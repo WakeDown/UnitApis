@@ -1,0 +1,66 @@
+﻿@using Stuff.Models
+@model List<Department>
+
+@{
+    ViewBag.Title = "Оргструктура";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<p>
+    <button id="btnDisplayDeps" class="btn btn-primary">подразделения</button>
+    <button id="btnDisplayStuff" class="btn btn-primary">сотрудники</button>
+</p>
+<p id="depsTree">
+    @ShowDepChild(Model)
+</p>
+@helper ShowDepChild(IEnumerable<Department> deps)
+{
+    <ul class="tree">
+        @foreach (var dep in deps)
+        {
+            <li>
+                <div class="panel-title collapsed" data-toggle="collapse" @String.Format("data-target=#dep{0}-child", dep.Id)>
+                <h4>@dep.Name</h4>
+                </div>
+                <div @String.Format("id=dep{0}-stuff", dep.Id) name="dep-stuff" class="panel-collapse collapse">
+                    @foreach (Employee emp in dep.GetStuff())
+                    {
+
+                        <div>@emp.DisplayName</div>
+                    }
+                </div>
+                @if (dep.ChildList.Any())
+                {
+    <div @String.Format("id=dep{0}-child", dep.Id) name="dep-child" class="panel-collapse collapse">
+    @ShowDepChild(dep.ChildList)
+    </div>
+                }
+            </li>
+        }
+    </ul>
+}
+
+@section scripts
+{
+    <script type="text/javascript">
+        init();
+
+        function init() {
+            $("#btnDisplayDeps").click(displayDeps);
+            $("#btnDisplayStuff").click(displayStuff);
+        }
+
+        function displayDeps() {
+            $("[name='dep-child']").toggle();
+            $(this).toggleClass('btn-taped');
+        }
+
+        function displayStuff() {
+            $("[name='dep-stuff']").toggle();
+            $(this).toggleClass('btn-taped');
+        }
+    </script>
+}
+
+@Scripts.Render("~/bundles/Department/Index")

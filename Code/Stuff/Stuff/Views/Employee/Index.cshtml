@@ -1,0 +1,63 @@
+﻿@model Stuff.Models.Employee
+
+@{
+    ViewBag.Title = "Карточка сотрудника";
+    Layout = "~/Views/Shared/_Editor.cshtml";
+}
+
+@section PanelHead
+{
+    
+        @Html.LabelFor(m => m.FullName) <a class="btn btn-link" href="@Url.Action("Edit")"><i class="fa fa-edit"></i>&nbsp;изменить</a>
+}
+
+@section PanelBody
+{
+    <div class="row">
+        <div class="col-lg-2">
+            <div id="photo">Photo</div>
+        </div>
+        <div class="col-lg-10">
+            <table class="table table-condensed">
+                <colgroup>
+                    <col class="col-lg-1"/>
+                    <col class="col-lg-4" />
+                </colgroup>
+                <tr>
+                    <td class="text-right">почта:</td>
+                    <td>@Html.LabelFor(m => m.Email)</td>
+                </tr>
+                <tr>
+                    <td class="text-right">сотовый:</td>
+                    <td>@Html.LabelFor(m => m.MobilNum)</td>
+                </tr>
+                <tr>
+                    <td class="text-right">раб. тел:</td>
+                    <td>@Html.LabelFor(m => m.WorkNum)</td>
+                </tr>
+                <tr>
+                    <td class="text-right">город:</td>
+                    <td>@Html.LabelFor(m => m.City.Name)</td>
+                </tr>
+                <tr>
+                    <td class="text-right">юр. лицо:</td>
+                    <td>@Html.LabelFor(m => m.Organization.Name)</td>
+                </tr>
+                <tr>
+                    <td class="text-right">подразделение:</td>
+                    <td>@Html.LabelFor(m => m.Department.Name)</td>
+                </tr>
+                <tr>
+                    <td class="text-right">должность:</td>
+                    <td>@Html.LabelFor(m => m.Position.Name)</td>
+                </tr>
+                <tr>
+                    <td class="text-right">руководитель: </td>
+                    <td>@Html.LabelFor(m => m.Manager.DisplayName)</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    
+
+}

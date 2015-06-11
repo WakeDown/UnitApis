@@ -1,0 +1,104 @@
+﻿@using Stuff.Helpers
+@using Stuff.Models
+@using Stuff.Objects
+@model Stuff.Models.Employee
+
+@{
+    ViewBag.Title = "Новый сотрудник";
+    Layout = "~/Views/Shared/_Editor.cshtml";
+}
+
+@section PanelHead
+{
+    Новый сотрудник
+}
+
+@section PanelBody
+{
+    
+        @using (Html.BeginForm("New", "Employee", FormMethod.Post, new { @class = "form-horizontal", enctype = "multipart/form-data", data_toggle = "validator", role = "form" }))
+        {
+            <div class="form-group">
+                <label class="col-lg-2 control-label" for="surname">ФИО</label>
+                <div class="col-lg-3">
+                    @Html.TextBoxFor(m => m.Surname, new {@class = "form-control required-mark", @id = "surname", placeholder = "Фамилия"})
+                </div>
+                <div class="col-lg-3">
+                    @Html.TextBoxFor(m => m.Name, new {@class = "form-control required-mark", @id = "name", placeholder = "Имя"})
+                </div>
+                <div class="col-lg-3">
+                    @Html.TextBoxFor(m => m.Patronymic, new {@class = "form-control", @id = "patronymic", placeholder = "Отчество"})
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-2 control-label" for="dateCame">Дата прихода</label>
+                <div class="col-lg-2">
+                    @Html.TextBoxFor(m => m.DateCame, new {@class = "form-control text-right required-mark", @id = "dateCame"})
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-2 control-label" for="email">E-mail</label>
+                <div class="col-lg-5">
+                    <div class="input-group">
+                        @Html.TextBoxFor(m => m.Email, new {@class = "form-control text-right required-mark", @id = "email"})
+                        <div class="input-group-addon">@@unitgroup.ru</div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-2 control-label" for="mobilNum">Мобильный тел.</label>
+                <div class="col-lg-5">
+                    @Html.TextBoxFor(m => m.MobilNum, new {@class = "form-control required-mark", @id = "mobilNum"})
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-2 control-label" for="workNum">Рабочий тел.</label>
+                <div class="col-lg-5">
+                    @Html.TextBoxFor(m => m.WorkNum, new {@class = "form-control required-mark", @id = "workNum"})
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-2 control-label" for="city">Город</label>
+                <div class="col-lg-5">
+                    @Html.DropDownListFor(m => m.City.Id, DbList.GetCityList(), new {@class = "form-control required-mark", @id = "city"})
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-2 control-label" for="organization">Юр. лицо</label>
+                <div class="col-lg-5">
+                    @Html.DropDownListFor(m => m.Organization.Id, DbList.GetOrganizationList(), new {@class = "form-control required-mark", @id = "organization"})
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-2 control-label" for="department">Отдел</label>
+                <div class="col-lg-5">
+                    @Html.DropDownListFor(m => m.DepartmentId, DbList.GetDepartmentList(), new {@class = "form-control required-mark", @id = "department"})
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-2 control-label" for="position">Должность</label>
+                <div class="col-lg-5">
+                    @Html.DropDownListFor(m => m.Position.Id, DbList.GetPositionList(), new {@class = "form-control required-mark", @id = "position"})
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-2 control-label" for="photo">Фотография</label>
+                <div class="col-lg-5">
+                    <input type="file" name="file" />
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-push-2 col-lg-5">
+                    @*<a type="submit" class="btn btn-primary btn-sm" href="#"><i class="fa fa-save"></i>&nbsp;добавить</a>*@
+                    <button type="submit" class="btn btn-success"><i class="fa fa-save"></i>&nbsp;добавить</button>
+                </div>
+            </div>
+        }
+}
+
+@section scripts
+        {
+    <script type="text/javascript">
+        $("#dateCame").mask('00.00.0000');
+    </script>
+}

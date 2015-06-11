@@ -1,0 +1,77 @@
+﻿@using Microsoft.Ajax.Utilities
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title – приложение ASP.NET</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    <div class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="~/">
+                    <img class="headLogo" src="~/Content/images/logo-unit.png" alt="" />
+                    <div class="h5"><strong>ЮНИТ</strong>&nbsp;<span class="h6">Персонал</span></div>
+                </a>
+                @*@Html.ActionLink("", "Index", "Home", null, new { @class = "navbar-brand" })*@
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href='@Url.Action("New", "Employee")'>
+                            <i class="fa fa-plus"></i> Новый сотрудник
+                        </a>
+                    </li>
+                    <li>
+                        <a href='@Url.Action("New", "Department")'>
+                            <i class="fa fa-plus"></i> Новое подразделение
+                        </a>
+                    </li>
+                    @*<li>@Html.ActionLink("Новый запрос", "Request", "Home")</li>*@
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="navbar-text">Вы вошли как <strong>@ViewBag.CurUser.ShortName</strong></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="container body-content">
+        @RenderBody()
+        <div class="clearfix"></div>
+        <hr class="last" />
+        <footer>
+            <div class="pull-left">
+                <h5>
+                    2015 @if (DateTime.Now.Year > 2015)
+                    {
+                        @String.Format("- {0}", DateTime.Now.Year);
+                    }
+                    &copy; UN1T
+                    <br />
+                    <small>v&nbsp;1.0</small>
+                </h5>
+            </div>
+            <div class="pull-right">
+                <h5><small><a href='http://support.unitgroup.ru' target="_blank">Техподдержка</a></small></h5>
+            </div>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @*@Scripts.Render("~/bundles/fuelux")*@
+    @RenderSection("scripts", required: false)
+</body>
+
+</html>
