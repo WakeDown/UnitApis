@@ -19,66 +19,98 @@
         @using (Html.BeginForm("New", "Employee", FormMethod.Post, new { @class = "form-horizontal", enctype = "multipart/form-data", data_toggle = "validator", role = "form" }))
         {
             <div class="form-group">
+                <label class="col-lg-2 control-label" for="empState">Статус</label>
+                <div class="col-lg-2">
+                    @Html.DropDownListFor(m => m.EmpState.Id, DbList.GetEmpStateList(), new { @class = "form-control required-mark", @id = "empState", required = "required", data_error = "Выберите Статус" })
+                    <span class="help-block with-errors"></span>
+                </div>
+            </div>
+            <div class="form-group">
                 <label class="col-lg-2 control-label" for="surname">ФИО</label>
                 <div class="col-lg-3">
-                    @Html.TextBoxFor(m => m.Surname, new {@class = "form-control required-mark", @id = "surname", placeholder = "Фамилия"})
+                    @Html.TextBoxFor(m => m.Surname, new { @class = "form-control required-mark", @id = "surname", placeholder = "Фамилия", required = "required", data_error = "Заполните поле Фамилия" })
+                    <div class="help-block with-errors"></div>
                 </div>
                 <div class="col-lg-3">
-                    @Html.TextBoxFor(m => m.Name, new {@class = "form-control required-mark", @id = "name", placeholder = "Имя"})
+                    @Html.TextBoxFor(m => m.Name, new { @class = "form-control required-mark", @id = "name", placeholder = "Имя", required = "required", data_error = "Заполните поле Имя" })
+                    <div class="help-block with-errors"></div>
                 </div>
                 <div class="col-lg-3">
                     @Html.TextBoxFor(m => m.Patronymic, new {@class = "form-control", @id = "patronymic", placeholder = "Отчество"})
+                    <div class="help-block with-errors"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-2 control-label" for="birthDate">Дата рождения</label>
+                <div class="col-lg-2">
+                    @Html.TextBoxFor(m => m.BirthDate, new { @class = "form-control text-right", @id = "birthDate" })
+                    <span class="help-block with-errors"></span>
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-lg-2 control-label" for="dateCame">Дата прихода</label>
                 <div class="col-lg-2">
-                    @Html.TextBoxFor(m => m.DateCame, new {@class = "form-control text-right required-mark", @id = "dateCame"})
+                    @Html.TextBoxFor(m => m.DateCame, new {@class = "form-control text-right", @id = "dateCame"})
+                    <span class="help-block with-errors"></span>
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-lg-2 control-label" for="email">E-mail</label>
                 <div class="col-lg-5">
-                    <div class="input-group">
-                        @Html.TextBoxFor(m => m.Email, new {@class = "form-control text-right required-mark", @id = "email"})
-                        <div class="input-group-addon">@@unitgroup.ru</div>
-                    </div>
+                    @*<div class="input-group">*@
+                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control required-mark", @id = "email", type="email", required = "required", data_error = "Заполните поле E-mail" })
+                    <span class="help-block with-errors"></span>
+                        @*<div class="input-group-addon">@@unitgroup.ru</div>
+    </div>*@
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-lg-2 control-label" for="mobilNum">Мобильный тел.</label>
                 <div class="col-lg-5">
-                    @Html.TextBoxFor(m => m.MobilNum, new {@class = "form-control required-mark", @id = "mobilNum"})
+                    @Html.TextBoxFor(m => m.MobilNum, new { @class = "form-control required-mark", @id = "mobilNum", required = "required", data_error = "Заполните поле Мобильный тел." })
+                    <span class="help-block with-errors"></span>
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-lg-2 control-label" for="workNum">Рабочий тел.</label>
                 <div class="col-lg-5">
-                    @Html.TextBoxFor(m => m.WorkNum, new {@class = "form-control required-mark", @id = "workNum"})
+                    @Html.TextBoxFor(m => m.WorkNum, new { @class = "form-control required-mark", @id = "workNum", required = "required", data_error = "Заполните поле Рабочий тел." })
+                    <span class="help-block with-errors"></span>
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-lg-2 control-label" for="city">Город</label>
                 <div class="col-lg-5">
-                    @Html.DropDownListFor(m => m.City.Id, DbList.GetCityList(), new {@class = "form-control required-mark", @id = "city"})
+                    @Html.DropDownListFor(m => m.City.Id, DbList.GetCityList(), "--выберите--", new { @class = "form-control required-mark", @id = "city", required = "required", data_error = "Выберите Город" })
+                    <span class="help-block with-errors"></span>
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-lg-2 control-label" for="organization">Юр. лицо</label>
                 <div class="col-lg-5">
-                    @Html.DropDownListFor(m => m.Organization.Id, DbList.GetOrganizationList(), new {@class = "form-control required-mark", @id = "organization"})
+                    @Html.DropDownListFor(m => m.Organization.Id, DbList.GetOrganizationList(), "--выберите--", new { @class = "form-control required-mark", @id = "organization", required = "required", data_error = "Выберите Юр. лицо" })
+                    <span class="help-block with-errors"></span>
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-lg-2 control-label" for="department">Отдел</label>
+                <label class="col-lg-2 control-label" for="department">Подрезделение</label>
                 <div class="col-lg-5">
-                    @Html.DropDownListFor(m => m.DepartmentId, DbList.GetDepartmentList(), new {@class = "form-control required-mark", @id = "department"})
+                    @Html.DropDownListFor(m => m.Department.Id, DbList.GetDepartmentList(), "--выберите--", new { @class = "form-control required-mark", @id = "department", required = "required", data_error = "Выберите Подрезделение" })
+                    <span class="help-block with-errors"></span>
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-lg-2 control-label" for="position">Должность</label>
                 <div class="col-lg-5">
-                    @Html.DropDownListFor(m => m.Position.Id, DbList.GetPositionList(), new {@class = "form-control required-mark", @id = "position"})
+                    @Html.DropDownListFor(m => m.Position.Id, DbList.GetPositionList(), "--выберите--", new { @class = "form-control required-mark", @id = "position", required = "required", data_error = "Выберите Должность" })
+                    <span class="help-block with-errors"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-2 control-label" for="manager">Руководитель</label>
+                <div class="col-lg-5">
+                    @Html.DropDownListFor(m => m.Manager.Id, DbList.GetEmployeeList(), "--выберите--", new { @class = "form-control", @id = "manager", })
+                    <span class="help-block with-errors"></span>
                 </div>
             </div>
             <div class="form-group">
@@ -91,6 +123,9 @@
                 <div class="col-lg-push-2 col-lg-5">
                     @*<a type="submit" class="btn btn-primary btn-sm" href="#"><i class="fa fa-save"></i>&nbsp;добавить</a>*@
                     <button type="submit" class="btn btn-success"><i class="fa fa-save"></i>&nbsp;добавить</button>
+                    <p class="text-danger">
+                        @ViewData["ServerError"]
+                    </p>
                 </div>
             </div>
         }
@@ -99,6 +134,7 @@
 @section scripts
         {
     <script type="text/javascript">
+        $("#birthDate").mask('00.00.0000');
         $("#dateCame").mask('00.00.0000');
     </script>
 }

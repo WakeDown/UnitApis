@@ -30,41 +30,30 @@ namespace Stuff.Models
         public string WorkNum { get; set; }
         public string MobilNum { get; set; }
         public EmpState EmpState { get; set; }
-        public int DepartmentId { get; set; }
+        //public int DepartmentId { get; set; }
         public Department Department { get; set; }
         public City City { get; set; }
         public byte[] Photo { get; set; }
         public DateTime? DateCame { get; set; }
+        public DateTime? BirthDate { get; set; }
 
         public AdGroup[] AdGroups { get; set; }
 
         public Employee() { }
 
-        public Employee(int id)
+        public Employee(int id, bool getPhoto = false)
         {
-            //Id = id;
-            //AdSid = "12213ohjboi5345oijbnio";
-            //Manager = new Employee() { DisplayName = "Медведевских А.А." };
-            //Surname = "Рехов";
-            //Name = "Антон";
-            //Patronymic = "Игоревич";
-            //FullName = "Рехов Антон Игоревич";
-            //DisplayName = "Рехов А.И.";
-            //Position = new Position() { Id = 1, Name = "Pos1" };
-            //Organization = new Organization() { Id = 1, Name = "Org1" };
-            //Email = "anton.rehov@unitgroup.ru";
-            //WorkNum = "111";
-            //MobilNum = "+79536001000";
-            //Department = new Department() { Id = 1, Name = "Dep1" };
-            //City = new City() { Id = 1, Name = "City1" };
-            //DateCame = DateTime.Now;
-
-            Uri uri = new Uri(String.Format("{0}/Employee/Get/{1}", OdataServiceUri, id));
+            Uri uri = new Uri(String.Format("{0}/Employee/Get?id={1}&getPhoto={2}", OdataServiceUri, id, getPhoto));
             string jsonString = GetJson(uri);
 
-            var emp = JsonConvert.DeserializeObject<Employee>(jsonString);
-            this.Id = emp.Id;
-            this.AdSid = emp.AdSid;
+            Employee emp = JsonConvert.DeserializeObject<Employee>(jsonString);
+            FillSelf(emp);
+        }
+
+        private void FillSelf(Employee emp)
+        {
+            Id = emp.Id;
+            AdSid = emp.AdSid;
             Manager = emp.Manager;
             Surname = emp.Surname;
             Name = emp.Name;
@@ -77,27 +66,52 @@ namespace Stuff.Models
             WorkNum = emp.WorkNum;
             MobilNum = emp.MobilNum;
             EmpState = emp.EmpState;
-            DepartmentId = emp.Department.Id;
             Department = emp.Department;
             City = emp.City;
             Photo = emp.Photo;
             DateCame = emp.DateCame;
+            BirthDate = emp.BirthDate;
         }
-
 
         public void FillAdGroups()
         {
             
         }
 
-        internal void Save()
+        public bool Save(out ResponseMessage responseMessage)
         {
-            Id = 1;
+            Uri uri = new Uri(String.Format("{0}/Employee/Save", OdataServiceUri));
+            string json = JsonConvert.SerializeObject(this);
+            bool result = PostJson(uri, json, out responseMessage);
+            return result;
         }
 
-        public static List<Employee> GetSelectionList()
+        public static bool Delete(int id, out ResponseMessage responseMessage)
         {
-            return new List<Employee>(){new Employee(1)};
+            Uri uri = new Uri(String.Format("{0}/Employee/Close?id={1}", OdataServiceUri, id));
+            string json = String.Empty;//String.Format("{{\"id\":{0}}}",id);
+            bool result = PostJson(uri, json, out responseMessage);
+            return result;
+        }
+
+        public static IEnumerable<Employee> GetList()
+        {
+            Uri uri = new Uri(String.Format("{0}/Employee/GetList", OdataServiceUri));
+            string jsonString = GetJson(uri);
+
+            var emps = JsonConvert.DeserializeObject<IEnumerable<Employee>>(jsonString);
+
+            return emps;
+        }
+
+        public static IEnumerable<Employee> GetSelectionList()
+        {
+            Uri uri = new Uri(String.Format("{0}/Employee/GetList", OdataServiceUri));
+            string jsonString = GetJson(uri);
+
+            var emps = JsonConvert.DeserializeObject<IEnumerable<Employee>>(jsonString);
+
+            return emps;
         }
     }
 }

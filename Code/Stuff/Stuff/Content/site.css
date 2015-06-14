@@ -110,12 +110,12 @@ ul.tree {
     list-style: none;
 }
 
-.tree li div.panel-title.collapsed h4:before {
+.tree li div.panel-title.collapsed .h4:before {
     font-family: FontAwesome;
    content: "\f0da   ";
 }
 
-.tree li div.panel-title h4:before {
+.tree li div.panel-title .h4:before {
     font-family: FontAwesome;
    content: "\f0d7   ";
 }

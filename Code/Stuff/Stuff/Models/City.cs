@@ -2,23 +2,40 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Newtonsoft.Json;
+using Stuff.Objects;
 
 namespace Stuff.Models
 {
-    public class City
+    public class City:DbModel
     {
         public int Id { get; set; }
         public string Name { get; set; }
 
+        public City() { }
+
+        public City(int id)
+        {
+            Uri uri = new Uri(String.Format("{0}/City/Get?id={1}", OdataServiceUri, id));
+            string jsonString = GetJson(uri);
+            var model = JsonConvert.DeserializeObject<City>(jsonString);
+            FillSelf(model);
+        }
+
+        private void FillSelf(City model)
+        {
+            Id = model.Id;
+            Name = model.Name;
+        }
+
         public static IEnumerable<City> GetSelectionList()
         {
-            var lst = new List<City>();
+            Uri uri = new Uri(String.Format("{0}/City/GetList", OdataServiceUri));
+            string jsonString = GetJson(uri);
 
-            lst.Add(new City() { Id = 1, Name = "City1" });
-            lst.Add(new City() { Id = 2, Name = "City2" });
-            lst.Add(new City() { Id = 3, Name = "City3" });
+            var model = JsonConvert.DeserializeObject<IEnumerable<City>>(jsonString);
 
-            return lst;
+            return model;
         }
     }
 }

@@ -41,12 +41,13 @@ namespace Stuff.Controllers
             ViewBag.CurUser = curUser;
 
             //Save department
-            string errorMessage = String.Empty;
             try
             {
-                bool complete = dep.Save(out errorMessage);
-                if (!complete)throw new Exception(errorMessage);
-                return RedirectToAction("Edit", "Department", new { id = dep.Id });
+                ResponseMessage responseMessage;
+                bool complete = dep.Save(out responseMessage);
+                if (!complete) throw new Exception(responseMessage.ErrorMessage);
+
+                return RedirectToAction("Edit", "Department", new { id = responseMessage.Id });
             }
             catch (Exception ex)
             {
@@ -55,6 +56,7 @@ namespace Stuff.Controllers
             }
         }
 
+        [HttpGet]
         public ActionResult Edit(int? id)
         {
             AdUser curUser = GetCurUser();
@@ -70,7 +72,42 @@ namespace Stuff.Controllers
             {
                 return View("New");
             }
-            
+        }
+        [HttpPost]
+        public ActionResult Edit(Department dep)
+        {
+            AdUser curUser = GetCurUser();
+            if (curUser == new AdUser()) return View("AccessDeny");
+            ViewBag.CurUser = curUser;
+
+            try
+            {
+                ResponseMessage responseMessage;
+                bool complete = dep.Save(out responseMessage);
+                if (!complete) throw new Exception(responseMessage.ErrorMessage);
+
+                return RedirectToAction("Edit", "Department", new { id = responseMessage.Id });
+            }
+            catch (Exception ex)
+            {
+                ViewData["ServerError"] = ex.Message;
+                return RedirectToAction("Edit", "Department", new { id = dep.Id });
+            }
+        }
+
+        
+        public void Delete(int? id)
+        {
+            try
+            {
+                ResponseMessage responseMessage;
+                bool complete = Department.Delete(id.Value, out responseMessage);
+                if (!complete) throw new Exception(responseMessage.ErrorMessage);
+            }
+            catch (Exception ex)
+            {
+                ViewData["ServerError"] = ex.Message;
+            }
         }
 	}
 }

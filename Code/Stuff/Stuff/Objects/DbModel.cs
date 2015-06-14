@@ -40,7 +40,6 @@ namespace Stuff.Objects
                 {
                     StreamReader reader = new StreamReader(responseStream, Encoding.UTF8);
                     result = reader.ReadToEnd();
-
                 }
             }
             catch (WebException ex)
@@ -50,7 +49,6 @@ namespace Stuff.Objects
                 {
                     StreamReader reader = new StreamReader(responseStream, Encoding.GetEncoding("utf-8"));
                     String errorText = reader.ReadToEnd();
-                    // log errorText
                 }
                 throw;
             }
@@ -58,7 +56,7 @@ namespace Stuff.Objects
             return result;
         }
 
-        protected static bool SendJson(Uri uri, string json, out string errorMessage)
+        protected static bool PostJson(Uri uri, string json, out ResponseMessage responseMessage)
         {
             var request = (HttpWebRequest)WebRequest.Create(uri);
             request.Headers.Add("Authorization", AuthorizationHeaderValue);
@@ -73,11 +71,12 @@ namespace Stuff.Objects
             }
 
             var response = (HttpWebResponse)request.GetResponse();
-            using (var streamReader = new StreamReader(response.GetResponseStream()))
-            {
-                errorMessage = streamReader.ReadToEnd();
-            }
-
+                using (var streamReader = new StreamReader(response.GetResponseStream()))
+                {
+                    string responseContent = streamReader.ReadToEnd();
+                    responseMessage = JsonConvert.DeserializeObject<ResponseMessage>(responseContent);
+                }
+            
             return response.StatusCode == HttpStatusCode.Created;
         }
     }

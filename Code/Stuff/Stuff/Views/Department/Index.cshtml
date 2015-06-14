@@ -11,6 +11,9 @@
     <button id="btnDisplayDeps" class="btn btn-primary">подразделения</button>
     <button id="btnDisplayStuff" class="btn btn-primary">сотрудники</button>
 </p>
+<p class="text-danger">
+    @ViewData["ServerError"]
+</p>
 <p id="depsTree">
     @ShowDepChild(Model)
 </p>
@@ -21,7 +24,8 @@
         {
             <li>
                 <div class="panel-title collapsed" data-toggle="collapse" @String.Format("data-target=#dep{0}-child", dep.Id)>
-                <h4>@dep.Name</h4>
+                    <span class="h4">@dep.Name</span> <a class="btn btn-link" href="@Url.Action("Edit", "Department", new { id = dep.Id })">изменить</a> 
+                    <button name="dep-delele" class="btn btn-link" depId="@dep.Id" onclick='@String.Format("return confirm('вы уверены что хотите удалить подразделение {0}?')", @dep.Name )'>удалить</button>
                 </div>
                 <div @String.Format("id=dep{0}-stuff", dep.Id) name="dep-stuff" class="panel-collapse collapse">
                     @foreach (Employee emp in dep.GetStuff())
@@ -49,6 +53,27 @@
         function init() {
             $("#btnDisplayDeps").click(displayDeps);
             $("#btnDisplayStuff").click(displayStuff);
+            $("[name='dep-delele']").click(deleteDepartment);
+        }
+
+        function deleteDepartment(e) {
+            var button = $(e.currentTarget);
+            var id = $(button).attr('depId');
+            
+            $.ajax({
+                type: "POST",
+                url: "/Department/Delete?id="+id,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                //data: { "id": id },
+                success: function() {
+                    alert(id);
+                },
+                error: function() {
+                    //alert('@ViewData["ServerError"]');
+                } 
+            });
+            //alert(id);
         }
 
         function displayDeps() {

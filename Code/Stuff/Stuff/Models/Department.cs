@@ -27,9 +27,6 @@ namespace Stuff.Models
             string jsonString = GetJson(uri);
             var dep = JsonConvert.DeserializeObject<Department>(jsonString);
             FillSelf(dep);
-            //Id = 1;
-            //ParentDepartment = new Department() { Id = 2 };
-            //Chief = new Employee() { FullName = "Гималтдинов Ильдар Разифович" };
         }
 
         private void FillSelf(Department dep)
@@ -40,11 +37,11 @@ namespace Stuff.Models
             Chief = dep.Chief;
         }
 
-        public bool Save(out string errorMessage)
+        public bool Save(out ResponseMessage responseMessage)
         {
             Uri uri = new Uri(String.Format("{0}/Department/Save", OdataServiceUri));
             string json = JsonConvert.SerializeObject(this);
-            bool result = SendJson(uri, json, out errorMessage);
+            bool result = PostJson(uri, json, out responseMessage);
             return result;
         }
 
@@ -58,6 +55,14 @@ namespace Stuff.Models
             return deps;
         }
 
+        public static bool Delete(int id, out ResponseMessage responseMessage)
+        {
+            Uri uri = new Uri(String.Format("{0}/Department/Close?id={1}", OdataServiceUri, id));
+            string json = String.Empty;//String.Format("{{\"id\":{0}}}",id);
+            bool result = PostJson(uri, json, out responseMessage);
+            return result;
+        }
+
         public static IEnumerable<Department> GetSelectionList()
         {
             Uri uri = new Uri(String.Format("{0}/Department/GetList", OdataServiceUri));
@@ -68,9 +73,14 @@ namespace Stuff.Models
             return deps;
         }
 
-        public List<Employee> GetStuff()
+        public IEnumerable<Employee> GetStuff()
         {
-            return new List<Employee>() {new Employee(){DisplayName = "Сотрудник 1"}, new Employee(){DisplayName = "Сотрудник 2"}, new Employee(){DisplayName = "Сотрудник 3"}, new Employee(){DisplayName = "Сотрудник 4"}, new Employee(){DisplayName = "Сотрудник 5"}};
+            Uri uri = new Uri(String.Format("{0}/Employee/GetList?idDepartment={1}", OdataServiceUri, Id));
+            string jsonString = GetJson(uri);
+
+            var emps = JsonConvert.DeserializeObject<IEnumerable<Employee>>(jsonString);
+
+            return emps;
         }
 
         public static List<Department> GetOrgStructure()
@@ -79,7 +89,7 @@ namespace Stuff.Models
             var result = new List<Department>();
 
             //Отделяем подразделения без Парентов
-            result = deps.Where(d => d.ParentDepartment == null || d.ParentDepartment == new Department()).ToList();
+            result = deps.Where(d => d.ParentDepartment == null || d.ParentDepartment == new Department()|| (d.ParentDepartment != null && d.ParentDepartment.Id == 0)).ToList();
             deps.RemoveAll(d => d.ParentDepartment == null || d.ParentDepartment == new Department());
 
             foreach (Department dep in result)
@@ -103,5 +113,7 @@ namespace Stuff.Models
 
             return result; 
         }
+
+        
     }
 }

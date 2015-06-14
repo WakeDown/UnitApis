@@ -7,8 +7,13 @@
 
 @section PanelHead
 {
+    <span class="pull-right"><a class="btn btn-link" href="@Url.Action("Edit", new {id=Model.Id})">@*<i class="fa fa-edit"></i>&nbsp;*@изменить</a></span>
+    @Html.LabelFor(m => m, Model.FullName) 
+    <p>
+        <small>
+            @Html.LabelFor(m=>m, Model.EmpState.Name)</small>
+    </p>
     
-        @Html.LabelFor(m => m.FullName) <a class="btn btn-link" href="@Url.Action("Edit")"><i class="fa fa-edit"></i>&nbsp;изменить</a>
 }
 
 @section PanelBody
@@ -24,36 +29,44 @@
                     <col class="col-lg-4" />
                 </colgroup>
                 <tr>
+                    <td class="text-right">дата рждения:</td>
+                    <td>@Html.LabelFor(m => m, Model.BirthDate != null? Model.BirthDate.Value.ToShortDateString() : String.Empty)</td>
+                </tr>
+                <tr>
+                    <td class="text-right">дата прихода:</td>
+                    <td>@Html.LabelFor(m => m, Model.DateCame != null ? Model.DateCame.Value.ToShortDateString() : String.Empty)</td>
+                </tr>
+                <tr>
                     <td class="text-right">почта:</td>
-                    <td>@Html.LabelFor(m => m.Email)</td>
+                    <td>@Html.LabelFor(m => m, Model.Email)</td>
                 </tr>
                 <tr>
                     <td class="text-right">сотовый:</td>
-                    <td>@Html.LabelFor(m => m.MobilNum)</td>
+                    <td>@Html.LabelFor(m => m, Model.MobilNum)</td>
                 </tr>
                 <tr>
                     <td class="text-right">раб. тел:</td>
-                    <td>@Html.LabelFor(m => m.WorkNum)</td>
+                    <td>@Html.LabelFor(m => m, Model.WorkNum)</td>
                 </tr>
                 <tr>
                     <td class="text-right">город:</td>
-                    <td>@Html.LabelFor(m => m.City.Name)</td>
+                    <td>@Html.LabelFor(m => m, Model.City.Name)</td>
                 </tr>
                 <tr>
                     <td class="text-right">юр. лицо:</td>
-                    <td>@Html.LabelFor(m => m.Organization.Name)</td>
+                    <td>@Html.LabelFor(m => m, Model.Organization.Name)</td>
                 </tr>
                 <tr>
                     <td class="text-right">подразделение:</td>
-                    <td>@Html.LabelFor(m => m.Department.Name)</td>
+                    <td>@Html.LabelFor(m => m, Model.Department.Name)</td>
                 </tr>
                 <tr>
                     <td class="text-right">должность:</td>
-                    <td>@Html.LabelFor(m => m.Position.Name)</td>
+                    <td>@Html.LabelFor(m => m, Model.Position.Name)</td>
                 </tr>
                 <tr>
                     <td class="text-right">руководитель: </td>
-                    <td>@Html.LabelFor(m => m.Manager.DisplayName)</td>
+                    <td>@Html.LabelFor(m => m, Model.Manager.DisplayName)</td>
                 </tr>
             </table>
         </div>
