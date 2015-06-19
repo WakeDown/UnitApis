@@ -36,6 +36,12 @@ namespace Stuff.Models
         public byte[] Photo { get; set; }
         public DateTime? DateCame { get; set; }
         public DateTime? BirthDate { get; set; }
+        public bool IsChief { get; set; }
+        public bool Male { get; set; }
+        /// <summary>
+        /// Официальная должность
+        /// </summary>
+        public Position PositionOrg { get; set; }
 
         public AdGroup[] AdGroups { get; set; }
 
@@ -71,6 +77,9 @@ namespace Stuff.Models
             Photo = emp.Photo;
             DateCame = emp.DateCame;
             BirthDate = emp.BirthDate;
+            IsChief = emp.IsChief;
+            Male = emp.Male;
+            PositionOrg = emp.PositionOrg;
         }
 
         public void FillAdGroups()

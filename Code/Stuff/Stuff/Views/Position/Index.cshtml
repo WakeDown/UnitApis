@@ -1,0 +1,94 @@
+﻿@using System.Web.UI.WebControls
+@using Stuff.Models
+@using Stuff.Objects
+@model Stuff.Models.Position
+
+@{
+    Layout = "~/Views/Shared/_Editor.cshtml";
+}
+@section PanelHead
+{
+    Должности
+}
+
+@section PanelBody
+{
+    @using (Html.BeginForm("Index", "Position", FormMethod.Post, new { @id = "posForm", @class = "form-horizontal", data_toggle = "validator", role = "form" }))
+    {
+        <div class="form-group">
+            @*<label class="col-lg-3 control-label" for="name">Название</label>*@
+            <div class="col-lg-5">
+                @Html.TextBoxFor(m => m.Name, new { @class = "form-control required-mark", @id = "name", required = "required", data_error = "Заполните Название", placeholder="Название должности" })
+                <span class="help-block with-errors"></span>
+            </div>
+            <div class="col-lg-1"><button type="submit" class="btn btn-success"><i class="fa fa-save"></i>&nbsp;добавить</button>
+</div><div class="col-lg-6 text-danger">
+    @ViewData["ServerError"]
+</div>
+        </div>
+        <div class="form-group">
+            <div class="col-lg-push-3 col-lg-5">
+                
+            </div>
+        </div>
+    }
+    
+@{
+    var list = Position.GetList();
+
+    if (list.Any())
+    {
+        <table class="table table-bordered">
+            <tr>
+                <th class="min-width">№</th>
+                <th>Название должности</th>
+                <th class="min-width text-nowrap">Кол-во сотрудников</th>
+                <th class="min-width"></th>
+            </tr>
+            @{ int i = 0;}
+            @foreach (var pos in list)
+            {
+                i++;
+                <tr>
+                    <td>@i</td>
+                    <td>@pos.Name</td>
+                    <td>@pos.EmpCount</td>
+                    <td>
+                        <button class="btn btn-link" name="delele-pos" posid="@pos.Id" data-toggle="tooltip" title="удалить"><i class="fa fa-trash"></i></button>
+                    </td>
+                </tr>
+            }
+        </table>
+    }
+}
+}
+
+@section scripts
+{
+    <script type="text/javascript">
+
+        $(document).ready(init);
+
+        function init() {
+            $("#posForm").validator();
+            $("[name='delele-pos']").click(deleteDepartment);
+        }
+
+        function deleteDepartment(e) {
+            if (!confirm('Вы действительно хотите удалить должность?')) return;
+            var id = $(this).attr('posId');
+            $.ajax({
+                type: 'POST',
+                url: "@Url.Action("Delete", "Position")",
+                data: { id: id },
+                success: function(data) {
+                    if (data != null) {
+                        alert(data);
+                    } else {
+                        window.location.reload();
+                    }
+                }
+            });
+        }
+    </script>
+}

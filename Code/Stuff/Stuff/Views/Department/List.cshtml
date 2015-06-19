@@ -1,0 +1,63 @@
+﻿@using Stuff.Models
+@model Stuff.Models.Department[]
+
+@{
+    ViewBag.Title = "Список подразделений";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<p>
+    <span class="text-danger">@ViewData["ServerError"]</span>
+</p>
+<p>
+    <a href='@Url.Action("New", "Department")'>
+        <i class="fa fa-plus"></i> Новое подразделение
+    </a>
+</p>
+@if (Model.Any())
+{
+    <table id="depList" class="table table-bordered">
+        <tr>
+            <th></th>
+            <th>№</th>
+            <th>Название подразделения</th>
+            <th>Головное подразделение</th>
+            <th>Руководитель</th>
+            <th></th>
+        </tr>
+        @{int i = 0;}
+        @foreach (Department dep in Model)
+        {
+            i++;
+            <tr>
+                <td>
+                    <a class="btn btn-link" href="@Url.Action("Edit", "Department", new { id = dep.Id })" data-toggle="tooltip" title="изменить"><i class="fa fa-edit"></i></a>
+                </td>
+                <th>@i</th>
+                <td>@dep.Name</td>
+                <td>@dep.ParentDepartment.Name</td>
+                <td>@dep.Chief.DisplayName</td>
+                <td>
+                    <button class="btn btn-link" name="delele-dep" depid="@dep.Id" data-toggle="tooltip" title="удалить"><i class="fa fa-trash"></i></button>
+                </td>
+            </tr>
+        }
+    </table>
+}
+
+@section scripts
+{
+    <script type="text/javascript">
+        $(document).ready(function() { init(); });
+
+        function init() {
+            $("[name='delele-dep']").click(deleteDepartment);
+        }
+
+        function deleteDepartment(e) {
+            if (!confirm('Вы действительно хотите удалить подразделение?')) return;
+            var id = $(this).attr('depId');
+            $.post("@Url.Action("Delete", "Department")", { id: id }, function() { window.location.reload(); });
+        }
+    </script>
+}

@@ -10,27 +10,44 @@
     <span class="pull-right"><a class="btn btn-link" href="@Url.Action("Edit", new {id=Model.Id})">@*<i class="fa fa-edit"></i>&nbsp;*@изменить</a></span>
     @Html.LabelFor(m => m, Model.FullName) 
     <p>
-        <small>
-            @Html.LabelFor(m=>m, Model.EmpState.Name)</small>
+        @*<small>
+            @Html.LabelFor(m=>m, Model.EmpState.Name)</small>*@
     </p>
     
 }
 
 @section PanelBody
 {
+    @{
+        string photoSrc = String.Empty;
+        if (Model.Photo != null && Model.Photo.Length > 0)
+        {
+            var base64 = Convert.ToBase64String(Model.Photo);
+            photoSrc = String.Format("data:image/gif;base64,{0}", base64);
+        }
+        else
+        {
+            photoSrc = Model.Male ? Href("~/Content/images/no_photo_male.jpg") : Href("~/Content/images/no_photo_female.png");
+        }
+    }
+
     <div class="row">
-        <div class="col-lg-2">
-            <div id="photo">Photo</div>
+        <div class="col-lg-3">
+            <div class="emp-photo"><img id="photo" src="@photoSrc" /></div>
         </div>
-        <div class="col-lg-10">
+        <div class="col-lg-9">
             <table class="table table-condensed">
                 <colgroup>
                     <col class="col-lg-1"/>
                     <col class="col-lg-4" />
                 </colgroup>
                 <tr>
-                    <td class="text-right">дата рждения:</td>
-                    <td>@Html.LabelFor(m => m, Model.BirthDate != null? Model.BirthDate.Value.ToShortDateString() : String.Empty)</td>
+                    <td class="text-right">пол:</td>
+                    <td>@Html.LabelFor(m => m, Model.Male != null ? Model.Male ? "мужской" : "женский" : "--не указан--")</td>
+                </tr>
+                <tr>
+                    <td class="text-right">дата рождения:</td>
+                    <td>@Html.LabelFor(m => m, Model.BirthDate != null? String.Format("{0:dd MMMM}",Model.BirthDate.Value) : String.Empty)</td>
                 </tr>
                 <tr>
                     <td class="text-right">дата прихода:</td>
@@ -41,11 +58,11 @@
                     <td>@Html.LabelFor(m => m, Model.Email)</td>
                 </tr>
                 <tr>
-                    <td class="text-right">сотовый:</td>
+                    <td class="text-right">мобильный:</td>
                     <td>@Html.LabelFor(m => m, Model.MobilNum)</td>
                 </tr>
                 <tr>
-                    <td class="text-right">раб. тел:</td>
+                    <td class="text-right">внутренний:</td>
                     <td>@Html.LabelFor(m => m, Model.WorkNum)</td>
                 </tr>
                 <tr>

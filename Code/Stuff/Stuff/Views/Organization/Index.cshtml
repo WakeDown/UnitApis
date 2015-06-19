@@ -1,0 +1,91 @@
+﻿@using System.Web.UI.WebControls
+@using Stuff.Models
+@using Stuff.Objects
+@model Stuff.Models.Organization
+
+@{
+    ViewBag.Title = "Юридические лица";
+    Layout = "~/Views/Shared/_Editor.cshtml";
+}
+
+@section PanelHead
+{
+    Юридические лица
+}
+
+@section PanelBody
+{
+    @using (Html.BeginForm("Index", "Organization", FormMethod.Post, new { @id="orgForm", @class = "form-horizontal",  data_toggle="validator", role="form" }))
+    {
+        <div class="form-group">
+            @*<label class="col-lg-3 control-label" for="name">Название</label>*@
+            <div class="col-lg-5">
+                @Html.TextBoxFor(m => m.Name, new { @class = "form-control required-mark", @id = "name", required = "required", data_error = "Заполните Название", placeholder="Название юр. лица" })
+                <span class="help-block with-errors"></span>
+            </div>
+            <div class="col-lg-1"><button type="submit" class="btn btn-success"><i class="fa fa-save"></i>&nbsp;добавить</button></div>
+            <div class="col-lg-6 text-danger">
+                @ViewData["ServerError"]
+            </div>
+        </div>
+    }
+    
+    @{
+    var list = Organization.GetList();
+
+    if (list.Any())
+    {
+        <table class="table table-bordered">
+            <tr>
+                <th class="min-width">№</th>
+                <th>Название юр. лица</th>
+                <th class="min-width text-nowrap">Кол-во сотрудников</th>
+                <th class="min-width"></th>
+            </tr>
+            @{ int i = 0;}
+            @foreach (var org in list)
+            {
+                i++;
+                <tr>
+                    <td>@i</td>
+                    <td>@org.Name</td>
+                    <td>@org.EmpCount</td>
+                    <td>
+                        <button class="btn btn-link" name="delele-org" orgid="@org.Id" data-toggle="tooltip" title="удалить"><i class="fa fa-trash"></i></button>
+                    </td>
+                </tr>
+            }
+        </table>
+    }
+}
+}
+
+@section scripts
+{
+    <script type="text/javascript">
+
+        $(document).ready(init);
+
+        function init() {
+            $("#orgForm").validator();
+            $("[name='delele-org']").click(deleteDepartment);
+        }
+
+        function deleteDepartment(e) {
+            if (!confirm('Вы действительно хотите удалить юр. лицо?')) return;
+            var id = $(this).attr('orgId');
+            $.ajax({
+                type: 'POST',
+                url: "@Url.Action("Delete", "Organization")",
+                data: { id: id },
+                success: function(data) {
+                    if (data != null) {
+                        alert(data);
+                    } else {
+                        window.location.reload();
+                    }
+                }
+            });
+        }
+    </script>
+}

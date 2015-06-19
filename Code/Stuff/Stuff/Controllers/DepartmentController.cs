@@ -11,13 +11,27 @@ namespace Stuff.Controllers
 {
     public class DepartmentController : BaseController
     {
-        //
-        // GET: /OrgStructure/
+        public ActionResult List()
+        {
+            DisplayCurUser();
+            var deps = Department.GetList().ToArray();
+
+            return View(deps);
+        }
+
+        public ActionResult Employees()
+        {
+            DisplayCurUser();
+            var deps = Department.GetList().ToArray();
+
+            return View(deps);
+        }
+
+        
+
         public ActionResult Index()
         {
-            AdUser curUser = GetCurUser();
-            if (curUser == new AdUser()) return View("AccessDeny");
-            ViewBag.CurUser = curUser;
+            DisplayCurUser();
 
             var deps = Department.GetOrgStructure();
 
@@ -27,18 +41,14 @@ namespace Stuff.Controllers
         [HttpGet]
         public ActionResult New()
         {
-            AdUser curUser = GetCurUser();
-            if (curUser == new AdUser()) return View("AccessDeny");
-            ViewBag.CurUser = curUser;
+            DisplayCurUser();
 
             return View();
         }
         [HttpPost]
         public ActionResult New(Department dep)
         {
-            AdUser curUser = GetCurUser();
-            if (curUser == new AdUser()) return View("AccessDeny");
-            ViewBag.CurUser = curUser;
+            DisplayCurUser();
 
             //Save department
             try
@@ -59,9 +69,7 @@ namespace Stuff.Controllers
         [HttpGet]
         public ActionResult Edit(int? id)
         {
-            AdUser curUser = GetCurUser();
-            if (curUser == new AdUser()) return View("AccessDeny");
-            ViewBag.CurUser = curUser;
+            DisplayCurUser();
 
             if (id.HasValue)
             {
@@ -76,9 +84,7 @@ namespace Stuff.Controllers
         [HttpPost]
         public ActionResult Edit(Department dep)
         {
-            AdUser curUser = GetCurUser();
-            if (curUser == new AdUser()) return View("AccessDeny");
-            ViewBag.CurUser = curUser;
+            DisplayCurUser();
 
             try
             {
@@ -95,13 +101,13 @@ namespace Stuff.Controllers
             }
         }
 
-        
-        public void Delete(int? id)
+        [HttpPost]
+        public void Delete(int id)
         {
             try
             {
                 ResponseMessage responseMessage;
-                bool complete = Department.Delete(id.Value, out responseMessage);
+                bool complete = Department.Delete(id, out responseMessage);
                 if (!complete) throw new Exception(responseMessage.ErrorMessage);
             }
             catch (Exception ex)

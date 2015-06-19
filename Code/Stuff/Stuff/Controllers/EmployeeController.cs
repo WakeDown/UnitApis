@@ -13,11 +13,21 @@ namespace Stuff.Controllers
 {
     public class EmployeeController : BaseController
     {
-        public ActionResult Index(int? id)
+        private void DisplayCurUser()
         {
             AdUser curUser = GetCurUser();
-            if (curUser == new AdUser()) return View("AccessDeny");
+            if (curUser == new AdUser()) RedirectToAction("AccessDeny");
             ViewBag.CurUser = curUser;
+        }
+
+        public ActionResult AccessDeny()
+        {
+            return View("AccessDeny");
+        }
+
+        public ActionResult Index(int? id)
+        {
+            DisplayCurUser();
 
             if (id.HasValue && id.Value > 0)
             {
@@ -33,28 +43,23 @@ namespace Stuff.Controllers
         [HttpGet]
         public ActionResult Edit(int? id)
         {
-            AdUser curUser = GetCurUser();
-            if (curUser == new AdUser()) return View("AccessDeny");
-            ViewBag.CurUser = curUser;
+            DisplayCurUser();
 
             if (id.HasValue)
             {
-                var emp = new Employee(id.Value);
+                var emp = new Employee(id.Value, true);
                 return View(emp);
             }
             else
             {
                 return View("New");
             }
-            
         }
 
         [HttpPost]
         public ActionResult Edit(Employee emp)
         {
-            AdUser curUser = GetCurUser();
-            if (curUser == new AdUser()) return View("AccessDeny");
-            ViewBag.CurUser = curUser;
+            DisplayCurUser();
 
             //Save employee
             try
@@ -74,9 +79,7 @@ namespace Stuff.Controllers
         [HttpGet]
         public ActionResult New()
         {
-            AdUser curUser = GetCurUser();
-            if (curUser == new AdUser()) return View("AccessDeny");
-            ViewBag.CurUser = curUser;
+            DisplayCurUser();
 
             var emp = new Employee();
 
@@ -86,9 +89,7 @@ namespace Stuff.Controllers
         [HttpPost]
         public ActionResult New(Employee emp)
         {
-            AdUser curUser = GetCurUser();
-            if (curUser == new AdUser()) return View("AccessDeny");
-            ViewBag.CurUser = curUser;
+            DisplayCurUser();
 
             
             //Save employee
@@ -109,9 +110,11 @@ namespace Stuff.Controllers
         [NonAction]
         public bool SaveEmployee(Employee emp, out ResponseMessage responseMessage)
         {
-            if (Request.Files.Count > 0 && Request.Files[0] != null)
+
+            if (Request.Files.Count > 0 && Request.Files[0] != null && Request.Files[0].ContentLength > 0)
             {
                 var file = Request.Files[0];
+               
                 string ext = Path.GetExtension(file.FileName).ToLower();
 
                 if (ext != ".png" && ext != ".jpeg" && ext != ".jpg" && ext != ".gif") throw new Exception("Формат фотографии должен быть .png .jpeg .gif");
@@ -129,7 +132,54 @@ namespace Stuff.Controllers
 
         public ActionResult List()
         {
-            return View();
+            DisplayCurUser();
+
+            var emps = Employee.GetList();
+            return View(emps);
+        }
+
+        public JsonResult GetDepartmentChief(int idDepartment)
+        {
+            string result = "--отсутствует--";
+            var dep = new Department(idDepartment);
+            if (dep.Chief != null && dep.Chief.Id > 0)
+            {
+                result = dep.Chief.DisplayName;
+            }
+
+            return Json(new { name = result });
+        }
+
+        [HttpPost]
+        public void Delete(int id)
+        {
+            try
+            {
+                ResponseMessage responseMessage;
+                bool complete = Employee.Delete(id, out responseMessage);
+                if (!complete) throw new Exception(responseMessage.ErrorMessage);
+            }
+            catch (Exception ex)
+            {
+                ViewData["ServerError"] = ex.Message;
+            }
+        }
+
+        [HttpPost]
+        public JsonResult GenEmailAddressByName(string surname, string name)
+        {
+            string email = String.Empty;
+            try
+            {
+                email = Ad.GenEmailAddressByName(surname, name);
+
+            }
+            catch (Exception ex)
+            {
+                ViewData["ServerError"] = ex.Message;
+            }
+
+            return Json(new {address = email});
         }
     }
 }

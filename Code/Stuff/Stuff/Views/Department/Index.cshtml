@@ -8,38 +8,44 @@
 
 
 <p>
-    <button id="btnDisplayDeps" class="btn btn-primary">подразделения</button>
-    <button id="btnDisplayStuff" class="btn btn-primary">сотрудники</button>
+    @*<button id="btnDisplayDeps" class="btn btn-primary">подразделения</button>
+    <button id="btnDisplayStuff" class="btn btn-primary">сотрудники</button>*@
 </p>
 <p class="text-danger">
     @ViewData["ServerError"]
 </p>
-<p id="depsTree">
-    @ShowDepChild(Model)
+<p>
+    <button id="btnHideDeps">свернуть</button>
+    <button id="btnShowDeps">развернуть</button>
 </p>
-@helper ShowDepChild(IEnumerable<Department> deps)
+<p id="depsTree">
+    @ShowDep(Model)
+</p>
+@helper ShowDep(IEnumerable<Department> deps)
 {
     <ul class="tree">
         @foreach (var dep in deps)
         {
+            bool display = dep.OrgStructureLevel == 1;
             <li>
-                <div class="panel-title collapsed" data-toggle="collapse" @String.Format("data-target=#dep{0}-child", dep.Id)>
-                    <span class="h4">@dep.Name</span> <a class="btn btn-link" href="@Url.Action("Edit", "Department", new { id = dep.Id })">изменить</a> 
-                    <button name="dep-delele" class="btn btn-link" depId="@dep.Id" onclick='@String.Format("return confirm('вы уверены что хотите удалить подразделение {0}?')", @dep.Name )'>удалить</button>
+                <div class="panel-title @(display ? String.Empty:"collapsed")" data-toggle="collapse" @String.Format("data-target=#dep{0}-child", dep.Id)>
+                    <span class="h4">@dep.Name</span>
                 </div>
-                <div @String.Format("id=dep{0}-stuff", dep.Id) name="dep-stuff" class="panel-collapse collapse">
-                    @foreach (Employee emp in dep.GetStuff())
-                    {
+                <div name="dep-container" @String.Format("id=dep{0}-child", dep.Id) class="panel-collapse @(display ? String.Empty : "collapse")">
+                    <div @String.Format("id=dep{0}-stuff", dep.Id) class="panel-collapse dep-stuff">
+                        @foreach (Employee emp in dep.GetStuff())
+                        {
+                            <div><a href="@Url.Action("Index", "Employee", new {id=emp.Id})" target="_blank" class="@(emp.IsChief?"text-danger":String.Empty)">@emp.DisplayName</a></div>
+                        }
+                    </div>
 
-                        <div>@emp.DisplayName</div>
+                    @if (dep.ChildList.Any())
+                    {
+                        
+                        @ShowDep(dep.ChildList)
+                        
                     }
                 </div>
-                @if (dep.ChildList.Any())
-                {
-    <div @String.Format("id=dep{0}-child", dep.Id) name="dep-child" class="panel-collapse collapse">
-    @ShowDepChild(dep.ChildList)
-    </div>
-                }
             </li>
         }
     </ul>
@@ -48,18 +54,27 @@
 @section scripts
 {
     <script type="text/javascript">
-        init();
+    $(document).ready(function () { init(); });
 
-        function init() {
-            $("#btnDisplayDeps").click(displayDeps);
-            $("#btnDisplayStuff").click(displayStuff);
-            $("[name='dep-delele']").click(deleteDepartment);
-        }
+    function init() {
+        //$("#btnDisplayDeps").click(displayDeps);
+        //$("#btnDisplayStuff").click(displayStuff);
+        //$("[name='dep-delele']").click(deleteDepartment);
+        $("#btnHideDeps").click(hideDeps);
+        $("#btnShowDeps").click(showDeps);
+    }
 
-        function deleteDepartment(e) {
+    function showDeps() {
+        $("[name='dep-container']").collapse('show');
+    }
+    function hideDeps() {
+        $("[name='dep-container']").collapse('hide');
+    }
+
+    @*function deleteDepartment(e) {
             var button = $(e.currentTarget);
             var id = $(button).attr('depId');
-            
+
             $.ajax({
                 type: "POST",
                 url: "/Department/Delete?id="+id,
@@ -71,20 +86,20 @@
                 },
                 error: function() {
                     //alert('@ViewData["ServerError"]');
-                } 
+                }
             });
             //alert(id);
         }
 
-        function displayDeps() {
-            $("[name='dep-child']").toggle();
-            $(this).toggleClass('btn-taped');
-        }
+    function displayDeps() {
+        $("[name='dep-child']").toggle();
+        $(this).toggleClass('btn-taped');
+    }
 
-        function displayStuff() {
-            $("[name='dep-stuff']").toggle();
-            $(this).toggleClass('btn-taped');
-        }
+    function displayStuff() {
+        $("[name='dep-stuff']").toggle();
+        $(this).toggleClass('btn-taped');
+    }*@
     </script>
 }
 

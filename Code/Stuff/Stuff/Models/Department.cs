@@ -7,6 +7,7 @@ using System.Web;
 using Microsoft.OData.Client;
 using Newtonsoft.Json;
 using Stuff.Objects;
+using WebGrease.Css.Extensions;
 
 namespace Stuff.Models
 {
@@ -18,6 +19,7 @@ namespace Stuff.Models
         public Department ParentDepartment { get; set; }
 
         public IEnumerable<Department> ChildList { get; set; }
+        public int OrgStructureLevel { get; set; }
 
         public Department() { }
 
@@ -91,10 +93,13 @@ namespace Stuff.Models
             //Отделяем подразделения без Парентов
             result = deps.Where(d => d.ParentDepartment == null || d.ParentDepartment == new Department()|| (d.ParentDepartment != null && d.ParentDepartment.Id == 0)).ToList();
             deps.RemoveAll(d => d.ParentDepartment == null || d.ParentDepartment == new Department());
+            result.ForEach(d => d.OrgStructureLevel = 1);
 
             foreach (Department dep in result)
             {
-                dep.ChildList = GetDepartmentChilds(dep.Id, ref deps);
+                var childs = GetDepartmentChilds(dep.Id, ref deps);
+                childs.ForEach(d => d.OrgStructureLevel = 2);
+                dep.ChildList = childs;
             }
 
             return result;

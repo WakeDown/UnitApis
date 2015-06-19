@@ -52,5 +52,12 @@ namespace Stuff.Objects
 
             return user;
         }
+
+        protected void DisplayCurUser()
+        {
+            AdUser curUser = GetCurUser();
+            if (curUser == new AdUser()) View("AccessDeny");
+            ViewBag.CurUser = curUser;
+        }
     }
 }

@@ -1,0 +1,82 @@
+﻿@using Microsoft.Ajax.Utilities
+@using Stuff.Models
+@model Stuff.Models.Department[]
+
+@{
+    ViewBag.Title = "Подразделения и сотрудники";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<p>
+    <span class="text-danger">@ViewData["ServerError"]</span>
+</p>
+@if (Model.Any())
+{
+    <table id="depList" class="table table-bordered no-padding">
+        <tr>
+            <th class="min-width">№</th>
+            <th class="width-20p">Подразделение</th>
+            <th>Руководитель</th>
+            <th>Сотрудники</th>
+        </tr>
+        @{int i = 0;}
+        @foreach (Department dep in Model)
+        {
+            i++;
+            <tr>
+                <th>@i</th>
+                <td>@dep.Name</td>
+                <td>@dep.Chief.DisplayName</td>
+                <td>
+                    @{
+            var stuff = dep.GetStuff();
+            if (stuff.Any())
+            {
+                <table class="table table-bordered table-stuff">
+                    @foreach (Employee emp in stuff)
+                    {
+                        <tr>
+                            <td class="min-width">
+                                <a class=" btn btn-link" href="@Url.Action("Edit", "Employee", new { id = emp.Id })" data-toggle="tooltip" title="изменить">
+    <i class="fa fa-edit"></i></a>
+                        </td>
+                            <td class="width-20p">
+                                @emp.DisplayName
+                            </td>
+                            <td class="min-width">
+                                <button name="delete-emp" class="btn btn-link" empid="@emp.Id" data-toggle="tooltip" title="удалить"><i class="fa fa-trash"></i></button>
+                            </td>
+                            <td>@(@emp.Position != null ? emp.Position.Name : "--отсутствует--")</td>
+                            @*<td>@(@emp.EmpState != null ? emp.EmpState.Name : "--отсутствует--")</td>*@
+                        </tr>
+                    }
+                </table>
+            }
+                    }
+                </td>
+            </tr>
+        }
+    </table>
+}
+
+@section scripts
+{
+    <script type="text/javascript">
+        $(document).ready(function () { init(); });
+
+        function init() {
+            $("[name='delete-emp']").click(deleteEmployee);
+        }
+
+        function deleteEmployee() {
+            if (!confirm('Вы действительно хотите удалить сотрудника?')) return;
+
+            var id = $(this).attr('empId');
+            $.post("@Url.Action("Delete", "Employee")", { id: id }, function () {
+                window.location.reload();
+            }
+        )
+            ;
+        }
+    </script>
+}

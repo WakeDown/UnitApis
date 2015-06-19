@@ -7,6 +7,10 @@ body {
    background: #B4B4B4 url(../Content/images/bg1.png) repeat left top;
 }
 
+.container {
+    width: 1400px;
+}
+
 /* Set padding to keep content from hitting the edges */
 .body-content {
     padding-left: 15px;
@@ -48,7 +52,7 @@ body {
     padding-left: 30px;
 }
 
-input.required-mark, select.required-mark {
+input.required-mark, select.required-mark, span.required-mark {
     background-color: #fcf8e3;
 }
 
@@ -110,6 +114,10 @@ ul.tree {
     list-style: none;
 }
 
+ul.tree li {
+    padding-bottom: 10px;
+}
+
 .tree li div.panel-title.collapsed .h4:before {
     font-family: FontAwesome;
    content: "\f0da   ";
@@ -127,4 +135,36 @@ ul.tree {
 .btn-taped {
     position: relative;
     top: 3px;
+}
+
+#photo {
+    width: 250px;
+    overflow : hidden;
+}
+
+#photo-min {
+    width: 50px;
+}
+
+table .btn {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.dep-stuff {
+    padding-left: 14px;
+    padding-bottom: 10px;
+}
+
+.table-stuff {
+    padding: 0;
+    margin: 0;
+}
+
+.min-width {
+    width: 1px !important;
+}
+
+.width-20p {
+    width: 20%;
 }
