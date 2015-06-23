@@ -1,44 +1,37 @@
-﻿@model Stuff.Models.Employee
+﻿@using Stuff.Objects
+@model Stuff.Models.Employee
 
 @{
     ViewBag.Title = "Карточка сотрудника";
     Layout = "~/Views/Shared/_Editor.cshtml";
+    bool userIsPersonalManager = ViewBag.CurUser.UserIsPersonalManager();
 }
 
 @section PanelHead
 {
-    <span class="pull-right"><a class="btn btn-link" href="@Url.Action("Edit", new {id=Model.Id})">@*<i class="fa fa-edit"></i>&nbsp;*@изменить</a></span>
-    @Html.LabelFor(m => m, Model.FullName) 
+    @if (userIsPersonalManager)
+    {
+        <span class="pull-right"><a class="btn btn-link" href="@Url.Action("Edit", new {id = Model.Id})">@*<i class="fa fa-edit"></i>&nbsp;*@изменить</a></span>
+        }
+        @Html.LabelFor(m => m, Model.FullName)
+
+    
     <p>
         @*<small>
             @Html.LabelFor(m=>m, Model.EmpState.Name)</small>*@
     </p>
-    
 }
 
 @section PanelBody
 {
-    @{
-        string photoSrc = String.Empty;
-        if (Model.Photo != null && Model.Photo.Length > 0)
-        {
-            var base64 = Convert.ToBase64String(Model.Photo);
-            photoSrc = String.Format("data:image/gif;base64,{0}", base64);
-        }
-        else
-        {
-            photoSrc = Model.Male ? Href("~/Content/images/no_photo_male.jpg") : Href("~/Content/images/no_photo_female.png");
-        }
-    }
-
     <div class="row">
         <div class="col-lg-3">
-            <div class="emp-photo"><img id="photo" src="@photoSrc" /></div>
+            <div class="emp-photo"><img id="photo" src="@DbModel.OdataServiceUri/Employee/GetPhoto?id=@Model.Id" /></div>
         </div>
         <div class="col-lg-9">
             <table class="table table-condensed">
                 <colgroup>
-                    <col class="col-lg-1"/>
+                    <col class="col-lg-1" />
                     <col class="col-lg-4" />
                 </colgroup>
                 <tr>
@@ -47,7 +40,7 @@
                 </tr>
                 <tr>
                     <td class="text-right">дата рождения:</td>
-                    <td>@Html.LabelFor(m => m, Model.BirthDate != null? String.Format("{0:dd MMMM}",Model.BirthDate.Value) : String.Empty)</td>
+                    <td>@Html.LabelFor(m => m, Model.BirthDate != null ? String.Format("{0:dd MMMM}", Model.BirthDate.Value) : String.Empty)</td>
                 </tr>
                 <tr>
                     <td class="text-right">дата прихода:</td>
@@ -88,6 +81,6 @@
             </table>
         </div>
     </div>
-    
+
 
 }

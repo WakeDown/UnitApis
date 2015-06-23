@@ -14,18 +14,21 @@ namespace Stuff.Controllers
         // GET: /Position/
         public ActionResult Index()
         {
-            DisplayCurUser();
+            var user = DisplayCurUser();
+            if (!user.UserIsPersonalManager()) return RedirectToAction("AccessDenied", "Error");
             return View();
         }
         [HttpPost]
         public ActionResult Index(Position pos)
         {
-            DisplayCurUser();
+            var user = DisplayCurUser();
+            if (!user.UserIsPersonalManager()) return RedirectToAction("AccessDenied", "Error");
 
             //Save department
             try
             {
                 ResponseMessage responseMessage;
+                pos.Creator = new Employee() { AdSid = GetCurUser().Sid };
                 bool complete = pos.Save(out responseMessage);
                 if (!complete) throw new Exception(responseMessage.ErrorMessage);
 
@@ -41,6 +44,8 @@ namespace Stuff.Controllers
         [HttpPost]
         public JsonResult Delete(int id)
         {
+            var user = DisplayCurUser();
+            if (!user.UserIsPersonalManager()) RedirectToAction("AccessDenied", "Error");
             try
             {
                 ResponseMessage responseMessage;

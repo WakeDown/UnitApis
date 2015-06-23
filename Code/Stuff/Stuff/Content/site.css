@@ -4,7 +4,7 @@
 }*/
 
 body {
-   background: #B4B4B4 url(../Content/images/bg1.png) repeat left top;
+    background: #B4B4B4 url(../Content/images/bg1.png) repeat left top;
 }
 
 .container {
@@ -37,10 +37,10 @@ body {
     padding-top: 3px;
 }
 
-.navbar-brand div {
-    padding: 3px 0 0 8px;
-    margin: 0;
-}
+    .navbar-brand div {
+        padding: 3px 0 0 8px;
+        margin: 0;
+    }
 
 .brand-prefix {
     padding-top: 5px;
@@ -70,8 +70,9 @@ input.required-mark, select.required-mark, span.required-mark {
     font-family: 'FontAwesome';
     content: "\f0d7";
     float: right;
-    color: #999;   
+    color: #999;
 }
+
 #filter .collapsed .title:after {
     content: "\f0d8";
 }
@@ -114,18 +115,18 @@ ul.tree {
     list-style: none;
 }
 
-ul.tree li {
-    padding-bottom: 10px;
-}
+    ul.tree li {
+        padding-bottom: 10px;
+    }
 
 .tree li div.panel-title.collapsed .h4:before {
     font-family: FontAwesome;
-   content: "\f0da   ";
+    content: "\f0da   ";
 }
 
 .tree li div.panel-title .h4:before {
     font-family: FontAwesome;
-   content: "\f0d7   ";
+    content: "\f0d7   ";
 }
 
 .tree li div.panel-title {
@@ -139,7 +140,7 @@ ul.tree li {
 
 #photo {
     width: 250px;
-    overflow : hidden;
+    overflow: hidden;
 }
 
 #photo-min {
@@ -167,4 +168,23 @@ table .btn {
 
 .width-20p {
     width: 20%;
+}
+
+.btn-nopadding {
+    padding: 0;
+    margin: 0;
+}
+
+.photo-info {
+    width: 250px;
+    padding-right: 5px;
+    padding-top: 5px;
+}
+
+.bold {
+    font-weight: 700;
+}
+
+.text-warning.light {
+    color: #d58512;
 }

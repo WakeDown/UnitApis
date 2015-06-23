@@ -5,6 +5,7 @@
 @{
     ViewBag.Title = "Подразделения и сотрудники";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    bool userIsPersonalManager = ViewBag.CurUser.UserIsPersonalManager();
 }
 
 <p>
@@ -36,16 +37,22 @@
                     @foreach (Employee emp in stuff)
                     {
                         <tr>
-                            <td class="min-width">
-                                <a class=" btn btn-link" href="@Url.Action("Edit", "Employee", new { id = emp.Id })" data-toggle="tooltip" title="изменить">
-    <i class="fa fa-edit"></i></a>
-                        </td>
+                            @if (userIsPersonalManager)
+                            {
+                                <td class="min-width">
+                                    <a class=" btn btn-link" href="@Url.Action("Edit", "Employee", new {id = emp.Id})" data-toggle="tooltip" title="изменить">
+                                        <i class="fa fa-edit"></i></a>
+                                </td>
+                            }
                             <td class="width-20p">
                                 @emp.DisplayName
                             </td>
-                            <td class="min-width">
-                                <button name="delete-emp" class="btn btn-link" empid="@emp.Id" data-toggle="tooltip" title="удалить"><i class="fa fa-trash"></i></button>
-                            </td>
+@if (userIsPersonalManager)
+{
+    <td class="min-width">
+        <button name="delete-emp" class="btn btn-link" empid="@emp.Id" data-toggle="tooltip" title="удалить"><i class="fa fa-trash"></i></button>
+    </td>
+}
                             <td>@(@emp.Position != null ? emp.Position.Name : "--отсутствует--")</td>
                             @*<td>@(@emp.EmpState != null ? emp.EmpState.Name : "--отсутствует--")</td>*@
                         </tr>
@@ -61,8 +68,10 @@
 
 @section scripts
 {
+@if (userIsPersonalManager)
+{
     <script type="text/javascript">
-        $(document).ready(function () { init(); });
+        $(document).ready(function() { init(); });
 
         function init() {
             $("[name='delete-emp']").click(deleteEmployee);
@@ -72,11 +81,11 @@
             if (!confirm('Вы действительно хотите удалить сотрудника?')) return;
 
             var id = $(this).attr('empId');
-            $.post("@Url.Action("Delete", "Employee")", { id: id }, function () {
+            $.post("@Url.Action("Delete", "Employee")", { id: id }, function() {
                 window.location.reload();
             }
-        )
-            ;
+            );
         }
     </script>
+}
 }

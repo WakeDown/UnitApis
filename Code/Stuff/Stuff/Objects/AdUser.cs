@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Web;
 
-namespace Stuff.Models
+namespace Stuff.Objects
 {
     public class AdUser
     {
@@ -27,6 +27,7 @@ namespace Stuff.Models
 
         public string Email { get; set; }
         public string ShortName{get; set;}
+        public List<AdRole> AdRoles { get; set; }
 
         private static string GetShortName(string name)
         {
@@ -59,6 +60,12 @@ namespace Stuff.Models
                 res = name;
             }
             return res;
+        }
+
+        public bool UserIsPersonalManager()
+        {
+            if (String.IsNullOrEmpty(Sid) || !AdRoles.Any()) return false;
+            return AdRoles.Contains(AdRole.PersonalManager);
         }
     }
 }

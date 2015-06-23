@@ -32,16 +32,16 @@ namespace Stuff.Objects
                         var name = userPrincipal.DisplayName;
                         user.Email = mail;
                         user.FullName = name;
-                        //user.Roles = new List<Role>();
-                        //var wp = new WindowsPrincipal(wi);
-                        //foreach (var role in _roles)
-                        //{
-                        //    var grpSid = new SecurityIdentifier(role.Sid);
-                        //    if (wp.IsInRole(grpSid))
-                        //    {
-                        //        user.Roles.Add(role.Role);
-                        //    }
-                        //}
+                        user.AdRoles = new List<AdRole>();
+                        var wp = new WindowsPrincipal(wi);
+                        foreach (var role in AdUserRole.GetList())
+                        {
+                            var grpSid = new SecurityIdentifier(role.Sid);
+                            if (wp.IsInRole(grpSid))
+                            {
+                                user.AdRoles.Add(role.Role);
+                            }
+                        }
                     }
                 }
             }
@@ -53,11 +53,12 @@ namespace Stuff.Objects
             return user;
         }
 
-        protected void DisplayCurUser()
+        protected AdUser DisplayCurUser()
         {
             AdUser curUser = GetCurUser();
-            if (curUser == new AdUser()) View("AccessDeny");
+            if (curUser == new AdUser()) RedirectToAction("AccessDenied", "Error");
             ViewBag.CurUser = curUser;
+            return curUser;
         }
     }
 }

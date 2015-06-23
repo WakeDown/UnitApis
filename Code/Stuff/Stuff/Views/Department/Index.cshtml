@@ -1,4 +1,5 @@
 ﻿@using Stuff.Models
+@using Stuff.Objects
 @model List<Department>
 
 @{
@@ -9,7 +10,7 @@
 
 <p>
     @*<button id="btnDisplayDeps" class="btn btn-primary">подразделения</button>
-    <button id="btnDisplayStuff" class="btn btn-primary">сотрудники</button>*@
+        <button id="btnDisplayStuff" class="btn btn-primary">сотрудники</button>*@
 </p>
 <p class="text-danger">
     @ViewData["ServerError"]
@@ -29,21 +30,19 @@
             bool display = dep.OrgStructureLevel == 1;
             <li>
                 <div class="panel-title @(display ? String.Empty:"collapsed")" data-toggle="collapse" @String.Format("data-target=#dep{0}-child", dep.Id)>
-                    <span class="h4">@dep.Name</span>
+                    <span class="h4">@dep.Name</span>&nbsp;&nbsp;<span class="text-warning light bold" >@dep.EmployeeCount</span>
                 </div>
                 <div name="dep-container" @String.Format("id=dep{0}-child", dep.Id) class="panel-collapse @(display ? String.Empty : "collapse")">
                     <div @String.Format("id=dep{0}-stuff", dep.Id) class="panel-collapse dep-stuff">
                         @foreach (Employee emp in dep.GetStuff())
                         {
-                            <div><a href="@Url.Action("Index", "Employee", new {id=emp.Id})" target="_blank" class="@(emp.IsChief?"text-danger":String.Empty)">@emp.DisplayName</a></div>
+                            <div class="org-emp"><a href="@Url.Action("Index", "Employee", new {id=emp.Id})" target="_blank" class="@(emp.IsChief?"text-danger":String.Empty)" name="emp-name" empid='@emp.Id' emppos="@emp.Position.Name" empcit="@emp.City.Name" empname="@emp.Name" emppatr="@emp.Patronymic">@emp.DisplayName</a></div>
                         }
                     </div>
 
                     @if (dep.ChildList.Any())
                     {
-                        
                         @ShowDep(dep.ChildList)
-                        
                     }
                 </div>
             </li>
@@ -54,24 +53,41 @@
 @section scripts
 {
     <script type="text/javascript">
-    $(document).ready(function () { init(); });
+        $(document).ready(function () { init(); });
 
-    function init() {
-        //$("#btnDisplayDeps").click(displayDeps);
-        //$("#btnDisplayStuff").click(displayStuff);
-        //$("[name='dep-delele']").click(deleteDepartment);
-        $("#btnHideDeps").click(hideDeps);
-        $("#btnShowDeps").click(showDeps);
-    }
+        function init() {
+            //$("#btnDisplayDeps").click(displayDeps);
+            //$("#btnDisplayStuff").click(displayStuff);
+            //$("[name='dep-delele']").click(deleteDepartment);
+            $("#btnHideDeps").click(hideDeps);
+            $("#btnShowDeps").click(showDeps);
+            
+            $("[name='emp-name']").popover({
+                html: true,
+                trigger: 'hover',
+                content: function () {
+                    var $el = $(this);
+                    var id = $el.attr('empid');
+                    var position = $el.attr('emppos');
+                    var city = $el.attr('empcit');
+                    var name = $el.attr('empname');
+                    var patr = $el.attr('emppatr');
+                    var url = '@DbModel.OdataServiceUri/Employee/GetPhoto?id=' + id;
+                    var img = '<img class="photo-info" src="' + url + '" />';
+                    var content = '<p>' + img + '</p><p class="text-center">' + name + ' ' + patr + '</p><p class="text-center">' + position + '</p><p class="text-center">' + city + '</p>';
+                    return content;
+                }
+            });
+        }
 
-    function showDeps() {
-        $("[name='dep-container']").collapse('show');
-    }
-    function hideDeps() {
-        $("[name='dep-container']").collapse('hide');
-    }
+        function showDeps() {
+            $("[name='dep-container']").collapse('show');
+        }
+        function hideDeps() {
+            $("[name='dep-container']").collapse('hide');
+        }
 
-    @*function deleteDepartment(e) {
+        @*function deleteDepartment(e) {
             var button = $(e.currentTarget);
             var id = $(button).attr('depId');
 

@@ -1,0 +1,28 @@
+﻿@model System.Web.Mvc.HandleErrorInfo
+@{
+    Layout = "~/Views/Shared/_Editor.cshtml";
+    ViewBag.Title = "Ошибка";
+}
+<div class="list-header clearfix">
+    <span>Ошибка</span>
+</div>
+<div class="list-sfs-holder">
+    <div class="alert alert-error">
+        Неизвестная ошибка. Пожалуйста обратитесь в <a href='http://support.unitgroup.ru' target="_blank">Техподдержку</a> и укажите информацию ниже.
+    </div>
+    @if (Model != null && HttpContext.Current.IsDebuggingEnabled)
+    {
+        <div>
+            <p>
+                <b>Exception:</b> @Model.Exception.Message<br />
+                <b>Controller:</b> @Model.ControllerName<br />
+                <b>Action:</b> @Model.ActionName
+            </p>
+            <div style="overflow:scroll">
+                <pre>
+@Model.Exception.StackTrace
+                </pre>
+            </div>
+        </div>
+    }
+</div>

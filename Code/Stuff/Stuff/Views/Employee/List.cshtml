@@ -4,46 +4,62 @@
 @{
     ViewBag.Title = "Список сотрудников";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    bool userIsPersonalManager = ViewBag.CurUser.UserIsPersonalManager();
 }
+
 
 <p>
     <span class="text-danger">@ViewData["ServerError"]</span>
 </p>
-
-<p>
-    <a href='@Url.Action("New", "Employee")'>
-        <i class="fa fa-plus"></i> Новый сотрудник
-    </a>
-</p>
+@if (userIsPersonalManager)
+{
+    <p>
+        <a href='@Url.Action("New", "Employee")' class="btn btn-primary">
+            <i class="fa fa-plus"></i> Новый сотрудник
+        </a>
+    </p>
+}
 
 @if (Model.Any())
 {
     <table class="table table-bordered">
         <tr>
-            <th></th>
+            @if (userIsPersonalManager)
+            {
+                <th></th>
+            }
             <th>№</th>
             <th>ФИО</th>
             <th>Должность</th>
             <th>Подразделение</th>
-            <th></th>
+@if (userIsPersonalManager)
+{
+    <th></th>
+}
         </tr>
         @{int i = 0;}
         @foreach (var emp in Model)
         {
             i++;
             <tr>
-                <td>
-                    <a class="btn btn-link" href="@Url.Action("Edit", "Employee", new { id = emp.Id })" data-toggle="tooltip" title="изменить"><i class="fa fa-edit"></i></a>
-                </td>
+                @if (userIsPersonalManager)
+                {
+                    <td>
+                        <a class="btn btn-link" href="@Url.Action("Edit", "Employee", new {id = emp.Id})" data-toggle="tooltip" title="изменить"><i class="fa fa-edit"></i></a>
+                    </td>
+                }
                 <td>@i</td>
                 <td>@emp.FullName</td>
                 <td>@(emp.Position != null ? emp.Position.Name : "--не указано--")</td>
                 <td>
                     @(emp.Department != null ? emp.Department.Name : "--не указано--")
                 </td>
-                <td>
-                    <button name="delete-emp" class="btn btn-link" empid="@emp.Id" data-toggle="tooltip" title="удалить"><i class="fa fa-trash"></i></button>
-                </td>
+@if (userIsPersonalManager)
+{
+    <td>
+        <button name="delete-emp" class="btn btn-link" empid="@emp.Id" data-toggle="tooltip" title="удалить"><i class="fa fa-trash"></i></button>
+    </td>
+}
             </tr>
         }
     </table>

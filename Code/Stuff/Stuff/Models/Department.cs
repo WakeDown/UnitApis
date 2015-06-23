@@ -17,6 +17,8 @@ namespace Stuff.Models
         public string Name { get; set; }
         public Employee Chief { get; set; }
         public Department ParentDepartment { get; set; }
+        public int EmployeeCount { get; set; }
+        public Employee Creator { get; set; }
 
         public IEnumerable<Department> ChildList { get; set; }
         public int OrgStructureLevel { get; set; }
@@ -37,6 +39,8 @@ namespace Stuff.Models
             Name = dep.Name;
             ParentDepartment = dep.ParentDepartment;
             Chief = dep.Chief;
+            EmployeeCount = dep.EmployeeCount;
+            Creator = dep.Creator;
         }
 
         public bool Save(out ResponseMessage responseMessage)
@@ -85,40 +89,14 @@ namespace Stuff.Models
             return emps;
         }
 
-        public static List<Department> GetOrgStructure()
+        public static IEnumerable<Department> GetOrgStructure()
         {
-            var deps = GetList().ToList();
-            var result = new List<Department>();
+            Uri uri = new Uri(String.Format("{0}/Department/GetOrgStructure", OdataServiceUri));
+            string jsonString = GetJson(uri);
 
-            //Отделяем подразделения без Парентов
-            result = deps.Where(d => d.ParentDepartment == null || d.ParentDepartment == new Department()|| (d.ParentDepartment != null && d.ParentDepartment.Id == 0)).ToList();
-            deps.RemoveAll(d => d.ParentDepartment == null || d.ParentDepartment == new Department());
-            result.ForEach(d => d.OrgStructureLevel = 1);
+            var deps = JsonConvert.DeserializeObject<IEnumerable<Department>>(jsonString);
 
-            foreach (Department dep in result)
-            {
-                var childs = GetDepartmentChilds(dep.Id, ref deps);
-                childs.ForEach(d => d.OrgStructureLevel = 2);
-                dep.ChildList = childs;
-            }
-
-            return result;
+            return deps;
         }
-
-        private static IEnumerable<Department> GetDepartmentChilds(int id, ref List<Department> deps)
-        {
-            var result = new List<Department>();
-            result = deps.Where(d => d.ParentDepartment.Id == id).ToList();
-            deps.RemoveAll(d => d.ParentDepartment.Id == id);
-
-            foreach (Department dep in result)
-            {
-                dep.ChildList = GetDepartmentChilds(dep.Id, ref deps);
-            }
-
-            return result; 
-        }
-
-        
     }
 }

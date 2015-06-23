@@ -38,6 +38,8 @@ namespace Stuff.Models
         public DateTime? BirthDate { get; set; }
         public bool IsChief { get; set; }
         public bool Male { get; set; }
+        public bool HasAdAccount { get; set; }
+        public Employee Creator { get; set; }
         /// <summary>
         /// Официальная должность
         /// </summary>
@@ -47,9 +49,9 @@ namespace Stuff.Models
 
         public Employee() { }
 
-        public Employee(int id, bool getPhoto = false)
+        public Employee(int id)
         {
-            Uri uri = new Uri(String.Format("{0}/Employee/Get?id={1}&getPhoto={2}", OdataServiceUri, id, getPhoto));
+            Uri uri = new Uri(String.Format("{0}/Employee/Get?id={1}", OdataServiceUri, id));
             string jsonString = GetJson(uri);
 
             Employee emp = JsonConvert.DeserializeObject<Employee>(jsonString);
@@ -80,6 +82,8 @@ namespace Stuff.Models
             IsChief = emp.IsChief;
             Male = emp.Male;
             PositionOrg = emp.PositionOrg;
+            HasAdAccount = emp.HasAdAccount;
+            Creator = emp.Creator;
         }
 
         public void FillAdGroups()
@@ -122,5 +126,11 @@ namespace Stuff.Models
 
             return emps;
         }
+
+        ////public static byte[] GetPhoto(int id)
+        ////{
+        ////    Uri uri = new Uri(String.Format("{0}/Employee/GetPhoto?id={1}", OdataServiceUri, id));
+        ////    return GetImage
+        ////}
     }
 }

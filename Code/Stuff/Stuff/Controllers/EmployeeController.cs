@@ -13,41 +13,30 @@ namespace Stuff.Controllers
 {
     public class EmployeeController : BaseController
     {
-        private void DisplayCurUser()
-        {
-            AdUser curUser = GetCurUser();
-            if (curUser == new AdUser()) RedirectToAction("AccessDeny");
-            ViewBag.CurUser = curUser;
-        }
-
-        public ActionResult AccessDeny()
-        {
-            return View("AccessDeny");
-        }
-
         public ActionResult Index(int? id)
         {
             DisplayCurUser();
 
             if (id.HasValue && id.Value > 0)
             {
-                var emp = new Employee(id.Value, true);
+                var emp = new Employee(id.Value);
 
                 return View(emp);
             }
             else
             {
-                return View("Error");
+                return RedirectToAction("Index", "Error");
             }
         }
         [HttpGet]
         public ActionResult Edit(int? id)
         {
-            DisplayCurUser();
+            var user = DisplayCurUser();
+            if (!user.UserIsPersonalManager()) return RedirectToAction("AccessDenied", "Error");
 
             if (id.HasValue)
             {
-                var emp = new Employee(id.Value, true);
+                var emp = new Employee(id.Value);
                 return View(emp);
             }
             else
@@ -59,7 +48,8 @@ namespace Stuff.Controllers
         [HttpPost]
         public ActionResult Edit(Employee emp)
         {
-            DisplayCurUser();
+            var user = DisplayCurUser();
+            if (!user.UserIsPersonalManager()) return RedirectToAction("AccessDenied", "Error");
 
             //Save employee
             try
@@ -77,21 +67,38 @@ namespace Stuff.Controllers
         }
 
         [HttpGet]
-        public ActionResult New()
+        public ActionResult New(bool? test)
         {
-            DisplayCurUser();
+            var user = DisplayCurUser();
+            if (!user.UserIsPersonalManager()) return RedirectToAction("AccessDenied", "Error");
 
             var emp = new Employee();
+
+            if (test.HasValue && test.Value)
+            {
+                emp.Name = "Тест";
+                emp.Surname = "Тестов";
+                emp.Patronymic = "Тестович";
+                emp.MobilNum = "9536001000";
+                emp.WorkNum = "111";
+                emp.Email = "test.testov@unitgroup.ru";
+                emp.City = new City() { Id = 26 };
+                emp.Organization = new Organization() { Id = 45 };
+                emp.Position = new Position() { Id = 46 };
+                emp.PositionOrg = new Position() { Id = 46 };
+                emp.Department = new Department() { Id = 10 };
+            }
 
             return View(emp);
         }
 
         [HttpPost]
+        //[MultiButton(MatchFormKey = "action", MatchFormValue = "Create")]
         public ActionResult New(Employee emp)
         {
-            DisplayCurUser();
+            var user = DisplayCurUser();
+            if (!user.UserIsPersonalManager()) return RedirectToAction("AccessDenied", "Error");
 
-            
             //Save employee
             try
             {
@@ -100,7 +107,7 @@ namespace Stuff.Controllers
                 if (!complete) throw new Exception(responseMessage.ErrorMessage);
                 return RedirectToAction("Index", "Employee", new { id = responseMessage.Id });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ViewData["ServerError"] = ex.Message;
                 return View("New", emp);
@@ -114,7 +121,7 @@ namespace Stuff.Controllers
             if (Request.Files.Count > 0 && Request.Files[0] != null && Request.Files[0].ContentLength > 0)
             {
                 var file = Request.Files[0];
-               
+
                 string ext = Path.GetExtension(file.FileName).ToLower();
 
                 if (ext != ".png" && ext != ".jpeg" && ext != ".jpg" && ext != ".gif") throw new Exception("Формат фотографии должен быть .png .jpeg .gif");
@@ -126,6 +133,9 @@ namespace Stuff.Controllers
                 }
                 emp.Photo = picture;
             }
+            emp.Creator = new Employee(){AdSid = GetCurUser().Sid};
+            //var chkCreateAdUser = Request.Form["chkCreateAdUser"];
+            //bool createAdUser = chkCreateAdUser != "false";
             bool complete = emp.Save(out responseMessage);
             return complete;
         }
@@ -153,6 +163,8 @@ namespace Stuff.Controllers
         [HttpPost]
         public void Delete(int id)
         {
+            var user = DisplayCurUser();
+            if (!user.UserIsPersonalManager()) RedirectToAction("AccessDenied", "Error");
             try
             {
                 ResponseMessage responseMessage;
@@ -166,8 +178,12 @@ namespace Stuff.Controllers
         }
 
         [HttpPost]
-        public JsonResult GenEmailAddressByName(string surname, string name)
+        //[MultiButton(MatchFormKey = "action", MatchFormValue = "GenEmail")]
+        public ActionResult GenEmailAddressByName(string surname, string name)
         {
+            var user = DisplayCurUser();
+            if (!user.UserIsPersonalManager()) return RedirectToAction("AccessDenied", "Error");
+            //DisplayCurUser();
             string email = String.Empty;
             try
             {
@@ -179,7 +195,15 @@ namespace Stuff.Controllers
                 ViewData["ServerError"] = ex.Message;
             }
 
-            return Json(new {address = email});
+            return Json(new { address = email });
+            //return PartialView("New", new Employee() {Email=email});
         }
+
+        ////public ActionResult GetPhoto(int? id)
+        ////{
+
+
+        ////    return base.File()
+        ////}
     }
 }

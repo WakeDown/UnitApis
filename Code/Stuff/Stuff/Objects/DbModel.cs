@@ -13,7 +13,7 @@ namespace Stuff.Objects
 {
     public class DbModel
     {
-        protected const string OdataServiceUri = "http://uiis-1:10002/odata";
+        public const string OdataServiceUri = "http://uiis-1:10002/odata";
 
         private static string AuthorizationHeaderValue
         {
@@ -79,5 +79,28 @@ namespace Stuff.Objects
             
             return response.StatusCode == HttpStatusCode.Created;
         }
+
+        ////protected static byte[] GetImage(Uri uri)
+        ////{
+        ////    var request = (HttpWebRequest)WebRequest.Create(uri);
+        ////    request.Headers.Add("Authorization", AuthorizationHeaderValue);
+        ////    request.ContentType = "image/gif";
+        ////    request.Method = "GET";
+
+        ////    //using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+        ////    //{
+        ////    //    streamWriter.Flush();
+        ////    //    streamWriter.Close();
+        ////    //}
+        ////    byte[] responseContent;
+        ////    var response = (HttpWebResponse)request.GetResponse();
+        ////    using (var streamReader = new StreamReader(response.GetResponseStream()))
+        ////    {
+        ////        responseContent = streamReader.ReadToEnd();
+        ////        //responseMessage = JsonConvert.DeserializeObject<ResponseMessage>(responseContent);
+        ////    }
+
+        ////    return responseContent;
+        ////}
     }
 }

@@ -13,7 +13,8 @@ namespace Stuff.Controllers
     {
         public ActionResult List()
         {
-            DisplayCurUser();
+            var user = DisplayCurUser();
+            if (!user.UserIsPersonalManager()) return RedirectToAction("AccessDenied", "Error");
             var deps = Department.GetList().ToArray();
 
             return View(deps);
@@ -41,19 +42,22 @@ namespace Stuff.Controllers
         [HttpGet]
         public ActionResult New()
         {
-            DisplayCurUser();
+            var user = DisplayCurUser();
+            if (!user.UserIsPersonalManager()) return RedirectToAction("AccessDenied", "Error");
 
             return View();
         }
         [HttpPost]
         public ActionResult New(Department dep)
         {
-            DisplayCurUser();
+            var user = DisplayCurUser();
+            if (!user.UserIsPersonalManager()) return RedirectToAction("AccessDenied", "Error");
 
             //Save department
             try
             {
                 ResponseMessage responseMessage;
+                dep.Creator = new Employee(){AdSid = GetCurUser().Sid};
                 bool complete = dep.Save(out responseMessage);
                 if (!complete) throw new Exception(responseMessage.ErrorMessage);
 
@@ -69,7 +73,8 @@ namespace Stuff.Controllers
         [HttpGet]
         public ActionResult Edit(int? id)
         {
-            DisplayCurUser();
+            var user = DisplayCurUser();
+            if (!user.UserIsPersonalManager()) return RedirectToAction("AccessDenied", "Error");
 
             if (id.HasValue)
             {
@@ -84,7 +89,8 @@ namespace Stuff.Controllers
         [HttpPost]
         public ActionResult Edit(Department dep)
         {
-            DisplayCurUser();
+            var user = DisplayCurUser();
+            if (!user.UserIsPersonalManager()) return RedirectToAction("AccessDenied", "Error");
 
             try
             {
@@ -104,6 +110,8 @@ namespace Stuff.Controllers
         [HttpPost]
         public void Delete(int id)
         {
+            var user = DisplayCurUser();
+            if (!user.UserIsPersonalManager()) RedirectToAction("AccessDenied", "Error");
             try
             {
                 ResponseMessage responseMessage;

@@ -68,34 +68,48 @@
                 <label class="col-lg-2 control-label" for="email">E-mail</label>
                 <div class="col-lg-5">
                     <div class="input-group">
-                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control required-mark", @id = "email", type="email", required = "required", data_error = "Заполните поле E-mail" })
+                        @{
+            var attrsEmail = new Dictionary<string, object>() { { "class", "form-control required-mark" }, { "id", "email" }, { "type", "email" }, { "required", "required" }, { "data_error", "Заполните поле E-mail" } };
+            if (String.IsNullOrEmpty(Model.Email)) { attrsEmail.Add("disabled", "disabled"); }
+                        }
+                        @Html.TextBoxFor(m => m.Email, attrsEmail)
                     
-                        <div class="input-group-addon"><button class="btn btn-info btn-xs" id="genEmail">сформировать</button></div>
+                        <div class="input-group-addon">
+                            <a id="btnGenEmail" href="javascript:void()">сгенерировать</a>
+                        </div>
                     </div>
                     <span class="help-block with-errors"></span>
                 </div>
                 <div class="col-lg-2">
-                    <input type="checkbox" name="no-data" data-for="email" /> отсутствует
+                    <input type="checkbox" name="no-data" data-for="email" @(String.IsNullOrEmpty(Model.Email) ? "checked" : String.Empty) /> отсутствует
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-lg-2 control-label" for="mobilNum">Мобильный тел.</label>
                 <div class="col-lg-5">
-                    @Html.TextBoxFor(m => m.MobilNum, new { @class = "form-control required-mark", @id = "mobilNum", required = "required", data_error = "Заполните поле Мобильный тел.", data_mask = "+7-000-000-00-00" })
+                    @{
+            var attrsMobilNum = new Dictionary<string, object>() { { "class", "form-control required-mark" }, { "id", "mobilNum" }, { "required", "required" }, { "data_error", "Заполните поле Мобильный тел." }, { "data-mask", "+7-000-000-00-00" } };
+            if (String.IsNullOrEmpty(Model.MobilNum)) { attrsMobilNum.Add("disabled", "disabled"); }
+}
+                    @Html.TextBoxFor(m => m.MobilNum, attrsMobilNum)
                     <span class="help-block with-errors"></span>
                 </div>
                 <div class="col-lg-2">
-                    <input type="checkbox" name="no-data" data-for="mobilNum" /> отсутствует
+                    <input type="checkbox" name="no-data" data-for="mobilNum" @(String.IsNullOrEmpty(Model.MobilNum) ? "checked" : String.Empty) /> отсутствует
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-lg-2 control-label" for="workNum">Внутренний тел.</label>
                 <div class="col-lg-5">
-                    @Html.TextBoxFor(m => m.WorkNum, new { @class = "form-control required-mark", @id = "workNum", required = "required", data_error = "Заполните поле Внутренний тел.", data_mask = "0#" })
+                    @{
+            var attrsWorkNum = new Dictionary<string, object>() { { "class", "form-control required-mark" }, { "id", "workNum" }, { "required", "required" }, { "data_error", "Заполните поле Внутренний тел." }, { "data-mask", "0#" } };
+            if (String.IsNullOrEmpty(Model.WorkNum)) { attrsWorkNum.Add("disabled", "disabled"); }
+}
+                    @Html.TextBoxFor(m => m.WorkNum, attrsWorkNum)
                     <span class="help-block with-errors"></span>
                 </div>
                 <div class="col-lg-2">
-                    <input type="checkbox" name="no-data" data-for="workNum" /> отсутствует
+                    <input type="checkbox" name="no-data" data-for="workNum" @(String.IsNullOrEmpty(Model.WorkNum) ? "checked" : String.Empty) /> отсутствует
                 </div>
             </div>
             <div class="form-group">
@@ -151,7 +165,8 @@
             <div class="form-group">
                 <div class="col-lg-push-2 col-lg-5">
                     @*<a type="submit" class="btn btn-primary btn-sm" href="#"><i class="fa fa-save"></i>&nbsp;добавить</a>*@
-                    <button type="submit" class="btn btn-success"><i class="fa fa-save"></i>&nbsp;добавить</button>
+                    <button id="btnCreate" type="submit" class="btn btn-success" name="action" value="Create"><i class="fa fa-save"></i>&nbsp;добавить</button>
+                    создать учетную запись UN1T&nbsp;@Html.CheckBoxFor(m => m.HasAdAccount, new { @id = "chkCreateAdUser" })
                     <p class="text-danger">
                         @ViewData["ServerError"]
                     </p>
@@ -170,24 +185,29 @@
         function init() {
             $("#department").change(showDepartmentChief);
             $("[name='no-data']").click(avalElement);
-            $("#genEmail").click(generateEmail);
+            $("#btnGenEmail").click(generateEmail);
         }
 
+        
         function generateEmail() {
+            
             var surname = $("#surname").val();
             var name = $("#name").val();
             if (surname == '' || name == '') {
                 alert('Заполните Имя и Фамилию!');
                 return;
             }
+            
             $.ajax({
                 type: 'POST',
                 url: '/Employee/GenEmailAddressByName?surname=' + surname + '&name=' + name,
                 success:
-                    function(json) {
+                    function (json) {
                         $("#email").val(json.address);
+                        return;
                     }
             });
+            
         }
 
         function avalElement() {
@@ -195,6 +215,7 @@
             var $element = $("#" + forId);
             var isDisabled = $element.prop('disabled');
             $element.prop('disabled', !isDisabled);
+            if (!isDisabled) $element.val('');
         }
 
         function showDepartmentChief() {

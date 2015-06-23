@@ -164,9 +164,13 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\EmployeeController.cs" />
     <Compile Include="Controllers\DepartmentController.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\OrganizationController.cs" />
     <Compile Include="Controllers\PositionController.cs" />
+    <Compile Include="Helpers\MultiButtonAttribute.cs" />
     <Compile Include="Models\Ad.cs" />
+    <Compile Include="Objects\AdRole.cs" />
+    <Compile Include="Objects\AdUserRole.cs" />
     <Compile Include="Objects\DbList.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -182,7 +186,7 @@
     <Compile Include="Models\Organization.cs" />
     <Compile Include="Objects\AdGroup.cs" />
     <Compile Include="Objects\ResponseMessage.cs" />
-    <Compile Include="Objects\User.cs" />
+    <Compile Include="Objects\AdUser.cs" />
     <Compile Include="Objects\BaseController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -211,7 +215,6 @@
     <Content Include="Content\fonts\FontAwesome.otf" />
     <None Include="Properties\PublishProfiles\Production.pubxml" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
-    <Content Include="Icon.png" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrapValidator.js" />
     <Content Include="Scripts\BootstrapValidator\language\en_US.js" />
@@ -269,6 +272,7 @@
     <Content Include="Scripts\fuelux.min.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery.mask.min.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\npm.js" />
     <Content Include="Scripts\respond.js" />
@@ -284,11 +288,11 @@
     </Content>
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
-    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Error\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Employee\Index.cshtml" />
     <Content Include="Views\Employee\New.cshtml" />
-    <Content Include="Views\Shared\AccessDeny.cshtml" />
+    <Content Include="Views\Error\AccessDenied.cshtml" />
     <Content Include="Views\Shared\_Editor.cshtml" />
     <Content Include="Views\Employee\Edit.cshtml" />
     <Content Include="Views\Employee\List.cshtml" />
@@ -299,6 +303,7 @@
     <Content Include="Views\Department\Employees.cshtml" />
     <Content Include="Views\Organization\Index.cshtml" />
     <Content Include="Views\Position\Index.cshtml" />
+    <Content Include="Views\Error\NotFound.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
