@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Stuff.Models;
@@ -10,19 +11,22 @@ namespace Stuff.Controllers
 {
     public class PositionController : BaseController
     {
+
         //
         // GET: /Position/
         public ActionResult Index()
         {
             var user = DisplayCurUser();
-            if (!user.UserIsPersonalManager()) return RedirectToAction("AccessDenied", "Error");
+            if (!user.UserCanEdit()) return RedirectToAction("AccessDenied", "Error");
             return View();
         }
         [HttpPost]
+        [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult Index(Position pos)
         {
+
             var user = DisplayCurUser();
-            if (!user.UserIsPersonalManager()) return RedirectToAction("AccessDenied", "Error");
+            if (!user.UserCanEdit()) return RedirectToAction("AccessDenied", "Error");
 
             //Save department
             try
@@ -31,12 +35,12 @@ namespace Stuff.Controllers
                 pos.Creator = new Employee() { AdSid = GetCurUser().Sid };
                 bool complete = pos.Save(out responseMessage);
                 if (!complete) throw new Exception(responseMessage.ErrorMessage);
-
-                return View("Index");
+                TempData["ServerSuccess"] = "Должность успешно добавлена";
+                return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                ViewData["ServerError"] = ex.Message;
+                TempData["ServerError"] = ex.Message;
                 return View("Index", pos);
             }
         }
@@ -45,7 +49,7 @@ namespace Stuff.Controllers
         public JsonResult Delete(int id)
         {
             var user = DisplayCurUser();
-            if (!user.UserIsPersonalManager()) RedirectToAction("AccessDenied", "Error");
+            if (!user.UserCanEdit()) RedirectToAction("AccessDenied", "Error");
             try
             {
                 ResponseMessage responseMessage;

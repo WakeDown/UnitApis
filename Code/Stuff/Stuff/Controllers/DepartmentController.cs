@@ -14,7 +14,7 @@ namespace Stuff.Controllers
         public ActionResult List()
         {
             var user = DisplayCurUser();
-            if (!user.UserIsPersonalManager()) return RedirectToAction("AccessDenied", "Error");
+            if (!user.UserCanEdit()) return RedirectToAction("AccessDenied", "Error");
             var deps = Department.GetList().ToArray();
 
             return View(deps);
@@ -43,7 +43,7 @@ namespace Stuff.Controllers
         public ActionResult New()
         {
             var user = DisplayCurUser();
-            if (!user.UserIsPersonalManager()) return RedirectToAction("AccessDenied", "Error");
+            if (!user.UserCanEdit()) return RedirectToAction("AccessDenied", "Error");
 
             return View();
         }
@@ -51,7 +51,7 @@ namespace Stuff.Controllers
         public ActionResult New(Department dep)
         {
             var user = DisplayCurUser();
-            if (!user.UserIsPersonalManager()) return RedirectToAction("AccessDenied", "Error");
+            if (!user.UserCanEdit()) return RedirectToAction("AccessDenied", "Error");
 
             //Save department
             try
@@ -74,7 +74,7 @@ namespace Stuff.Controllers
         public ActionResult Edit(int? id)
         {
             var user = DisplayCurUser();
-            if (!user.UserIsPersonalManager()) return RedirectToAction("AccessDenied", "Error");
+            if (!user.UserCanEdit()) return RedirectToAction("AccessDenied", "Error");
 
             if (id.HasValue)
             {
@@ -90,7 +90,7 @@ namespace Stuff.Controllers
         public ActionResult Edit(Department dep)
         {
             var user = DisplayCurUser();
-            if (!user.UserIsPersonalManager()) return RedirectToAction("AccessDenied", "Error");
+            if (!user.UserCanEdit()) return RedirectToAction("AccessDenied", "Error");
 
             try
             {
@@ -111,7 +111,7 @@ namespace Stuff.Controllers
         public void Delete(int id)
         {
             var user = DisplayCurUser();
-            if (!user.UserIsPersonalManager()) RedirectToAction("AccessDenied", "Error");
+            if (!user.UserCanEdit()) RedirectToAction("AccessDenied", "Error");
             try
             {
                 ResponseMessage responseMessage;

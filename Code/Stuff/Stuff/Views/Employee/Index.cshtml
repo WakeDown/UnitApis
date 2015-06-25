@@ -4,12 +4,12 @@
 @{
     ViewBag.Title = "Карточка сотрудника";
     Layout = "~/Views/Shared/_Editor.cshtml";
-    bool userIsPersonalManager = ViewBag.CurUser.UserIsPersonalManager();
+    bool userCanEdit = ViewBag.CurUser.UserCanEdit();
 }
 
 @section PanelHead
 {
-    @if (userIsPersonalManager)
+    @if (userCanEdit)
     {
         <span class="pull-right"><a class="btn btn-link" href="@Url.Action("Edit", new {id = Model.Id})">@*<i class="fa fa-edit"></i>&nbsp;*@изменить</a></span>
         }
@@ -34,18 +34,23 @@
                     <col class="col-lg-1" />
                     <col class="col-lg-4" />
                 </colgroup>
-                <tr>
+                @*<tr>
                     <td class="text-right">пол:</td>
                     <td>@Html.LabelFor(m => m, Model.Male != null ? Model.Male ? "мужской" : "женский" : "--не указан--")</td>
-                </tr>
+                </tr>*@
                 <tr>
                     <td class="text-right">дата рождения:</td>
                     <td>@Html.LabelFor(m => m, Model.BirthDate != null ? String.Format("{0:dd MMMM}", Model.BirthDate.Value) : String.Empty)</td>
                 </tr>
-                <tr>
+                @*<tr>
                     <td class="text-right">дата прихода:</td>
                     <td>@Html.LabelFor(m => m, Model.DateCame != null ? Model.DateCame.Value.ToShortDateString() : String.Empty)</td>
+                </tr>*@
+                <tr>
+                    <td class="text-right">Стаж работы:</td>
+                    <td>@Html.LabelFor(m => m, Model.DateCame.HasValue ? Model.ExpirenceString : String.Empty)</td>
                 </tr>
+
                 <tr>
                     <td class="text-right">почта:</td>
                     <td>@Html.LabelFor(m => m, Model.Email)</td>

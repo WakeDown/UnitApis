@@ -5,7 +5,7 @@
 @{
     ViewBag.Title = "Подразделения и сотрудники";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    bool userIsPersonalManager = ViewBag.CurUser.UserIsPersonalManager();
+    bool userCanEdit = ViewBag.CurUser.UserCanEdit();
 }
 
 <p>
@@ -37,7 +37,7 @@
                     @foreach (Employee emp in stuff)
                     {
                         <tr>
-                            @if (userIsPersonalManager)
+                            @if (userCanEdit)
                             {
                                 <td class="min-width">
                                     <a class=" btn btn-link" href="@Url.Action("Edit", "Employee", new {id = emp.Id})" data-toggle="tooltip" title="изменить">
@@ -47,7 +47,7 @@
                             <td class="width-20p">
                                 @emp.DisplayName
                             </td>
-@if (userIsPersonalManager)
+@if (userCanEdit)
 {
     <td class="min-width">
         <button name="delete-emp" class="btn btn-link" empid="@emp.Id" data-toggle="tooltip" title="удалить"><i class="fa fa-trash"></i></button>
@@ -68,7 +68,7 @@
 
 @section scripts
 {
-@if (userIsPersonalManager)
+@if (userCanEdit)
 {
     <script type="text/javascript">
         $(document).ready(function() { init(); });

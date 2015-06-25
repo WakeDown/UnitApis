@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Web;
 using Newtonsoft.Json;
@@ -15,33 +13,11 @@ namespace Stuff.Objects
     {
         public const string OdataServiceUri = "http://uiis-1:10002/odata";
 
-        //private static string AuthorizationHeaderValue
-        //{
-        //    get
-        //    {
-        //        String username = "UN1T\\sqlUnit_prog";
-        //        String password = "1qazXSW@";
-        //        String encoded = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(username + ":" + password));
-        //        return "Basic " + encoded;
-        //    }
-        //}
-
         protected static string GetJson(Uri uri)
         {
             string result = String.Empty;
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
-            CredentialCache cc = new CredentialCache();
-            cc.Add(uri, "NTLM", CredentialCache.DefaultNetworkCredentials);
-            //cc.Add(
-                //uri,
-                //"NTLM",
-                //new NetworkCredential("login", "password")
-            //);
-            
-            request.Credentials = cc;
             request.ContentType = "application/json";
-            //request.Headers.Add("Authorization", AuthorizationHeaderValue);
-            
 
             try
             {
@@ -69,10 +45,6 @@ namespace Stuff.Objects
         protected static bool PostJson(Uri uri, string json, out ResponseMessage responseMessage)
         {
             var request = (HttpWebRequest)WebRequest.Create(uri);
-            CredentialCache cc = new CredentialCache();
-            cc.Add(uri, "NTLM", CredentialCache.DefaultNetworkCredentials);
-            request.Credentials = cc;
-            //request.Headers.Add("Authorization", AuthorizationHeaderValue);
             request.ContentType = "text/json";
             request.Method = "POST";
 

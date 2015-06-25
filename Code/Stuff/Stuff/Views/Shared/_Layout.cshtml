@@ -1,7 +1,7 @@
 ﻿@using Microsoft.Ajax.Utilities
 
 @{
-    bool userIsPersonalManager = ViewBag.CurUser.UserIsPersonalManager();
+    bool userCanEdit = ViewBag.CurUser.UserCanEdit();
 }
 
 <!DOCTYPE html>
@@ -40,7 +40,7 @@
                             <li><a href='@Url.Action("List", "Employee")'>Сотрудники</a></li>
                         </ul>
                     </li>
-                    @if (userIsPersonalManager)
+                    @if (userCanEdit)
                     {
                         <li>
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-book fa-fw"></i>Справочники <b class="caret"></b></a>

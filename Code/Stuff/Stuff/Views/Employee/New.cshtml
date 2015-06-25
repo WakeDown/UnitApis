@@ -166,11 +166,11 @@
                 <div class="col-lg-push-2 col-lg-5">
                     @*<a type="submit" class="btn btn-primary btn-sm" href="#"><i class="fa fa-save"></i>&nbsp;добавить</a>*@
                     <button id="btnCreate" type="submit" class="btn btn-success" name="action" value="Create"><i class="fa fa-save"></i>&nbsp;добавить</button>
-                    создать учетную запись UN1T&nbsp;@Html.CheckBoxFor(m => m.HasAdAccount, new { @id = "chkCreateAdUser" })
-                    <p class="text-danger">
-                        @ViewData["ServerError"]
-                    </p>
                 </div>
+                <div class="col-lg-3">@Html.CheckBoxFor(m => m.HasAdAccount, new { @id = "chkCreateAdUser" })&nbsp;создать учетную запись UN1T</div>
+                <p class="text-danger">
+                    @ViewData["ServerError"]
+                </p>
             </div>
         }
 }

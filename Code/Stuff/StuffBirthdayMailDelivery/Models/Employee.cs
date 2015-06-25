@@ -1,21 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Web;
-using System.Web.Mvc;
 using Newtonsoft.Json;
 using Stuff.Objects;
 
-namespace Stuff.Models
+namespace StuffBirthdayMailDelivery.Models
 {
     public class Employee : DbModel
     {
-        //protected static Uri OdataServiceEmployeeUri = new Uri(String.Format("{0}/Employee", OdataServiceUri));
-
         public int Id { get; set; }
         public string AdSid { get; set; }
         public Employee Manager { get; set; }
@@ -30,7 +26,6 @@ namespace Stuff.Models
         public string WorkNum { get; set; }
         public string MobilNum { get; set; }
         public EmpState EmpState { get; set; }
-        //public int DepartmentId { get; set; }
         public Department Department { get; set; }
         public City City { get; set; }
         public byte[] Photo { get; set; }
@@ -41,9 +36,6 @@ namespace Stuff.Models
         public bool HasAdAccount { get; set; }
         public Employee Creator { get; set; }
         public Position PositionOrg { get; set; }
-        public string ExpirenceString { get; set; }
-
-        public AdGroup[] AdGroups { get; set; }
 
         public Employee() { }
 
@@ -82,54 +74,29 @@ namespace Stuff.Models
             PositionOrg = emp.PositionOrg;
             HasAdAccount = emp.HasAdAccount;
             Creator = emp.Creator;
-            ExpirenceString = emp.ExpirenceString;
         }
 
-        public void FillAdGroups()
+        public static IEnumerable<string> GetFullRecipientList()
         {
-            
-        }
-
-        public bool Save(out ResponseMessage responseMessage)
-        {
-            Uri uri = new Uri(String.Format("{0}/Employee/Save", OdataServiceUri));
-            string json = JsonConvert.SerializeObject(this);
-            bool result = PostJson(uri, json, out responseMessage);
-            return result;
-        }
-
-        public static bool Delete(int id, out ResponseMessage responseMessage)
-        {
-            Uri uri = new Uri(String.Format("{0}/Employee/Close?id={1}", OdataServiceUri, id));
-            string json = String.Empty;//String.Format("{{\"id\":{0}}}",id);
-            bool result = PostJson(uri, json, out responseMessage);
-            return result;
-        }
-
-        public static IEnumerable<Employee> GetList()
-        {
-            Uri uri = new Uri(String.Format("{0}/Employee/GetList", OdataServiceUri));
+            Uri uri = new Uri(String.Format("{0}/Employee/GetFullRecipientList", OdataServiceUri));
             string jsonString = GetJson(uri);
-
+            var email = JsonConvert.DeserializeObject<IEnumerable<string>>(jsonString);
+            return email;
+        }
+        public static IEnumerable<Employee> GetTodayBirthdayList()
+        {
+            Uri uri = new Uri(String.Format("{0}/Employee/GetTodayBirthdayList", OdataServiceUri));
+            string jsonString = GetJson(uri);
             var emps = JsonConvert.DeserializeObject<IEnumerable<Employee>>(jsonString);
-
             return emps;
         }
-
-        public static IEnumerable<Employee> GetSelectionList()
+        public static IEnumerable<Employee> GetNextMonthBirthdayList()
         {
-            Uri uri = new Uri(String.Format("{0}/Employee/GetList", OdataServiceUri));
+            Uri uri = new Uri(String.Format("{0}/Employee/GetNextMonthBirthdayList", OdataServiceUri));
             string jsonString = GetJson(uri);
-
             var emps = JsonConvert.DeserializeObject<IEnumerable<Employee>>(jsonString);
-
             return emps;
         }
-
-        ////public static byte[] GetPhoto(int id)
-        ////{
-        ////    Uri uri = new Uri(String.Format("{0}/Employee/GetPhoto?id={1}", OdataServiceUri, id));
-        ////    return GetImage
-        ////}
+        
     }
 }

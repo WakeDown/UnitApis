@@ -27,7 +27,7 @@ namespace Stuff.Objects
 
         public string Email { get; set; }
         public string ShortName{get; set;}
-        public List<AdRole> AdRoles { get; set; }
+        public List<AdGroup> AdGroups { get; set; }
 
         private static string GetShortName(string name)
         {
@@ -62,10 +62,10 @@ namespace Stuff.Objects
             return res;
         }
 
-        public bool UserIsPersonalManager()
+        public bool UserCanEdit()
         {
-            if (String.IsNullOrEmpty(Sid) || !AdRoles.Any()) return false;
-            return AdRoles.Contains(AdRole.PersonalManager);
+            if (String.IsNullOrEmpty(Sid) || !AdGroups.Any()) return false;
+            return AdGroups.Contains(AdGroup.SuperAdmin) || AdGroups.Contains(AdGroup.PersonalManager);
         }
     }
 }

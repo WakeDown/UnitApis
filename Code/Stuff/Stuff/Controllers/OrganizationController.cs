@@ -15,7 +15,7 @@ namespace Stuff.Controllers
         public ActionResult Index()
         {
             var user = DisplayCurUser();
-            if (!user.UserIsPersonalManager()) return RedirectToAction("AccessDenied", "Error");
+            if (!user.UserCanEdit()) return RedirectToAction("AccessDenied", "Error");
             return View();
         }
 
@@ -23,7 +23,7 @@ namespace Stuff.Controllers
         public ActionResult Index(Organization org)
         {
             var user = DisplayCurUser();
-            if (!user.UserIsPersonalManager()) return RedirectToAction("AccessDenied", "Error");
+            if (!user.UserCanEdit()) return RedirectToAction("AccessDenied", "Error");
                     
             //Save department
             try
@@ -32,12 +32,12 @@ namespace Stuff.Controllers
                 org.Creator = new Employee() { AdSid = GetCurUser().Sid };
                 bool complete = org.Save(out responseMessage);
                 if (!complete) throw new Exception(responseMessage.ErrorMessage);
-
-                return View("Index", new Organization());
+                TempData["ServerSuccess"] = "Юо. лицо успешно добавлено";
+                return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                ViewData["ServerError"] = ex.Message;
+                TempData["ServerError"] = ex.Message;
                 return View("Index", org);
             }
         }
@@ -46,7 +46,7 @@ namespace Stuff.Controllers
         public JsonResult Delete(int id)
         {
             var user = DisplayCurUser();
-            if (!user.UserIsPersonalManager()) RedirectToAction("AccessDenied", "Error");
+            if (!user.UserCanEdit()) RedirectToAction("AccessDenied", "Error");
 
             try
             {

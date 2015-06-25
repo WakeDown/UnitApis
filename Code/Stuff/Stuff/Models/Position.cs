@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web;
 using Newtonsoft.Json;
 using Stuff.Objects;
@@ -14,8 +15,11 @@ namespace Stuff.Models
         public int EmpCount { get; set; }
         public Employee Creator { get; set; }
 
-        public Position() { }
+        public Position()
+        {
+        }
 
+        
         public Position(int id)
         {
             Uri uri = new Uri(String.Format("{0}/Position/Get?id={1}", OdataServiceUri, id));

@@ -169,8 +169,8 @@
     <Compile Include="Controllers\PositionController.cs" />
     <Compile Include="Helpers\MultiButtonAttribute.cs" />
     <Compile Include="Models\Ad.cs" />
-    <Compile Include="Objects\AdRole.cs" />
-    <Compile Include="Objects\AdUserRole.cs" />
+    <Compile Include="Objects\AdGroup.cs" />
+    <Compile Include="Objects\AdUserGroup.cs" />
     <Compile Include="Objects\DbList.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -184,7 +184,6 @@
     <Compile Include="Models\EmpState.cs" />
     <Compile Include="Models\Position.cs" />
     <Compile Include="Models\Organization.cs" />
-    <Compile Include="Objects\AdGroup.cs" />
     <Compile Include="Objects\ResponseMessage.cs" />
     <Compile Include="Objects\AdUser.cs" />
     <Compile Include="Objects\BaseController.cs" />

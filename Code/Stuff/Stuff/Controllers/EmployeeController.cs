@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -32,7 +33,7 @@ namespace Stuff.Controllers
         public ActionResult Edit(int? id)
         {
             var user = DisplayCurUser();
-            if (!user.UserIsPersonalManager()) return RedirectToAction("AccessDenied", "Error");
+            if (!user.UserCanEdit()) return RedirectToAction("AccessDenied", "Error");
 
             if (id.HasValue)
             {
@@ -49,7 +50,7 @@ namespace Stuff.Controllers
         public ActionResult Edit(Employee emp)
         {
             var user = DisplayCurUser();
-            if (!user.UserIsPersonalManager()) return RedirectToAction("AccessDenied", "Error");
+            if (!user.UserCanEdit()) return RedirectToAction("AccessDenied", "Error");
 
             //Save employee
             try
@@ -70,9 +71,9 @@ namespace Stuff.Controllers
         public ActionResult New(bool? test)
         {
             var user = DisplayCurUser();
-            if (!user.UserIsPersonalManager()) return RedirectToAction("AccessDenied", "Error");
+            if (!user.UserCanEdit()) return RedirectToAction("AccessDenied", "Error");
 
-            var emp = new Employee();
+            var emp = new Employee() {HasAdAccount = true};
 
             if (test.HasValue && test.Value)
             {
@@ -97,7 +98,7 @@ namespace Stuff.Controllers
         public ActionResult New(Employee emp)
         {
             var user = DisplayCurUser();
-            if (!user.UserIsPersonalManager()) return RedirectToAction("AccessDenied", "Error");
+            if (!user.UserCanEdit()) return RedirectToAction("AccessDenied", "Error");
 
             //Save employee
             try
@@ -164,7 +165,7 @@ namespace Stuff.Controllers
         public void Delete(int id)
         {
             var user = DisplayCurUser();
-            if (!user.UserIsPersonalManager()) RedirectToAction("AccessDenied", "Error");
+            if (!user.UserCanEdit()) RedirectToAction("AccessDenied", "Error");
             try
             {
                 ResponseMessage responseMessage;
@@ -182,7 +183,7 @@ namespace Stuff.Controllers
         public ActionResult GenEmailAddressByName(string surname, string name)
         {
             var user = DisplayCurUser();
-            if (!user.UserIsPersonalManager()) return RedirectToAction("AccessDenied", "Error");
+            if (!user.UserCanEdit()) return RedirectToAction("AccessDenied", "Error");
             //DisplayCurUser();
             string email = String.Empty;
             try

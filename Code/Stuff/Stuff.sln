@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stuff.Tests", "Stuff.Tests\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdSyncronyzer", "AdSyncronyzer\AdSyncronyzer.csproj", "{131E1ACC-41E1-442C-A62A-FCA5B0E4B366}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StuffBirthdayMailDelivery", "StuffBirthdayMailDelivery\StuffBirthdayMailDelivery.csproj", "{8DA3FBBE-62A3-4EEE-B557-F8C058A92DAC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{131E1ACC-41E1-442C-A62A-FCA5B0E4B366}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{131E1ACC-41E1-442C-A62A-FCA5B0E4B366}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{131E1ACC-41E1-442C-A62A-FCA5B0E4B366}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8DA3FBBE-62A3-4EEE-B557-F8C058A92DAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DA3FBBE-62A3-4EEE-B557-F8C058A92DAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DA3FBBE-62A3-4EEE-B557-F8C058A92DAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DA3FBBE-62A3-4EEE-B557-F8C058A92DAC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

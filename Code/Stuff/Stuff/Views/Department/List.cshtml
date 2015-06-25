@@ -4,7 +4,7 @@
 @{
     ViewBag.Title = "Список подразделений";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    bool userIsPersonalManager = ViewBag.CurUser.UserIsPersonalManager();
+    bool userCanEdit = ViewBag.CurUser.UserCanEdit();
 }
 
 <p>
@@ -19,7 +19,7 @@
 {
     <table id="depList" class="table table-bordered">
         <tr>
-            @if (userIsPersonalManager)
+            @if (userCanEdit)
             {
                 <th></th>
             }
@@ -27,7 +27,7 @@
             <th>Название подразделения</th>
             <th>Головное подразделение</th>
             <th>Руководитель</th>
-@if (ViewBag.CurUser.UserIsPersonalManager())
+@if (ViewBag.CurUser.UserCanEdit())
 {
     <th></th>
 }
@@ -37,7 +37,7 @@
         {
             i++;
             <tr>
-                @if (userIsPersonalManager)
+                @if (userCanEdit)
                 {
                     <td>
                         <a class="btn btn-link" href="@Url.Action("Edit", "Department", new {id = dep.Id})" data-toggle="tooltip" title="изменить"><i class="fa fa-edit"></i></a>
@@ -47,7 +47,7 @@
                 <td>@dep.Name</td>
                 <td>@dep.ParentDepartment.Name</td>
                 <td>@dep.Chief.DisplayName</td>
-@if (ViewBag.CurUser.UserIsPersonalManager())
+@if (ViewBag.CurUser.UserCanEdit())
 {
     <td>
         <button class="btn btn-link" name="delele-dep" depid="@dep.Id" data-toggle="tooltip" title="удалить"><i class="fa fa-trash"></i></button>
@@ -60,7 +60,7 @@
 
 @section scripts
 {
-@if (userIsPersonalManager)
+@if (userCanEdit)
 {
     <script type="text/javascript">
         $(document).ready(function() { init(); });

@@ -5,7 +5,9 @@ using System.Web;
 
 namespace Stuff.Objects
 {
-    public class AdGroup
+    public enum AdGroup
     {
+        SuperAdmin,
+        PersonalManager
     }
 }

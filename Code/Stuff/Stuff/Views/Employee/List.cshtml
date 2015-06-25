@@ -4,14 +4,14 @@
 @{
     ViewBag.Title = "Список сотрудников";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    bool userIsPersonalManager = ViewBag.CurUser.UserIsPersonalManager();
+    bool userCanEdit = ViewBag.CurUser.UserCanEdit();
 }
 
 
 <p>
     <span class="text-danger">@ViewData["ServerError"]</span>
 </p>
-@if (userIsPersonalManager)
+@if (userCanEdit)
 {
     <p>
         <a href='@Url.Action("New", "Employee")' class="btn btn-primary">
@@ -24,7 +24,7 @@
 {
     <table class="table table-bordered">
         <tr>
-            @if (userIsPersonalManager)
+            @if (userCanEdit)
             {
                 <th></th>
             }
@@ -32,17 +32,17 @@
             <th>ФИО</th>
             <th>Должность</th>
             <th>Подразделение</th>
-@if (userIsPersonalManager)
-{
-    <th></th>
-}
+            @if (userCanEdit)
+            {
+                <th></th>
+            }
         </tr>
         @{int i = 0;}
         @foreach (var emp in Model)
         {
             i++;
             <tr>
-                @if (userIsPersonalManager)
+                @if (userCanEdit)
                 {
                     <td>
                         <a class="btn btn-link" href="@Url.Action("Edit", "Employee", new {id = emp.Id})" data-toggle="tooltip" title="изменить"><i class="fa fa-edit"></i></a>
@@ -54,12 +54,12 @@
                 <td>
                     @(emp.Department != null ? emp.Department.Name : "--не указано--")
                 </td>
-@if (userIsPersonalManager)
-{
-    <td>
-        <button name="delete-emp" class="btn btn-link" empid="@emp.Id" data-toggle="tooltip" title="удалить"><i class="fa fa-trash"></i></button>
-    </td>
-}
+                @if (userCanEdit)
+                {
+                    <td>
+                        <button name="delete-emp" class="btn btn-link" empid="@emp.Id" data-toggle="tooltip" title="удалить"><i class="fa fa-trash"></i></button>
+                    </td>
+                }
             </tr>
         }
     </table>
@@ -68,7 +68,7 @@
 @section scripts
 {
     <script type="text/javascript">
-        $(document).ready(function () { init(); });
+        $(document).ready(function() { init(); });
 
         function init() {
             $("[name='delete-emp']").click(deleteEmployee);
@@ -77,11 +77,14 @@
         function deleteEmployee() {
             if (!confirm('Вы действительно хотите удалить сотрудника?')) return;
             var id = $(this).attr('empId');
-            $.post("@Url.Action("Delete", "Employee")", { id: id }, function () {
-                window.location.reload();
+            $.post("@Url.Action("Delete", "Employee")", { id: id }, function(data) {
+                if (data != null && data != '') {
+                    alert(data);
+                } else {
+                    window.location.reload();
+                }
             }
-        )
-            ;
+            );
         }
     </script>
 }
