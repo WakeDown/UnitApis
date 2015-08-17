@@ -84,11 +84,11 @@ namespace Stuff.Objects
         private static NetworkCredential nc = GetAdUserCredentials();
         public static NetworkCredential GetAdUserCredentials()
         {
-            string accUserName = @"UN1T\rehov";
-            string accUserPass = "R3xQwi!!";
+            string accUserName = @"UN1T\adUnit_prog";
+            string accUserPass = "1qazXSW@";
 
             string domain = "UN1T";//accUserName.Substring(0, accUserName.IndexOf("\\"));
-            string name = "rehov";//accUserName.Substring(accUserName.IndexOf("\\") + 1);
+            string name = "adUnit_prog";//accUserName.Substring(accUserName.IndexOf("\\") + 1);
 
             NetworkCredential nc = new NetworkCredential(name, accUserPass, domain);
 
