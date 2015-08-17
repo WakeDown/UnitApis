@@ -1,5 +1,5 @@
 ﻿@using Stuff.Models
-@model List<Stuff.Models.Employee>
+@model IEnumerable<Stuff.Models.Employee>
 
 @{
     ViewBag.Title = "Список сотрудников";
@@ -7,10 +7,6 @@
     bool userCanEdit = ViewBag.CurUser.UserCanEdit();
 }
 
-
-<p>
-    <span class="text-danger">@ViewData["ServerError"]</span>
-</p>
 @if (userCanEdit)
 {
     <p>
@@ -19,11 +15,13 @@
         </a>
     </p>
 }
-
+<p>
+    <span class="text-danger">@ViewData["ServerError"]</span>
+</p>
 @if (Model.Any())
 {
     <table class="table table-bordered">
-        <tr>
+        <tr class="bg-primary">
             @if (userCanEdit)
             {
                 <th></th>
@@ -68,9 +66,10 @@
 @section scripts
 {
     <script type="text/javascript">
-        $(document).ready(function() { init(); });
+        
+        $(document).ready(function() { init_emp_list(); });
 
-        function init() {
+        function init_emp_list() {
             $("[name='delete-emp']").click(deleteEmployee);
         }
 

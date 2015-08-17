@@ -1,4 +1,7 @@
-﻿@using Microsoft.Ajax.Utilities
+﻿@using System.Configuration
+@using System.Data.SqlClient
+@using Microsoft.Ajax.Utilities
+@using Stuff.Models
 
 @{
     bool userCanEdit = ViewBag.CurUser.UserCanEdit();
@@ -7,17 +10,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title – приложение ASP.NET</title>
+    <title>@ViewBag.Title</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/common")
 </head>
 <body>
+
     <div class="navbar navbar-default navbar-fixed-top">
         <div class="container">
+
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                     <span class="icon-bar"></span>
@@ -26,7 +34,7 @@
                 </button>
                 <a class="navbar-brand" href="~/">
                     <img class="headLogo" src="~/Content/images/logo-unit.png" alt="" />
-                    <div class="h5"><strong>ЮНИТ</strong>&nbsp;<span class="h6">Персонал</span></div>
+                    <div class="h5"><strong>ЮНИТ</strong>&nbsp;<span class="h6">Портал</span></div>
                 </a>
                 @*@Html.ActionLink("", "Index", "Home", null, new { @class = "navbar-brand" })*@
             </div>
@@ -37,7 +45,16 @@
                         <ul class="dropdown-menu">
                             <li><a href='@Url.Action("Index", "Department")'>Оргструктура</a></li>
                             <li><a href='@Url.Action("Employees", "Department")'>Подразделения</a></li>
+                            @if (userCanEdit)
+                            {
+                                <li><a href='@Url.Action("NewbieList", "Employee")'>Новобранцы</a></li>
+                            }
                             <li><a href='@Url.Action("List", "Employee")'>Сотрудники</a></li>
+                            @if (userCanEdit)
+                            {
+                                <li><a href='@Url.Action("DecreeList", "Employee")'>В декрете</a></li>
+                                <li><a href='@Url.Action("FiredList", "Employee")'>Уволенные</a></li>
+                            }
                         </ul>
                     </li>
                     @if (userCanEdit)
@@ -52,16 +69,62 @@
                             </ul>
                         </li>
                     }
+                    @*@if (userCanEdit)
+                    {
+                        <li>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-book fa-fw"></i>Заявления <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="@Url.Action("StatementRestFewHours", "Document")" target="_blank">
+                                        Отсутствие на 1 или несколько часов
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("StatementRestFewDays", "Document")" target="_blank">
+                                        Отсутствие на 1 или несколько дней
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    }*@
+                    @if (ViewBag.CurUser.UserIsPersonalManager())
+                    {
+                        <li>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-book fa-fw"></i>Документы <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="@Url.Action("DocumentEmployeeList", "Document")" target="_blank">
+                                        Список сотрудников
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Links", "Document")" target="_blank">
+                                        Сопоставление документов
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    }
+                    @*<li>
+                        <a href="@Url.Action("My", "Document")"><i class="fa fa-book fa-fw"></i>Мои документы</a>
+                    </li>*@
                     @*<li>@Html.ActionLink("Новый запрос", "Request", "Home")</li>*@
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    <li class="navbar-text">Вы вошли как <strong>@ViewBag.CurUser.ShortName</strong></li>
+                    <li class="navbar-text">Вы вошли как <strong id="userName">@ViewBag.CurUser.ShortName</strong></li>
                 </ul>
             </div>
         </div>
     </div>
     <div class="clearfix"></div>
     <div class="container body-content">
+        @if (!String.IsNullOrEmpty(ConfigurationManager.AppSettings["Environment"]))
+        {
+            <blockquote class="bg-warning">
+                @ConfigurationManager.AppSettings["Environment"]<br />
+                <small>@ConfigurationManager.AppSettings["OdataServiceUri"]</small>
+            </blockquote>
+        }
         @RenderBody()
         <div class="clearfix"></div>
         <hr class="last" />
@@ -83,30 +146,45 @@
         </footer>
     </div>
 
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
+
+    <!-- Modal -->
+    @*@Html.Action("StatementRestFewHours", "Document")*@
+    @*@Html.Partial("StatementFewHours", new StatementRestFewHours())*@
+
+
+    <!-- Modal -->
+    @*<div class="modal fade" id="modalStatementRestFewDays" tabindex="-1" role="dialog" aria-labelledby="modalStatementRestFewDaysLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="modalStatementRestFewDaysLabel">Заявление на отгул (1 или несколько дней)</h4>
+                    </div>
+                    <div class="modal-body">
+                        ...
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
+                        <button type="button" class="btn btn-primary">Распечатать</button>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+
+
     @*@Scripts.Render("~/bundles/fuelux")*@
     @RenderSection("scripts", required: false)
     <script type="text/javascript">
-        //$(document).ready(function (){
-        //$.jMaskGlobals = {
-        //    maskElements: 'input,td,span,div',
-        //    dataMaskAttr: '*[data-mask]',
-        //    dataMask: true,
-        //    watchInterval: 300,
-        //    watchInputs: true,
-        //    watchDataMask: false,
-        //    byPassKeys: [9, 16, 17, 18, 36, 37, 38, 39, 40, 91],
-        //    translation: {
-        //        '0': { pattern: /\d/ },
-        //        '9': { pattern: /\d/, optional: true },
-        //        '#': { pattern: /\d/, recursive: true },
-        //        'A': { pattern: /[a-zA-Z0-9]/ },
-        //        'S': { pattern: /[A-Z]/ },
-        //        's': { pattern: /[a-z]/ },
-        //        '$': { pattern: /[a-z]/, recursive: true }
-        //    }
-        //};
+        $(document).ready(function () {
+            $('#userName').click(function () {
+                $.ajax({
+                    url: '@Url.Action("GetServerUserName", "Employee")',
+                    type: 'POST',
+                    success: function (data) { alert(data.sid) }
+                });
+            });
+        });
+
     </script>
 </body>
 

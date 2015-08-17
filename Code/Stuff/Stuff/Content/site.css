@@ -4,6 +4,7 @@
 }*/
 
 body {
+    font-family: Arial;
     background: #B4B4B4 url(../Content/images/bg1.png) repeat left top;
 }
 
@@ -18,7 +19,7 @@ body {
 }
 
 .body-content {
-    background: #eee;
+    background: #fff;
     padding-top: 70px;
 }
 
@@ -49,10 +50,10 @@ body {
 .headLogo {
     display: block;
     height: 25px;
-    padding-left: 30px;
+    padding-left: 25px;
 }
 
-input.required-mark, select.required-mark, span.required-mark {
+input.required-mark, select.required-mark, span.required-mark, textarea.required-mark {
     background-color: #fcf8e3;
 }
 
@@ -187,4 +188,87 @@ table .btn {
 
 .text-warning.light {
     color: #d58512;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+
+
+img.org-state-preview {
+    height: 80px;
+}
+
+#docs tr:hover {
+    cursor: pointer;
+    background-color: #fcf8e3; 
+}
+#docs tr.selected, #docs tr.selected:hover {
+    background-color: #f7ecb5; 
+}
+
+table.list4link tr:hover {
+    cursor: pointer;
+    background-color: #fcf8e3; 
+}
+table.list4link tr.selected, #docs tr.selected:hover {
+    background-color: #f7ecb5; 
+}
+
+table.list4link tr .act {
+    display: none;
+}
+
+table.list4link tr.db-success .act {
+    display: block;
+}
+
+table.list4link tr.db-error .act {
+    display: block;
+}
+
+.tab-mark {
+    position: absolute;
+    color: #e38d13;
+    overflow: hidden;
+    font-size: 3em;
+    bottom: 0px;
+    right: 0px;
+    float: right;
+}
+
+.tab-mark.hidden {
+    display: none;
+}
+
+
+.main-menu {
+    width: 100%;
+}
+
+.main-menu tr.clear {
+    height: 50px;
+}
+
+.main-menu td {
+    margin: 5px;
+    padding: 15px 40px;
+    text-align: center;
+    border: 2px solid #fff;
+}
+
+.main-menu td:hover {
+   /*background-color: #e3e3e3;*/
+   /*border: 2px solid #e3e3e3;*/
+}
+
+.main-icon {
+     width: 60px;
+}
+
+
+.main-icon-label {
+    font-size: 2em;
+    text-align: center;
 }

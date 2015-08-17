@@ -1,0 +1,56 @@
+﻿
+@{
+    ViewBag.Title = "Главная";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<table class="main-menu">
+    <tr>
+        <td>
+            <a class="main-icon" href="@Url.Action("Index", "Department")" target="_blank">
+                <img src="@Url.Content("~/Content/images/orgstr_icon.png")"/>
+                <div class="main-icon-label">Оргструктура</div>
+            </a>
+        </td>
+        <td>
+            <a class="main-icon" href="@Url.Action("Statements", "Document")" target="_blank">
+                <img src="@Url.Content("~/Content/images/statement_icon.png")"/>
+                <div class="main-icon-label">Служебные записки</div>
+            </a>
+        </td>
+        <td>
+            <a class="main-icon" href="@Url.Action("My", "Document")" target="_blank">
+                <img src="@Url.Content("~/Content/images/mydoc_icon.png")"/>
+                <div class="main-icon-label">Мои документы</div>
+            </a>
+        </td>
+    </tr>
+    <tr class="clear">
+        <td colspan="3"></td>
+    </tr>
+    <tr>
+        <td>
+            <a class="main-icon" href="http://bitrix.un1t.group/about/index.php" target="_blank">
+                <img src="@Url.Content("~/Content/images/news_icon.png")" />
+                <div class="main-icon-label">Новости компании</div>
+            </a>
+        </td>
+        <td>
+            <a class="main-icon" href="http://bitrix.un1t.group/about/gallery/" target="_blank">
+                <img src="@Url.Content("~/Content/images/photo_icon.png")" />
+                <div class="main-icon-label">Фотографии</div>
+            </a>
+        </td>
+        <td>
+            <a class="main-icon" href="http://bitrix.un1t.group/workgroups/" target="_blank">
+                <img src="@Url.Content("~/Content/images/groups_icon.png")" />
+                <div class="main-icon-label">Группы</div>
+            </a>
+        </td>
+    </tr>
+</table>
+
+
+@section scripts
+{
+
+}

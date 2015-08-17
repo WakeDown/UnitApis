@@ -8,6 +8,7 @@ namespace Stuff.Objects
     public enum AdGroup
     {
         SuperAdmin,
-        PersonalManager
+        PersonalManager,
+        SystemUser
     }
 }

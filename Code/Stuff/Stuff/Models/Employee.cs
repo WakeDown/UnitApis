@@ -42,10 +42,17 @@ namespace Stuff.Models
         public Employee Creator { get; set; }
         public Position PositionOrg { get; set; }
         public string ExpirenceString { get; set; }
+        public string FullNameDat { get; set; }
+        public string FullNameRod { get; set; }
+        public string ShortNameDat { get; set; }
+        public string ShortNameRod { get; set; }
 
         public AdGroup[] AdGroups { get; set; }
 
-        public Employee() { }
+        public Employee()
+        {
+            DateCame = DateTime.Now;
+        }
 
         public Employee(int id)
         {
@@ -56,6 +63,15 @@ namespace Stuff.Models
             FillSelf(emp);
         }
 
+        public Employee(string sid)
+        {
+            Uri uri = new Uri(String.Format("{0}/Employee/Get?adSid={1}", OdataServiceUri, sid));
+            string jsonString = GetJson(uri);
+
+            Employee emp = JsonConvert.DeserializeObject<Employee>(jsonString);
+            FillSelf(emp);
+        }
+        
         private void FillSelf(Employee emp)
         {
             Id = emp.Id;
@@ -83,6 +99,10 @@ namespace Stuff.Models
             HasAdAccount = emp.HasAdAccount;
             Creator = emp.Creator;
             ExpirenceString = emp.ExpirenceString;
+            FullNameDat = emp.FullNameDat;
+            FullNameRod = emp.FullNameRod;
+            ShortNameDat = emp.ShortNameDat;
+            ShortNameRod = emp.ShortNameRod;
         }
 
         public void FillAdGroups()
@@ -105,10 +125,60 @@ namespace Stuff.Models
             bool result = PostJson(uri, json, out responseMessage);
             return result;
         }
-
-        public static IEnumerable<Employee> GetList()
+        public static bool SetStateDecree(int id, out ResponseMessage responseMessage)
         {
-            Uri uri = new Uri(String.Format("{0}/Employee/GetList", OdataServiceUri));
+            Uri uri = new Uri(String.Format("{0}/Employee/SetStateDecree?id={1}", OdataServiceUri, id));
+            string json = String.Empty;//String.Format("{{\"id\":{0}}}",id);
+            bool result = PostJson(uri, json, out responseMessage);
+            return result;
+        }
+        public static bool SetStateFired(int id, out ResponseMessage responseMessage)
+        {
+            Uri uri = new Uri(String.Format("{0}/Employee/SetStateFired?id={1}", OdataServiceUri, id));
+            string json = String.Empty;//String.Format("{{\"id\":{0}}}",id);
+            bool result = PostJson(uri, json, out responseMessage);
+            return result;
+        }
+        public static bool SetStateStuff(int id, out ResponseMessage responseMessage)
+        {
+            Uri uri = new Uri(String.Format("{0}/Employee/SetStateStuff?id={1}", OdataServiceUri, id));
+            string json = String.Empty;//String.Format("{{\"id\":{0}}}",id);
+            bool result = PostJson(uri, json, out responseMessage);
+            return result;
+        }
+        public static IEnumerable<Employee> GetList(int? idCity = null, int? idDepartment = null, bool showHidden = true)
+        {
+            Uri uri = new Uri(String.Format("{0}/Employee/GetList?idCity={1}&idDepartment={2}&showHidden={3}", OdataServiceUri, idCity, idDepartment, showHidden));
+            string jsonString = GetJson(uri);
+
+            var emps = JsonConvert.DeserializeObject<IEnumerable<Employee>>(jsonString);
+
+            return emps;
+        }
+
+        public static IEnumerable<Employee> GetFiredList()
+        {
+            Uri uri = new Uri(String.Format("{0}/Employee/GetFiredList", OdataServiceUri));
+            string jsonString = GetJson(uri);
+
+            var emps = JsonConvert.DeserializeObject<IEnumerable<Employee>>(jsonString);
+
+            return emps;
+        }
+
+        public static IEnumerable<Employee> GetDecreeList()
+        {
+            Uri uri = new Uri(String.Format("{0}/Employee/GetDecreeList", OdataServiceUri));
+            string jsonString = GetJson(uri);
+
+            var emps = JsonConvert.DeserializeObject<IEnumerable<Employee>>(jsonString);
+
+            return emps;
+        }
+
+        public static IEnumerable<Employee> GetNewbieList()
+        {
+            Uri uri = new Uri(String.Format("{0}/Employee/GetStNewbieList", OdataServiceUri));
             string jsonString = GetJson(uri);
 
             var emps = JsonConvert.DeserializeObject<IEnumerable<Employee>>(jsonString);
@@ -126,10 +196,40 @@ namespace Stuff.Models
             return emps;
         }
 
+        public Employee GetDirector()
+        {
+            Uri uri = new Uri(String.Format("{0}/Employee/GetDirector", OdataServiceUri));
+            string jsonString = GetJson(uri);
+            Employee emp = JsonConvert.DeserializeObject<Employee>(jsonString);
+            FillSelf(emp);
+            return emp;
+        }
+
+        public Employee GetDepartmentDirector(string employeeSid)
+        {
+            Uri uri = new Uri(String.Format("{0}/Employee/GetDepartmentDirector?employeeSid={1}", OdataServiceUri, employeeSid));
+            string jsonString = GetJson(uri);
+            Employee emp = JsonConvert.DeserializeObject<Employee>(jsonString);
+            FillSelf(emp);
+            return emp;
+        }
+
         ////public static byte[] GetPhoto(int id)
         ////{
         ////    Uri uri = new Uri(String.Format("{0}/Employee/GetPhoto?id={1}", OdataServiceUri, id));
         ////    return GetImage
         ////}
+
+        public static string GetServerSid()
+        {
+            Uri uri = new Uri(String.Format("{0}/Employee/GetCurrentUserSid", OdataServiceUri));
+            return GetJson(uri);
+        }
+
+        public static string GetServerUserName()
+        {
+            Uri uri = new Uri(String.Format("{0}/Employee/GetCurrentUserName", OdataServiceUri));
+            return GetJson(uri);
+        }
     }
 }

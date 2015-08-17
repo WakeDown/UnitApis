@@ -1,24 +1,21 @@
 ﻿@using System.Web.UI.WebControls
 @using Stuff.Models
 @using Stuff.Objects
-@model Stuff.Models.Organization
+@model IEnumerable<Stuff.Models.Organization>
 
 @{
     ViewBag.Title = "Юридические лица";
-    Layout = "~/Views/Shared/_Editor.cshtml";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@section PanelHead
-{
-    Юридические лица
-}
+<p>
+    <a class="btn btn-primary" href="@Url.Action("New")"><i class="fa fa-plus"></i> Новое юр. лицо</a>
+</p>
 
-@section PanelBody
-{
-    @using (Html.BeginForm("Index", "Organization", FormMethod.Post, new { @id="orgForm", @class = "form-horizontal",  data_toggle="validator", role="form" }))
+
+    @*@using (Html.BeginForm("Index", "Organization", FormMethod.Post, new { @id="orgForm", @class = "form-horizontal",  data_toggle="validator", role="form" }))
     {
         <div class="form-group">
-            @*<label class="col-lg-3 control-label" for="name">Название</label>*@
             <div class="col-lg-5">
                 @Html.TextBoxFor(m => m.Name, new { @class = "form-control required-mark", @id = "name", required = "required", data_error = "Заполните Название", placeholder="Название юр. лица" })
                 <span class="help-block with-errors"></span>
@@ -29,25 +26,29 @@
                 <span class="text-success">@TempData["ServerSuccess"]</span>
             </div>
         </div>
-    }
+}
+*@
     
-    @{
-    var list = Organization.GetList();
+    
 
-    if (list.Any())
+    @if (Model.Any())
     {
         <table class="table table-bordered">
-            <tr>
+            <tr class="bg-primary">
+                <th class="min-width"></th>
                 <th class="min-width">№</th>
                 <th>Название юр. лица</th>
                 <th class="min-width text-nowrap">Кол-во сотрудников</th>
                 <th class="min-width"></th>
             </tr>
             @{ int i = 0;}
-            @foreach (var org in list)
+            @foreach (var org in Model)
             {
                 i++;
                 <tr>
+                    <td>
+                        <a class="btn btn-link" href="@Url.Action("Edit", "Organization", new {id = org.Id})" data-toggle="tooltip" title="изменить"><i class="fa fa-edit"></i></a>
+                    </td>
                     <td>@i</td>
                     <td>@org.Name</td>
                     <td>@org.EmpCount</td>
@@ -58,8 +59,7 @@
             }
         </table>
     }
-}
-}
+
 
 @section scripts
 {

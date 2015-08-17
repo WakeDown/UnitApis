@@ -13,7 +13,9 @@ namespace Stuff.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public int EmpCount { get; set; }
-        public Employee Creator { get; set; }
+        //public Employee Creator { get; set; }
+        public string NameRod { get; set; }
+        public string NameDat { get; set; }
 
         public Position()
         {
@@ -33,6 +35,8 @@ namespace Stuff.Models
             Id = model.Id;
             Name = model.Name;
             EmpCount = model.EmpCount;
+            NameRod = model.NameRod;
+            NameDat = model.NameDat;
         }
 
         public static IEnumerable<Position> GetSelectionList()

@@ -1,0 +1,138 @@
+﻿@using Stuff.Models
+@model Stuff.Models.Statement
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Заявление</title>
+    @Styles.Render("~/Content/statement")
+</head>
+<body>
+    <div class="print sheet">
+        <table class="no-border">
+            <colgroup>
+                <col style="width: 50%;" />
+            </colgroup>
+            <tr>
+                <td colspan="2">
+                    <img class="logo-unit-statement" src="~/Content/images/logo-unit-statement.png" />
+                </td>
+            </tr>
+            <tr class="text-sm">
+                <td class="bold top-left">
+                    @Model.Organization.Name
+                </td>
+                <td></td>
+            </tr>
+            <tr class="top-left text-sm">
+                <td>
+                    <div>@Model.Organization.Phone</div>
+                    <div>@Model.Organization.Email</div>
+                    <div>@Model.Organization.Site</div>
+                    <div style="height: 20px;"></div>
+                    @foreach (var image in Model.Organization.StateImages)
+                    {
+                        if (image.Image.Length > 0)
+                        {
+                            var base64 = Convert.ToBase64String(image.Image);
+                            var imgSrc = String.Format("data:image/gif;base64,{0}", base64);
+                            <div>
+                                <img class="org-state" src="@imgSrc" />
+                            </div>
+                        }
+                    }
+
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td colspan="2" style="height: 10px;"><hr /></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <div>@Model.Organization.Name</div>
+                    <div>@Model.Organization.Director.ShortNameDat</div>
+                    <div>от @Model.Employee.Position.NameRod</div>
+                    <div>@Model.Employee.ShortNameRod</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="height: 30px;"></td>
+            </tr>
+            <tr>
+                <td colspan="2"><h3 class="center">@Model.Name</h3></td>
+            </tr>
+            <tr><td colspan="2" style="height: 30px;"></td></tr>
+            <tr>
+                <td colspan="2">@Model.Text</td>
+            </tr>
+            <tr><td colspan="2" style="height: 100px;"></td></tr>
+            <tr>
+                <td class="top">@DateTime.Now.ToString("dd MMMM yyyy") г.</td>
+                <td><div class="right">Подпись___________________</div><div class="right">@Model.Employee.DisplayName</div></td>
+            </tr>
+            <tr><td colspan="2" style="height: 100px;"></td></tr>
+            <tr>
+                <td class="bold">СОГЛАСОВАНО</td>
+                <td></td>
+            </tr>
+            <tr><td colspan="2" style="height: 30px;"></td></tr>
+            <tr>
+                <td></td>
+                <td><div class="right">Подпись___________________</div><div class="right">@Model.Organization.Director.DisplayName</div></td>
+            </tr>
+            <tr><td colspan="2" style="height: 10px;"></td></tr>
+            <tr>
+                <td></td>
+                <td class="right">
+                    _____________ @DateTime.Now.Year г.
+                </td>
+            </tr>
+        </table>
+    </div>
+    @if (Model.Matchers.Any())
+    {<div class="sheet">
+        <table class="no-border">
+            <tr>
+                <td colspan="2"><img class="logo-unit-statement" src="~/Content/images/logo-unit-statement.png" /></td>
+            </tr>
+            <tr><td colspan="2" style="height: 30px;"></td></tr>
+            <tr>
+                <td class="bold">Согласовано:</td>
+            </tr>
+            <tr><td colspan="2" style="height: 20px;"></td></tr>
+            @foreach (Employee mact in Model.Matchers)
+            {
+                <tr><td colspan="2" style="height: 50px;"></td></tr>
+                <tr>
+                    <td>
+                        Подпись____________________/@mact.DisplayName/_____________ @DateTime.Now.Year г.
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+    }
+        @*@Scripts.Render("~/Content/jquery")*@
+        <script type="text/javascript">
+            //    var divToPrint = document.getElementsByTagName('body');
+            //newWin = window.open();
+            //newWin.document.write(divToPrint.innerHTML);
+            //newWin.document.close();
+            //newWin.focus();
+            //newWin.print();
+            //newWin.close();
+            window.print();
+            //$(document).ready(function () { window.print(); });
+        </script>
+</body>
+</html>

@@ -14,7 +14,7 @@
 @if (Model.Any())
 {
     <table id="depList" class="table table-bordered no-padding">
-        <tr>
+        <tr class="bg-primary">
             <th class="min-width">№</th>
             <th class="width-20p">Подразделение</th>
             <th>Руководитель</th>
@@ -22,47 +22,48 @@
         </tr>
         @{int i = 0;}
         @foreach (Department dep in Model)
-        {
-            i++;
-            <tr>
-                <th>@i</th>
-                <td>@dep.Name</td>
-                <td>@dep.Chief.DisplayName</td>
-                <td>
-                    @{
-            var stuff = dep.GetStuff();
-            if (stuff.Any())
-            {
-                <table class="table table-bordered table-stuff">
-                    @foreach (Employee emp in stuff)
-                    {
-                        <tr>
-                            @if (userCanEdit)
-                            {
-                                <td class="min-width">
-                                    <a class=" btn btn-link" href="@Url.Action("Edit", "Employee", new {id = emp.Id})" data-toggle="tooltip" title="изменить">
-                                        <i class="fa fa-edit"></i></a>
-                                </td>
-                            }
-                            <td class="width-20p">
-                                @emp.DisplayName
-                            </td>
-@if (userCanEdit)
 {
-    <td class="min-width">
-        <button name="delete-emp" class="btn btn-link" empid="@emp.Id" data-toggle="tooltip" title="удалить"><i class="fa fa-trash"></i></button>
-    </td>
-}
-                            <td>@(@emp.Position != null ? emp.Position.Name : "--отсутствует--")</td>
-                            @*<td>@(@emp.EmpState != null ? emp.EmpState.Name : "--отсутствует--")</td>*@
-                        </tr>
+    i++;
+    <tr>
+        <th>@i</th>
+        <td>@dep.Name</td>
+        <td>@dep.Chief.DisplayName</td>
+        <td>
+            @{
+    var stuff = dep.GetStuff();
+    if (stuff.Any())
+    {
+        <table class="table table-bordered table-stuff">
+            @foreach (Employee emp in stuff)
+            {
+                <tr>
+                    @if (userCanEdit)
+                    {
+                        <td class="min-width">
+                            <a class=" btn btn-link" href="@Url.Action("Edit", "Employee", new {id = emp.Id})" data-toggle="tooltip" title="изменить">
+                                <i class="fa fa-edit"></i>
+                            </a>
+                        </td>
                     }
-                </table>
+                    <td class="width-20p">
+                        @emp.DisplayName
+                    </td>
+                    @if (userCanEdit)
+                    {
+                        <td class="min-width">
+                            <button name="delete-emp" class="btn btn-link" empid="@emp.Id" data-toggle="tooltip" title="удалить"><i class="fa fa-trash"></i></button>
+                        </td>
+                    }
+                    <td>@(@emp.Position != null ? emp.Position.Name : "--отсутствует--")</td>
+                    @*<td>@(@emp.EmpState != null ? emp.EmpState.Name : "--отсутствует--")</td>*@
+                </tr>
             }
-                    }
-                </td>
-            </tr>
-        }
+        </table>
+    }
+            }
+        </td>
+    </tr>
+}
     </table>
 }
 

@@ -1,0 +1,60 @@
+﻿body {
+    font-size: 14pt;
+    font-family: Verdana, Arial, sans-serif;
+}
+.print {
+    page-break-after:always;
+}
+
+.sheet {
+    width: 1020px !important;
+    padding-left: 50px;
+}
+
+.no-border {
+    border-color: transparent;
+}
+
+table.bordered {
+    border-collapse: collapse;
+}
+
+table.bordered, table.bordered tr, table.bordered td, table.bordered th {
+    border: 1px solid #333 !important;
+}
+
+table.bordered td, table.bordered th {
+    padding: 3px;
+}
+
+.logo-unit-statement {
+    width: 200px;
+}
+
+.bold {
+    font-weight: 700;
+}
+
+.top-left {
+    text-align: left;
+    vertical-align: top;
+}
+.center {
+    text-align: center;
+}
+
+.text-sm {
+    font-size: 0.8em;
+}
+
+img.org-state {
+    height: 100px;
+}
+
+.right {
+    text-align: right;
+}
+
+.text-nowrap {
+    white-space: nowrap;
+}

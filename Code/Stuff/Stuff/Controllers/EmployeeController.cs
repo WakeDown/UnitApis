@@ -14,6 +14,18 @@ namespace Stuff.Controllers
 {
     public class EmployeeController : BaseController
     {
+        public JsonResult GetServerSid()
+        {
+            DisplayCurUser();
+            return Json(new {sid = Employee.GetServerSid()});
+        }
+
+        public JsonResult GetServerUserName()
+        {
+            DisplayCurUser();
+            return Json(new { sid = Employee.GetServerUserName() });
+        }
+
         public ActionResult Index(int? id)
         {
             DisplayCurUser();
@@ -106,7 +118,7 @@ namespace Stuff.Controllers
                 ResponseMessage responseMessage;
                 bool complete = SaveEmployee(emp, out responseMessage);
                 if (!complete) throw new Exception(responseMessage.ErrorMessage);
-                return RedirectToAction("Index", "Employee", new { id = responseMessage.Id });
+                return RedirectToAction("NewbieList", "Employee", new { id = responseMessage.Id });
             }
             catch (Exception ex)
             {
@@ -149,6 +161,30 @@ namespace Stuff.Controllers
             return View(emps);
         }
 
+        public ActionResult FiredList()
+        {
+            DisplayCurUser();
+
+            var emps = Employee.GetFiredList();
+            return View(emps);
+        }
+
+        public ActionResult DecreeList()
+        {
+            DisplayCurUser();
+
+            var emps = Employee.GetDecreeList();
+            return View(emps);
+        }
+
+        public ActionResult NewbieList()
+        {
+            DisplayCurUser();
+
+            var emps = Employee.GetNewbieList();
+            return View(emps);
+        }
+
         public JsonResult GetDepartmentChief(int idDepartment)
         {
             string result = "--отсутствует--";
@@ -178,6 +214,62 @@ namespace Stuff.Controllers
             }
         }
 
+        
+            [HttpPost]
+        public void Renew(int id)
+        {
+            var user = DisplayCurUser();
+            if (!user.UserCanEdit()) RedirectToAction("AccessDenied", "Error");
+            try
+            {
+                ResponseMessage responseMessage;
+                bool complete = Employee.SetStateStuff(id, out responseMessage);
+                if (!complete) throw new Exception(responseMessage.ErrorMessage);
+                RedirectToAction("List");
+            }
+            catch (Exception ex)
+            {
+                ViewData["ServerError"] = ex.Message;
+            }
+        }
+
+        [HttpPost]
+        public void Fired(int id)
+        {
+            var user = DisplayCurUser();
+            if (!user.UserCanEdit()) RedirectToAction("AccessDenied", "Error");
+            try
+            {
+                ResponseMessage responseMessage;
+                bool complete = Employee.SetStateFired(id, out responseMessage);
+                if (!complete) throw new Exception(responseMessage.ErrorMessage);
+                RedirectToAction("FiredList");
+
+            }
+            catch (Exception ex)
+            {
+                ViewData["ServerError"] = ex.Message;
+            }
+        }
+
+        [HttpPost]
+        public void Decree(int id)
+        {
+            var user = DisplayCurUser();
+            if (!user.UserCanEdit()) RedirectToAction("AccessDenied", "Error");
+            try
+            {
+                ResponseMessage responseMessage;
+                bool complete = Employee.SetStateDecree(id, out responseMessage);
+                if (!complete) throw new Exception(responseMessage.ErrorMessage);
+                RedirectToAction("DecreeList");
+            }
+            catch (Exception ex)
+            {
+                ViewData["ServerError"] = ex.Message;
+            }
+        }
+
         [HttpPost]
         //[MultiButton(MatchFormKey = "action", MatchFormValue = "GenEmail")]
         public ActionResult GenEmailAddressByName(string surname, string name)
@@ -189,7 +281,6 @@ namespace Stuff.Controllers
             try
             {
                 email = Ad.GenEmailAddressByName(surname, name);
-
             }
             catch (Exception ex)
             {

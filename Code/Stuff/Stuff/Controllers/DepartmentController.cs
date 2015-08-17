@@ -34,7 +34,7 @@ namespace Stuff.Controllers
         {
             DisplayCurUser();
 
-            var deps = Department.GetOrgStructure();
+            var deps = Department.GetOrgStructure().ToList();
 
             return View(deps);
         }
@@ -57,7 +57,7 @@ namespace Stuff.Controllers
             try
             {
                 ResponseMessage responseMessage;
-                dep.Creator = new Employee(){AdSid = GetCurUser().Sid};
+                //dep.Creator = new Employee(){AdSid = GetCurUser().Sid};
                 bool complete = dep.Save(out responseMessage);
                 if (!complete) throw new Exception(responseMessage.ErrorMessage);
 
@@ -121,6 +121,21 @@ namespace Stuff.Controllers
             catch (Exception ex)
             {
                 ViewData["ServerError"] = ex.Message;
+            }
+        }
+
+        [HttpPost]
+        public JsonResult GetStuff(int? idDepartment)
+        {
+            try
+            {
+                var list = Employee.GetList(idDepartment: idDepartment);
+                return Json(list);
+            }
+            catch (Exception ex)
+            {
+                ViewData["ServerError"] = ex.Message;
+                return Json(new { errorMessage = ex.Message });
             }
         }
 	}

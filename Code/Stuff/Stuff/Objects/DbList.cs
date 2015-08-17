@@ -35,6 +35,10 @@ namespace Stuff.Objects
         {
             return new SelectList(Employee.GetSelectionList(), "Id", "DisplayName");
         }
+        public static SelectList GetEmployeeListSid()
+        {
+            return new SelectList(Employee.GetSelectionList(), "AdSid", "DisplayName");
+        }
         public static SelectList GetEmpStateList()
         {
             return new SelectList(EmpState.GetSelectionList(), "Id", "Name");

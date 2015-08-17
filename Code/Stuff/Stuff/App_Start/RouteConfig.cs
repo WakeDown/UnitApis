@@ -12,17 +12,11 @@ namespace Stuff
         public static void RegisterRoutes(RouteCollection routes)
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
-
-            //routes.MapRoute(
-            //    name: "EmployeeIndex",
-            //    url: "Employee/Index/{id}",
-            //    defaults: new { action="Index", controller="Employee" }
-            //);
-
+            
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Department", action = "Index", id = UrlParameter.Optional }
+                defaults: new { controller = "Main", action = "Index", id = UrlParameter.Optional }
             );
 
             

@@ -14,11 +14,23 @@
 {
     @using (Html.BeginForm("Edit", "Employee", FormMethod.Post, new { @class = "form-horizontal", enctype = "multipart/form-data", data_toggle = "validator", role = "form" }))
     {
+        @Html.HiddenFor(m => m.HasAdAccount)
+        @Html.HiddenFor(m=>m.EmpState.Name)
         <div class="form-group">
             <label class="col-lg-2 control-label" for="empState">Статус</label>
             <div class="col-lg-2">
-                @Html.DropDownListFor(m => m.EmpState.Id, DbList.GetEmpStateList(), new { @class = "form-control required-mark", @id = "empState", required = "required", data_error = "Выберите Статус" })
+                @Html.LabelFor(m => m.EmpState, Model.EmpState.Name, new { @class = "form-control" })
+                @*@Html.DropDownListFor(m => m.EmpState.Id, DbList.GetEmpStateList(), new { @class = "form-control required-mark", @id = "empState", required = "required", data_error = "Выберите Статус" })*@
                 <span class="help-block with-errors"></span>
+            </div>
+            <div class="col-lg-1">
+                <span id="emp-fired" class="btn btn-danger" empid="@Model.Id">Уволить</span>
+            </div>
+            <div class="col-lg-1">
+                <span id="emp-decree" class="btn btn-warning" empid="@Model.Id">В декрет</span>
+            </div>
+            <div class="col-lg-1">
+                <span id="emp-renew" class="btn btn-success" empid="@Model.Id">Принять/Восстановить</span>
             </div>
         </div>
         <div class="form-group">
@@ -44,6 +56,20 @@
             <div class="col-lg-3">
                 @Html.TextBoxFor(m => m.Patronymic, new { @class = "form-control", @id = "patronymic", placeholder = "Отчество" })
                 <div class="help-block with-errors"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="fullNameDat">ФИО<br /><small>-дательный падеж- Кому?</small></label>
+            <div class="col-lg-5">
+                @Html.TextBoxFor(m => m.FullNameDat, new { @class = "form-control", @id = "fullNameDat" })
+                <span class="help-block with-errors"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="FullNameRod">ФИО<br /><small>-родительный падеж- От кого?</small></label>
+            <div class="col-lg-5">
+                @Html.TextBoxFor(m => m.FullNameRod, new { @class = "form-control", @id = "FullNameRod" })
+                <span class="help-block with-errors"></span>
             </div>
         </div>
         <div class="form-group">
@@ -98,7 +124,7 @@
                 @{
         var attrsWorkNum = new Dictionary<string, object>() { { "class", "form-control required-mark" }, { "id", "workNum" }, { "required", "required" }, { "data_error", "Заполните поле Внутренний тел." }, { "data-mask", "0#" } };
         if (String.IsNullOrEmpty(Model.WorkNum)) { attrsWorkNum.Add("disabled", "disabled"); }
-}
+                }
                 @Html.TextBoxFor(m => m.WorkNum, attrsWorkNum)
                 <span class="help-block with-errors"></span>
             </div>
@@ -155,7 +181,7 @@
                 <p>
                     <img id="photo-min" src="@DbModel.OdataServiceUri/Employee/GetPhoto?id=@Model.Id" />
                 </p>
-                <input type="file" name="file" />
+                <input type="file" name="file" multiple="multiple" />
             </div>
         </div>
         <div class="form-group">
@@ -174,11 +200,55 @@
 {
     <script type="text/javascript">
         $(document).ready(function () {
-            init();
-        });
-        function init() {
             $("#department").change(showDepartmentChief);
             $("[name='no-data']").click(avalElement);
+            $("#emp-decree").click(decreeEmployee);
+            $("#emp-fired").click(firedEmployee);
+            $("#emp-renew").click(renewEmployee);
+            $("#birthDate").mask('00.00.0000');
+            $("#dateCame").mask('00.00.0000');
+            $('#mobilNum').mask('+7-000-000-00-00');
+        });
+        
+        
+        function renewEmployee() {
+            if (!confirm('Вы действительно хотите восстановить сотрудника?')) return;
+            $(this).prop('disabled');
+            var id = $(this).attr('empId');
+            $.post("@Url.Action("Renew", "Employee")", { id: id }, function (data) {
+            if (data != null && data !== '') {
+                alert(data);
+            } else {
+                window.location.reload();
+            }
+        }
+            );
+        }
+        function decreeEmployee() {
+            if (!confirm('Вы действительно хотите отвправить сотрудника в декрет?')) return;
+            $(this).prop('disabled');
+            var id = $(this).attr('empId');
+            $.post("@Url.Action("Decree", "Employee")", { id: id }, function (data) {
+                if (data != null && data !== '') {
+                    alert(data);
+                } else {
+                    window.location.reload();
+                }
+            }
+            );
+        }
+        function firedEmployee() {
+            if (!confirm('Вы действительно хотите уволить сотрудника?')) return;
+            $(this).prop('disabled');
+            var id = $(this).attr('empId');
+            $.post("@Url.Action("Fired", "Employee")", { id: id }, function (data) {
+                if (data != null && data !== '') {
+                    alert(data);
+                } else {
+                    window.location.reload();
+                }
+            }
+            );
         }
         function avalElement() {
             var forId = $(this).attr('data-for');
@@ -208,5 +278,4 @@
                 );
         }
     </script>
-
 }

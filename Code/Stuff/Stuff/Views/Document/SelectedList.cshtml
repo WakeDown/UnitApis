@@ -1,0 +1,12 @@
+﻿@using Stuff.Models
+@model IEnumerable<Stuff.Models.Document>
+
+<table class="table table-bordered">
+    @foreach (Document doc in Model)
+    {
+        <tr>
+            <td>@doc.Id</td>
+            <td>@doc.Name</td>
+        </tr>
+    }
+</table>

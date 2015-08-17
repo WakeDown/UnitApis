@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace StuffBirthdayMailDelivery.Models
+namespace StuffDelivery.Models
 {
     public class Department
     {

@@ -1,0 +1,119 @@
+﻿@using Stuff.Models
+@model IEnumerable<Stuff.Models.ItBudgetReportItem>
+
+@{
+    Layout = null;
+
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+    <style type="text/css">
+        body {
+            padding: 60px 35px;
+            font-family: 'Calibri';
+        }
+
+        .it-bud-list {
+            border-collapse: collapse;
+            border: 1px solid black;
+        }
+
+            .it-bud-list td, .it-bud-list th {
+                padding: 3px;
+                border: 1px solid black;
+            }
+
+        .it-bud-dep-row {
+            background: #d3d3d3;
+            font-size: 1.2em;
+        }
+
+        .it-bud-peaple-row td:first-child {
+            padding-left: 10px;
+        }
+
+        .level-1 td:first-child {
+        }
+
+        .level-1.it-bud-peaple-row td:first-child {
+            padding-left: 10px;
+        }
+
+        .level-2 td:first-child {
+            padding-left: 15px;
+        }
+
+        .level-2.it-bud-peaple-row td:first-child {
+            padding-left: 25px;
+        }
+
+        .level-3 td:first-child {
+            padding-left: 40px;
+        }
+
+        .level-3.it-bud-peaple-row td:first-child {
+            padding-left: 50px;
+        }
+
+        .level-4 td:first-child {
+            padding-left: 80px;
+        }
+
+        .level-4.it-bud-peaple-row td:first-child {
+            padding-left: 90px;
+        }
+
+        .level-5 td:first-child {
+            padding-left: 120px;
+        }
+
+        .level-5.it-bud-peaple-row td:first-child {
+            padding-left: 130px;
+        }
+
+        .money-cell {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    @if (Model.Any())
+    {
+        <table class="it-bud-list">
+            @foreach (ItBudgetReportItem item in Model)
+            {
+                @*<tr class="it-bud-dep-row level-@item.Level"><td>@item.DepartmentName</td><td>@item.PeopleCount чел.</td><td class="money-cell">@String.Format("{0:N0} р.", item.CostSum)</td></tr>*@
+                if (item.Peoples.Any())
+                {
+                    foreach (ItBudgetReportItemPeople peop in item.Peoples)
+                    {
+                <tr class="it-bud-peaple-row">
+                    <td>@item.DepartmentName</td>
+                    <td>@peop.FullName</td>
+                    @*<td class="money-cell">@String.Format("{0:N0} р.", peop.Cost)</td>*@
+                </tr>
+                    }
+                }
+            }
+        </table>
+        <p>
+
+        </p>
+
+        <table class="it-bud-list">
+            @{
+                 var depList = Model.GroupBy(m => new {m.DepartmentName, m.Level}).Select(m=> new{Name=m.Key.DepartmentName, Level=m.Key.Level, PeopleCount=m.Sum(p=>p.PeopleCount)}).OrderBy(m=>m.Level).ThenBy(m=>m.Name);
+            }
+            @foreach (var dep in depList)
+            {
+                <tr><td>@dep.Name</td><td>@dep.PeopleCount</td></tr>
+            }
+        </table>
+    }
+</body>
+</html>

@@ -18,7 +18,7 @@
 @if (Model.Any())
 {
     <table id="depList" class="table table-bordered">
-        <tr>
+        <tr class="bg-primary">
             @if (userCanEdit)
             {
                 <th></th>
@@ -27,10 +27,10 @@
             <th>Название подразделения</th>
             <th>Головное подразделение</th>
             <th>Руководитель</th>
-@if (ViewBag.CurUser.UserCanEdit())
-{
-    <th></th>
-}
+            @if (ViewBag.CurUser.UserCanEdit())
+            {
+                <th></th>
+            }
         </tr>
         @{int i = 0;}
         @foreach (Department dep in Model)

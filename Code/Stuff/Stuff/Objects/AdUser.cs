@@ -67,5 +67,23 @@ namespace Stuff.Objects
             if (String.IsNullOrEmpty(Sid) || !AdGroups.Any()) return false;
             return AdGroups.Contains(AdGroup.SuperAdmin) || AdGroups.Contains(AdGroup.PersonalManager);
         }
+
+        public bool UserIsAdmin()
+        {
+            if (String.IsNullOrEmpty(Sid) || !AdGroups.Any()) return false;
+            return AdGroups.Contains(AdGroup.SuperAdmin);
+        }
+
+        public bool UserIsPersonalManager()
+        {
+            if (String.IsNullOrEmpty(Sid) || !AdGroups.Any()) return false;
+            return AdGroups.Contains(AdGroup.PersonalManager) || AdGroups.Contains(AdGroup.SuperAdmin);
+        }
+
+        public bool IsSystemUser()
+        {
+            if (String.IsNullOrEmpty(Sid) || !AdGroups.Any()) return false;
+            return AdGroups.Contains(AdGroup.SystemUser) || AdGroups.Contains(AdGroup.SuperAdmin);
+        }
     }
 }

@@ -8,7 +8,7 @@ using System.Web;
 using Newtonsoft.Json;
 using Stuff.Objects;
 
-namespace StuffBirthdayMailDelivery.Models
+namespace StuffDelivery.Models
 {
     public class Employee : DbModel
     {
@@ -76,9 +76,17 @@ namespace StuffBirthdayMailDelivery.Models
             Creator = emp.Creator;
         }
 
-        public static IEnumerable<string> GetFullRecipientList()
+        public static IEnumerable<string> GetHolidayWorkDeliveryRecipientList()
         {
-            Uri uri = new Uri(String.Format("{0}/Employee/GetFullRecipientList", OdataServiceUri));
+            Uri uri = new Uri(String.Format("{0}/Employee/GetHolidayWorkDeliveryRecipientList", OdataServiceUri));
+            string jsonString = GetJson(uri);
+            var email = JsonConvert.DeserializeObject<IEnumerable<string>>(jsonString);
+            return email;
+        }
+
+        public static IEnumerable<string> GetFullRecipientList(string citySysName=null)
+        {
+            Uri uri = new Uri(String.Format("{0}/Employee/GetFullRecipientList?citySysName={1}", OdataServiceUri, citySysName));
             string jsonString = GetJson(uri);
             var email = JsonConvert.DeserializeObject<IEnumerable<string>>(jsonString);
             return email;
@@ -97,6 +105,20 @@ namespace StuffBirthdayMailDelivery.Models
             var emps = JsonConvert.DeserializeObject<IEnumerable<Employee>>(jsonString);
             return emps;
         }
-        
+        public static IEnumerable<Employee> GetNewbieList()
+        {
+            Uri uri = new Uri(String.Format("{0}/Employee/GetNewbieList", OdataServiceUri));
+            string jsonString = GetJson(uri);
+            var emps = JsonConvert.DeserializeObject<IEnumerable<Employee>>(jsonString);
+            return emps;
+        }
+
+        public static bool SetNewbieDeliverySend(out ResponseMessage responseMessage,params Employee[] emps)
+        {
+            Uri uri = new Uri(String.Format("{0}/Employee/SetDeliverySend", OdataServiceUri));
+            string json = JsonConvert.SerializeObject(emps);
+            bool result = PostJson(uri, json, out responseMessage);
+            return result;
+        }
     }
 }

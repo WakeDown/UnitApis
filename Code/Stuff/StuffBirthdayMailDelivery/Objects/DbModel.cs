@@ -17,6 +17,14 @@ namespace Stuff.Objects
         {
             string result = String.Empty;
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+            CredentialCache cc = new CredentialCache();
+            cc.Add(uri, "NTLM", CredentialCache.DefaultNetworkCredentials);
+            request.Credentials = cc;
+            //cc.Add(
+            //uri,
+            //"NTLM",
+            //new NetworkCredential("UN1T\\sqlUnit_prog", "1qazXSW@")
+            //);
             request.ContentType = "application/json";
 
             try
@@ -45,6 +53,9 @@ namespace Stuff.Objects
         protected static bool PostJson(Uri uri, string json, out ResponseMessage responseMessage)
         {
             var request = (HttpWebRequest)WebRequest.Create(uri);
+            CredentialCache cc = new CredentialCache();
+            cc.Add(uri, "NTLM", CredentialCache.DefaultNetworkCredentials);
+            request.Credentials = cc;
             request.ContentType = "text/json";
             request.Method = "POST";
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -13,7 +14,7 @@ namespace Stuff.Objects
 {
     public class DbModel
     {
-        public const string OdataServiceUri = "http://uiis-1:10002/odata";
+        public static string OdataServiceUri = ConfigurationManager.AppSettings["OdataServiceUri"];//"http://uiis-1:10002/data";
 
         //private static string AuthorizationHeaderValue
         //{
@@ -41,7 +42,6 @@ namespace Stuff.Objects
             request.Credentials = cc;
             request.ContentType = "application/json";
             //request.Headers.Add("Authorization", AuthorizationHeaderValue);
-            
 
             try
             {

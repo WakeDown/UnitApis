@@ -56,9 +56,9 @@ namespace Stuff.Models
             Uri uri = new Uri(String.Format("{0}/Department/GetList", OdataServiceUri));
             string jsonString = GetJson(uri);
 
-            var deps = JsonConvert.DeserializeObject<IEnumerable<Department>>(jsonString);
+            var model = JsonConvert.DeserializeObject<IEnumerable<Department>>(jsonString);
 
-            return deps;
+            return model;
         }
 
         public static bool Delete(int id, out ResponseMessage responseMessage)
@@ -81,12 +81,13 @@ namespace Stuff.Models
 
         public IEnumerable<Employee> GetStuff()
         {
-            Uri uri = new Uri(String.Format("{0}/Employee/GetList?idDepartment={1}", OdataServiceUri, Id));
-            string jsonString = GetJson(uri);
+            return Employee.GetList(idDepartment: Id);
+            //Uri uri = new Uri(String.Format("{0}/Employee/GetList?idDepartment={1}", OdataServiceUri, Id));
+            //string jsonString = GetJson(uri);
 
-            var emps = JsonConvert.DeserializeObject<IEnumerable<Employee>>(jsonString);
+            //var emps = JsonConvert.DeserializeObject<IEnumerable<Employee>>(jsonString);
 
-            return emps;
+            //return emps;
         }
 
         public static IEnumerable<Department> GetOrgStructure()
