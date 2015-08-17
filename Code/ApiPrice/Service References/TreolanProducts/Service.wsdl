@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="https://b2b.treolan.ru/Webservice2008/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="https://b2b.treolan.ru/Webservice2008/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">B2B Веб-Сервис. Версия: 1.0</wsdl:documentation>
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="https://b2b.treolan.ru/Webservice2008/">
+      <s:element name="ProductInfo">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="password" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Articul" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ProductInfoResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ProductInfoResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ProductInfoV2">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="password" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Articul" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ProductInfoV2Response">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ProductInfoV2Result">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCargoList">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="password" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="DateBeg" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="DateEnd" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCargoListResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetCargoListResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCargoByNumb">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="password" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="CargoNumb" type="s:long" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCargoByNumbResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetCargoByNumbResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetSchet">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="password" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="SchetName" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetSchetResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetSchetResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DeleteSchetPosition">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="password" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="XMLQuery" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DeleteSchetPositionResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DeleteSchetPositionResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MoveSchet">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="password" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="XMLQuery" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MoveSchetResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="MoveSchetResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="ProductInfoSoapIn">
+    <wsdl:part name="parameters" element="tns:ProductInfo" />
+  </wsdl:message>
+  <wsdl:message name="ProductInfoSoapOut">
+    <wsdl:part name="parameters" element="tns:ProductInfoResponse" />
+  </wsdl:message>
+  <wsdl:message name="ProductInfoV2SoapIn">
+    <wsdl:part name="parameters" element="tns:ProductInfoV2" />
+  </wsdl:message>
+  <wsdl:message name="ProductInfoV2SoapOut">
+    <wsdl:part name="parameters" element="tns:ProductInfoV2Response" />
+  </wsdl:message>
+  <wsdl:message name="GetCargoListSoapIn">
+    <wsdl:part name="parameters" element="tns:GetCargoList" />
+  </wsdl:message>
+  <wsdl:message name="GetCargoListSoapOut">
+    <wsdl:part name="parameters" element="tns:GetCargoListResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetCargoByNumbSoapIn">
+    <wsdl:part name="parameters" element="tns:GetCargoByNumb" />
+  </wsdl:message>
+  <wsdl:message name="GetCargoByNumbSoapOut">
+    <wsdl:part name="parameters" element="tns:GetCargoByNumbResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetSchetSoapIn">
+    <wsdl:part name="parameters" element="tns:GetSchet" />
+  </wsdl:message>
+  <wsdl:message name="GetSchetSoapOut">
+    <wsdl:part name="parameters" element="tns:GetSchetResponse" />
+  </wsdl:message>
+  <wsdl:message name="DeleteSchetPositionSoapIn">
+    <wsdl:part name="parameters" element="tns:DeleteSchetPosition" />
+  </wsdl:message>
+  <wsdl:message name="DeleteSchetPositionSoapOut">
+    <wsdl:part name="parameters" element="tns:DeleteSchetPositionResponse" />
+  </wsdl:message>
+  <wsdl:message name="MoveSchetSoapIn">
+    <wsdl:part name="parameters" element="tns:MoveSchet" />
+  </wsdl:message>
+  <wsdl:message name="MoveSchetSoapOut">
+    <wsdl:part name="parameters" element="tns:MoveSchetResponse" />
+  </wsdl:message>
+  <wsdl:portType name="B2BWebServiceSoap">
+    <wsdl:operation name="ProductInfo">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Позволяет получать подробную информацию по продукту.</wsdl:documentation>
+      <wsdl:input message="tns:ProductInfoSoapIn" />
+      <wsdl:output message="tns:ProductInfoSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProductInfoV2">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Позволяет получать подробную информацию по продукту. Версия 2.</wsdl:documentation>
+      <wsdl:input message="tns:ProductInfoV2SoapIn" />
+      <wsdl:output message="tns:ProductInfoV2SoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCargoList">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Возможность получения списка грузов и их характеристик.</wsdl:documentation>
+      <wsdl:input message="tns:GetCargoListSoapIn" />
+      <wsdl:output message="tns:GetCargoListSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCargoByNumb">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Возможность получения подробной информации по грузу.</wsdl:documentation>
+      <wsdl:input message="tns:GetCargoByNumbSoapIn" />
+      <wsdl:output message="tns:GetCargoByNumbSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetSchet">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Получения информации по Счету.</wsdl:documentation>
+      <wsdl:input message="tns:GetSchetSoapIn" />
+      <wsdl:output message="tns:GetSchetSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="DeleteSchetPosition">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Удаление позиций счета.</wsdl:documentation>
+      <wsdl:input message="tns:DeleteSchetPositionSoapIn" />
+      <wsdl:output message="tns:DeleteSchetPositionSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MoveSchet">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Перенос позиций из счета в счет.</wsdl:documentation>
+      <wsdl:input message="tns:MoveSchetSoapIn" />
+      <wsdl:output message="tns:MoveSchetSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="B2BWebServiceSoap" type="tns:B2BWebServiceSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="ProductInfo">
+      <soap:operation soapAction="https://b2b.treolan.ru/Webservice2008/ProductInfo" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProductInfoV2">
+      <soap:operation soapAction="https://b2b.treolan.ru/Webservice2008/ProductInfoV2" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCargoList">
+      <soap:operation soapAction="https://b2b.treolan.ru/Webservice2008/GetCargoList" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCargoByNumb">
+      <soap:operation soapAction="https://b2b.treolan.ru/Webservice2008/GetCargoByNumb" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSchet">
+      <soap:operation soapAction="https://b2b.treolan.ru/Webservice2008/GetSchet" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteSchetPosition">
+      <soap:operation soapAction="https://b2b.treolan.ru/Webservice2008/DeleteSchetPosition" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MoveSchet">
+      <soap:operation soapAction="https://b2b.treolan.ru/Webservice2008/MoveSchet" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="B2BWebServiceSoap12" type="tns:B2BWebServiceSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="ProductInfo">
+      <soap12:operation soapAction="https://b2b.treolan.ru/Webservice2008/ProductInfo" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProductInfoV2">
+      <soap12:operation soapAction="https://b2b.treolan.ru/Webservice2008/ProductInfoV2" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCargoList">
+      <soap12:operation soapAction="https://b2b.treolan.ru/Webservice2008/GetCargoList" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCargoByNumb">
+      <soap12:operation soapAction="https://b2b.treolan.ru/Webservice2008/GetCargoByNumb" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSchet">
+      <soap12:operation soapAction="https://b2b.treolan.ru/Webservice2008/GetSchet" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteSchetPosition">
+      <soap12:operation soapAction="https://b2b.treolan.ru/Webservice2008/DeleteSchetPosition" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MoveSchet">
+      <soap12:operation soapAction="https://b2b.treolan.ru/Webservice2008/MoveSchet" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="B2BWebService">
+    <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">B2B Веб-Сервис. Версия: 1.0</wsdl:documentation>
+    <wsdl:port name="B2BWebServiceSoap" binding="tns:B2BWebServiceSoap">
+      <soap:address location="https://api.treolan.ru/webservice2008/Service.asmx" />
+    </wsdl:port>
+    <wsdl:port name="B2BWebServiceSoap12" binding="tns:B2BWebServiceSoap12">
+      <soap12:address location="https://api.treolan.ru/webservice2008/Service.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

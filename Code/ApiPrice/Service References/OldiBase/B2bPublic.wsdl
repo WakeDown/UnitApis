@@ -1,0 +1,908 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns:xsd1="http://www.staten.ru" xmlns:soapbind="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12bind="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.staten.ru" name="B2bPublic" targetNamespace="http://www.staten.ru" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xs:schema xmlns:xs1="http://www.staten.ru" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.staten.ru" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:complexType name="Balance">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="BalanceClient" nillable="true" type="xs1:BalanceClient" />
+          <xs:element name="DateFrom" type="xs:string" />
+          <xs:element name="DateTo" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="BalanceClient">
+        <xs:sequence>
+          <xs:element name="Client" nillable="true" type="xs1:Client" />
+          <xs:element name="Begin" type="xs:decimal" />
+          <xs:element name="Out" type="xs:decimal" />
+          <xs:element name="In" type="xs:decimal" />
+          <xs:element name="End" type="xs:decimal" />
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="ContractRow" type="xs1:ContractRow" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="BalanceRow">
+        <xs:sequence>
+          <xs:element name="Date" type="xs:string" />
+          <xs:element name="Document" type="xs1:Document" />
+          <xs:element name="Begin" type="xs:decimal" />
+          <xs:element name="Out" type="xs:decimal" />
+          <xs:element name="In" type="xs:decimal" />
+          <xs:element name="End" type="xs:decimal" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="BankAccount">
+        <xs:sequence>
+          <xs:element name="BankName" type="xs:string" />
+          <xs:element name="Account" type="xs:string" />
+          <xs:element name="Bik" type="xs:decimal" />
+          <xs:element name="CorrAccount" type="xs:string" />
+          <xs:element name="Major" type="xs:int" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="CatalogElement">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Client">
+        <xs:sequence>
+          <xs:element name="Code" type="xs:string" />
+          <xs:element name="FullName" type="xs:string" />
+          <xs:element minOccurs="0" name="Currency" nillable="true" type="xs1:Currency" />
+          <xs:element minOccurs="0" name="Balance" nillable="true" type="xs:decimal" />
+          <xs:element minOccurs="0" name="Overdraft" nillable="true" type="xs:decimal" />
+          <xs:element minOccurs="0" name="Allowed" nillable="true" type="xs:decimal" />
+          <xs:element minOccurs="0" name="Inn" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Kpp" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="AdressFact" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="AdressJur" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="BankAccounts" nillable="true" />
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="Contracts" nillable="true" type="xs1:Contract" />
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="DeliveryList" nillable="true" type="xs1:Delivery" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ClientList">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="Client" nillable="true" type="xs1:Client" />
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="Currencies" type="xs1:Currency" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Contract">
+        <xs:sequence>
+          <xs:element name="Code" type="xs:string" />
+          <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Firm" nillable="true" />
+          <xs:element minOccurs="0" name="Currency" nillable="true" type="xs1:Currency" />
+          <xs:element minOccurs="0" name="ProcentConv" nillable="true" type="xs:decimal" />
+          <xs:element minOccurs="0" name="ProcentConvUsd" nillable="true" type="xs:decimal" />
+          <xs:element minOccurs="0" name="Major" nillable="true" type="xs:int" />
+          <xs:element minOccurs="0" name="Number" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Date" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ContractRow">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="BalanceRow" nillable="true" type="xs1:BalanceRow" />
+          <xs:element name="Begin" type="xs:decimal" />
+          <xs:element name="Out" type="xs:decimal" />
+          <xs:element name="In" type="xs:decimal" />
+          <xs:element name="End" type="xs:decimal" />
+          <xs:element name="Contract" type="xs1:Contract" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Credit">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="CreditClient" nillable="true" type="xs1:CreditClient" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="CreditBalanceRow">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="CreditDocRow" nillable="true" type="xs1:CreditDocRow" />
+          <xs:element minOccurs="0" name="Contract" nillable="true" type="xs1:Contract" />
+          <xs:element minOccurs="0" name="Debt" nillable="true" type="xs:decimal" />
+          <xs:element minOccurs="0" name="DebtCur" nillable="true" type="xs:decimal" />
+          <xs:element minOccurs="0" name="Limit" nillable="true" type="xs:decimal" />
+          <xs:element minOccurs="0" name="Overdraft" nillable="true" type="xs:decimal" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="CreditClient">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="CreditLine" nillable="true" type="xs1:CreditLine" />
+          <xs:element name="Debt" type="xs:decimal" />
+          <xs:element name="DebtCur" type="xs:decimal" />
+          <xs:element name="Limit" type="xs:decimal" />
+          <xs:element name="Overdraft" type="xs:decimal" />
+          <xs:element name="Client" type="xs1:Client" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="CreditDocRow">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Paydate" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Debt" nillable="true" type="xs:decimal" />
+          <xs:element minOccurs="0" name="DebtCur" nillable="true" type="xs:decimal" />
+          <xs:element minOccurs="0" name="Limit" nillable="true" type="xs:decimal" />
+          <xs:element minOccurs="0" name="Overdraft" nillable="true" type="xs:decimal" />
+          <xs:element minOccurs="0" name="Document" nillable="true" type="xs1:Document" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="CreditLine">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="CreditBalanceRow" nillable="true" type="xs1:CreditBalanceRow" />
+          <xs:element name="Name" type="xs:string" />
+          <xs:element minOccurs="0" name="Debt" nillable="true" type="xs:decimal" />
+          <xs:element minOccurs="0" name="DebtCur" nillable="true" type="xs:decimal" />
+          <xs:element minOccurs="0" name="Limit" nillable="true" type="xs:decimal" />
+          <xs:element minOccurs="0" name="Overdraft" nillable="true" type="xs:decimal" />
+          <xs:element minOccurs="0" name="Rate" nillable="true" type="xs:float" />
+          <xs:element minOccurs="0" name="RateUnit" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Length" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Penalty" nillable="true" type="xs:decimal" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Currency">
+        <xs:sequence>
+          <xs:element name="Code" nillable="true" type="xs:string" />
+          <xs:element name="Name" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Rate" nillable="true" type="xs:decimal" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Delivery">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="DeliveryCompany" nillable="true" type="xs1:CatalogElement" />
+          <xs:element minOccurs="0" name="City" nillable="true" type="xs1:CatalogElement" />
+          <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="AdressDelivery" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="StatusDelivery" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="DeliveryDate" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Document">
+        <xs:sequence>
+          <xs:element name="Number" type="xs:string" />
+          <xs:element name="Date" type="xs:string" />
+          <xs:element minOccurs="0" name="Currency" nillable="true" type="xs1:Currency" />
+          <xs:element minOccurs="0" name="Sum" nillable="true" type="xs:decimal" />
+          <xs:element minOccurs="0" name="Comment" nillable="true" type="xs:string" />
+          <xs:element name="Uid" type="xs:string" />
+          <xs:element name="Type" type="xs:string" />
+          <xs:element name="Name" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Error">
+        <xs:sequence>
+          <xs:element name="ErrorCode" type="xs:string" />
+          <xs:element name="ErrorMessage" type="xs:string" />
+          <xs:element name="ErrorDebugMessage" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Files">
+        <xs:sequence>
+          <xs:element name="Id" type="xs:string" />
+          <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Link" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Type" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="GtdSerialRow">
+        <xs:sequence>
+          <xs:element name="Code" type="xs:string" />
+          <xs:element name="Name" type="xs:string" />
+          <xs:element name="Quantity" type="xs:int" />
+          <xs:element minOccurs="0" name="Gtd" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="SerialStr" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Country" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="CountryCode" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Invoice">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Number" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Date" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Firm" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Client" nillable="true" type="xs1:Client" />
+          <xs:element minOccurs="0" name="Contract" nillable="true" type="xs1:Contract" />
+          <xs:element minOccurs="0" name="Sum" nillable="true" type="xs:decimal" />
+          <xs:element minOccurs="0" name="Currency" nillable="true" type="xs1:Currency" />
+          <xs:element minOccurs="0" name="Status" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Comment" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Rezerv" nillable="true" type="xs:int" />
+          <xs:element minOccurs="0" name="DateRezervClose" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="Items" nillable="true" type="xs1:ItemRow" />
+          <xs:element minOccurs="0" name="Uid" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="LastModified" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Site" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Weight" nillable="true" type="xs:decimal" />
+          <xs:element minOccurs="0" name="Volume" nillable="true" type="xs:decimal" />
+          <xs:element minOccurs="0" name="IsComputer" nillable="true" type="xs:decimal" />
+          <xs:element minOccurs="0" name="InvoiceType" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="Shipments" nillable="true" type="xs1:Shipment" />
+          <xs:element minOccurs="0" name="Delivery" nillable="true" type="xs1:Delivery" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="InvoiceList">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="Invoice" nillable="true" type="xs1:Invoice" />
+          <xs:element name="DateFrom" type="xs:string" />
+          <xs:element name="DateTo" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Item">
+        <xs:sequence>
+          <xs:element name="Code" type="xs:string" />
+          <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="IsGroup" nillable="true" type="xs:boolean" />
+          <xs:element minOccurs="0" name="Parent" nillable="true" type="xs1:Item" />
+          <xs:element minOccurs="0" name="Garanty" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Vendor" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="VendorCode" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Multiplicity" nillable="true" type="xs:int" />
+          <xs:element minOccurs="0" name="Volume" nillable="true" type="xs:decimal" />
+          <xs:element minOccurs="0" name="Weight" nillable="true" type="xs:decimal" />
+          <xs:element minOccurs="0" name="Width" nillable="true" type="xs:decimal" />
+          <xs:element minOccurs="0" name="Depth" nillable="true" type="xs:decimal" />
+          <xs:element minOccurs="0" name="Height" nillable="true" type="xs:decimal" />
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="Ean" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="Properties" nillable="true" type="xs1:ItemProperty" />
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="Images" nillable="true" type="xs1:Files" />
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="StockItem" nillable="true" type="xs1:StockItem" />
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="PriceItem" nillable="true" type="xs1:PriceItem" />
+          <xs:element minOccurs="0" name="Status" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Rrp" nillable="true" type="xs:decimal" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ItemList">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="Item" nillable="true" type="xs1:Item" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ItemProperty">
+        <xs:sequence>
+          <xs:element name="Id" type="xs:string" />
+          <xs:element name="Name" type="xs:string" />
+          <xs:element name="Value" type="xs:string" />
+          <xs:element minOccurs="0" name="Sorting" nillable="true" type="xs:int" />
+          <xs:element minOccurs="0" name="Unit" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ItemRow">
+        <xs:sequence>
+          <xs:element name="Code" type="xs:string" />
+          <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+          <xs:element name="Quantity" type="xs:int" />
+          <xs:element minOccurs="0" name="Price" nillable="true" type="xs:decimal" />
+          <xs:element minOccurs="0" name="Sum" nillable="true" type="xs:decimal" />
+          <xs:element minOccurs="0" name="Garn" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Weight" nillable="true" type="xs:decimal" />
+          <xs:element minOccurs="0" name="Volume" nillable="true" type="xs:decimal" />
+          <xs:element minOccurs="0" name="Inbox" nillable="true" type="xs:int" />
+          <xs:element minOccurs="0" name="Complect" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Comment" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="PriceClient" nillable="true" type="xs:decimal" />
+          <xs:element minOccurs="0" name="Stock" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Reject" nillable="true" type="xs:int" />
+          <xs:element minOccurs="0" name="StockReserve" nillable="true" type="xs1:Stock" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="PriceItem">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="PriceType" nillable="true" type="xs1:PriceType" />
+          <xs:element minOccurs="0" name="Value" nillable="true" type="xs:decimal" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="PriceType">
+        <xs:sequence>
+          <xs:element name="Id" type="xs:string" />
+          <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Currency" nillable="true" type="xs1:Currency" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Shipment">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Number" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Date" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Firm" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Client" nillable="true" type="xs1:Client" />
+          <xs:element minOccurs="0" name="Contract" nillable="true" type="xs1:Contract" />
+          <xs:element minOccurs="0" name="Sum" nillable="true" type="xs:decimal" />
+          <xs:element minOccurs="0" name="Currency" nillable="true" type="xs1:Currency" />
+          <xs:element minOccurs="0" name="Comment" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="Items" nillable="true" type="xs1:ItemRow" />
+          <xs:element minOccurs="0" name="Uid" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="IsGtd" nillable="true" type="xs:int" />
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="GtdSerials" nillable="true" type="xs1:GtdSerialRow" />
+          <xs:element minOccurs="0" name="Weight" nillable="true" type="xs:decimal" />
+          <xs:element minOccurs="0" name="Volume" nillable="true" type="xs:decimal" />
+          <xs:element minOccurs="0" name="StatusDelivery" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="StatusWMS" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Invoice" nillable="true" type="xs1:Invoice" />
+          <xs:element minOccurs="0" name="RegNumber" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="RegDate" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="AdressDelivery" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Delivery" nillable="true" type="xs1:Delivery" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ShipmentList">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="Shipment" nillable="true" type="xs1:Shipment" />
+          <xs:element name="DateFrom" type="xs:string" />
+          <xs:element name="DateTo" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Stock">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="StockItem">
+        <xs:sequence>
+          <xs:element name="Stock" type="xs1:Stock" />
+          <xs:element name="Available" type="xs:int" />
+          <xs:element minOccurs="0" name="Reserve" nillable="true" type="xs:int" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetInvoices">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="ClientCode" nillable="true" type="xs:string" />
+            <xs:element name="DateFrom" type="xs:string" />
+            <xs:element name="DateTo" type="xs:string" />
+            <xs:element name="Token" type="xs:string" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetInvoicesResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="return" type="xs1:InvoiceList" />
+            <xs:element name="Error" type="xs1:Error" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetClientParam">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="ClientCode" nillable="true" type="xs:string" />
+            <xs:element name="Token" type="xs:string" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetClientParamResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="return" type="xs1:ClientList" />
+            <xs:element name="Error" type="xs1:Error" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="CloseInvoice">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Uid" type="xs:string" />
+            <xs:element name="Comment" type="xs:string" />
+            <xs:element name="Token" type="xs:string" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="CloseInvoiceResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="return" type="xs:boolean" />
+            <xs:element name="Error" type="xs1:Error" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetInvoice">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Uid" type="xs:string" />
+            <xs:element name="Token" type="xs:string" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetInvoiceResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="return" type="xs1:Invoice" />
+            <xs:element name="Error" type="xs1:Error" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="PutInvoice">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="ClientCode" type="xs:string" />
+            <xs:element name="Invoice" type="xs1:Invoice" />
+            <xs:element name="WriteType" type="xs:int" />
+            <xs:element name="Token" type="xs:string" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="PutInvoiceResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="return" type="xs1:Invoice" />
+            <xs:element name="Error" type="xs1:Error" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetShipments">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="ClientCode" nillable="true" type="xs:string" />
+            <xs:element name="DateFrom" type="xs:string" />
+            <xs:element name="DateTo" type="xs:string" />
+            <xs:element name="Token" type="xs:string" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetShipmentsResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="return" type="xs1:ShipmentList" />
+            <xs:element name="Error" type="xs1:Error" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetShipment">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Uid" type="xs:string" />
+            <xs:element name="Token" type="xs:string" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetShipmentResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="return" type="xs1:Shipment" />
+            <xs:element name="Error" type="xs1:Error" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetBalance">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="ClientCode" nillable="true" type="xs:string" />
+            <xs:element name="DateFrom" type="xs:string" />
+            <xs:element name="DateTo" type="xs:string" />
+            <xs:element name="Token" type="xs:string" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetBalanceResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="return" type="xs1:Balance" />
+            <xs:element name="Error" type="xs1:Error" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetCreditTotal">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="ClientCode" nillable="true" type="xs:string" />
+            <xs:element name="Token" type="xs:string" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetCreditTotalResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="return" type="xs1:Credit" />
+            <xs:element name="Error" type="xs1:Error" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetItems">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="ID_Group" nillable="true" type="xs:string" />
+            <xs:element name="ItemList" nillable="true" type="xs1:ItemList" />
+            <xs:element name="Token" type="xs:string" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetItemsResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="return" nillable="true" type="xs1:ItemList" />
+            <xs:element name="Error" type="xs1:Error" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetItemsStock">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="ID_Group" nillable="true" type="xs:string" />
+            <xs:element name="ItemList" nillable="true" type="xs1:ItemList" />
+            <xs:element name="IsEntire" nillable="true" type="xs:string" />
+            <xs:element name="Token" type="xs:string" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetItemsStockResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="return" nillable="true" type="xs1:ItemList" />
+            <xs:element name="Error" type="xs1:Error" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetItemsProp">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="ID_Group" nillable="true" type="xs:string" />
+            <xs:element name="ItemList" nillable="true" type="xs1:ItemList" />
+            <xs:element name="Token" type="xs:string" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetItemsPropResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="return" nillable="true" type="xs1:ItemList" />
+            <xs:element name="Error" type="xs1:Error" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>
+  </types>
+  <message name="GetInvoicesRequestMessage">
+    <part name="parameters" element="tns:GetInvoices" />
+  </message>
+  <message name="GetInvoicesResponseMessage">
+    <part name="parameters" element="tns:GetInvoicesResponse" />
+  </message>
+  <message name="GetClientParamRequestMessage">
+    <part name="parameters" element="tns:GetClientParam" />
+  </message>
+  <message name="GetClientParamResponseMessage">
+    <part name="parameters" element="tns:GetClientParamResponse" />
+  </message>
+  <message name="CloseInvoiceRequestMessage">
+    <part name="parameters" element="tns:CloseInvoice" />
+  </message>
+  <message name="CloseInvoiceResponseMessage">
+    <part name="parameters" element="tns:CloseInvoiceResponse" />
+  </message>
+  <message name="GetInvoiceRequestMessage">
+    <part name="parameters" element="tns:GetInvoice" />
+  </message>
+  <message name="GetInvoiceResponseMessage">
+    <part name="parameters" element="tns:GetInvoiceResponse" />
+  </message>
+  <message name="PutInvoiceRequestMessage">
+    <part name="parameters" element="tns:PutInvoice" />
+  </message>
+  <message name="PutInvoiceResponseMessage">
+    <part name="parameters" element="tns:PutInvoiceResponse" />
+  </message>
+  <message name="GetShipmentsRequestMessage">
+    <part name="parameters" element="tns:GetShipments" />
+  </message>
+  <message name="GetShipmentsResponseMessage">
+    <part name="parameters" element="tns:GetShipmentsResponse" />
+  </message>
+  <message name="GetShipmentRequestMessage">
+    <part name="parameters" element="tns:GetShipment" />
+  </message>
+  <message name="GetShipmentResponseMessage">
+    <part name="parameters" element="tns:GetShipmentResponse" />
+  </message>
+  <message name="GetBalanceRequestMessage">
+    <part name="parameters" element="tns:GetBalance" />
+  </message>
+  <message name="GetBalanceResponseMessage">
+    <part name="parameters" element="tns:GetBalanceResponse" />
+  </message>
+  <message name="GetCreditTotalRequestMessage">
+    <part name="parameters" element="tns:GetCreditTotal" />
+  </message>
+  <message name="GetCreditTotalResponseMessage">
+    <part name="parameters" element="tns:GetCreditTotalResponse" />
+  </message>
+  <message name="GetItemsRequestMessage">
+    <part name="parameters" element="tns:GetItems" />
+  </message>
+  <message name="GetItemsResponseMessage">
+    <part name="parameters" element="tns:GetItemsResponse" />
+  </message>
+  <message name="GetItemsStockRequestMessage">
+    <part name="parameters" element="tns:GetItemsStock" />
+  </message>
+  <message name="GetItemsStockResponseMessage">
+    <part name="parameters" element="tns:GetItemsStockResponse" />
+  </message>
+  <message name="GetItemsPropRequestMessage">
+    <part name="parameters" element="tns:GetItemsProp" />
+  </message>
+  <message name="GetItemsPropResponseMessage">
+    <part name="parameters" element="tns:GetItemsPropResponse" />
+  </message>
+  <portType name="B2bPublicPortType">
+    <operation name="GetInvoices">
+      <input message="tns:GetInvoicesRequestMessage" />
+      <output message="tns:GetInvoicesResponseMessage" />
+    </operation>
+    <operation name="GetClientParam">
+      <input message="tns:GetClientParamRequestMessage" />
+      <output message="tns:GetClientParamResponseMessage" />
+    </operation>
+    <operation name="CloseInvoice">
+      <input message="tns:CloseInvoiceRequestMessage" />
+      <output message="tns:CloseInvoiceResponseMessage" />
+    </operation>
+    <operation name="GetInvoice">
+      <input message="tns:GetInvoiceRequestMessage" />
+      <output message="tns:GetInvoiceResponseMessage" />
+    </operation>
+    <operation name="PutInvoice">
+      <input message="tns:PutInvoiceRequestMessage" />
+      <output message="tns:PutInvoiceResponseMessage" />
+    </operation>
+    <operation name="GetShipments">
+      <input message="tns:GetShipmentsRequestMessage" />
+      <output message="tns:GetShipmentsResponseMessage" />
+    </operation>
+    <operation name="GetShipment">
+      <input message="tns:GetShipmentRequestMessage" />
+      <output message="tns:GetShipmentResponseMessage" />
+    </operation>
+    <operation name="GetBalance">
+      <input message="tns:GetBalanceRequestMessage" />
+      <output message="tns:GetBalanceResponseMessage" />
+    </operation>
+    <operation name="GetCreditTotal">
+      <input message="tns:GetCreditTotalRequestMessage" />
+      <output message="tns:GetCreditTotalResponseMessage" />
+    </operation>
+    <operation name="GetItems">
+      <input message="tns:GetItemsRequestMessage" />
+      <output message="tns:GetItemsResponseMessage" />
+    </operation>
+    <operation name="GetItemsStock">
+      <input message="tns:GetItemsStockRequestMessage" />
+      <output message="tns:GetItemsStockResponseMessage" />
+    </operation>
+    <operation name="GetItemsProp">
+      <input message="tns:GetItemsPropRequestMessage" />
+      <output message="tns:GetItemsPropResponseMessage" />
+    </operation>
+  </portType>
+  <binding name="B2bPublicSoapBinding" type="tns:B2bPublicPortType">
+    <soapbind:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <operation name="GetInvoices">
+      <soapbind:operation soapAction="http://www.staten.ru#B2bPublic:GetInvoices" style="document" />
+      <input>
+        <soapbind:body use="literal" />
+      </input>
+      <output>
+        <soapbind:body use="literal" />
+      </output>
+    </operation>
+    <operation name="GetClientParam">
+      <soapbind:operation soapAction="http://www.staten.ru#B2bPublic:GetClientParam" style="document" />
+      <input>
+        <soapbind:body use="literal" />
+      </input>
+      <output>
+        <soapbind:body use="literal" />
+      </output>
+    </operation>
+    <operation name="CloseInvoice">
+      <soapbind:operation soapAction="http://www.staten.ru#B2bPublic:CloseInvoice" style="document" />
+      <input>
+        <soapbind:body use="literal" />
+      </input>
+      <output>
+        <soapbind:body use="literal" />
+      </output>
+    </operation>
+    <operation name="GetInvoice">
+      <soapbind:operation soapAction="http://www.staten.ru#B2bPublic:GetInvoice" style="document" />
+      <input>
+        <soapbind:body use="literal" />
+      </input>
+      <output>
+        <soapbind:body use="literal" />
+      </output>
+    </operation>
+    <operation name="PutInvoice">
+      <soapbind:operation soapAction="http://www.staten.ru#B2bPublic:PutInvoice" style="document" />
+      <input>
+        <soapbind:body use="literal" />
+      </input>
+      <output>
+        <soapbind:body use="literal" />
+      </output>
+    </operation>
+    <operation name="GetShipments">
+      <soapbind:operation soapAction="http://www.staten.ru#B2bPublic:GetShipments" style="document" />
+      <input>
+        <soapbind:body use="literal" />
+      </input>
+      <output>
+        <soapbind:body use="literal" />
+      </output>
+    </operation>
+    <operation name="GetShipment">
+      <soapbind:operation soapAction="http://www.staten.ru#B2bPublic:GetShipment" style="document" />
+      <input>
+        <soapbind:body use="literal" />
+      </input>
+      <output>
+        <soapbind:body use="literal" />
+      </output>
+    </operation>
+    <operation name="GetBalance">
+      <soapbind:operation soapAction="http://www.staten.ru#B2bPublic:GetBalance" style="document" />
+      <input>
+        <soapbind:body use="literal" />
+      </input>
+      <output>
+        <soapbind:body use="literal" />
+      </output>
+    </operation>
+    <operation name="GetCreditTotal">
+      <soapbind:operation soapAction="http://www.staten.ru#B2bPublic:GetCreditTotal" style="document" />
+      <input>
+        <soapbind:body use="literal" />
+      </input>
+      <output>
+        <soapbind:body use="literal" />
+      </output>
+    </operation>
+    <operation name="GetItems">
+      <soapbind:operation soapAction="http://www.staten.ru#B2bPublic:GetItems" style="document" />
+      <input>
+        <soapbind:body use="literal" />
+      </input>
+      <output>
+        <soapbind:body use="literal" />
+      </output>
+    </operation>
+    <operation name="GetItemsStock">
+      <soapbind:operation soapAction="http://www.staten.ru#B2bPublic:GetItemsStock" style="document" />
+      <input>
+        <soapbind:body use="literal" />
+      </input>
+      <output>
+        <soapbind:body use="literal" />
+      </output>
+    </operation>
+    <operation name="GetItemsProp">
+      <soapbind:operation soapAction="http://www.staten.ru#B2bPublic:GetItemsProp" style="document" />
+      <input>
+        <soapbind:body use="literal" />
+      </input>
+      <output>
+        <soapbind:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+  <binding name="B2bPublicSoap12Binding" type="tns:B2bPublicPortType">
+    <soap12bind:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <operation name="GetInvoices">
+      <soap12bind:operation soapAction="http://www.staten.ru#B2bPublic:GetInvoices" style="document" />
+      <input>
+        <soap12bind:body use="literal" />
+      </input>
+      <output>
+        <soap12bind:body use="literal" />
+      </output>
+    </operation>
+    <operation name="GetClientParam">
+      <soap12bind:operation soapAction="http://www.staten.ru#B2bPublic:GetClientParam" style="document" />
+      <input>
+        <soap12bind:body use="literal" />
+      </input>
+      <output>
+        <soap12bind:body use="literal" />
+      </output>
+    </operation>
+    <operation name="CloseInvoice">
+      <soap12bind:operation soapAction="http://www.staten.ru#B2bPublic:CloseInvoice" style="document" />
+      <input>
+        <soap12bind:body use="literal" />
+      </input>
+      <output>
+        <soap12bind:body use="literal" />
+      </output>
+    </operation>
+    <operation name="GetInvoice">
+      <soap12bind:operation soapAction="http://www.staten.ru#B2bPublic:GetInvoice" style="document" />
+      <input>
+        <soap12bind:body use="literal" />
+      </input>
+      <output>
+        <soap12bind:body use="literal" />
+      </output>
+    </operation>
+    <operation name="PutInvoice">
+      <soap12bind:operation soapAction="http://www.staten.ru#B2bPublic:PutInvoice" style="document" />
+      <input>
+        <soap12bind:body use="literal" />
+      </input>
+      <output>
+        <soap12bind:body use="literal" />
+      </output>
+    </operation>
+    <operation name="GetShipments">
+      <soap12bind:operation soapAction="http://www.staten.ru#B2bPublic:GetShipments" style="document" />
+      <input>
+        <soap12bind:body use="literal" />
+      </input>
+      <output>
+        <soap12bind:body use="literal" />
+      </output>
+    </operation>
+    <operation name="GetShipment">
+      <soap12bind:operation soapAction="http://www.staten.ru#B2bPublic:GetShipment" style="document" />
+      <input>
+        <soap12bind:body use="literal" />
+      </input>
+      <output>
+        <soap12bind:body use="literal" />
+      </output>
+    </operation>
+    <operation name="GetBalance">
+      <soap12bind:operation soapAction="http://www.staten.ru#B2bPublic:GetBalance" style="document" />
+      <input>
+        <soap12bind:body use="literal" />
+      </input>
+      <output>
+        <soap12bind:body use="literal" />
+      </output>
+    </operation>
+    <operation name="GetCreditTotal">
+      <soap12bind:operation soapAction="http://www.staten.ru#B2bPublic:GetCreditTotal" style="document" />
+      <input>
+        <soap12bind:body use="literal" />
+      </input>
+      <output>
+        <soap12bind:body use="literal" />
+      </output>
+    </operation>
+    <operation name="GetItems">
+      <soap12bind:operation soapAction="http://www.staten.ru#B2bPublic:GetItems" style="document" />
+      <input>
+        <soap12bind:body use="literal" />
+      </input>
+      <output>
+        <soap12bind:body use="literal" />
+      </output>
+    </operation>
+    <operation name="GetItemsStock">
+      <soap12bind:operation soapAction="http://www.staten.ru#B2bPublic:GetItemsStock" style="document" />
+      <input>
+        <soap12bind:body use="literal" />
+      </input>
+      <output>
+        <soap12bind:body use="literal" />
+      </output>
+    </operation>
+    <operation name="GetItemsProp">
+      <soap12bind:operation soapAction="http://www.staten.ru#B2bPublic:GetItemsProp" style="document" />
+      <input>
+        <soap12bind:body use="literal" />
+      </input>
+      <output>
+        <soap12bind:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+  <service name="B2bPublic">
+    <port name="B2bPublicSoap" binding="tns:B2bPublicSoapBinding">
+      <documentation>
+        <wsi:Claim xmlns:wsi="http://ws-i.org/schemas/conformanceClaim/" conformsTo="http://ws-i.org/profiles/basic/1.1" />
+      </documentation>
+      <soapbind:address location="http://83.136.30.148/Public/wserp.1cws" />
+    </port>
+    <port name="B2bPublicSoap12" binding="tns:B2bPublicSoap12Binding">
+      <soap12bind:address location="http://83.136.30.148/Public/wserp.1cws" />
+    </port>
+  </service>
+</definitions>

@@ -1,0 +1,1204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="https://api.merlion.com/dl/mlservice2" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap-enc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns="http://schemas.xmlsoap.org/wsdl/" name="ML" targetNamespace="https://api.merlion.com/dl/mlservice2" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="https://api.merlion.com/dl/mlservice2">
+      <xsd:element name="helloWorld">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="name" nillable="true" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="helloWorldResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="helloWorldResult" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="getCatalog">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="cat_id" nillable="true" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="CatalogResult">
+        <xsd:all>
+          <xsd:element name="ID" nillable="true" type="xsd:string" />
+          <xsd:element name="ID_PARENT" nillable="true" type="xsd:string" />
+          <xsd:element name="Description" nillable="true" type="xsd:string" />
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="ArrayOfCatalogResult">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="item" type="tns:CatalogResult" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="getCatalogResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="getCatalogResult" type="tns:ArrayOfCatalogResult" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="getShipmentDates">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="code" nillable="true" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="ShipmentDatesResult">
+        <xsd:all>
+          <xsd:element name="Date" nillable="true" type="xsd:string" />
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="ArrayOfShipmentDatesResult">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="item" type="tns:ShipmentDatesResult" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="getShipmentDatesResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="getShipmentDatesResult" type="tns:ArrayOfShipmentDatesResult" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="getShipmentMethods">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="code" nillable="true" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="ShipmentMethodsResult">
+        <xsd:all>
+          <xsd:element name="Code" nillable="true" type="xsd:string" />
+          <xsd:element name="Description" nillable="true" type="xsd:string" />
+          <xsd:element name="IsDefault" nillable="true" type="xsd:int" />
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="ArrayOfShipmentMethodsResult">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="item" type="tns:ShipmentMethodsResult" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="getShipmentMethodsResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="getShipmentMethodsResult" type="tns:ArrayOfShipmentMethodsResult" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="getShipmentAgents">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="code" nillable="true" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="DictionaryResult">
+        <xsd:all>
+          <xsd:element name="Code" nillable="true" type="xsd:string" />
+          <xsd:element name="Description" nillable="true" type="xsd:string" />
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="ArrayOfDictionaryResult">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="item" type="tns:DictionaryResult" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="getShipmentAgentsResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="getShipmentAgentsResult" type="tns:ArrayOfDictionaryResult" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="getCounterAgent">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="code" nillable="true" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="getCounterAgentResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="getCounterAgentResult" type="tns:ArrayOfDictionaryResult" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="getRepresentative">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="CounterAgentCode" nillable="true" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="RepresentativeResult">
+        <xsd:all>
+          <xsd:element name="Representative" nillable="true" type="xsd:string" />
+          <xsd:element name="CounterAgentCode" nillable="true" type="xsd:string" />
+          <xsd:element name="StartDate" nillable="true" type="xsd:string" />
+          <xsd:element name="EndDate" nillable="true" type="xsd:string" />
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="ArrayOfRepresentativeResult">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="item" type="tns:RepresentativeResult" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="getRepresentativeResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="getRepresentativeResult" type="tns:ArrayOfRepresentativeResult" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="getEndPointDelivery">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="id" nillable="true" type="xsd:int" />
+            <xsd:element name="ShippingAgentCode" nillable="true" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="EndPointDeliveryResult">
+        <xsd:all>
+          <xsd:element name="ID" nillable="true" type="xsd:int" />
+          <xsd:element name="Endpoint_address" nillable="true" type="xsd:string" />
+          <xsd:element name="Endpoint_contact" nillable="true" type="xsd:string" />
+          <xsd:element name="ShippingAgentCode" nillable="true" type="xsd:string" />
+          <xsd:element name="City" nillable="true" type="xsd:string" />
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="ArrayOfEndPointDeliveryResult">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="item" type="tns:EndPointDeliveryResult" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="getEndPointDeliveryResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="getEndPointDeliveryResult" type="tns:ArrayOfEndPointDeliveryResult" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="getPackingTypes">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="code" nillable="true" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="getPackingTypesResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="getPackingTypesResult" type="tns:ArrayOfDictionaryResult" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="getItems">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="cat_id" nillable="true" type="xsd:string" />
+            <xsd:element name="item_id" nillable="true" type="xsd:string" />
+            <xsd:element name="shipment_method" nillable="true" type="xsd:string" />
+            <xsd:element name="page" nillable="true" type="xsd:int" />
+            <xsd:element name="rows_on_page" nillable="true" type="xsd:int" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="ItemsResult">
+        <xsd:all>
+          <xsd:element name="No" nillable="true" type="xsd:string" />
+          <xsd:element name="Name" nillable="true" type="xsd:string" />
+          <xsd:element name="Brand" nillable="true" type="xsd:string" />
+          <xsd:element name="Vendor_part" nillable="true" type="xsd:string" />
+          <xsd:element name="Size" nillable="true" type="xsd:string" />
+          <xsd:element name="EOL" nillable="true" type="xsd:int" />
+          <xsd:element name="Warranty" nillable="true" type="xsd:int" />
+          <xsd:element name="Weight" nillable="true" type="xsd:float" />
+          <xsd:element name="Volume" nillable="true" type="xsd:float" />
+          <xsd:element name="Min_Packaged" nillable="true" type="xsd:int" />
+          <xsd:element name="GroupName1" nillable="true" type="xsd:string" />
+          <xsd:element name="GroupName2" nillable="true" type="xsd:string" />
+          <xsd:element name="GroupName3" nillable="true" type="xsd:string" />
+          <xsd:element name="GroupCode1" nillable="true" type="xsd:string" />
+          <xsd:element name="GroupCode2" nillable="true" type="xsd:string" />
+          <xsd:element name="GroupCode3" nillable="true" type="xsd:string" />
+          <xsd:element name="IsBundle" nillable="true" type="xsd:int" />
+          <xsd:element name="ActionDesc" nillable="true" type="xsd:string" />
+          <xsd:element name="ActionWWW" nillable="true" type="xsd:string" />
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="ArrayOfItemsResult">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="item" type="tns:ItemsResult" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="getItemsResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="getItemsResult" type="tns:ArrayOfItemsResult" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="getItemsAvail">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="cat_id" nillable="true" type="xsd:string" />
+            <xsd:element name="shipment_method" nillable="true" type="xsd:string" />
+            <xsd:element name="shipment_date" nillable="true" type="xsd:string" />
+            <xsd:element name="only_avail" nillable="true" type="xsd:string" />
+            <xsd:element name="item_id" nillable="true" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="ItemsAvailResult">
+        <xsd:all>
+          <xsd:element name="No" nillable="true" type="xsd:string" />
+          <xsd:element name="PriceClient" nillable="true" type="xsd:float" />
+          <xsd:element name="PriceClient_RG" nillable="true" type="xsd:float" />
+          <xsd:element name="PriceClient_MSK" nillable="true" type="xsd:float" />
+          <xsd:element name="AvailableClient" nillable="true" type="xsd:int" />
+          <xsd:element name="AvailableClient_RG" nillable="true" type="xsd:int" />
+          <xsd:element name="AvailableClient_MSK" nillable="true" type="xsd:int" />
+          <xsd:element name="AvailableExpected" nillable="true" type="xsd:int" />
+          <xsd:element name="AvailableExpectedNext" nillable="true" type="xsd:int" />
+          <xsd:element name="DateExpectedNext" nillable="true" type="xsd:string" />
+          <xsd:element name="RRP" nillable="true" type="xsd:float" />
+          <xsd:element name="RRP_Date" nillable="true" type="xsd:string" />
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="ArrayOfItemsAvailResult">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="item" type="tns:ItemsAvailResult" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="getItemsAvailResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="getItemsAvailResult" type="tns:ArrayOfItemsAvailResult" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="getItemsProperties">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="cat_id" nillable="true" type="xsd:string" />
+            <xsd:element name="item_id" nillable="true" type="xsd:string" />
+            <xsd:element name="page" nillable="true" type="xsd:int" />
+            <xsd:element name="rows_on_page" nillable="true" type="xsd:int" />
+            <xsd:element name="last_days_changed" nillable="true" type="xsd:int" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="ItemsPropertiesResult">
+        <xsd:all>
+          <xsd:element name="No" nillable="true" type="xsd:string" />
+          <xsd:element name="PropertyID" nillable="true" type="xsd:int" />
+          <xsd:element name="PropertyName" nillable="true" type="xsd:string" />
+          <xsd:element name="Sorting" nillable="true" type="xsd:int" />
+          <xsd:element name="Value" nillable="true" type="xsd:string" />
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="ArrayOfItemsPropertiesResult">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="item" type="tns:ItemsPropertiesResult" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="getItemsPropertiesResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="getItemsPropertiesResult" type="tns:ArrayOfItemsPropertiesResult" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="getItemsImages">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="cat_id" nillable="true" type="xsd:string" />
+            <xsd:element name="item_id" nillable="true" type="xsd:string" />
+            <xsd:element name="page" nillable="true" type="xsd:int" />
+            <xsd:element name="rows_on_page" nillable="true" type="xsd:int" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="ItemsImagesResult">
+        <xsd:all>
+          <xsd:element name="No" nillable="true" type="xsd:string" />
+          <xsd:element name="ViewType" nillable="true" type="xsd:string" />
+          <xsd:element name="SizeType" nillable="true" type="xsd:string" />
+          <xsd:element name="FileName" nillable="true" type="xsd:string" />
+          <xsd:element name="Created" nillable="true" type="xsd:string" />
+          <xsd:element name="Size" nillable="true" type="xsd:int" />
+          <xsd:element name="Width" nillable="true" type="xsd:int" />
+          <xsd:element name="Height" nillable="true" type="xsd:int" />
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="ArrayOfItemsImagesResult">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="item" type="tns:ItemsImagesResult" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="getItemsImagesResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="getItemsImagesResult" type="tns:ArrayOfItemsImagesResult" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="getLinkedItems">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="page" nillable="true" type="xsd:int" />
+            <xsd:element name="rows_on_page" nillable="true" type="xsd:int" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="LinkedItemsResult">
+        <xsd:all>
+          <xsd:element name="No" nillable="true" type="xsd:string" />
+          <xsd:element name="Cust_ItemNo" nillable="true" type="xsd:string" />
+          <xsd:element name="Cust_ItemName" nillable="true" type="xsd:string" />
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="ArrayOfLinkedItemsResult">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="item" type="tns:LinkedItemsResult" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="getLinkedItemsResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="getLinkedItemsResult" type="tns:ArrayOfLinkedItemsResult" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="getOrdersList">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="document_no" nillable="true" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="OrdersListResult">
+        <xsd:all>
+          <xsd:element name="document_no" nillable="true" type="xsd:string" />
+          <xsd:element name="PostedDocumentNo" nillable="true" type="xsd:string" />
+          <xsd:element name="TNN" nillable="true" type="xsd:string" />
+          <xsd:element name="OrderDate" nillable="true" type="xsd:string" />
+          <xsd:element name="Manager" nillable="true" type="xsd:string" />
+          <xsd:element name="Contact" nillable="true" type="xsd:string" />
+          <xsd:element name="ShipmentMethod" nillable="true" type="xsd:string" />
+          <xsd:element name="ShipmentMethodCode" nillable="true" type="xsd:string" />
+          <xsd:element name="ShipmentDate" nillable="true" type="xsd:string" />
+          <xsd:element name="ActualShipmentDate" nillable="true" type="xsd:string" />
+          <xsd:element name="CounterpartyClient" nillable="true" type="xsd:string" />
+          <xsd:element name="CounterpartyClientCode" nillable="true" type="xsd:string" />
+          <xsd:element name="ShippingAgent" nillable="true" type="xsd:string" />
+          <xsd:element name="ShippingAgentCode" nillable="true" type="xsd:string" />
+          <xsd:element name="EndCustomer" nillable="true" type="xsd:string" />
+          <xsd:element name="PostingDescription" nillable="true" type="xsd:string" />
+          <xsd:element name="Weight" nillable="true" type="xsd:string" />
+          <xsd:element name="Volume" nillable="true" type="xsd:float" />
+          <xsd:element name="Amount" nillable="true" type="xsd:float" />
+          <xsd:element name="AmountRUR" nillable="true" type="xsd:float" />
+          <xsd:element name="WillDeleteTomorrow" nillable="true" type="xsd:string" />
+          <xsd:element name="Status" nillable="true" type="xsd:string" />
+          <xsd:element name="EndPointCity" nillable="true" type="xsd:string" />
+          <xsd:element name="EndPointAdress" nillable="true" type="xsd:string" />
+          <xsd:element name="EndPointContact" nillable="true" type="xsd:string" />
+          <xsd:element name="PackingType" nillable="true" type="xsd:string" />
+          <xsd:element name="Representative" nillable="true" type="xsd:string" />
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="ArrayOfOrdersListResult">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="item" type="tns:OrdersListResult" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="getOrdersListResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="getOrdersListResult" type="tns:ArrayOfOrdersListResult" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="getOrderLines">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="document_no" type="xsd:string" />
+            <xsd:element name="details" nillable="true" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="OrderLinesResult">
+        <xsd:all>
+          <xsd:element name="item_no" nillable="true" type="xsd:string" />
+          <xsd:element name="document_no" nillable="true" type="xsd:string" />
+          <xsd:element name="qty" nillable="true" type="xsd:int" />
+          <xsd:element name="desire_qty" nillable="true" type="xsd:int" />
+          <xsd:element name="shipped_qty" nillable="true" type="xsd:int" />
+          <xsd:element name="price" nillable="true" type="xsd:float" />
+          <xsd:element name="amount" nillable="true" type="xsd:float" />
+          <xsd:element name="desire_price" nillable="true" type="xsd:float" />
+          <xsd:element name="weight" nillable="true" type="xsd:float" />
+          <xsd:element name="volume" nillable="true" type="xsd:float" />
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="ArrayOfOrderLinesResult">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="item" type="tns:OrderLinesResult" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="getOrderLinesResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="getOrderLinesResult" type="tns:ArrayOfOrderLinesResult" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="getOrderLinesGTD">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="document_no" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="OrderLinesGTDResult">
+        <xsd:all>
+          <xsd:element name="document_no" nillable="true" type="xsd:string" />
+          <xsd:element name="item_no" nillable="true" type="xsd:string" />
+          <xsd:element name="bundle_item_no" nillable="true" type="xsd:string" />
+          <xsd:element name="gtd_no" nillable="true" type="xsd:string" />
+          <xsd:element name="used_qty" nillable="true" type="xsd:int" />
+          <xsd:element name="country" nillable="true" type="xsd:string" />
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="ArrayOfOrderLinesGTDResult">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="item" type="tns:OrderLinesGTDResult" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="getOrderLinesGTDResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="getOrderLinesGTDResult" type="tns:ArrayOfOrderLinesGTDResult" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="getCommandResult">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="operation_no" nillable="true" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="CommandResult">
+        <xsd:all>
+          <xsd:element name="operation_no" nillable="true" type="xsd:int" />
+          <xsd:element name="CreateTime" nillable="true" type="xsd:string" />
+          <xsd:element name="ProcessingTime" nillable="true" type="xsd:string" />
+          <xsd:element name="EndingTime" nillable="true" type="xsd:string" />
+          <xsd:element name="ProcessingResult" nillable="true" type="xsd:string" />
+          <xsd:element name="DocumentNo" nillable="true" type="xsd:string" />
+          <xsd:element name="DocumentNo2" nillable="true" type="xsd:string" />
+          <xsd:element name="ProcessingResultComment" nillable="true" type="xsd:string" />
+          <xsd:element name="ErrorText" nillable="true" type="xsd:string" />
+          <xsd:element name="ProcessingReserved" nillable="true" type="xsd:string" />
+          <xsd:element name="OperationLineNo" nillable="true" type="xsd:int" />
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="ArrayOfCommandResult">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="item" type="tns:CommandResult" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="getCommandResultResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="getCommandResultResult" type="tns:ArrayOfCommandResult" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="getCurrencyRate">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="date" nillable="true" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="CurrencyRateResult">
+        <xsd:all>
+          <xsd:element name="Code" nillable="true" type="xsd:string" />
+          <xsd:element name="Date" nillable="true" type="xsd:string" />
+          <xsd:element name="ExchangeRate" nillable="true" type="xsd:float" />
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="ArrayOfCurrencyRateResult">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="item" type="tns:CurrencyRateResult" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="getCurrencyRateResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="getCurrencyRateResult" type="tns:ArrayOfCurrencyRateResult" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="getCountry">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="code" nillable="true" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="getCountryResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="getCountryResult" type="tns:ArrayOfDictionaryResult" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="setOrderHeaderCommand">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="document_no" nillable="true" type="xsd:string" />
+            <xsd:element name="shipment_method" nillable="true" type="xsd:string" />
+            <xsd:element name="shipment_date" nillable="true" type="xsd:string" />
+            <xsd:element name="counter_agent" nillable="true" type="xsd:string" />
+            <xsd:element name="shipment_agent" nillable="true" type="xsd:string" />
+            <xsd:element name="end_customer" nillable="true" type="xsd:string" />
+            <xsd:element name="comment" nillable="true" type="xsd:string" />
+            <xsd:element name="representative" nillable="true" type="xsd:string" />
+            <xsd:element name="endpoint_delivery_id" nillable="true" type="xsd:int" />
+            <xsd:element name="packing_type" nillable="true" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="setOrderHeaderCommandResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="setOrderHeaderCommandResult" type="xsd:int" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="setOrderLineCommand">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="document_no" type="xsd:string" />
+            <xsd:element name="item_no" nillable="true" type="xsd:string" />
+            <xsd:element name="qty" nillable="true" type="xsd:int" />
+            <xsd:element name="price" nillable="true" type="xsd:float" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="setOrderLineCommandResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="setOrderLineCommandResult" type="xsd:int" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="setAddOrderLineCommand">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="document_no" type="xsd:string" />
+            <xsd:element name="item_no" nillable="true" type="xsd:string" />
+            <xsd:element name="qty" nillable="true" type="xsd:int" />
+            <xsd:element name="price" nillable="true" type="xsd:float" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="setAddOrderLineCommandResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="setAddOrderLineCommandResult" type="xsd:int" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="setMoveOrderLineCommand">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="document_no" nillable="true" type="xsd:string" />
+            <xsd:element name="item_no" nillable="true" type="xsd:string" />
+            <xsd:element name="qty" nillable="true" type="xsd:int" />
+            <xsd:element name="operation_no" nillable="true" type="xsd:int" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="setMoveOrderLineCommandResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="setMoveOrderLineCommandResult" type="xsd:int" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="setDeleteOrderCommand">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="document_no" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="setDeleteOrderCommandResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="setDeleteOrderCommandResult" type="xsd:int" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="setSignOrderCommand">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="document_no" type="xsd:string" />
+            <xsd:element name="sign_type" nillable="true" type="xsd:int" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="setSignOrderCommandResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="setSignOrderCommandResult" type="xsd:int" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="helloWorldIn">
+    <wsdl:part name="parameters" element="tns:helloWorld" />
+  </wsdl:message>
+  <wsdl:message name="helloWorldOut">
+    <wsdl:part name="parameters" element="tns:helloWorldResponse" />
+  </wsdl:message>
+  <wsdl:message name="getCatalogIn">
+    <wsdl:part name="parameters" element="tns:getCatalog" />
+  </wsdl:message>
+  <wsdl:message name="getCatalogOut">
+    <wsdl:part name="parameters" element="tns:getCatalogResponse" />
+  </wsdl:message>
+  <wsdl:message name="getShipmentDatesIn">
+    <wsdl:part name="parameters" element="tns:getShipmentDates" />
+  </wsdl:message>
+  <wsdl:message name="getShipmentDatesOut">
+    <wsdl:part name="parameters" element="tns:getShipmentDatesResponse" />
+  </wsdl:message>
+  <wsdl:message name="getShipmentMethodsIn">
+    <wsdl:part name="parameters" element="tns:getShipmentMethods" />
+  </wsdl:message>
+  <wsdl:message name="getShipmentMethodsOut">
+    <wsdl:part name="parameters" element="tns:getShipmentMethodsResponse" />
+  </wsdl:message>
+  <wsdl:message name="getShipmentAgentsIn">
+    <wsdl:part name="parameters" element="tns:getShipmentAgents" />
+  </wsdl:message>
+  <wsdl:message name="getShipmentAgentsOut">
+    <wsdl:part name="parameters" element="tns:getShipmentAgentsResponse" />
+  </wsdl:message>
+  <wsdl:message name="getCounterAgentIn">
+    <wsdl:part name="parameters" element="tns:getCounterAgent" />
+  </wsdl:message>
+  <wsdl:message name="getCounterAgentOut">
+    <wsdl:part name="parameters" element="tns:getCounterAgentResponse" />
+  </wsdl:message>
+  <wsdl:message name="getRepresentativeIn">
+    <wsdl:part name="parameters" element="tns:getRepresentative" />
+  </wsdl:message>
+  <wsdl:message name="getRepresentativeOut">
+    <wsdl:part name="parameters" element="tns:getRepresentativeResponse" />
+  </wsdl:message>
+  <wsdl:message name="getEndPointDeliveryIn">
+    <wsdl:part name="parameters" element="tns:getEndPointDelivery" />
+  </wsdl:message>
+  <wsdl:message name="getEndPointDeliveryOut">
+    <wsdl:part name="parameters" element="tns:getEndPointDeliveryResponse" />
+  </wsdl:message>
+  <wsdl:message name="getPackingTypesIn">
+    <wsdl:part name="parameters" element="tns:getPackingTypes" />
+  </wsdl:message>
+  <wsdl:message name="getPackingTypesOut">
+    <wsdl:part name="parameters" element="tns:getPackingTypesResponse" />
+  </wsdl:message>
+  <wsdl:message name="getItemsIn">
+    <wsdl:part name="parameters" element="tns:getItems" />
+  </wsdl:message>
+  <wsdl:message name="getItemsOut">
+    <wsdl:part name="parameters" element="tns:getItemsResponse" />
+  </wsdl:message>
+  <wsdl:message name="getItemsAvailIn">
+    <wsdl:part name="parameters" element="tns:getItemsAvail" />
+  </wsdl:message>
+  <wsdl:message name="getItemsAvailOut">
+    <wsdl:part name="parameters" element="tns:getItemsAvailResponse" />
+  </wsdl:message>
+  <wsdl:message name="getItemsPropertiesIn">
+    <wsdl:part name="parameters" element="tns:getItemsProperties" />
+  </wsdl:message>
+  <wsdl:message name="getItemsPropertiesOut">
+    <wsdl:part name="parameters" element="tns:getItemsPropertiesResponse" />
+  </wsdl:message>
+  <wsdl:message name="getItemsImagesIn">
+    <wsdl:part name="parameters" element="tns:getItemsImages" />
+  </wsdl:message>
+  <wsdl:message name="getItemsImagesOut">
+    <wsdl:part name="parameters" element="tns:getItemsImagesResponse" />
+  </wsdl:message>
+  <wsdl:message name="getLinkedItemsIn">
+    <wsdl:part name="parameters" element="tns:getLinkedItems" />
+  </wsdl:message>
+  <wsdl:message name="getLinkedItemsOut">
+    <wsdl:part name="parameters" element="tns:getLinkedItemsResponse" />
+  </wsdl:message>
+  <wsdl:message name="getOrdersListIn">
+    <wsdl:part name="parameters" element="tns:getOrdersList" />
+  </wsdl:message>
+  <wsdl:message name="getOrdersListOut">
+    <wsdl:part name="parameters" element="tns:getOrdersListResponse" />
+  </wsdl:message>
+  <wsdl:message name="getOrderLinesIn">
+    <wsdl:part name="parameters" element="tns:getOrderLines" />
+  </wsdl:message>
+  <wsdl:message name="getOrderLinesOut">
+    <wsdl:part name="parameters" element="tns:getOrderLinesResponse" />
+  </wsdl:message>
+  <wsdl:message name="getOrderLinesGTDIn">
+    <wsdl:part name="parameters" element="tns:getOrderLinesGTD" />
+  </wsdl:message>
+  <wsdl:message name="getOrderLinesGTDOut">
+    <wsdl:part name="parameters" element="tns:getOrderLinesGTDResponse" />
+  </wsdl:message>
+  <wsdl:message name="getCommandResultIn">
+    <wsdl:part name="parameters" element="tns:getCommandResult" />
+  </wsdl:message>
+  <wsdl:message name="getCommandResultOut">
+    <wsdl:part name="parameters" element="tns:getCommandResultResponse" />
+  </wsdl:message>
+  <wsdl:message name="getCurrencyRateIn">
+    <wsdl:part name="parameters" element="tns:getCurrencyRate" />
+  </wsdl:message>
+  <wsdl:message name="getCurrencyRateOut">
+    <wsdl:part name="parameters" element="tns:getCurrencyRateResponse" />
+  </wsdl:message>
+  <wsdl:message name="getCountryIn">
+    <wsdl:part name="parameters" element="tns:getCountry" />
+  </wsdl:message>
+  <wsdl:message name="getCountryOut">
+    <wsdl:part name="parameters" element="tns:getCountryResponse" />
+  </wsdl:message>
+  <wsdl:message name="setOrderHeaderCommandIn">
+    <wsdl:part name="parameters" element="tns:setOrderHeaderCommand" />
+  </wsdl:message>
+  <wsdl:message name="setOrderHeaderCommandOut">
+    <wsdl:part name="parameters" element="tns:setOrderHeaderCommandResponse" />
+  </wsdl:message>
+  <wsdl:message name="setOrderLineCommandIn">
+    <wsdl:part name="parameters" element="tns:setOrderLineCommand" />
+  </wsdl:message>
+  <wsdl:message name="setOrderLineCommandOut">
+    <wsdl:part name="parameters" element="tns:setOrderLineCommandResponse" />
+  </wsdl:message>
+  <wsdl:message name="setAddOrderLineCommandIn">
+    <wsdl:part name="parameters" element="tns:setAddOrderLineCommand" />
+  </wsdl:message>
+  <wsdl:message name="setAddOrderLineCommandOut">
+    <wsdl:part name="parameters" element="tns:setAddOrderLineCommandResponse" />
+  </wsdl:message>
+  <wsdl:message name="setMoveOrderLineCommandIn">
+    <wsdl:part name="parameters" element="tns:setMoveOrderLineCommand" />
+  </wsdl:message>
+  <wsdl:message name="setMoveOrderLineCommandOut">
+    <wsdl:part name="parameters" element="tns:setMoveOrderLineCommandResponse" />
+  </wsdl:message>
+  <wsdl:message name="setDeleteOrderCommandIn">
+    <wsdl:part name="parameters" element="tns:setDeleteOrderCommand" />
+  </wsdl:message>
+  <wsdl:message name="setDeleteOrderCommandOut">
+    <wsdl:part name="parameters" element="tns:setDeleteOrderCommandResponse" />
+  </wsdl:message>
+  <wsdl:message name="setSignOrderCommandIn">
+    <wsdl:part name="parameters" element="tns:setSignOrderCommand" />
+  </wsdl:message>
+  <wsdl:message name="setSignOrderCommandOut">
+    <wsdl:part name="parameters" element="tns:setSignOrderCommandResponse" />
+  </wsdl:message>
+  <wsdl:portType name="MLPort">
+    <wsdl:operation name="helloWorld">
+      <documentation>Hello World</documentation>
+      <wsdl:input message="tns:helloWorldIn" />
+      <wsdl:output message="tns:helloWorldOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getCatalog">
+      <documentation>Справочник товарных групп</documentation>
+      <wsdl:input message="tns:getCatalogIn" />
+      <wsdl:output message="tns:getCatalogOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getShipmentDates">
+      <documentation>Справочник доступных дат отгрузки</documentation>
+      <wsdl:input message="tns:getShipmentDatesIn" />
+      <wsdl:output message="tns:getShipmentDatesOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getShipmentMethods">
+      <documentation>Справочник доступных методов отгрузки</documentation>
+      <wsdl:input message="tns:getShipmentMethodsIn" />
+      <wsdl:output message="tns:getShipmentMethodsOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getShipmentAgents">
+      <documentation>Справочник агентов по доставке</documentation>
+      <wsdl:input message="tns:getShipmentAgentsIn" />
+      <wsdl:output message="tns:getShipmentAgentsOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getCounterAgent">
+      <documentation>Справочник контрагентов</documentation>
+      <wsdl:input message="tns:getCounterAgentIn" />
+      <wsdl:output message="tns:getCounterAgentOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getRepresentative">
+      <documentation>Справочник представителей</documentation>
+      <wsdl:input message="tns:getRepresentativeIn" />
+      <wsdl:output message="tns:getRepresentativeOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getEndPointDelivery">
+      <documentation>Справочник конечных точек доставки</documentation>
+      <wsdl:input message="tns:getEndPointDeliveryIn" />
+      <wsdl:output message="tns:getEndPointDeliveryOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getPackingTypes">
+      <documentation>Справочник типов упаковки</documentation>
+      <wsdl:input message="tns:getPackingTypesIn" />
+      <wsdl:output message="tns:getPackingTypesOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getItems">
+      <documentation>Справочник товаров</documentation>
+      <wsdl:input message="tns:getItemsIn" />
+      <wsdl:output message="tns:getItemsOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getItemsAvail">
+      <documentation>Доступное количество товаров и цены</documentation>
+      <wsdl:input message="tns:getItemsAvailIn" />
+      <wsdl:output message="tns:getItemsAvailOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getItemsProperties">
+      <documentation>Харатеристики товаров</documentation>
+      <wsdl:input message="tns:getItemsPropertiesIn" />
+      <wsdl:output message="tns:getItemsPropertiesOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getItemsImages">
+      <documentation>Изображения товаров</documentation>
+      <wsdl:input message="tns:getItemsImagesIn" />
+      <wsdl:output message="tns:getItemsImagesOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getLinkedItems">
+      <documentation>Привязки товаров партнера к товарам Мерлиона</documentation>
+      <wsdl:input message="tns:getLinkedItemsIn" />
+      <wsdl:output message="tns:getLinkedItemsOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getOrdersList">
+      <documentation>Список заказов</documentation>
+      <wsdl:input message="tns:getOrdersListIn" />
+      <wsdl:output message="tns:getOrdersListOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getOrderLines">
+      <documentation>Список строк заказа</documentation>
+      <wsdl:input message="tns:getOrderLinesIn" />
+      <wsdl:output message="tns:getOrderLinesOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getOrderLinesGTD">
+      <documentation>Список строк заказа с ГТД</documentation>
+      <wsdl:input message="tns:getOrderLinesGTDIn" />
+      <wsdl:output message="tns:getOrderLinesGTDOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getCommandResult">
+      <documentation>Результат обработки команды</documentation>
+      <wsdl:input message="tns:getCommandResultIn" />
+      <wsdl:output message="tns:getCommandResultOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getCurrencyRate">
+      <documentation>Справочник курса валюты</documentation>
+      <wsdl:input message="tns:getCurrencyRateIn" />
+      <wsdl:output message="tns:getCurrencyRateOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getCountry">
+      <documentation>Справочник стран</documentation>
+      <wsdl:input message="tns:getCountryIn" />
+      <wsdl:output message="tns:getCountryOut" />
+    </wsdl:operation>
+    <wsdl:operation name="setOrderHeaderCommand">
+      <documentation>Команда для создания или редактирования заголовка заказа</documentation>
+      <wsdl:input message="tns:setOrderHeaderCommandIn" />
+      <wsdl:output message="tns:setOrderHeaderCommandOut" />
+    </wsdl:operation>
+    <wsdl:operation name="setOrderLineCommand">
+      <documentation>Команда для создания строки заказа</documentation>
+      <wsdl:input message="tns:setOrderLineCommandIn" />
+      <wsdl:output message="tns:setOrderLineCommandOut" />
+    </wsdl:operation>
+    <wsdl:operation name="setAddOrderLineCommand">
+      <documentation>Команда для добавления товара в заказ</documentation>
+      <wsdl:input message="tns:setAddOrderLineCommandIn" />
+      <wsdl:output message="tns:setAddOrderLineCommandOut" />
+    </wsdl:operation>
+    <wsdl:operation name="setMoveOrderLineCommand">
+      <documentation>Команда для переноса товара из заказа в заказ</documentation>
+      <wsdl:input message="tns:setMoveOrderLineCommandIn" />
+      <wsdl:output message="tns:setMoveOrderLineCommandOut" />
+    </wsdl:operation>
+    <wsdl:operation name="setDeleteOrderCommand">
+      <documentation>Команда для удаления заказа</documentation>
+      <wsdl:input message="tns:setDeleteOrderCommandIn" />
+      <wsdl:output message="tns:setDeleteOrderCommandOut" />
+    </wsdl:operation>
+    <wsdl:operation name="setSignOrderCommand">
+      <documentation>Команда для подписи заказа</documentation>
+      <wsdl:input message="tns:setSignOrderCommandIn" />
+      <wsdl:output message="tns:setSignOrderCommandOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="MLBinding" type="tns:MLPort">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="helloWorld">
+      <soap:operation soapAction="https://api.merlion.com/dl/mlservice2#helloWorld" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getCatalog">
+      <soap:operation soapAction="https://api.merlion.com/dl/mlservice2#getCatalog" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getShipmentDates">
+      <soap:operation soapAction="https://api.merlion.com/dl/mlservice2#getShipmentDates" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getShipmentMethods">
+      <soap:operation soapAction="https://api.merlion.com/dl/mlservice2#getShipmentMethods" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getShipmentAgents">
+      <soap:operation soapAction="https://api.merlion.com/dl/mlservice2#getShipmentAgents" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getCounterAgent">
+      <soap:operation soapAction="https://api.merlion.com/dl/mlservice2#getCounterAgent" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getRepresentative">
+      <soap:operation soapAction="https://api.merlion.com/dl/mlservice2#getRepresentative" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getEndPointDelivery">
+      <soap:operation soapAction="https://api.merlion.com/dl/mlservice2#getEndPointDelivery" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getPackingTypes">
+      <soap:operation soapAction="https://api.merlion.com/dl/mlservice2#getPackingTypes" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getItems">
+      <soap:operation soapAction="https://api.merlion.com/dl/mlservice2#getItems" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getItemsAvail">
+      <soap:operation soapAction="https://api.merlion.com/dl/mlservice2#getItemsAvail" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getItemsProperties">
+      <soap:operation soapAction="https://api.merlion.com/dl/mlservice2#getItemsProperties" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getItemsImages">
+      <soap:operation soapAction="https://api.merlion.com/dl/mlservice2#getItemsImages" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getLinkedItems">
+      <soap:operation soapAction="https://api.merlion.com/dl/mlservice2#getLinkedItems" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getOrdersList">
+      <soap:operation soapAction="https://api.merlion.com/dl/mlservice2#getOrdersList" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getOrderLines">
+      <soap:operation soapAction="https://api.merlion.com/dl/mlservice2#getOrderLines" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getOrderLinesGTD">
+      <soap:operation soapAction="https://api.merlion.com/dl/mlservice2#getOrderLinesGTD" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getCommandResult">
+      <soap:operation soapAction="https://api.merlion.com/dl/mlservice2#getCommandResult" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getCurrencyRate">
+      <soap:operation soapAction="https://api.merlion.com/dl/mlservice2#getCurrencyRate" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getCountry">
+      <soap:operation soapAction="https://api.merlion.com/dl/mlservice2#getCountry" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="setOrderHeaderCommand">
+      <soap:operation soapAction="https://api.merlion.com/dl/mlservice2#setOrderHeaderCommand" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="setOrderLineCommand">
+      <soap:operation soapAction="https://api.merlion.com/dl/mlservice2#setOrderLineCommand" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="setAddOrderLineCommand">
+      <soap:operation soapAction="https://api.merlion.com/dl/mlservice2#setAddOrderLineCommand" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="setMoveOrderLineCommand">
+      <soap:operation soapAction="https://api.merlion.com/dl/mlservice2#setMoveOrderLineCommand" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="setDeleteOrderCommand">
+      <soap:operation soapAction="https://api.merlion.com/dl/mlservice2#setDeleteOrderCommand" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="setSignOrderCommand">
+      <soap:operation soapAction="https://api.merlion.com/dl/mlservice2#setSignOrderCommand" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="https://api.merlion.com/dl/mlservice2" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="MLService">
+    <wsdl:port name="MLPort" binding="tns:MLBinding">
+      <soap:address location="https://api.merlion.com/dl/mlservice2" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,568 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:dime="http://schemas.xmlsoap.org/ws/2002/04/dime/wsdl/" xmlns:stk="http://schemas.microsoft.com/soap-toolkit/wsdl-extension" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ref="http://schemas.xmlsoap.org/ws/2002/04/reference/" xmlns:wsdlns="http://tempuri.org/treolan/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:typens="http://tempuri.org/treolan/type/" xmlns:content="http://schemas.xmlsoap.org/ws/2002/04/content-type/" xmlns="http://schemas.xmlsoap.org/wsdl/" name="treolan" targetNamespace="http://tempuri.org/treolan/wsdl/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://tempuri.org/treolan/type/">
+      <xsd:import namespace="http://schemas.xmlsoap.org/soap/encoding/" />
+      <xsd:import namespace="http://schemas.xmlsoap.org/wsdl/" />
+      <xsd:import namespace="http://schemas.xmlsoap.org/ws/2002/04/reference/" />
+      <xsd:import namespace="http://schemas.xmlsoap.org/ws/2002/04/content-type/" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="WebService.GenCatalog">
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="category" type="xsd:string" />
+    <wsdl:part name="keywords" type="xsd:string" />
+    <wsdl:part name="criterion" type="xsd:int" />
+    <wsdl:part name="inArticul" type="xsd:boolean" />
+    <wsdl:part name="inName" type="xsd:boolean" />
+    <wsdl:part name="inMark" type="xsd:boolean" />
+    <wsdl:part name="showNc" type="xsd:int" />
+  </wsdl:message>
+  <wsdl:message name="WebService.GenCatalogResponse">
+    <wsdl:part name="Result" type="xsd:string" />
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="category" type="xsd:string" />
+    <wsdl:part name="keywords" type="xsd:string" />
+    <wsdl:part name="criterion" type="xsd:int" />
+    <wsdl:part name="inArticul" type="xsd:boolean" />
+    <wsdl:part name="inName" type="xsd:boolean" />
+    <wsdl:part name="inMark" type="xsd:boolean" />
+    <wsdl:part name="showNc" type="xsd:int" />
+  </wsdl:message>
+  <wsdl:message name="WebService.GenCatalogV2">
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="category" type="xsd:string" />
+    <wsdl:part name="vendorid" type="xsd:string" />
+    <wsdl:part name="keywords" type="xsd:string" />
+    <wsdl:part name="criterion" type="xsd:int" />
+    <wsdl:part name="inArticul" type="xsd:boolean" />
+    <wsdl:part name="inName" type="xsd:boolean" />
+    <wsdl:part name="inMark" type="xsd:boolean" />
+    <wsdl:part name="showNc" type="xsd:int" />
+  </wsdl:message>
+  <wsdl:message name="WebService.GenCatalogV2Response">
+    <wsdl:part name="Result" type="xsd:string" />
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="category" type="xsd:string" />
+    <wsdl:part name="vendorid" type="xsd:string" />
+    <wsdl:part name="keywords" type="xsd:string" />
+    <wsdl:part name="criterion" type="xsd:int" />
+    <wsdl:part name="inArticul" type="xsd:boolean" />
+    <wsdl:part name="inName" type="xsd:boolean" />
+    <wsdl:part name="inMark" type="xsd:boolean" />
+    <wsdl:part name="showNc" type="xsd:int" />
+  </wsdl:message>
+  <wsdl:message name="WebService.GenStock">
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="section" type="xsd:int" />
+    <wsdl:part name="keywords" type="xsd:string" />
+    <wsdl:part name="criterion" type="xsd:int" />
+    <wsdl:part name="inArticul" type="xsd:boolean" />
+    <wsdl:part name="inName" type="xsd:boolean" />
+    <wsdl:part name="inMark" type="xsd:boolean" />
+    <wsdl:part name="showNc" type="xsd:int" />
+  </wsdl:message>
+  <wsdl:message name="WebService.GenStockResponse">
+    <wsdl:part name="Result" type="xsd:string" />
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="section" type="xsd:int" />
+    <wsdl:part name="keywords" type="xsd:string" />
+    <wsdl:part name="criterion" type="xsd:int" />
+    <wsdl:part name="inArticul" type="xsd:boolean" />
+    <wsdl:part name="inName" type="xsd:boolean" />
+    <wsdl:part name="inMark" type="xsd:boolean" />
+    <wsdl:part name="showNc" type="xsd:int" />
+  </wsdl:message>
+  <wsdl:message name="WebService.GenInvoice">
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="Number" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="WebService.GenInvoiceResponse">
+    <wsdl:part name="Result" type="xsd:string" />
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="Number" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="WebService.GenReserveList">
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="WebService.GenReserveListResponse">
+    <wsdl:part name="Result" type="xsd:string" />
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="WebService.GenInvoiceList">
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="DateBeg" type="xsd:string" />
+    <wsdl:part name="DateEnd" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="WebService.GenInvoiceListResponse">
+    <wsdl:part name="Result" type="xsd:string" />
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="DateBeg" type="xsd:string" />
+    <wsdl:part name="DateEnd" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="WebService.GenSchetList">
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="DateBeg" type="xsd:string" />
+    <wsdl:part name="DateEnd" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="WebService.GenSchetListResponse">
+    <wsdl:part name="Result" type="xsd:string" />
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="DateBeg" type="xsd:string" />
+    <wsdl:part name="DateEnd" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="WebService.GenSchet">
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="Number" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="WebService.GenSchetResponse">
+    <wsdl:part name="Result" type="xsd:string" />
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="Number" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="WebService.GenSchetV2">
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="Number" type="xsd:string" />
+    <wsdl:part name="groupkit" type="xsd:int" />
+  </wsdl:message>
+  <wsdl:message name="WebService.GenSchetV2Response">
+    <wsdl:part name="Result" type="xsd:string" />
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="Number" type="xsd:string" />
+    <wsdl:part name="groupkit" type="xsd:int" />
+  </wsdl:message>
+  <wsdl:message name="WebService.GetPayers">
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="WebService.GetPayersResponse">
+    <wsdl:part name="Result" type="xsd:string" />
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="WebService.AvailablePrefixes">
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="paramXml" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="WebService.AvailablePrefixesResponse">
+    <wsdl:part name="Result" type="xsd:anyType" />
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="paramXml" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="WebService.ChangeQuery">
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="xmlQuery" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="WebService.ChangeQueryResponse">
+    <wsdl:part name="Result" type="xsd:string" />
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="xmlQuery" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="WebService.ChangeSchet">
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="xmlQuery" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="WebService.ChangeSchetResponse">
+    <wsdl:part name="Result" type="xsd:string" />
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="xmlQuery" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="WebService.NewOrder">
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="orderXml" type="xsd:string" />
+    <wsdl:part name="useCode" type="xsd:short" />
+  </wsdl:message>
+  <wsdl:message name="WebService.NewOrderResponse">
+    <wsdl:part name="Result" type="xsd:string" />
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="orderXml" type="xsd:string" />
+    <wsdl:part name="useCode" type="xsd:short" />
+  </wsdl:message>
+  <wsdl:message name="WebService.GenOrder">
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="Number" type="xsd:int" />
+  </wsdl:message>
+  <wsdl:message name="WebService.GenOrderResponse">
+    <wsdl:part name="Result" type="xsd:string" />
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="Number" type="xsd:int" />
+  </wsdl:message>
+  <wsdl:message name="WebService.GenQuery">
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="Number" type="xsd:int" />
+  </wsdl:message>
+  <wsdl:message name="WebService.GenQueryResponse">
+    <wsdl:part name="Result" type="xsd:string" />
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="Number" type="xsd:int" />
+  </wsdl:message>
+  <wsdl:message name="WebService.GenChangeSchet">
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="stringXml" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="WebService.GenChangeSchetResponse">
+    <wsdl:part name="Result" type="xsd:string" />
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="stringXml" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="WebService.GenPayerList">
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="WebService.GenPayerListResponse">
+    <wsdl:part name="Result" type="xsd:string" />
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="WebService.GenCargo">
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="numb" type="xsd:int" />
+  </wsdl:message>
+  <wsdl:message name="WebService.GenCargoResponse">
+    <wsdl:part name="Result" type="xsd:string" />
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="numb" type="xsd:int" />
+  </wsdl:message>
+  <wsdl:message name="WebService.GenCargoList">
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="DateBeg" type="xsd:string" />
+    <wsdl:part name="DateEnd" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="WebService.GenCargoListResponse">
+    <wsdl:part name="Result" type="xsd:string" />
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="DateBeg" type="xsd:string" />
+    <wsdl:part name="DateEnd" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="WebService.GenCargoListByStatus">
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="status" type="xsd:short" />
+  </wsdl:message>
+  <wsdl:message name="WebService.GenCargoListByStatusResponse">
+    <wsdl:part name="Result" type="xsd:string" />
+    <wsdl:part name="login" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="status" type="xsd:short" />
+  </wsdl:message>
+  <wsdl:portType name="WebServiceSoapPort">
+    <wsdl:operation name="GenCatalog" parameterOrder="login password category keywords criterion inArticul inName inMark showNc">
+      <wsdl:input message="wsdlns:WebService.GenCatalog" />
+      <wsdl:output message="wsdlns:WebService.GenCatalogResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="GenCatalogV2" parameterOrder="login password category vendorid keywords criterion inArticul inName inMark showNc">
+      <wsdl:input message="wsdlns:WebService.GenCatalogV2" />
+      <wsdl:output message="wsdlns:WebService.GenCatalogV2Response" />
+    </wsdl:operation>
+    <wsdl:operation name="GenStock" parameterOrder="login password section keywords criterion inArticul inName inMark showNc">
+      <wsdl:input message="wsdlns:WebService.GenStock" />
+      <wsdl:output message="wsdlns:WebService.GenStockResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="GenInvoice" parameterOrder="login password Number">
+      <wsdl:input message="wsdlns:WebService.GenInvoice" />
+      <wsdl:output message="wsdlns:WebService.GenInvoiceResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="GenReserveList" parameterOrder="login password">
+      <wsdl:input message="wsdlns:WebService.GenReserveList" />
+      <wsdl:output message="wsdlns:WebService.GenReserveListResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="GenInvoiceList" parameterOrder="login password DateBeg DateEnd">
+      <wsdl:input message="wsdlns:WebService.GenInvoiceList" />
+      <wsdl:output message="wsdlns:WebService.GenInvoiceListResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="GenSchetList" parameterOrder="login password DateBeg DateEnd">
+      <wsdl:input message="wsdlns:WebService.GenSchetList" />
+      <wsdl:output message="wsdlns:WebService.GenSchetListResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="GenSchet" parameterOrder="login password Number">
+      <wsdl:input message="wsdlns:WebService.GenSchet" />
+      <wsdl:output message="wsdlns:WebService.GenSchetResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="GenSchetV2" parameterOrder="login password Number groupkit">
+      <wsdl:input message="wsdlns:WebService.GenSchetV2" />
+      <wsdl:output message="wsdlns:WebService.GenSchetV2Response" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPayers" parameterOrder="login password">
+      <wsdl:input message="wsdlns:WebService.GetPayers" />
+      <wsdl:output message="wsdlns:WebService.GetPayersResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="AvailablePrefixes" parameterOrder="login password paramXml">
+      <wsdl:input message="wsdlns:WebService.AvailablePrefixes" />
+      <wsdl:output message="wsdlns:WebService.AvailablePrefixesResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="ChangeQuery" parameterOrder="login password xmlQuery">
+      <wsdl:input message="wsdlns:WebService.ChangeQuery" />
+      <wsdl:output message="wsdlns:WebService.ChangeQueryResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="ChangeSchet" parameterOrder="login password xmlQuery">
+      <wsdl:input message="wsdlns:WebService.ChangeSchet" />
+      <wsdl:output message="wsdlns:WebService.ChangeSchetResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="NewOrder" parameterOrder="login password orderXml useCode">
+      <wsdl:input message="wsdlns:WebService.NewOrder" />
+      <wsdl:output message="wsdlns:WebService.NewOrderResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="GenOrder" parameterOrder="login password Number">
+      <wsdl:input message="wsdlns:WebService.GenOrder" />
+      <wsdl:output message="wsdlns:WebService.GenOrderResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="GenQuery" parameterOrder="login password Number">
+      <wsdl:input message="wsdlns:WebService.GenQuery" />
+      <wsdl:output message="wsdlns:WebService.GenQueryResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="GenChangeSchet" parameterOrder="login password stringXml">
+      <wsdl:input message="wsdlns:WebService.GenChangeSchet" />
+      <wsdl:output message="wsdlns:WebService.GenChangeSchetResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="GenPayerList" parameterOrder="login password">
+      <wsdl:input message="wsdlns:WebService.GenPayerList" />
+      <wsdl:output message="wsdlns:WebService.GenPayerListResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="GenCargo" parameterOrder="login password numb">
+      <wsdl:input message="wsdlns:WebService.GenCargo" />
+      <wsdl:output message="wsdlns:WebService.GenCargoResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="GenCargoList" parameterOrder="login password DateBeg DateEnd">
+      <wsdl:input message="wsdlns:WebService.GenCargoList" />
+      <wsdl:output message="wsdlns:WebService.GenCargoListResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="GenCargoListByStatus" parameterOrder="login password status">
+      <wsdl:input message="wsdlns:WebService.GenCargoListByStatus" />
+      <wsdl:output message="wsdlns:WebService.GenCargoListByStatusResponse" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="WebServiceSoapBinding" type="wsdlns:WebServiceSoapPort">
+    <stk:binding preferredEncoding="UTF-8" />
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="rpc" />
+    <wsdl:operation name="GenCatalog">
+      <soap:operation soapAction="http://tempuri.org/treolan/action/WebService.GenCatalog" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="login password category keywords criterion inArticul inName inMark showNc" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="Result login password category keywords criterion inArticul inName inMark showNc" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GenCatalogV2">
+      <soap:operation soapAction="http://tempuri.org/treolan/action/WebService.GenCatalogV2" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="login password category vendorid keywords criterion inArticul inName inMark showNc" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="Result login password category vendorid keywords criterion inArticul inName inMark showNc" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GenStock">
+      <soap:operation soapAction="http://tempuri.org/treolan/action/WebService.GenStock" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="login password section keywords criterion inArticul inName inMark showNc" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="Result login password section keywords criterion inArticul inName inMark showNc" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GenInvoice">
+      <soap:operation soapAction="http://tempuri.org/treolan/action/WebService.GenInvoice" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="login password Number" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="Result login password Number" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GenReserveList">
+      <soap:operation soapAction="http://tempuri.org/treolan/action/WebService.GenReserveList" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="login password" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="Result login password" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GenInvoiceList">
+      <soap:operation soapAction="http://tempuri.org/treolan/action/WebService.GenInvoiceList" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="login password DateBeg DateEnd" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="Result login password DateBeg DateEnd" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GenSchetList">
+      <soap:operation soapAction="http://tempuri.org/treolan/action/WebService.GenSchetList" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="login password DateBeg DateEnd" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="Result login password DateBeg DateEnd" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GenSchet">
+      <soap:operation soapAction="http://tempuri.org/treolan/action/WebService.GenSchet" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="login password Number" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="Result login password Number" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GenSchetV2">
+      <soap:operation soapAction="http://tempuri.org/treolan/action/WebService.GenSchetV2" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="login password Number groupkit" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="Result login password Number groupkit" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPayers">
+      <soap:operation soapAction="http://tempuri.org/treolan/action/WebService.GetPayers" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="login password" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="Result login password" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AvailablePrefixes">
+      <soap:operation soapAction="http://tempuri.org/treolan/action/WebService.AvailablePrefixes" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="login password paramXml" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="Result login password paramXml" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ChangeQuery">
+      <soap:operation soapAction="http://tempuri.org/treolan/action/WebService.ChangeQuery" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="login password xmlQuery" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="Result login password xmlQuery" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ChangeSchet">
+      <soap:operation soapAction="http://tempuri.org/treolan/action/WebService.ChangeSchet" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="login password xmlQuery" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="Result login password xmlQuery" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="NewOrder">
+      <soap:operation soapAction="http://tempuri.org/treolan/action/WebService.NewOrder" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="login password orderXml useCode" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="Result login password orderXml useCode" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GenOrder">
+      <soap:operation soapAction="http://tempuri.org/treolan/action/WebService.GenOrder" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="login password Number" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="Result login password Number" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GenQuery">
+      <soap:operation soapAction="http://tempuri.org/treolan/action/WebService.GenQuery" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="login password Number" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="Result login password Number" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GenChangeSchet">
+      <soap:operation soapAction="http://tempuri.org/treolan/action/WebService.GenChangeSchet" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="login password stringXml" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="Result login password stringXml" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GenPayerList">
+      <soap:operation soapAction="http://tempuri.org/treolan/action/WebService.GenPayerList" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="login password" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="Result login password" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GenCargo">
+      <soap:operation soapAction="http://tempuri.org/treolan/action/WebService.GenCargo" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="login password numb" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="Result login password numb" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GenCargoList">
+      <soap:operation soapAction="http://tempuri.org/treolan/action/WebService.GenCargoList" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="login password DateBeg DateEnd" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="Result login password DateBeg DateEnd" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GenCargoListByStatus">
+      <soap:operation soapAction="http://tempuri.org/treolan/action/WebService.GenCargoListByStatus" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="login password status" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://tempuri.org/treolan/message/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" parts="Result login password status" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="treolan">
+    <wsdl:port name="WebServiceSoapPort" binding="wsdlns:WebServiceSoapBinding">
+      <soap:address location="https://api.treolan.ru/webservices/treolan.ASP" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

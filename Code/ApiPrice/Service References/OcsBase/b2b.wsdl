@@ -1,0 +1,1083 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://tempuri.org/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/">
+      <s:element name="GetCatalog">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="token" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCatalogResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetCatalogResult" type="tns:CatalogResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="CatalogResult">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="OperationStatus" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="ErrorText" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Categories" type="tns:ArrayOfCategory" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfCategory">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Category" nillable="true" type="tns:Category" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Category">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="CategoryID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="CategoryName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ParentCategoryID" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="NestingLevel" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetProductAvailability">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="token" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="availability" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="shipmentCity" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="categoryIDList" type="tns:ArrayOfString" />
+            <s:element minOccurs="0" maxOccurs="1" name="itemIDList" type="tns:ArrayOfString" />
+            <s:element minOccurs="0" maxOccurs="1" name="locationList" type="tns:ArrayOfString" />
+            <s:element minOccurs="1" maxOccurs="1" name="displayMissing" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfString">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetProductAvailabilityResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetProductAvailabilityResult" type="tns:ProductResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ProductResult">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="OperationStatus" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="ErrorText" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="EffectiveDate" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="Products" type="tns:ArrayOfProduct" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfProduct">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Product" nillable="true" type="tns:Product" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Product">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="ItemID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PartNumber" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Producer" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ItemName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ItemNameRus" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="CategoryID" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Price" nillable="true" type="s:decimal" />
+          <s:element minOccurs="0" maxOccurs="1" name="Currency" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="PercentConv" nillable="true" type="s:decimal" />
+          <s:element minOccurs="1" maxOccurs="1" name="Availability" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Multiplicity" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="PriceEndUser" nillable="true" type="s:decimal" />
+          <s:element minOccurs="0" maxOccurs="1" name="PriceEndUserCurrency" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="PriceEndUserWeb" nillable="true" type="s:decimal" />
+          <s:element minOccurs="0" maxOccurs="1" name="PriceEndUserWebCurrency" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="UOM" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Weight" type="s:decimal" />
+          <s:element minOccurs="1" maxOccurs="1" name="Width" type="s:decimal" />
+          <s:element minOccurs="1" maxOccurs="1" name="Height" type="s:decimal" />
+          <s:element minOccurs="1" maxOccurs="1" name="Depth" type="s:decimal" />
+          <s:element minOccurs="1" maxOccurs="1" name="Volume" type="s:decimal" />
+          <s:element minOccurs="0" maxOccurs="1" name="EAN128" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="UPC" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="EquipmentGroup" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="EquipmentType" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Comment" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PartnerItemID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Locations" type="tns:ArrayOfQuantityLocation" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfQuantityLocation">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="QuantityLocation" nillable="true" type="tns:QuantityLocation" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="QuantityLocation">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Location" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Quantity" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="GreaterThanQuantity" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetOperationStatus">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="token" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="operationID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetOperationStatusResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetOperationStatusResult" type="tns:OrderResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="OrderResult">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="OperationStatus" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="ErrorText" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="OrderID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="OperationID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ShipmentCity" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PayerCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ContactPersonCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="OCSOrderID" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="OrderDate" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="OrderLines" type="tns:ArrayOfOrderLineResult" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfOrderLineResult">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="OrderLineResult" nillable="true" type="tns:OrderLineResult" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="OrderLineResult">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="LineOperationStatus" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="ErrorText" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="OperationType" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="LineID" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="LineIndex" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="LineStatus" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="OCSOrderID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="OrderCurrency" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ManagingSide" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="ReservePlace" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="ItemID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PartNumber" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ItemName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="CategoryID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Producer" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="UOM" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Volume" nillable="true" type="s:decimal" />
+          <s:element minOccurs="1" maxOccurs="1" name="Weight" nillable="true" type="s:decimal" />
+          <s:element minOccurs="0" maxOccurs="1" name="EAN128" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="UPC" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Multiplicity" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="OrderPrice" nillable="true" type="s:decimal" />
+          <s:element minOccurs="0" maxOccurs="1" name="PriceCorrectionStatus" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="PercentConv" nillable="true" type="s:decimal" />
+          <s:element minOccurs="1" maxOccurs="1" name="ReserveExpirationDate" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="ReservedQuantity" nillable="true" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="NotReservedQuantity" nillable="true" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="QuantityStore" type="tns:ArrayOfQuantityStoreReserveResult" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfQuantityStoreReserveResult">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="QuantityStoreReserveResult" nillable="true" type="tns:QuantityStoreReserveResult" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="QuantityStoreReserveResult">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Store" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Quantity" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetOrderStatus">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="token" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="orderID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetOrderStatusResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetOrderStatusResult" type="tns:OrderResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CreateOrder">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="token" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="order" type="tns:Order" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="Order">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="OrderID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="OperationID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ShipmentCity" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="ReservePlace" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="PayerCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ContactPersonCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Comment" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="OrderLines" type="tns:ArrayOfOrderLine" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfOrderLine">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="OrderLine" nillable="true" type="tns:OrderLine" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="OrderLine">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="ItemID" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Quantity" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="LineID" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="OperationType" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="PriceCorrectionNeeded" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="PriceComment" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="CreateOrderResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CreateOrderResult" type="tns:OperationResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="OperationResult">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="OperationStatus" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="ErrorText" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="OperationID" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="CreateOrderOnline">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="token" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="order" type="tns:Order" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CreateOrderOnlineResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CreateOrderOnlineResult" type="tns:OrderResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ModifyOrderLines">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="token" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="order" type="tns:Order" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ModifyOrderLinesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ModifyOrderLinesResult" type="tns:OperationResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ModifyOrderLinesOnline">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="token" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="order" type="tns:Order" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ModifyOrderLinesOnlineResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ModifyOrderLinesOnlineResult" type="tns:OrderResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CancelOrder">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="token" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="orderID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="operationID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CancelOrderResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CancelOrderResult" type="tns:OperationResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CancelOrderOnline">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="token" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="orderID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="operationID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CancelOrderOnlineResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CancelOrderOnlineResult" type="tns:OrderResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MergeOrderLines">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="token" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="order" type="tns:Order" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MergeOrderLinesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="MergeOrderLinesResult" type="tns:OperationResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MergeOrderLinesOnline">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="token" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="order" type="tns:Order" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MergeOrderLinesOnlineResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="MergeOrderLinesOnlineResult" type="tns:OrderResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetShipmentCities">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="token" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetShipmentCitiesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetShipmentCitiesResult" type="tns:ShipmentCitiesResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ShipmentCitiesResult">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="OperationStatus" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="ErrorText" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ShipmentCityList" type="tns:ArrayOfString" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetLocations">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="token" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="availability" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="shipmentCity" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetLocationsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetLocationsResult" type="tns:LocationResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="LocationResult">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="OperationStatus" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="ErrorText" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="LocationList" type="tns:ArrayOfLocationInfo" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfLocationInfo">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="LocationInfo" nillable="true" type="tns:LocationInfo" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="LocationInfo">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Location" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="LocationCategory" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetPayers">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="token" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetPayersResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetPayersResult" type="tns:PayersResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="PayersResult">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="OperationStatus" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="ErrorText" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PayerList" type="tns:ArrayOfPayerInfo" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfPayerInfo">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="PayerInfo" nillable="true" type="tns:PayerInfo" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="PayerInfo">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="PayerName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PayerCode" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="PayerType" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetReservePlaces">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="token" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetReservePlacesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetReservePlacesResult" type="tns:ReservePlaceResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ReservePlaceResult">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="OperationStatus" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="ErrorText" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ReservePlaceList" type="tns:ArrayOfReservePlaceInfo" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfReservePlaceInfo">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="ReservePlaceInfo" nillable="true" type="tns:ReservePlaceInfo" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ReservePlaceInfo">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="ReservePlaceName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="ReservePlaceCode" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetContactPersons">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="token" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetContactPersonsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetContactPersonsResult" type="tns:ContactPersonResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ContactPersonResult">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="OperationStatus" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="ErrorText" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ContactPersonList" type="tns:ArrayOfContactPersonInfo" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfContactPersonInfo">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="ContactPersonInfo" nillable="true" type="tns:ContactPersonInfo" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ContactPersonInfo">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="ContactPersonName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ContactPersonCode" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetCurrentCurrencyRate">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="token" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCurrentCurrencyRateResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetCurrentCurrencyRateResult" type="tns:CurrencyRateResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="CurrencyRateResult">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="OperationStatus" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="ErrorText" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Currency" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Rate" type="s:decimal" />
+        </s:sequence>
+      </s:complexType>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="GetCatalogSoapIn">
+    <wsdl:part name="parameters" element="tns:GetCatalog" />
+  </wsdl:message>
+  <wsdl:message name="GetCatalogSoapOut">
+    <wsdl:part name="parameters" element="tns:GetCatalogResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetProductAvailabilitySoapIn">
+    <wsdl:part name="parameters" element="tns:GetProductAvailability" />
+  </wsdl:message>
+  <wsdl:message name="GetProductAvailabilitySoapOut">
+    <wsdl:part name="parameters" element="tns:GetProductAvailabilityResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetOperationStatusSoapIn">
+    <wsdl:part name="parameters" element="tns:GetOperationStatus" />
+  </wsdl:message>
+  <wsdl:message name="GetOperationStatusSoapOut">
+    <wsdl:part name="parameters" element="tns:GetOperationStatusResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetOrderStatusSoapIn">
+    <wsdl:part name="parameters" element="tns:GetOrderStatus" />
+  </wsdl:message>
+  <wsdl:message name="GetOrderStatusSoapOut">
+    <wsdl:part name="parameters" element="tns:GetOrderStatusResponse" />
+  </wsdl:message>
+  <wsdl:message name="CreateOrderSoapIn">
+    <wsdl:part name="parameters" element="tns:CreateOrder" />
+  </wsdl:message>
+  <wsdl:message name="CreateOrderSoapOut">
+    <wsdl:part name="parameters" element="tns:CreateOrderResponse" />
+  </wsdl:message>
+  <wsdl:message name="CreateOrderOnlineSoapIn">
+    <wsdl:part name="parameters" element="tns:CreateOrderOnline" />
+  </wsdl:message>
+  <wsdl:message name="CreateOrderOnlineSoapOut">
+    <wsdl:part name="parameters" element="tns:CreateOrderOnlineResponse" />
+  </wsdl:message>
+  <wsdl:message name="ModifyOrderLinesSoapIn">
+    <wsdl:part name="parameters" element="tns:ModifyOrderLines" />
+  </wsdl:message>
+  <wsdl:message name="ModifyOrderLinesSoapOut">
+    <wsdl:part name="parameters" element="tns:ModifyOrderLinesResponse" />
+  </wsdl:message>
+  <wsdl:message name="ModifyOrderLinesOnlineSoapIn">
+    <wsdl:part name="parameters" element="tns:ModifyOrderLinesOnline" />
+  </wsdl:message>
+  <wsdl:message name="ModifyOrderLinesOnlineSoapOut">
+    <wsdl:part name="parameters" element="tns:ModifyOrderLinesOnlineResponse" />
+  </wsdl:message>
+  <wsdl:message name="CancelOrderSoapIn">
+    <wsdl:part name="parameters" element="tns:CancelOrder" />
+  </wsdl:message>
+  <wsdl:message name="CancelOrderSoapOut">
+    <wsdl:part name="parameters" element="tns:CancelOrderResponse" />
+  </wsdl:message>
+  <wsdl:message name="CancelOrderOnlineSoapIn">
+    <wsdl:part name="parameters" element="tns:CancelOrderOnline" />
+  </wsdl:message>
+  <wsdl:message name="CancelOrderOnlineSoapOut">
+    <wsdl:part name="parameters" element="tns:CancelOrderOnlineResponse" />
+  </wsdl:message>
+  <wsdl:message name="MergeOrderLinesSoapIn">
+    <wsdl:part name="parameters" element="tns:MergeOrderLines" />
+  </wsdl:message>
+  <wsdl:message name="MergeOrderLinesSoapOut">
+    <wsdl:part name="parameters" element="tns:MergeOrderLinesResponse" />
+  </wsdl:message>
+  <wsdl:message name="MergeOrderLinesOnlineSoapIn">
+    <wsdl:part name="parameters" element="tns:MergeOrderLinesOnline" />
+  </wsdl:message>
+  <wsdl:message name="MergeOrderLinesOnlineSoapOut">
+    <wsdl:part name="parameters" element="tns:MergeOrderLinesOnlineResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetShipmentCitiesSoapIn">
+    <wsdl:part name="parameters" element="tns:GetShipmentCities" />
+  </wsdl:message>
+  <wsdl:message name="GetShipmentCitiesSoapOut">
+    <wsdl:part name="parameters" element="tns:GetShipmentCitiesResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetLocationsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetLocations" />
+  </wsdl:message>
+  <wsdl:message name="GetLocationsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetLocationsResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetPayersSoapIn">
+    <wsdl:part name="parameters" element="tns:GetPayers" />
+  </wsdl:message>
+  <wsdl:message name="GetPayersSoapOut">
+    <wsdl:part name="parameters" element="tns:GetPayersResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetReservePlacesSoapIn">
+    <wsdl:part name="parameters" element="tns:GetReservePlaces" />
+  </wsdl:message>
+  <wsdl:message name="GetReservePlacesSoapOut">
+    <wsdl:part name="parameters" element="tns:GetReservePlacesResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetContactPersonsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetContactPersons" />
+  </wsdl:message>
+  <wsdl:message name="GetContactPersonsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetContactPersonsResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetCurrentCurrencyRateSoapIn">
+    <wsdl:part name="parameters" element="tns:GetCurrentCurrencyRate" />
+  </wsdl:message>
+  <wsdl:message name="GetCurrentCurrencyRateSoapOut">
+    <wsdl:part name="parameters" element="tns:GetCurrentCurrencyRateResponse" />
+  </wsdl:message>
+  <wsdl:portType name="B2BWebServiceSoap">
+    <wsdl:operation name="GetCatalog">
+      <wsdl:input message="tns:GetCatalogSoapIn" />
+      <wsdl:output message="tns:GetCatalogSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetProductAvailability">
+      <wsdl:input message="tns:GetProductAvailabilitySoapIn" />
+      <wsdl:output message="tns:GetProductAvailabilitySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetOperationStatus">
+      <wsdl:input message="tns:GetOperationStatusSoapIn" />
+      <wsdl:output message="tns:GetOperationStatusSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetOrderStatus">
+      <wsdl:input message="tns:GetOrderStatusSoapIn" />
+      <wsdl:output message="tns:GetOrderStatusSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CreateOrder">
+      <wsdl:input message="tns:CreateOrderSoapIn" />
+      <wsdl:output message="tns:CreateOrderSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CreateOrderOnline">
+      <wsdl:input message="tns:CreateOrderOnlineSoapIn" />
+      <wsdl:output message="tns:CreateOrderOnlineSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ModifyOrderLines">
+      <wsdl:input message="tns:ModifyOrderLinesSoapIn" />
+      <wsdl:output message="tns:ModifyOrderLinesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ModifyOrderLinesOnline">
+      <wsdl:input message="tns:ModifyOrderLinesOnlineSoapIn" />
+      <wsdl:output message="tns:ModifyOrderLinesOnlineSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CancelOrder">
+      <wsdl:input message="tns:CancelOrderSoapIn" />
+      <wsdl:output message="tns:CancelOrderSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CancelOrderOnline">
+      <wsdl:input message="tns:CancelOrderOnlineSoapIn" />
+      <wsdl:output message="tns:CancelOrderOnlineSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MergeOrderLines">
+      <wsdl:input message="tns:MergeOrderLinesSoapIn" />
+      <wsdl:output message="tns:MergeOrderLinesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MergeOrderLinesOnline">
+      <wsdl:input message="tns:MergeOrderLinesOnlineSoapIn" />
+      <wsdl:output message="tns:MergeOrderLinesOnlineSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetShipmentCities">
+      <wsdl:input message="tns:GetShipmentCitiesSoapIn" />
+      <wsdl:output message="tns:GetShipmentCitiesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetLocations">
+      <wsdl:input message="tns:GetLocationsSoapIn" />
+      <wsdl:output message="tns:GetLocationsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPayers">
+      <wsdl:input message="tns:GetPayersSoapIn" />
+      <wsdl:output message="tns:GetPayersSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetReservePlaces">
+      <wsdl:input message="tns:GetReservePlacesSoapIn" />
+      <wsdl:output message="tns:GetReservePlacesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetContactPersons">
+      <wsdl:input message="tns:GetContactPersonsSoapIn" />
+      <wsdl:output message="tns:GetContactPersonsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCurrentCurrencyRate">
+      <wsdl:input message="tns:GetCurrentCurrencyRateSoapIn" />
+      <wsdl:output message="tns:GetCurrentCurrencyRateSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="B2BWebServiceSoap" type="tns:B2BWebServiceSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetCatalog">
+      <soap:operation soapAction="http://tempuri.org/GetCatalog" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetProductAvailability">
+      <soap:operation soapAction="http://tempuri.org/GetProductAvailability" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetOperationStatus">
+      <soap:operation soapAction="http://tempuri.org/GetOperationStatus" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetOrderStatus">
+      <soap:operation soapAction="http://tempuri.org/GetOrderStatus" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreateOrder">
+      <soap:operation soapAction="http://tempuri.org/CreateOrder" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreateOrderOnline">
+      <soap:operation soapAction="http://tempuri.org/CreateOrderOnline" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ModifyOrderLines">
+      <soap:operation soapAction="http://tempuri.org/ModifyOrderLines" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ModifyOrderLinesOnline">
+      <soap:operation soapAction="http://tempuri.org/ModifyOrderLinesOnline" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CancelOrder">
+      <soap:operation soapAction="http://tempuri.org/CancelOrder" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CancelOrderOnline">
+      <soap:operation soapAction="http://tempuri.org/CancelOrderOnline" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MergeOrderLines">
+      <soap:operation soapAction="http://tempuri.org/MergeOrderLines" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MergeOrderLinesOnline">
+      <soap:operation soapAction="http://tempuri.org/MergeOrderLinesOnline" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetShipmentCities">
+      <soap:operation soapAction="http://tempuri.org/GetShipmentCities" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetLocations">
+      <soap:operation soapAction="http://tempuri.org/GetLocations" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPayers">
+      <soap:operation soapAction="http://tempuri.org/GetPayers" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetReservePlaces">
+      <soap:operation soapAction="http://tempuri.org/GetReservePlaces" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetContactPersons">
+      <soap:operation soapAction="http://tempuri.org/GetContactPersons" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCurrentCurrencyRate">
+      <soap:operation soapAction="http://tempuri.org/GetCurrentCurrencyRate" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="B2BWebServiceSoap12" type="tns:B2BWebServiceSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetCatalog">
+      <soap12:operation soapAction="http://tempuri.org/GetCatalog" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetProductAvailability">
+      <soap12:operation soapAction="http://tempuri.org/GetProductAvailability" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetOperationStatus">
+      <soap12:operation soapAction="http://tempuri.org/GetOperationStatus" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetOrderStatus">
+      <soap12:operation soapAction="http://tempuri.org/GetOrderStatus" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreateOrder">
+      <soap12:operation soapAction="http://tempuri.org/CreateOrder" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreateOrderOnline">
+      <soap12:operation soapAction="http://tempuri.org/CreateOrderOnline" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ModifyOrderLines">
+      <soap12:operation soapAction="http://tempuri.org/ModifyOrderLines" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ModifyOrderLinesOnline">
+      <soap12:operation soapAction="http://tempuri.org/ModifyOrderLinesOnline" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CancelOrder">
+      <soap12:operation soapAction="http://tempuri.org/CancelOrder" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CancelOrderOnline">
+      <soap12:operation soapAction="http://tempuri.org/CancelOrderOnline" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MergeOrderLines">
+      <soap12:operation soapAction="http://tempuri.org/MergeOrderLines" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MergeOrderLinesOnline">
+      <soap12:operation soapAction="http://tempuri.org/MergeOrderLinesOnline" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetShipmentCities">
+      <soap12:operation soapAction="http://tempuri.org/GetShipmentCities" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetLocations">
+      <soap12:operation soapAction="http://tempuri.org/GetLocations" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPayers">
+      <soap12:operation soapAction="http://tempuri.org/GetPayers" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetReservePlaces">
+      <soap12:operation soapAction="http://tempuri.org/GetReservePlaces" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetContactPersons">
+      <soap12:operation soapAction="http://tempuri.org/GetContactPersons" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCurrentCurrencyRate">
+      <soap12:operation soapAction="http://tempuri.org/GetCurrentCurrencyRate" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="B2BWebService">
+    <wsdl:port name="B2BWebServiceSoap" binding="tns:B2BWebServiceSoap">
+      <soap:address location="https://b2bservice.ocs.ru/b2b.asmx" />
+    </wsdl:port>
+    <wsdl:port name="B2BWebServiceSoap12" binding="tns:B2BWebServiceSoap12">
+      <soap12:address location="https://b2bservice.ocs.ru/b2b.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
