@@ -54,10 +54,10 @@ namespace DataProvider.Models.Service
             //CostCompany = Db.DbHelper.GetValueDecimalOrDefault(row, "cost_company");
         }
 
-        public static IEnumerable<ClassifierCaterory> GetList()
+        public static IEnumerable<ClassifierCaterory> GetLowerList()
         {
             //SqlParameter pIdAdmin = new SqlParameter() { ParameterName = "id_admin", SqlValue = idAdmin, SqlDbType = SqlDbType.Int };
-            var dt = Db.Service.ExecuteQueryStoredProcedure("get_classifier_list");
+            var dt = Db.Service.ExecuteQueryStoredProcedure("get_lower_classifier_category_list");
 
             var lst = new List<ClassifierCaterory>();
 

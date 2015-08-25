@@ -107,7 +107,7 @@ namespace DataProvider.Models.Stuff
             }
         }
 
-        public string ShortName(string fullName)
+        public static string ShortName(string fullName)
         {
             string result = String.Empty;
             string[] nameArr = fullName.Split(' ');

@@ -20,20 +20,22 @@ namespace DataProvider.Models.Service
         public EmployeeSm Creator { get; set; }
         public DateTime DateCreate { get; set; }
         public ClaimState State { get; set; }
+        public string SpecialistSid { get; set; }
+        public int IdWorkType { get; set; }
 
 
         public Claim2ClaimState() { }
 
-        public Claim2ClaimState(int id)
-        {
-            SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = id, SqlDbType = SqlDbType.Int };
-            var dt = Db.Service.ExecuteQueryStoredProcedure("get_model", pId);
-            if (dt.Rows.Count > 0)
-            {
-                var row = dt.Rows[0];
-                FillSelf(row);
-            }
-        }
+        //public Claim2ClaimState(int id)
+        //{
+        //    SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = id, SqlDbType = SqlDbType.Int };
+        //    var dt = Db.Service.ExecuteQueryStoredProcedure("get_model", pId);
+        //    if (dt.Rows.Count > 0)
+        //    {
+        //        var row = dt.Rows[0];
+        //        FillSelf(row);
+        //    }
+        //}
 
         public Claim2ClaimState(DataRow row)
             : this()
@@ -50,6 +52,8 @@ namespace DataProvider.Models.Service
             DateCreate = Db.DbHelper.GetValueDateTimeOrDefault(row, "dattim1");
             IdClaimState = Db.DbHelper.GetValueIntOrDefault(row, "id_claim_state");
             State = new ClaimState(row);
+            SpecialistSid = Db.DbHelper.GetValueString(row, "specialist_sid");
+            IdWorkType = Db.DbHelper.GetValueIntOrDefault(row, "id_work_type");
         }
 
         public void Save()

@@ -46,6 +46,37 @@ namespace DataProvider.Helpers
             }
         }
 
+        public static IEnumerable<KeyValuePair<string, string>> GetUserListByAdGroup(AdGroup grp)
+        {
+            var list = new Dictionary<string, string>();
+
+            using (WindowsImpersonationContextFacade impersonationContext
+                = new WindowsImpersonationContextFacade(
+                    nc))
+            {
+                var domain = new PrincipalContext(ContextType.Domain);
+                var group = GroupPrincipal.FindByIdentity(domain, IdentityType.Sid, AdUserGroup.GetSidByAdGroup(grp));
+                if (group != null)
+                {
+                    var members = group.GetMembers(true);
+                    foreach (var principal in members)
+                    {
+                        var userPrincipal = UserPrincipal.FindByIdentity(domain, principal.SamAccountName);
+                        if (userPrincipal != null)
+                        {
+                            var name = Employee.ShortName(userPrincipal.DisplayName);
+                            var sid = userPrincipal.Sid.Value;
+                            list.Add(sid, name);
+                        }
+                    }
+                }
+
+
+            }
+
+            return list.OrderBy(x => x.Value);
+        }
+
         private static string GetLoginFromEmail(string email)
         {
             return !string.IsNullOrEmpty(email) ? email.Substring(0, email.IndexOf("@", StringComparison.Ordinal)) : String.Empty;
@@ -79,7 +110,7 @@ namespace DataProvider.Helpers
         //        Department currDep = new Department(emp.Department.Id);
         //        GetParentDepChief(currDep, out managerUsername);
         //    }
-            
+
         //}
 
         //public static void GetParentDepChief(Department dep, out string managerUsername)
@@ -145,7 +176,7 @@ namespace DataProvider.Helpers
                         search.PropertiesToLoad.Add("DistinguishedName");
                         SearchResult resultManager = search.FindOne();
                         if (resultManager != null)
-                            managerName = (string) resultManager.Properties["DistinguishedName"][0];
+                            managerName = (string)resultManager.Properties["DistinguishedName"][0];
                     }
                 }
 
@@ -158,7 +189,7 @@ namespace DataProvider.Helpers
                         using (var up = new UserPrincipal(pc))
                         {
                             up.SamAccountName = username;
-                            up.UserPrincipalName = username;
+                            up.UserPrincipalName = username + "@unitgroup.ru";
                             up.SetPassword("z-123456");
                             up.Enabled = true;
                             up.ExpirePasswordNow();
@@ -213,36 +244,36 @@ namespace DataProvider.Helpers
                     search.PropertiesToLoad.Add("company");
                     search.PropertiesToLoad.Add("department");
                     //search.PropertiesToLoad.Add("userAccountControl");
-                    
-                        SearchResult resultUser = search.FindOne();
 
-                        if (resultUser == null) return String.Empty;
+                    SearchResult resultUser = search.FindOne();
 
-                        DirectoryEntry user = resultUser.GetDirectoryEntry();
-                        //user.Properties["sAMAccountName"].Value =username;
-                        //user.Properties["userPrincipalName"].Value =username;
-                        SetProp(ref user, ref resultUser, "mail", mail);
-                        SetProp(ref user, ref resultUser, "displayname", fullName);
-                        SetProp(ref user, ref resultUser, "givenName", surname);
-                        SetProp(ref user, ref resultUser, "sn", name);
-                        SetProp(ref user, ref resultUser, "title", position);
-                        SetProp(ref user, ref resultUser, "telephonenumber", workNum);
-                        SetProp(ref user, ref resultUser, "mobile", mobilNum);
-                        SetProp(ref user, ref resultUser, "l", city);
-                        SetProp(ref user, ref resultUser, "company", org);
-                        SetProp(ref user, ref resultUser, "department", dep);
-                        SetProp(ref user, ref resultUser, "manager", managerName);
-                        user.Properties["jpegPhoto"].Clear();
-                        SetProp(ref user, ref resultUser, "jpegPhoto", photo);
-                        //using (WindowsImpersonationContextFacade impersonationContext= new WindowsImpersonationContextFacade(nc))
-                        //{
-                        user.CommitChanges();
-                        //}
-                        SecurityIdentifier sid = new SecurityIdentifier((byte[]) resultUser.Properties["objectsid"][0],
-                            0);
+                    if (resultUser == null) return String.Empty;
 
-                        return sid.Value;
-                    
+                    DirectoryEntry user = resultUser.GetDirectoryEntry();
+                    //user.Properties["sAMAccountName"].Value =username;
+                    //user.Properties["userPrincipalName"].Value =username;
+                    SetProp(ref user, ref resultUser, "mail", mail);
+                    SetProp(ref user, ref resultUser, "displayname", fullName);
+                    SetProp(ref user, ref resultUser, "givenName", surname);
+                    SetProp(ref user, ref resultUser, "sn", name);
+                    SetProp(ref user, ref resultUser, "title", position);
+                    SetProp(ref user, ref resultUser, "telephonenumber", workNum);
+                    SetProp(ref user, ref resultUser, "mobile", mobilNum);
+                    SetProp(ref user, ref resultUser, "l", city);
+                    SetProp(ref user, ref resultUser, "company", org);
+                    SetProp(ref user, ref resultUser, "department", dep);
+                    SetProp(ref user, ref resultUser, "manager", managerName);
+                    user.Properties["jpegPhoto"].Clear();
+                    SetProp(ref user, ref resultUser, "jpegPhoto", photo);
+                    //using (WindowsImpersonationContextFacade impersonationContext= new WindowsImpersonationContextFacade(nc))
+                    //{
+                    user.CommitChanges();
+                    //}
+                    SecurityIdentifier sid = new SecurityIdentifier((byte[])resultUser.Properties["objectsid"][0],
+                        0);
+
+                    return sid.Value;
+
                 }
                 return String.Empty;
             }
@@ -341,6 +372,170 @@ namespace DataProvider.Helpers
 
 
                 return false;
+            }
+        }
+
+        public static string CreateSimpleAdUser(string username, string password, string name, string description, string adPath = "OU=Users,OU=UNIT,DC=UN1T,DC=GROUP")
+        {
+            using (WindowsImpersonationContextFacade impersonationContext
+               = new WindowsImpersonationContextFacade(
+                   nc))
+            {
+                bool userIsExist = false;
+                DirectoryEntry directoryEntry = new DirectoryEntry(DomainPath);
+
+                using (directoryEntry)
+                {
+                    //Если пользователь существует
+                    DirectorySearcher search = new DirectorySearcher(directoryEntry);
+                    search.Filter = String.Format("(&(objectClass=user)(sAMAccountName={0}))", username);
+                    SearchResult resultUser = search.FindOne();
+                    userIsExist = resultUser != null && resultUser.Properties.Contains("sAMAccountName");
+                }
+
+                if (!userIsExist)
+                {
+                    //Создаем аккаунт в AD
+                    using (
+                        var pc = new PrincipalContext(ContextType.Domain, "UN1T", adPath))
+                    {
+                        using (var up = new UserPrincipal(pc))
+                        {
+                            up.SamAccountName = username;
+                            up.UserPrincipalName = username + "@unitgroup.ru";
+                            
+                            up.SetPassword(password);
+                            up.Enabled = true;
+                            up.PasswordNeverExpires = true;
+                            up.UserCannotChangePassword = true;
+                            up.Description = description;
+                            //up.DistinguishedName = "DC=unitgroup.ru";
+                            try
+                            {
+                                up.Save();
+                            }
+                            catch (PrincipalOperationException ex)
+                            {
+
+                            }
+                            up.UnlockAccount();
+                        }
+                    }
+                }
+
+                directoryEntry = new DirectoryEntry(DomainPath);
+                using (directoryEntry)
+                {
+
+                    //DirectoryEntry user = directoryEntry.Children.Add("CN=" + username, "user");
+                    DirectorySearcher search = new DirectorySearcher(directoryEntry);
+                    search.Filter = String.Format("(&(objectClass=user)(sAMAccountName={0}))", username);
+                    search.PropertiesToLoad.Add("objectsid");
+                    search.PropertiesToLoad.Add("samaccountname");
+                    search.PropertiesToLoad.Add("userPrincipalName");
+                    search.PropertiesToLoad.Add("mail");
+                    search.PropertiesToLoad.Add("usergroup");
+                    search.PropertiesToLoad.Add("displayname");
+                    search.PropertiesToLoad.Add("givenName");
+                    search.PropertiesToLoad.Add("sn");
+                    search.PropertiesToLoad.Add("title");
+                    search.PropertiesToLoad.Add("telephonenumber");
+                    search.PropertiesToLoad.Add("homephone");
+                    search.PropertiesToLoad.Add("mobile");
+                    search.PropertiesToLoad.Add("manager");
+                    search.PropertiesToLoad.Add("l");
+                    search.PropertiesToLoad.Add("company");
+                    search.PropertiesToLoad.Add("department");
+
+                    SearchResult resultUser = search.FindOne();
+
+                    if (resultUser == null) return String.Empty;
+
+                    DirectoryEntry user = resultUser.GetDirectoryEntry();
+                    //SetProp(ref user, ref resultUser, "mail", mail);
+                    SetProp(ref user, ref resultUser, "displayname", username);
+                    SetProp(ref user, ref resultUser, "givenName", username);
+                    SetProp(ref user, ref resultUser, "sn", name);
+                    SetProp(ref user, ref resultUser, "title", "1");
+                    //SetProp(ref user, ref resultUser, "telephonenumber", workNum);
+                    //SetProp(ref user, ref resultUser, "mobile", mobilNum);
+                    SetProp(ref user, ref resultUser, "l", "1");
+                    SetProp(ref user, ref resultUser, "company", name);
+                    SetProp(ref user, ref resultUser, "department", "1");
+                    //SetProp(ref user, ref resultUser, "manager", "");
+                    //user.Properties["jpegPhoto"].Clear();
+                    //SetProp(ref user, ref resultUser, "jpegPhoto", photo);
+                    user.CommitChanges();
+
+                    SecurityIdentifier sid = new SecurityIdentifier((byte[])resultUser.Properties["objectsid"][0],
+                        0);
+
+                    return sid.Value;
+
+                }
+                return String.Empty;
+            }
+        }
+
+        public static void IncludeUser2AdGroup(string userSid, params AdGroup[] groups)
+        {
+            using (WindowsImpersonationContextFacade impersonationContext
+               = new WindowsImpersonationContextFacade(
+                   nc))
+            {
+                var context = new PrincipalContext(ContextType.Domain);
+                var userPrincipal = UserPrincipal.FindByIdentity(context, IdentityType.Sid, userSid);
+                if (userPrincipal == null) return;
+
+                foreach (var grp in groups)
+                {
+                    //Если пользователь не является членом группы то включаем
+                    if (userPrincipal.IsMemberOf(context, IdentityType.Sid, AdUserGroup.GetSidByAdGroup(grp)))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        var group = GroupPrincipal.FindByIdentity(context, IdentityType.Sid,
+                            AdUserGroup.GetSidByAdGroup(grp));
+                        if (group != null)
+                        {
+                            group.Members.Add(userPrincipal);
+                            group.Save();
+                        }
+                    }
+                }
+
+            }
+        }
+
+        public static void ExcludeUserFromAdGroup(string userSid, params AdGroup[] groups)
+        {
+            using (WindowsImpersonationContextFacade impersonationContext
+               = new WindowsImpersonationContextFacade(
+                   nc))
+            {
+                var context = new PrincipalContext(ContextType.Domain);
+                var userPrincipal = UserPrincipal.FindByIdentity(context, IdentityType.Sid, userSid);
+                if (userPrincipal == null) return;
+
+                foreach (var grp in groups)
+                {
+                    //Если пользователь является членом группы то исключаем
+                    if (userPrincipal.IsMemberOf(context, IdentityType.Sid, AdUserGroup.GetSidByAdGroup(grp)))
+                    {
+                        var group = GroupPrincipal.FindByIdentity(context, IdentityType.Sid, AdUserGroup.GetSidByAdGroup(grp));
+                        if (group != null)
+                        {
+                            group.Members.Remove(userPrincipal);
+                            group.Save();
+                        }
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
             }
         }
     }

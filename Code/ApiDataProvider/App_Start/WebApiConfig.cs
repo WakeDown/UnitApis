@@ -6,6 +6,7 @@ using DataProvider.Models;
 using System.Web.OData.Builder;
 using System.Web.OData.Extensions;
 using DataProvider.Models.Stuff;
+using DataProvider.Objects;
 
 namespace DataProvider.App_Start
 {
@@ -14,6 +15,7 @@ namespace DataProvider.App_Start
         public static void Register(HttpConfiguration config)
         {
             config.Filters.Add(new AuthorizeAttribute());
+            //config.Filters.Add(new AuthorizeAdAttribute()); 
 
             config.EnableQuerySupport();
             config.MapHttpAttributeRoutes();

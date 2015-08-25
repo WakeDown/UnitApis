@@ -48,6 +48,7 @@ namespace DataProvider.Helpers
                     cmd.Parameters.AddRange(sqlParams);
                     if (conn.State == ConnectionState.Closed) conn.Open();
                     dt.Load(cmd.ExecuteReader());
+                    cmd.Parameters.Clear();
                 }
 
                 return dt;
@@ -126,6 +127,15 @@ namespace DataProvider.Helpers
                 }
                 return null;
             }
+
+            //public static int GetValueInt(DataRow row, string name)
+            //{
+            //    if (row.Table.Columns.Contains(name))
+            //    {
+            //        return GetValueInt(row[name]);
+            //    }
+            //    return null;
+            //}
 
             public static int GetValueInt(object value)
             {

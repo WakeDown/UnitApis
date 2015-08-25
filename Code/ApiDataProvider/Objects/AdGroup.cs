@@ -7,6 +7,7 @@ namespace DataProvider.Objects
 {
     public enum AdGroup
     {
+        None,
         SuperAdmin,
         SystemUser,
         //Personal
@@ -22,11 +23,18 @@ namespace DataProvider.Objects
         // />
 
         //Service
+        ZipClaimClient,
+        ZipClaimClientCounterView,
+        ZipClaimClientZipView,
         ServiceAdmin,
         ServiceManager,
         ServiceEngeneer,
         ServiceOperator,
-        ServiceControler
+        ServiceControler,
+        ServiceTech,
+        //---доступы
+        ServiceClaimClassifier,
+        ServiceClaimClientAccess
         // />
     }
 }

@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using DataProvider.Helpers;
+using DataProvider.Objects;
 
 namespace DataProvider.Models.Stuff
 {
@@ -33,6 +34,7 @@ namespace DataProvider.Models.Stuff
 
         public EmployeeSm(string sid)
         {
+            if (String.IsNullOrEmpty(sid)) return;
             SqlParameter pSid = new SqlParameter() { ParameterName = "ad_sid", SqlValue = sid, SqlDbType = SqlDbType.VarChar };
             var dt = Db.Stuff.ExecuteQueryStoredProcedure("get_employee_sm", pSid);
             if (dt.Rows.Count > 0)
@@ -50,5 +52,7 @@ namespace DataProvider.Models.Stuff
             FullName = Db.DbHelper.GetValueString(row, "full_name");
             Email = Db.DbHelper.GetValueString(row, "email");
         }
+
+        
     }
 }

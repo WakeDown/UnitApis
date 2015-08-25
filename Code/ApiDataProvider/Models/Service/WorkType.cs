@@ -8,7 +8,7 @@ using DataProvider.Helpers;
 using DataProvider.Models.Service;
 using DataProvider.Objects;
 
-namespace DataProvider.Controllers.Service
+namespace DataProvider.Models.Service
 {
     public class WorkType:DbModel
     {
@@ -19,10 +19,21 @@ namespace DataProvider.Controllers.Service
 
         public WorkType() { }
 
+        public WorkType(int id)
+        {
+            SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = id, SqlDbType = SqlDbType.Int };
+            var dt = Db.Service.ExecuteQueryStoredProcedure("get_work_type", pId);
+
+            if (dt.Rows.Count > 0)
+            {
+                FillSelf(dt.Rows[0]);
+            }
+        }
+
         public WorkType(string sysName)
         {
             SqlParameter pSysName = new SqlParameter() { ParameterName = "sys_name", SqlValue = sysName, SqlDbType = SqlDbType.NVarChar };
-            var dt = Db.Service.ExecuteQueryStoredProcedure("get_classifier_category", pSysName);
+            var dt = Db.Service.ExecuteQueryStoredProcedure("get_work_type", pSysName);
 
             if (dt.Rows.Count > 0)
             {

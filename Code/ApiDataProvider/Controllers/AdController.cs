@@ -16,6 +16,11 @@ namespace DataProvider.Controllers
 {
     public class AdController : BaseApiController
     {
+        public IEnumerable<KeyValuePair<string, string>> GetUserListByAdGroup(AdGroup group)
+        {
+            return AdHelper.GetUserListByAdGroup(group);
+        }
+
         public string GetSid()
         {
             string curSid = GetCurUser().Sid;
@@ -28,6 +33,7 @@ namespace DataProvider.Controllers
         {
             return String.Format("{0}@unitgroup.ru", GetLoginByName(surname, name));
         }
+
         [HttpGet]
         [AuthorizeAd(Groups = new[] { AdGroup.PersonalManager })]
         public string GetLoginByName(string surname, string name)
@@ -48,7 +54,6 @@ namespace DataProvider.Controllers
             //return response;
         }
         
-
         [HttpGet]
         [AuthorizeAd(Groups = new[] { AdGroup.SystemUser })]
         public HttpResponseMessage Synchronyze()
@@ -64,10 +69,6 @@ namespace DataProvider.Controllers
                     Employee e = emp;
                     try
                     {
-                        if (e.DisplayName == "Тестов Т.Т.")
-                        {
-                            string s = "";
-                        }
                         AdHelper.SaveUser(e);
                     }
                     catch (UnauthorizedAccessException ex)

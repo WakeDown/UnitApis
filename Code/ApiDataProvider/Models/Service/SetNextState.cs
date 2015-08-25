@@ -9,6 +9,7 @@ namespace DataProvider.Models.Service
     {
         None = 0,
         Next = 1,
-        End = 2
+        Back=2,
+        End = 3
     }
 }

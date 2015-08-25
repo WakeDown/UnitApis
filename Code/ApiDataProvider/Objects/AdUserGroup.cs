@@ -34,11 +34,20 @@ namespace DataProvider.Objects
             list.Add(new AdUserGroup(AdGroup.SpeCalcOperator, "S-1-5-21-1970802976-3466419101-4042325969-4287", "SpeCalcOperator"));
             list.Add(new AdUserGroup(AdGroup.SpeCalcKonkurs, "S-1-5-21-1970802976-3466419101-4042325969-4285", "SpeCalcKonkurs"));
             //Service
+            
+            list.Add(new AdUserGroup(AdGroup.ZipClaimClient, "S-1-5-21-1970802976-3466419101-4042325969-3639", "zipclaim-client"));
+            list.Add(new AdUserGroup(AdGroup.ZipClaimClientCounterView, "S-1-5-21-1970802976-3466419101-4042325969-4219", "zipclaim-client-counter-view"));
+            list.Add(new AdUserGroup(AdGroup.ZipClaimClientZipView, "S-1-5-21-1970802976-3466419101-4042325969-4218", "zipclaim-client-zip-view"));
             list.Add(new AdUserGroup(AdGroup.ServiceAdmin, "S-1-5-21-1970802976-3466419101-4042325969-2566", "ServiceAdmin"));
             list.Add(new AdUserGroup(AdGroup.ServiceManager, "S-1-5-21-1970802976-3466419101-4042325969-2567", "ServiceManager"));
             list.Add(new AdUserGroup(AdGroup.ServiceEngeneer, "S-1-5-21-1970802976-3466419101-4042325969-2558", "ServiceEngeneer"));
             list.Add(new AdUserGroup(AdGroup.ServiceOperator, "S-1-5-21-1970802976-3466419101-4042325969-2568", "ServiceOperator"));
             list.Add(new AdUserGroup(AdGroup.ServiceControler, "S-1-5-21-1970802976-3466419101-4042325969-4066", "ServiceControler"));
+            list.Add(new AdUserGroup(AdGroup.ServiceTech, "S-1-5-21-1970802976-3466419101-4042325969-4079", "ServiceTech"));
+            //---
+            list.Add(new AdUserGroup(AdGroup.ServiceClaimClassifier, "S-1-5-21-1970802976-3466419101-4042325969-4081", "ServiceClaimClassifier"));
+            list.Add(new AdUserGroup(AdGroup.ServiceClaimClientAccess, "S-1-5-21-1970802976-3466419101-4042325969-4082", "ServiceClaimClientAccess"));
+
             return list;
         }
 
@@ -46,6 +55,13 @@ namespace DataProvider.Objects
         public static string GetSidByAdGroup(AdGroup grp)
         {
             return GetList().Single(g => g.Group == grp).Sid;
+        }
+
+        public static AdGroup GetAdGroupBySid(string sid)
+        {
+            if (string.IsNullOrEmpty(sid)) return AdGroup.None;
+            var grp = GetList().Single(g => g.Sid == sid).Group;
+            return grp;
         }
     }
 }

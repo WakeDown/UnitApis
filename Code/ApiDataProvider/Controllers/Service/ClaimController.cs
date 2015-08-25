@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using DataProvider.Helpers;
+using DataProvider.Models;
 using DataProvider.Models.Service;
 using DataProvider.Objects;
 using DataProvider._TMPLTS;
@@ -12,38 +13,77 @@ using Objects;
 
 namespace DataProvider.Controllers.Service
 {
-   public class ClaimController : BaseApiController
+    public class ClaimController : BaseApiController
     {
 
-       public IEnumerable<Claim> GetList(int? idAdmin = null, int? idEngeneer = null, DateTime? dateStart = null, DateTime? dateEnd = null, int? topRows = null)
+        public ListResult<Claim> GetList(int? idAdmin = null, int? idEngeneer = null, DateTime? dateStart = null, DateTime? dateEnd = null, int? topRows = null)
         {
             //AdHelper.UserInGroup(GetCurUser().User, AdGroup.ServiceEngeneer, AdGroup.SuperAdmin);
-            return Claim.GetList(idAdmin, idEngeneer, dateStart, dateEnd, topRows);
+            int cnt;
+            var list = Claim.GetList(out cnt, idAdmin, idEngeneer, dateStart, dateEnd, topRows);
+            return new ListResult<Claim>(list, cnt);
         }
 
         [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin })]
-       public Claim Get(int id)
+        public Claim Get(int id)
         {
-            var model = new Claim(id, true);
+            AdHelper.UserInGroup(GetCurUser().User, AdGroup.ServiceEngeneer, AdGroup.ServiceAdmin, AdGroup.ServiceControler, AdGroup.ServiceTech, AdGroup.SuperAdmin);
+            Claim model;
+            try
+            {
+                model = new Claim(id, GetCurUser(), true);
+            }
+            catch (AccessDenyException ex)
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.Conflict)
+                {
+                    Content = new StringContent(ex.Message),
+                    ReasonPhrase = ex.Message
+                };
+                throw new HttpResponseException(resp);
+            }
             return model;
         }
 
         [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin })]
         public IEnumerable<Claim2ClaimState> GetStateHistory(int? id)
         {
-            if (!id.HasValue) return new [] {new Claim2ClaimState()};
+            if (!id.HasValue) return new[] { new Claim2ClaimState() };
             return Claim2ClaimState.GetList(id.Value);
         }
 
+        //[AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin })]
+        //public HttpResponseMessage SaveAndGoNextState(Claim model)
+        //{
+        //    HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
+
+        //    try
+        //    {
+        //        model.CurUserAdSid = GetCurUser().Sid;
+        //        model.Save(/*SetNextState.Next*/);
+        //        //model.Go2State(SetNextState.Next);
+        //        response.Content = new StringContent(String.Format("{{\"id\":{0},\"sid\":\"{1}\"}}", model.Id, model.Sid));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        response = new HttpResponseMessage(HttpStatusCode.OK);
+        //        response.Content = new StringContent(MessageHelper.ConfigureExceptionMessage(ex));
+
+        //    }
+        //    return response;
+        //}
+
         [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin })]
-        public HttpResponseMessage SaveAndGoNextState(Claim model)
+        public HttpResponseMessage GoBack(Claim model)
         {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
 
             try
             {
                 model.CurUserAdSid = GetCurUser().Sid;
-                model.Save(SetNextState.Next);
+                //model.Save(SetNextState.Back);
+                //model.Go(SetNextState.Back);
+                //model.Go2State(SetNextState.Back);
                 response.Content = new StringContent(String.Format("{{\"id\":{0},\"sid\":\"{1}\"}}", model.Id, model.Sid));
             }
             catch (Exception ex)
@@ -55,15 +95,37 @@ namespace DataProvider.Controllers.Service
             return response;
         }
 
+        //[AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin })]
+        //public HttpResponseMessage SaveAndGoEndState(Claim model)
+        //{
+        //    HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
+
+        //    try
+        //    {
+        //        model.CurUserAdSid = GetCurUser().Sid;
+        //        //model.Save(SetNextState.End);
+        //        model.Save();
+        //        model.Go2State(SetNextState.End);
+        //        response.Content = new StringContent(String.Format("{{\"id\":{0},\"sid\":\"{1}\"}}", model.Id, model.Sid));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        response = new HttpResponseMessage(HttpStatusCode.OK);
+        //        response.Content = new StringContent(MessageHelper.ConfigureExceptionMessage(ex));
+
+        //    }
+        //    return response;
+        //}
+
         [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin })]
-        public HttpResponseMessage SaveAndGoEndState(Claim model)
+        public HttpResponseMessage Go(Claim model)
         {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
 
             try
             {
                 model.CurUserAdSid = GetCurUser().Sid;
-                model.Save(SetNextState.End);
+                model.Go();
                 response.Content = new StringContent(String.Format("{{\"id\":{0},\"sid\":\"{1}\"}}", model.Id, model.Sid));
             }
             catch (Exception ex)
@@ -88,7 +150,7 @@ namespace DataProvider.Controllers.Service
             }
             catch (Exception ex)
             {
-                response = new HttpResponseMessage(HttpStatusCode.OK); 
+                response = new HttpResponseMessage(HttpStatusCode.OK);
                 response.Content = new StringContent(MessageHelper.ConfigureExceptionMessage(ex));
 
             }
@@ -113,6 +175,9 @@ namespace DataProvider.Controllers.Service
             return response;
         }
 
-
+        public IEnumerable<KeyValuePair<string, string>> GetCurrentClaimSpecialistList(int id)
+        {
+            return Claim.GetSpecialistList(id);
+        }
     }
 }

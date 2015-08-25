@@ -93,17 +93,91 @@ namespace DataProvider.Models.Service
             return new ClaimState("END");
         }
 
-        public static ClaimState GetNext(int idClaimState)
+        public static ClaimState GetNext(int idClaimState, int claimId)
         {
-            var st = new ClaimState();
-            SqlParameter pIdClaim = new SqlParameter() { ParameterName = "id_claim_state", SqlValue = idClaimState, SqlDbType = SqlDbType.Int };
-            var dt = Db.Service.ExecuteQueryStoredProcedure("get_next_claim_state", pIdClaim);
-            if (dt.Rows.Count > 0)
-            {
-                st = new ClaimState(dt.Rows[0]);
-            }
+            var currState = new ClaimState(idClaimState);
 
-            return st;
+            switch (currState.SysName.ToUpper())
+            {
+                case "NEW":
+                    return new ClaimState("NEWADD");
+                case "NEWADD":
+                    return new ClaimState("SET");
+                case "SET":
+                    var wtId = new Claim(claimId).IdWorkType;
+                    if (!wtId.HasValue) throw new ArgumentException("Невозможно определить следующий статус. Тип работ не указан.");
+                    var wtSysName = new WorkType(wtId.Value).SysName;
+                    switch (wtSysName)
+                    {
+                        case "ДНО": case "НПР": case "ТЭО":case "УТЗ":
+                            return new ClaimState("TECHWORK");
+                        case "РТО": case "МТС": case "УРМ": case "ЗРМ":
+                        case "МДО": case "ИПТ": case "РЗРД": case "ЗНЗЧ":
+                            return new ClaimState("SRVADMWORK");
+                    }
+
+                    break;
+                default:
+                    return currState;
+            }
+            
+
+            //var st = new ClaimState();
+            //SqlParameter pIdClaim = new SqlParameter() { ParameterName = "id_claim_state", SqlValue = idClaimState, SqlDbType = SqlDbType.Int };
+            //var dt = Db.Service.ExecuteQueryStoredProcedure("get_next_claim_state", pIdClaim);
+            //if (dt.Rows.Count > 0)
+            //{
+            //    st = new ClaimState(dt.Rows[0]);
+            //}
+
+            return currState;
+        }
+
+        public static ClaimState GetPrev(int idClaimState, int claimId)
+        {
+            //TODO: Написать функцию выбора предыдущего статуса
+            var currState = new ClaimState(idClaimState);
+
+            //switch (currState.SysName.ToUpper())
+            //{
+            //    case "NEW":
+            //        return new ClaimState("NEWADD");
+            //    case "NEWADD":
+            //        return new ClaimState("SET");
+            //    case "SET":
+            //        var wtSysName = new WorkType(new Claim(claimId).IdWorkType).SysName;
+            //        switch (wtSysName)
+            //        {
+            //            case "ДНО":
+            //            case "НПР":
+            //            case "ТЭО":
+            //            case "УТЗ":
+            //                return new ClaimState("TECHWORK");
+            //            case "РТО":
+            //            case "МТС":
+            //            case "УРМ":
+            //            case "ЗРМ":
+            //            case "МДО":
+            //            case "ИПТ":
+            //            case "РЗРД":
+            //            case "ЗНЗЧ":
+            //                return new ClaimState("TECHWORK");
+            //        }
+
+            //        break;
+            //}
+
+
+            //var st = new ClaimState();
+            //SqlParameter pIdClaim = new SqlParameter() { ParameterName = "id_claim_state", SqlValue = idClaimState, SqlDbType = SqlDbType.Int };
+            //var dt = Db.Service.ExecuteQueryStoredProcedure("get_next_claim_state", pIdClaim);
+            //if (dt.Rows.Count > 0)
+            //{
+            //    st = new ClaimState(dt.Rows[0]);
+            //}
+
+            return currState;
         }
     }
+    
 }
