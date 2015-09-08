@@ -93,8 +93,8 @@
         }
 
         .print {
-            page-break-after: auto;
-        }
+    page-break-after: auto;
+}
     </style>
 </head>
 <body>
@@ -111,33 +111,43 @@
                 }
                 @foreach (ItBudgetReportItem item in Model)
                 {
-                if (item.Peoples.Any())
-                {
-                    foreach (ItBudgetReportItemPeople peop in item.Peoples)
+                    @*<tr class="it-bud-dep-row level-@item.Level"><td>@item.DepartmentName</td><td>@item.PeopleCount чел.</td><td class="money-cell">@String.Format("{0:N0} р.", item.CostSum)</td></tr>*@
+                    if (item.Peoples.Any())
                     {
-                        i++;
-                        <tr class="it-bud-peaple-row">
-                            <td>@i</td>
-                            <td>@item.BudgetName</td>
-                            <td>@peop.FullName</td>
-                            <td class="money-cell text-nowrap">@String.Format("{0:N0} р.", peop.Cost)</td>
-                            @{ onePeopleCost = peop.Cost;}
-                        </tr>
-                                        }
-                                    }
-                                }
+                        foreach (ItBudgetReportItemPeople peop in item.Peoples)
+                        {
+                            i++;
+                            <tr class="it-bud-peaple-row">
+                                <td>@i</td>
+                                <td>@item.DepartmentName</td>
+                                <td>@peop.FullName</td>
+                                <td class="money-cell text-nowrap">@String.Format("{0:N0} р.", peop.Cost)</td>
+                                @{ onePeopleCost = peop.Cost;}
+                            </tr>
+                        }
+                    }
+                }
+                @*<tr><td colspan="4"></td></tr>
+                     @{
+                         var depList = Model.GroupBy(m => new {m.DepartmentName, m.Level}).Select(m=> new{Name=m.Key.DepartmentName, Level=m.Key.Level, PeopleCount=m.Sum(p=>p.PeopleCount)}).OrderBy(m=>m.Level).ThenBy(m=>m.Name);
+                    }
+                    @foreach (var dep in depList)
+                    {
+                        <tr><td class="cell1"></td><td class="cell2">@dep.Name</td><td class="cell3">@dep.PeopleCount</td><td class="cell4">@(String.Format("{0:N0} р.", dep.PeopleCount * onePeopleCost))</td></tr>
+                    }
+                    <tr><td class="cell1"></td><td class="cell2"></td><th class="cell3">@depList.Count()</th><th class="cell4">@(String.Format("{0:N0} р.", depList.Count() * onePeopleCost))</th></tr>*@
             </table>
             <p style="height: 20px"></p>
             <table class="it-bud-list">
                 @{
-                    var budList = Model.GroupBy(m => new { m.BudgetName, m.Level }).Select(m => new { BudgetName = m.Key.BudgetName, Level = m.Key.Level, PeopleCount = m.Sum(p => p.PeopleCount) });
+                    var depList = Model.GroupBy(m => new { m.DepartmentName, m.Level }).Select(m => new { Name = m.Key.DepartmentName, Level = m.Key.Level, PeopleCount = m.Sum(p => p.PeopleCount) });//.OrderBy(m => m.Level).ThenBy(m => m.Name);
                 }
-                @foreach (var dep in budList)
+                @foreach (var dep in depList)
                 {
-                    <tr class="level-@dep.Level"><td>@dep.BudgetName</td><td class="text-center">@dep.PeopleCount</td><td class="money-cell text-nowrap">@(String.Format("{0:N0} р.", dep.PeopleCount * onePeopleCost))</td></tr>
+                    <tr class="level-@dep.Level"><td>@dep.Name</td><td class="text-center">@dep.PeopleCount</td><td class="money-cell text-nowrap">@(String.Format("{0:N0} р.", dep.PeopleCount * onePeopleCost))</td></tr>
                 }
                 @{
-                    int peopleCountTotal = budList.Select(m => m.PeopleCount).Sum();
+                    int peopleCountTotal = depList.Where(m => m.Level == 1).Select(m => m.PeopleCount).Sum();
                 }
                 <tr><th>ИТОГО</th><th class="text-center">@peopleCountTotal</th><th class="money-cell text-nowrap">@(String.Format("{0:N0} р.", peopleCountTotal * onePeopleCost))</th></tr>
             </table>

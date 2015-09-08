@@ -22,21 +22,21 @@
                 @*<div class="modal-body">*@
                     <div class="form-group">
                         <label class="col-lg-2 control-label" for="dateRest">Дата отсутствия</label>
-                        <div class="col-lg-8">
+                        <div class="col-lg-2">
                             @Html.TextBoxFor(m => m.DateRest, new { @class = "form-control required-mark", @id = "dateRest", required="required" })
                             <span class="help-block with-errors"></span>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-lg-2 control-label" for="hourStart">Время начала</label>
-                        <div class="col-lg-8 bootstrap-timepicker">
+                        <div class="col-lg-2 bootstrap-timepicker">
                             @Html.TextBoxFor(m => m.HourStart, "{0:HH:mm}", new { @class = "form-control required-mark", @id = "hourStart", required = "required" })
                             <span class="help-block with-errors"></span>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-lg-2 control-label" for="hourCount">Количество часов</label>
-                        <div class="col-lg-8">
+                        <div class="col-lg-1">
                             @Html.TextBoxFor(m => m.HoursCount, new { @class = "form-control required-mark", @id = "hourCount", required = "required" })
                             <span class="help-block with-errors"></span>
                         </div>

@@ -13,13 +13,14 @@ using System.Threading.Tasks;
 using SelectPdf;
 using Stuff.Objects;
 using StuffDelivery.Models;
+using StuffDelivery.Objects;
 
 namespace StuffDelivery
 {
     class Program
     {
         private static MailAddress defaultMailFrom = new MailAddress("UN1T@un1t.group");
-        private static readonly string stuffWebLeftPartUrl = "http://uiis-1:10003";
+        private static readonly string stuffWebLeftPartUrl = "http://portal.unitgroup.ru";
 
         static void Main(string[] args)
         {
@@ -42,9 +43,12 @@ namespace StuffDelivery
             doc.Save(stream);
 
             var file = new AttachmentFile() { Data = stream.ToArray(), FileName = "it-budget.pdf", DataMimeType = MediaTypeNames.Application.Pdf };
-            var recipients = new MailAddress[] {new MailAddress("Ildar.Gimaltdinov@unitgroup.ru"), new MailAddress("Svetlana.Demysheva@unitgroup.ru"),  };
+            //var recipients = new MailAddress[] {new MailAddress("Ildar.Gimaltdinov@unitgroup.ru"), new MailAddress("Svetlana.Demysheva@unitgroup.ru"), new MailAddress("Larisa.Ganishina@unitgroup.ru") };
+            var recipientsStr = ConfigurationManager.AppSettings["ItBudgetRecipients"].Split('|');
             //string monthName = new TranslitDate().GetMonthName(DateTime.Now.AddMonths(1).Month);
-            SendMailSmtp("ИТ бюджет за ", "Спиок ИТ бюджета во вложении", true, null, recipients, null, file, true);
+            var recipients = (from s in recipientsStr where !String.IsNullOrEmpty(s) select new MailAddress(s)).ToArray();
+            string monthName = TranslitDate.GetMonthNameImenit(DateTime.Now.AddMonths(-1).Month);
+            SendMailSmtp(String.Format("ИТ бюджет за {0} {1}", monthName, DateTime.Now.AddMonths(-1).Year), "Добрый день. ИТ бюджет во вложении", true, null, recipients, null, file);
         }
 
         public static void SendHolidayWorkConfirmList()
@@ -62,7 +66,8 @@ namespace StuffDelivery
             foreach (string s in list)
             {
                 i++;
-                mailBody.AppendLine(String.Format("<tr style='border: 1px solid black;'><td style='border: 1px solid black;padding: 5px;'>{0}</td><td style='border: 1px solid black;padding: 5px;'>{1}</td></tr>", i, s));
+                mailBody.AppendLine(
+                    $"<tr style='border: 1px solid black;'><td style='border: 1px solid black;padding: 5px;'>{i}</td><td style='border: 1px solid black;padding: 5px;'>{s}</td></tr>");
             }
             mailBody.AppendLine("</table>");
             mailBody.AppendLine("</div>");
@@ -157,7 +162,7 @@ namespace StuffDelivery
                 mailBody.AppendLine("<div style='font-family: Calibri'>");
                 mailBody.AppendLine("<p>Уважаемые коллеги!</p>");
                 //mailBody.AppendLine("\r\n");
-                string monthName = new TranslitDate().GetMonthName(DateTime.Now.AddMonths(1).Month);
+                string monthName = TranslitDate.GetMonthNamePredl(DateTime.Now.AddMonths(1).Month);
                 mailBody.AppendLine(String.Format("<p>В {0} месяце свои дни рождения празднуют:</p>", monthName));
                 //mailBody.AppendLine("\r\n");
                 string stuffUri = ConfigurationManager.AppSettings["stuffUrl"];

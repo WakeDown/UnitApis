@@ -7,6 +7,7 @@ namespace Stuff.Models
 {
     public class ItBudgetReportItem
     {
+        public string BudgetName { get; set; }
         public string DepartmentName { get; set; }
         public int PeopleCount { get; set; }
         public double CostSum { get; set; }

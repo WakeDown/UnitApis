@@ -61,5 +61,24 @@ namespace Stuff.Models
             Organization.Director.Position = new Position(Organization.Director.Position.Id);
             Organization.Director.PositionOrg = new Position(Organization.Director.PositionOrg.Id);
         }
+
+        protected void SetMatchersOficial(string empSid)
+        {
+            Matchers = new List<Employee>() { Employee.Manager };
+            var depDir = new Employee().GetDepartmentDirector(empSid);
+            if (depDir != null)
+            {
+                if (Employee.Manager.Id != depDir.Id) Matchers.Add(depDir);
+            }
+            else
+            {
+                depDir = new Employee();
+            }
+            var dir = new Employee().GetDirector();
+            if (dir != null)
+            {
+                if (Employee.Manager.Id != dir.Id && depDir.Id != dir.Id) Matchers.Add(dir);
+            }
+        }
     }
 }

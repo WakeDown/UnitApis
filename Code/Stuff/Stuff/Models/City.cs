@@ -38,11 +38,11 @@ namespace Stuff.Models
             return model;
         }
 
-        public static IEnumerable<Position> GetList()
+        public static IEnumerable<City> GetList()
         {
             Uri uri = new Uri(String.Format("{0}/City/GetList", OdataServiceUri));
             string jsonString = GetJson(uri);
-            var model = JsonConvert.DeserializeObject<IEnumerable<Position>>(jsonString);
+            var model = JsonConvert.DeserializeObject<IEnumerable<City>>(jsonString);
             return model;
         }
 

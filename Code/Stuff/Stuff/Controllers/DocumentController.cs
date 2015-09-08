@@ -251,6 +251,8 @@ namespace Stuff.Controllers
             return File(stream.ToArray(), "application/pdf");
         }
 
+       
+
         public ActionResult StatementRestDays(string sid, DateTime? dateStart, int? daysCount, string cause)
         {
             var data = new StatementRestFewDays();
@@ -261,6 +263,86 @@ namespace Stuff.Controllers
             data.Configure();
 
             return View("Statement", data);
+        }
+
+        [HttpGet]
+        public ActionResult StatementFormFired()
+        {
+            return View("StatementFormFired", new StatementFired(CurUser.Sid));
+        }
+
+        [HttpPost]
+        public ActionResult StatementFormFired(StatementFired data)
+        {
+            try
+            {
+                data.Configure();
+            }
+            catch (Exception ex)
+            {
+                TempData["ServerError"] = ex.Message;
+                return View("StatementFormFired", data);
+            }
+            HtmlToPdf converter = new HtmlToPdf();
+
+            string url = Url.Action("StatementFiredPdf", new { sid = data.SidEmployee, dateFired = data.DateFired });
+            var leftPartUrl = String.Format("{0}://{1}:{2}", Request.RequestContext.HttpContext.Request.Url.Scheme, Request.RequestContext.HttpContext.Request.Url.Host, Request.RequestContext.HttpContext.Request.Url.Port);
+            url = String.Format("{1}{0}", url, leftPartUrl);
+            PdfDocument doc = converter.ConvertUrl(url);
+            MemoryStream stream = new MemoryStream();
+            doc.Save(stream);
+            return File(stream.ToArray(), "application/pdf");
+        }
+
+        public ActionResult StatementFiredPdf(string sid, DateTime? dateFired)
+        {
+            var data = new StatementFired();
+            data.SidEmployee = sid;
+            data.DateFired = dateFired.Value;
+            data.Configure();
+
+            return View("StatementFired", data);
+        }
+
+        [HttpGet]
+        public ActionResult StatementFormRest()
+        {
+            return View("StatementFormRest", new StatementRest(CurUser.Sid));
+        }
+
+        [HttpPost]
+        public ActionResult StatementFormRest(StatementRest data)
+        {
+            try
+            {
+                data.Configure();
+            }
+            catch (Exception ex)
+            {
+                TempData["ServerError"] = ex.Message;
+                return View("StatementFormRest", data);
+            }
+            HtmlToPdf converter = new HtmlToPdf();
+
+            string url = Url.Action("StatementRestPdf", new { sid = data.SidEmployee, dateStart = data.DateStart, dateEnd = data.DateEnd, daysCount=data.DaysCount });
+            var leftPartUrl = String.Format("{0}://{1}:{2}", Request.RequestContext.HttpContext.Request.Url.Scheme, Request.RequestContext.HttpContext.Request.Url.Host, Request.RequestContext.HttpContext.Request.Url.Port);
+            url = String.Format("{1}{0}", url, leftPartUrl);
+            PdfDocument doc = converter.ConvertUrl(url);
+            MemoryStream stream = new MemoryStream();
+            doc.Save(stream);
+            return File(stream.ToArray(), "application/pdf");
+        }
+
+        public ActionResult StatementRestPdf(string sid, DateTime? dateStart, DateTime? dateEnd, int? daysCount)
+        {
+            var data = new StatementRest();
+            data.SidEmployee = sid;
+            data.DateStart = dateStart.Value;
+            data.DateEnd = dateEnd.Value;
+            data.DaysCount = daysCount.Value;
+            data.Configure();
+
+            return View("StatementRest", data);
         }
 
         public ActionResult DocumentHeader(int? idOrg)

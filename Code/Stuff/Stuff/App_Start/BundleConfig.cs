@@ -35,15 +35,7 @@ namespace Stuff
             //bundles.Add(new ScriptBundle("~/bundles/fuelux").Include(
             //            "~/Scripts/fuelux.min.js"));
 
-            bundles.Add(new ScriptBundle("~/bundles/2pdf").Include(
-                "~/Scripts/jquery-{version}.js",
-                        "~/Scripts/pdf/jspdf.js",
-                        "~/Scripts/pdf/jspdf.plugin.addimage.js",
-                        "~/Scripts/pdf/jspdf.plugin.from_html.js",
-                        "~/Scripts/pdf/jspdf.plugin.split_text_to_size.js",
-                        "~/Scripts/pdf/jspdf.plugin.standard_fonts_metrics.js"
-                        //, "~/Scripts/pdf.worker.js"
-                        ));
+           
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
@@ -65,8 +57,8 @@ namespace Stuff
             bundles.Add(new ScriptBundle("~/bundles/Department/Index").Include(
                       "~/Scripts/Views/Department/Index.js"));
 
+            BundleTable.EnableOptimizations = true;
 
-            
         }
     }
 }

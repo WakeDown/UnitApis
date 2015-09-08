@@ -120,16 +120,16 @@ namespace Stuff.Objects
                             var name = userPrincipal.DisplayName;
                             user.Email = mail;
                             user.FullName = name;
-                            user.AdGroups = new List<AdGroup>();
-                            var wp = new WindowsPrincipal(wi);
-                            foreach (var role in AdUserGroup.GetList())
-                            {
-                                var grpSid = new SecurityIdentifier(role.Sid);
-                                if (wp.IsInRole(grpSid))
-                                {
-                                    user.AdGroups.Add(role.Group);
-                                }
-                            }
+                            //user.AdGroups = new List<AdGroup>();
+                            //var wp = new WindowsPrincipal(wi);
+                            //foreach (var role in AdUserGroup.GetList())
+                            //{
+                            //    var grpSid = new SecurityIdentifier(role.Sid);
+                            //    if (wp.IsInRole(grpSid))
+                            //    {
+                            //        user.AdGroups.Add(role.Group);
+                            //    }
+                            //}
                         }
                     }
                 }

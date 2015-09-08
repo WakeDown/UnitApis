@@ -42,27 +42,32 @@ namespace Stuff.Models
         //int hoursCount, DateTime hourStart, DateTime dateRest, string cause = null
         public void Configure()
         {
-            base.Configure(SidEmployee, "GRP");
-            //Organization.Director = new Employee().GetDirector();
-            Matchers = new List<Employee>() {Employee.Manager};
-            var depDir = new Employee().GetDepartmentDirector(SidEmployee);
-            if (Employee.Manager.Id != depDir.Id) Matchers.Add(depDir);
-            if (HoursCount <= 0) throw new ArgumentException("Количество часов должно быть больше 0");
-            Name = "Служебная записка";
-            HoursCount = HoursCount;
-            HourEnd = HourStart.AddHours(HoursCount);
+            
+                base.Configure(SidEmployee, "GRP");
+                //Organization.Director = new Employee().GetDirector();
+                Matchers = new List<Employee>() {Employee.Manager};
+                var depDir = new Employee().GetDepartmentDirector(SidEmployee);
+                if (depDir != null)
+                {
+                    if (Employee.Manager.Id != depDir.Id) Matchers.Add(depDir);
+                }
+                if (HoursCount <= 0) throw new ArgumentException("Количество часов должно быть больше 0");
+                Name = "Служебная записка";
+                HoursCount = HoursCount;
+                HourEnd = HourStart.AddHours(HoursCount);
 
-            //Склоняем часы
-            string hoursStr = "часа";
-            int hDig = HoursCount % 10;
-            if (hDig == 1) hoursStr = "час";
-            if (hDig > 1 && hDig < 5) hoursStr = "часа";
-            if (hDig > 4 && hDig < 21) hoursStr = "часов";
+                //Склоняем часы
+                string hoursStr = "часа";
+                int hDig = HoursCount%10;
+                if (hDig == 1) hoursStr = "час";
+                if (hDig > 1 && hDig < 5) hoursStr = "часа";
+                if (hDig > 4 && hDig < 21) hoursStr = "часов";
 
-            Text =
-                String.Format(
-                    "Прошу предоставить мне {0} {5} рабочего времени с {1:HH:mm} по {2:HH:mm} {3:dd.MM.yyyy} года за свой счет {4}.",
-                    HoursCount, HourStart, HourEnd, DateRest, Cause, hoursStr);
+                Text =
+                    String.Format(
+                        "Прошу предоставить мне {0} {5} рабочего времени с {1:HH:mm} по {2:HH:mm} {3:dd.MM.yyyy} года за свой счет {4}.",
+                        HoursCount, HourStart, HourEnd, DateRest, Cause, hoursStr);
+            
         }
     }
 }

@@ -23,20 +23,19 @@ namespace Stuff.Controllers
         public ActionResult Employees()
         {
             DisplayCurUser();
-            var deps = Department.GetList().ToArray();
+            var list = Department.GetList().ToArray();
 
-            return View(deps);
+            return View(list);
         }
-
         
 
         public ActionResult Index()
         {
             DisplayCurUser();
 
-            var deps = Department.GetOrgStructure().ToList();
+            var list = Department.GetOrgStructure().ToList();
 
-            return View(deps);
+            return View(list);
         }
 
         [HttpGet]
@@ -48,7 +47,7 @@ namespace Stuff.Controllers
             return View();
         }
         [HttpPost]
-        public ActionResult New(Department dep)
+        public ActionResult New(Department model)
         {
             var user = DisplayCurUser();
             if (!user.UserCanEdit()) return RedirectToAction("AccessDenied", "Error");
@@ -58,7 +57,7 @@ namespace Stuff.Controllers
             {
                 ResponseMessage responseMessage;
                 //dep.Creator = new Employee(){AdSid = GetCurUser().Sid};
-                bool complete = dep.Save(out responseMessage);
+                bool complete = model.Save(out responseMessage);
                 if (!complete) throw new Exception(responseMessage.ErrorMessage);
 
                 return RedirectToAction("Edit", "Department", new { id = responseMessage.Id });
@@ -66,7 +65,7 @@ namespace Stuff.Controllers
             catch (Exception ex)
             {
                 ViewData["ServerError"] = ex.Message;
-                return View("New", dep);
+                return View("New", model);
             }
         }
 

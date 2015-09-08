@@ -1,5 +1,5 @@
 ﻿@using Stuff.Models
-@model Stuff.Models.Statement
+@model Stuff.Models.StatementRest
 
 @{
     Layout = null;
@@ -51,9 +51,33 @@
                     <div class="right">@Model.Employee.DisplayName</div>
                 </td>
             </tr>
-            <tr><td colspan="2" style="height: 100px;"></td></tr>
+            <tr><td colspan="2" style="height: 20px;"></td></tr>
+            <tr><td colspan="2"><hr style="border: 1px solid black" /></td></tr>
+            <tr><td colspan="2" style="height: 20px;"></td></tr>
             <tr>
-                <td class="bold">СОГЛАСОВАНО</td>
+                <td colspan="2">
+                    <span class="bold">СОГЛАСОВАНО</span> <span style="font-size: 0.7em" class="bold">на соответствие утвержденного графика отпусков</span>
+                </td>
+            </tr>
+            <tr>
+                <td style="border-bottom: 1px solid black">
+
+                </td>
+                <td>
+                    <div class="right">________________/________________</div>
+                </td>
+            </tr>
+            <tr>
+                <td style="font-size: 0.7em" class="bold">должность представителя службы персонала</td>
+                <td>
+                    <div class="right"> _____________ @DateTime.Now.Year г.</div>
+                </td>
+            </tr>
+            <tr><td colspan="2" style="height: 50px;"></td></tr>
+            <tr><td colspan="2"><hr/></td></tr>
+            <tr><td colspan="2" style="height: 50px;"></td></tr>
+            <tr>
+                <td class="bold">УТВЕРЖДАЮ</td>
                 <td></td>
             </tr>
             <tr>
