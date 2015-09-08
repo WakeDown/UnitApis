@@ -49,6 +49,7 @@ namespace DataProvider.Models.Stuff
         public string ShortNameRod { get; set; }
         public bool IsHidden { get; set; }
         public DateTime? DateFired { get; set; }
+        public int? IdBudget { get; set; }
 
         public Employee()
         {
@@ -92,6 +93,7 @@ namespace DataProvider.Models.Stuff
             ShortNameRod = ShortName(FullNameRod);
             IsHidden = row.Table.Columns.Contains("is_hidden") && Db.DbHelper.GetValueBool(row["is_hidden"].ToString());
             DateFired = Db.DbHelper.GetValueDateTimeOrNull(row, "date_fired");
+            IdBudget = Db.DbHelper.GetValueIntOrNull(row, "id_budget");
         }
 
         public Employee(int id, bool getPhoto = false)
@@ -117,7 +119,7 @@ namespace DataProvider.Models.Stuff
                 string name = nameArr[i];
                 if (String.IsNullOrEmpty(name))continue;
                 if (i > 0) name = name[0] + ".";
-                if (i >= 1) name = " " + name;
+                if (i == 1) name = " " + name;
                 result += name;
             }
             return result;
@@ -223,6 +225,7 @@ namespace DataProvider.Models.Stuff
             SqlParameter pCreatorAdSid = new SqlParameter() { ParameterName = "creator_sid", SqlValue = CurUserAdSid, SqlDbType = SqlDbType.VarChar };
             SqlParameter pFullNameDat = new SqlParameter() { ParameterName = "full_name_dat", SqlValue = FullNameDat, SqlDbType = SqlDbType.NVarChar };
             SqlParameter pFullNameRod = new SqlParameter() { ParameterName = "full_name_rod", SqlValue = FullNameRod, SqlDbType = SqlDbType.NVarChar };
+            SqlParameter pIdBudget = new SqlParameter() { ParameterName = "id_budget", SqlValue = IdBudget, SqlDbType = SqlDbType.Int };
 
             using (var conn = Db.Stuff.connection)
             {
@@ -233,7 +236,7 @@ namespace DataProvider.Models.Stuff
                     {
                         var dt = Db.Stuff.ExecuteQueryStoredProcedure("save_employee", conn, tran, pId, pAdSid, pManager, pName,
                                 pSurname,pPatronymic, pFullName, pDisplayName, pPosition, pDepartment, pOrganization, pEmail,
-                                pWorkNum,pMobilNum, pEmpState, pCity, pDateCame, pBirthDate, pMale, pPositionOrg, pHasAdAccount, pCreatorAdSid, pFullNameDat, pFullNameRod);
+                                pWorkNum,pMobilNum, pEmpState, pCity, pDateCame, pBirthDate, pMale, pPositionOrg, pHasAdAccount, pCreatorAdSid, pFullNameDat, pFullNameRod, pIdBudget);
 
                         if (dt.Rows.Count > 0)
                         {
@@ -313,16 +316,17 @@ namespace DataProvider.Models.Stuff
 
         }
 
-        public static IEnumerable<Employee> GetList(int? idDepartment = null, bool getPhoto = false, int? idCity = null, int? idManager = null, bool userCanViewHiddenEmps = false, bool showHidden = true)
+        public static IEnumerable<Employee> GetList(int? idDepartment = null, bool getPhoto = false, int? idCity = null, int? idManager = null, bool userCanViewHiddenEmps = false, bool showHidden = true, int? idBudget = null)
         {
             SqlParameter pIdDepartment = new SqlParameter() { ParameterName = "id_department", SqlValue = idDepartment, SqlDbType = SqlDbType.Int };
             SqlParameter pGetPhoto = new SqlParameter() { ParameterName = "get_photo", SqlValue = getPhoto, SqlDbType = SqlDbType.Bit };
             SqlParameter pIdCity = new SqlParameter() { ParameterName = "id_city", SqlValue = idCity, SqlDbType = SqlDbType.Int };
             SqlParameter pIdManager = new SqlParameter() { ParameterName = "id_manager", SqlValue = idManager, SqlDbType = SqlDbType.Int };
+            SqlParameter pIdBudget = new SqlParameter() { ParameterName = "id_budget", SqlValue = idBudget, SqlDbType = SqlDbType.Int };
             //if (sysNamePositions == null) sysNamePositions = new[] {""};
             //SqlParameter pSysNamePositions = new SqlParameter() { ParameterName = "lst_pos_sys_name", SqlValue = String.Join(",", sysNamePositions), SqlDbType = SqlDbType.NVarChar };
 
-            var dt = Db.Stuff.ExecuteQueryStoredProcedure("get_employee_list", pIdDepartment, pGetPhoto, pIdCity, pIdManager);
+            var dt = Db.Stuff.ExecuteQueryStoredProcedure("get_employee_list", pIdDepartment, pGetPhoto, pIdCity, pIdManager, pIdBudget);
 
             var lst = new List<Employee>();
 

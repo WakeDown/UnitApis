@@ -7,18 +7,20 @@ using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Web.Http;
+using System.Web.Mvc;
 using System.Xml;
 using DataProvider.Helpers;
 using DataProvider.Models.Service;
+using DataProvider.Objects;
 using Objects;
 
 namespace DataProvider.Controllers.Service
 {
     public class DeviceController : BaseApiController
     {
-        public DeviceSearchResult GetSearchList(int? idContractor = null, string contractorName = null, int? idContract = null, string contractNumber = null, int? idDevice = null, string deviceName = null)
+        public DeviceSearchResult GetSearchList(int? idContractor = null, string contractorName = null, int? idContract = null, string contractNumber = null, int? idDevice = null, string deviceName = null, string serialNum = null)
         {
-            var devices = Device.GetList(idContractor, contractorName, idContract, contractNumber, idDevice, deviceName);
+            var devices = Device.GetList(idContractor, contractorName, idContract, contractNumber, idDevice, deviceName, serialNum);
             var vendors = from device in devices
                 group device by device.Vendor
                 into d
@@ -35,16 +37,17 @@ namespace DataProvider.Controllers.Service
             return Device.GetList(idContractor, contractorName, idContract, contractNumber, idDevice, deviceName);
         }
 
-
-        public DeviceInfoResult GetInfo(string serialNum)
+        [AuthorizeAd(Groups = new[] { AdGroup.ServiceMobileUser })]
+        public IHttpActionResult GetInfo(string serialNum)
         {
-            if (String.IsNullOrEmpty(serialNum)) return null;
-            return Device.GetInfo(serialNum);
+            if (String.IsNullOrEmpty(serialNum)) return NotFound();
+            return Ok(Device.GetInfo(serialNum));
         }
 
-        public IEnumerable<DeviceInfoResult> GetInfoList()
+        [AuthorizeAd(Groups = new[] { AdGroup.ServiceMobileUser })]
+        public IHttpActionResult GetInfoList()
         {
-            return Device.GetInfoList();
+            return Ok(Device.GetInfoList());
         }
 
         public byte[] GetInfoListHash()

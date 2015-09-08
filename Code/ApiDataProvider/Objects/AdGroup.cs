@@ -32,6 +32,9 @@ namespace DataProvider.Objects
         ServiceOperator,
         ServiceControler,
         ServiceTech,
+        ServiceClaimContractorAccess,
+        ZipClaimAddressChange,
+        ServiceMobileUser,
         //---доступы
         ServiceClaimClassifier,
         ServiceClaimClientAccess

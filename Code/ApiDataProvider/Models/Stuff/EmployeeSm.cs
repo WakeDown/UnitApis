@@ -20,7 +20,7 @@ namespace DataProvider.Models.Stuff
         public EmployeeSm()
         {
         }
-
+        
         public EmployeeSm(int id)
         {
             SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = id, SqlDbType = SqlDbType.Int };
@@ -42,6 +42,11 @@ namespace DataProvider.Models.Stuff
                 var row = dt.Rows[0];
                 FillSelf(row);
             }
+            else
+            {
+                var adUser = AdHelper.GetUserBySid(sid);
+                FillSelf(adUser); 
+            }
         }
 
         private void FillSelf(DataRow row)
@@ -53,6 +58,13 @@ namespace DataProvider.Models.Stuff
             Email = Db.DbHelper.GetValueString(row, "email");
         }
 
-        
+        private void FillSelf(EmployeeSm user)
+        {
+            Id = user.Id;
+            AdSid = user.AdSid;
+            DisplayName = user.DisplayName;
+            FullName = user.FullName;
+            Email = user.Email;
+        }
     }
 }

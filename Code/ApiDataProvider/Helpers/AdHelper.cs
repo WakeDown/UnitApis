@@ -77,6 +77,27 @@ namespace DataProvider.Helpers
             return list.OrderBy(x => x.Value);
         }
 
+        public static IEnumerable<KeyValuePair<string, string>> GetGroupListByAdOrg(AdOrg org)
+        {
+            var list = new Dictionary<string, string>();
+
+            using (WindowsImpersonationContextFacade impersonationContext
+                = new WindowsImpersonationContextFacade(
+                    nc))
+            {
+                var domain = new PrincipalContext(ContextType.Domain, "UN1T.GROUP", String.Format("{0}, DC=UN1T,DC=GROUP", AdOrganization.GetAdPathByAdOrg(org)));
+                GroupPrincipal groupList = new GroupPrincipal(domain, "*");
+                PrincipalSearcher ps = new PrincipalSearcher(groupList);
+
+                foreach (var grp in ps.FindAll())
+                {
+                    list.Add(grp.Sid.Value, grp.Name);
+                }
+            }
+
+            return list;
+        }
+
         private static string GetLoginFromEmail(string email)
         {
             return !string.IsNullOrEmpty(email) ? email.Substring(0, email.IndexOf("@", StringComparison.Ordinal)) : String.Empty;
@@ -403,7 +424,7 @@ namespace DataProvider.Helpers
                         {
                             up.SamAccountName = username;
                             up.UserPrincipalName = username + "@unitgroup.ru";
-                            
+
                             up.SetPassword(password);
                             up.Enabled = true;
                             up.PasswordNeverExpires = true;
@@ -453,13 +474,13 @@ namespace DataProvider.Helpers
 
                     DirectoryEntry user = resultUser.GetDirectoryEntry();
                     //SetProp(ref user, ref resultUser, "mail", mail);
-                    SetProp(ref user, ref resultUser, "displayname", username);
+                    SetProp(ref user, ref resultUser, "displayname", name);
                     SetProp(ref user, ref resultUser, "givenName", username);
                     SetProp(ref user, ref resultUser, "sn", name);
-                    SetProp(ref user, ref resultUser, "title", "1");
+                    SetProp(ref user, ref resultUser, "title", description);
                     //SetProp(ref user, ref resultUser, "telephonenumber", workNum);
                     //SetProp(ref user, ref resultUser, "mobile", mobilNum);
-                    SetProp(ref user, ref resultUser, "l", "1");
+                    SetProp(ref user, ref resultUser, "l", description);
                     SetProp(ref user, ref resultUser, "company", name);
                     SetProp(ref user, ref resultUser, "department", "1");
                     //SetProp(ref user, ref resultUser, "manager", "");
@@ -475,6 +496,55 @@ namespace DataProvider.Helpers
                 }
                 return String.Empty;
             }
+        }
+
+        public static string CreateAdGroup(string name, string adPath)
+        {
+            string grpSid = String.Empty;
+
+            using (WindowsImpersonationContextFacade impersonationContext
+              = new WindowsImpersonationContextFacade(
+                  nc))
+            {
+                //DirectoryEntry directoryEntry = new DirectoryEntry(DomainPath);
+                //DirectoryEntry ou = directoryEntry.Children.Find(adPath);
+                //DirectoryEntry group = ou.Children.Add($"CN={name}", "group");
+                //group.Properties["samAccountName"].Value = name;
+                //group.CommitChanges();
+
+                bool groupIsExist = false;
+                DirectoryEntry directoryEntry = new DirectoryEntry(DomainPath);
+
+                using (directoryEntry)
+                {
+                    //Если пользователь существует
+                    DirectorySearcher search = new DirectorySearcher(directoryEntry);
+                    search.Filter = String.Format("(&(objectClass=user)(sAMAccountName={0}))", name);
+                    SearchResult resultGroup = search.FindOne();
+                    groupIsExist = resultGroup != null && resultGroup.Properties.Contains("sAMAccountName");
+
+
+                    if (!groupIsExist)
+                    {
+
+                        DirectoryEntry ou = directoryEntry.Children.Find(adPath);
+                        DirectoryEntry group = ou.Children.Add($"CN={name}", "group");
+                        group.Properties["samAccountName"].Value = name;
+                        group.CommitChanges();
+                        SecurityIdentifier sid = new SecurityIdentifier((byte[])group.Properties["objectsid"][0],
+                            0);
+                        grpSid = sid.Value;
+                    }
+                    else
+                    {
+                        SecurityIdentifier sid = new SecurityIdentifier((byte[])resultGroup.Properties["objectsid"][0],
+                            0);
+                        grpSid = sid.Value;
+                    }
+                }
+            }
+
+            return grpSid;
         }
 
         public static void IncludeUser2AdGroup(string userSid, params AdGroup[] groups)
@@ -498,6 +568,37 @@ namespace DataProvider.Helpers
                     {
                         var group = GroupPrincipal.FindByIdentity(context, IdentityType.Sid,
                             AdUserGroup.GetSidByAdGroup(grp));
+                        if (group != null)
+                        {
+                            group.Members.Add(userPrincipal);
+                            group.Save();
+                        }
+                    }
+                }
+
+            }
+        }
+
+        public static void IncludeUser2AdGroup(string userSid, params string[] groupSidList)
+        {
+            using (WindowsImpersonationContextFacade impersonationContext
+               = new WindowsImpersonationContextFacade(
+                   nc))
+            {
+                var context = new PrincipalContext(ContextType.Domain);
+                var userPrincipal = UserPrincipal.FindByIdentity(context, IdentityType.Sid, userSid);
+                if (userPrincipal == null) return;
+
+                foreach (var grpSid in groupSidList)
+                {
+                    //Если пользователь не является членом группы то включаем
+                    if (userPrincipal.IsMemberOf(context, IdentityType.Sid, grpSid))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        var group = GroupPrincipal.FindByIdentity(context, IdentityType.Sid, grpSid);
                         if (group != null)
                         {
                             group.Members.Add(userPrincipal);
@@ -537,6 +638,76 @@ namespace DataProvider.Helpers
                     }
                 }
             }
+        }
+
+        public static void ExcludeUserFromAdGroup(string userSid, params string[] groupSidList)
+        {
+            using (WindowsImpersonationContextFacade impersonationContext
+               = new WindowsImpersonationContextFacade(
+                   nc))
+            {
+                var context = new PrincipalContext(ContextType.Domain);
+                var userPrincipal = UserPrincipal.FindByIdentity(context, IdentityType.Sid, userSid);
+                if (userPrincipal == null) return;
+
+                foreach (var grpSid in groupSidList)
+                {
+                    //Если пользователь является членом группы то исключаем
+                    if (userPrincipal.IsMemberOf(context, IdentityType.Sid, grpSid))
+                    {
+                        var group = GroupPrincipal.FindByIdentity(context, IdentityType.Sid, grpSid);
+                        if (group != null)
+                        {
+                            group.Members.Remove(userPrincipal);
+                            group.Save();
+                        }
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+            }
+        }
+
+        public static EmployeeSm GetUserBySid(string sid)
+        {
+            var result = new EmployeeSm();
+
+            using (WindowsImpersonationContextFacade impersonationContext
+                = new WindowsImpersonationContextFacade(
+                    nc))
+            {
+                var context = new PrincipalContext(ContextType.Domain);
+                var userPrincipal = UserPrincipal.FindByIdentity(context, IdentityType.Sid, sid);
+
+                if (userPrincipal != null)
+                {
+                    result.AdSid = sid;
+                    result.FullName = userPrincipal.DisplayName;
+                    result.DisplayName = Employee.ShortName(result.FullName);
+                }
+            }
+
+            return result;
+        }
+
+        public static string GetADGroupNameBySid(string sid)
+        {
+            string name = null;
+            using (WindowsImpersonationContextFacade impersonationContext
+                = new WindowsImpersonationContextFacade(
+                    nc))
+            {
+
+                //Если пользователь существует
+                var context = new PrincipalContext(ContextType.Domain);
+                var gp = GroupPrincipal.FindByIdentity(context, IdentityType.Sid, sid);
+                name = gp.SamAccountName;
+
+            }
+
+            return name;
         }
     }
 }

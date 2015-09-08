@@ -5,29 +5,29 @@ using System.Net;
 using System.Net.Http;
 using System.Web;
 using DataProvider.Helpers;
-using DataProvider.Models.Stuff;
+using DataProvider.Models.Service;
 using DataProvider.Objects;
 using Objects;
 
-namespace DataProvider._TMPLTS
+namespace DataProvider.Controllers.Service
 {
-    public class Controller : BaseApiController
+    public class ContractorAccessController : BaseApiController
     {
-        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin })]
-        public IEnumerable<Model> GetList()
+        [AuthorizeAd(AdGroup.SuperAdmin, AdGroup.ServiceClaimContractorAccess, AdGroup.ServiceControler)]
+        public IEnumerable<ContractorAccess> GetList()
         {
-            return Model.GetList();
+            return ContractorAccess.GetList();
         }
 
-        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin })]
-        public Model Get(int id)
+        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin, AdGroup.ServiceClaimContractorAccess, AdGroup.ServiceControler })]
+        public ContractorAccess Get(int id)
         {
-            var model = new Model(id);
+            var model = new ContractorAccess(id);
             return model;
         }
 
-        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin })]
-        public HttpResponseMessage Save(Model model)
+        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin, AdGroup.ServiceClaimContractorAccess })]
+        public HttpResponseMessage Save(ContractorAccess model)
         {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
 
@@ -46,14 +46,14 @@ namespace DataProvider._TMPLTS
             return response;
         }
 
-        [AuthorizeAd(Groups = new[] { AdGroup.PersonalManager })]
+        [AuthorizeAd(Groups = new[] { AdGroup.ServiceClaimContractorAccess })]
         public HttpResponseMessage Close(int id)
         {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
 
             try
             {
-                Model.Close(id,GetCurUser().Sid);
+                ContractorAccess.Close(id, GetCurUser().Sid);
             }
             catch (Exception ex)
             {
@@ -62,6 +62,11 @@ namespace DataProvider._TMPLTS
 
             }
             return response;
+        }
+
+        public IEnumerable<KeyValuePair<string, string>> GetOrgList()
+        {
+            return AdHelper.GetGroupListByAdOrg(AdOrg.EngeneerGroups);
         }
     }
 }

@@ -9,7 +9,7 @@ namespace DataProvider.Models.SpeCalc
     {
         public static string[] Emails4Test = {"anton.rehov@unitgroup.ru"};
         public static string[] Emails4SysError = { "anton.rehov@unitgroup.ru" };
-        public static string[] Emails4NewEmployee = { "anton.rehov@unitgroup.ru", "sergey.dendin@unitgroup.ru" };
+        public static string[] Emails4NewEmployee = { "anton.rehov@unitgroup.ru", "anton.ivonin@unitgroup.ru", "evgeniy.chetverikov@unitgroup.ru" };
 
         public class SpeCalc
         {

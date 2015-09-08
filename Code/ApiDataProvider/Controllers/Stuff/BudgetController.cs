@@ -4,28 +4,32 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using System.Web.Http.OData;
-using DataProvider.Models.SpeCalc;
+using DataProvider.Helpers;
+using DataProvider.Models.Stuff;
 using DataProvider.Objects;
+using DataProvider._TMPLTS;
 using Objects;
 
-namespace DataProvider.Controllers.SpeCalc
+namespace DataProvider.Controllers.Stuff
 {
-    public class QuePosAnswerController : BaseApiController
+
+    public class BudgetController : BaseApiController
     {
-        [EnableQuery]
-        public IQueryable<QuePosAnswer> GetList(int idQuePosition)
+        [AuthorizeAd(AdGroup.PersonalManager)]
+        public IHttpActionResult GetList()
         {
-            return new EnumerableQuery<QuePosAnswer>(QuePosAnswer.GetList(idQuePosition));
+            return Ok(Budget.GetList());
         }
 
-        public QuePosAnswer Get(int id)
+        [AuthorizeAd(AdGroup.PersonalManager)]
+        public IHttpActionResult Get(int id)
         {
-            var model = new QuePosAnswer(id);
-            return model;
+            var model = new Budget(id);
+            return Ok(model);
         }
-        //[AuthorizeAd(Groups = new[] { AdGroup.SpeCalcKontroler, AdGroup.SpeCalcProduct  })]
-        public HttpResponseMessage Save(QuePosAnswer model)
+
+        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin })]
+        public HttpResponseMessage Save(Budget model)
         {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
 
@@ -38,25 +42,25 @@ namespace DataProvider.Controllers.SpeCalc
             catch (Exception ex)
             {
                 response = new HttpResponseMessage(HttpStatusCode.OK);
-                response.Content = new StringContent(String.Format("{{\"errorMessage\":\"{0}\"}}", ex.Message));
+                response.Content = new StringContent(MessageHelper.ConfigureExceptionMessage(ex));
 
             }
             return response;
         }
 
-        //[AuthorizeAd(Groups = new[] { AdGroup.SpeCalcKontroler, AdGroup.SpeCalcProduct })]
+        [AuthorizeAd(Groups = new[] { AdGroup.PersonalManager })]
         public HttpResponseMessage Close(int id)
         {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
 
             try
             {
-                QuePosAnswer.Close(id);
+                Budget.Close(id, GetCurUser().Sid);
             }
             catch (Exception ex)
             {
                 response = new HttpResponseMessage(HttpStatusCode.OK);
-                response.Content = new StringContent(String.Format("{{\"errorMessage\":\"{0}\"}}", ex.Message));
+                response.Content = new StringContent(MessageHelper.ConfigureExceptionMessage(ex));
 
             }
             return response;

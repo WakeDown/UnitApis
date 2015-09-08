@@ -31,6 +31,7 @@ namespace DataProvider.Helpers
                     cmd.Parameters.AddRange(sqlParams);
                     if (conn.State == ConnectionState.Closed) conn.Open();
                     cmd.ExecuteNonQuery();
+                    cmd.Parameters.Clear();
                 }
             }
 
@@ -67,6 +68,7 @@ namespace DataProvider.Helpers
                     cmd.Parameters.AddRange(sqlParams);
                     if (conn.State == ConnectionState.Closed) conn.Open();
                     cmd.ExecuteNonQuery();
+                    cmd.Parameters.Clear();
                 }
             }
 
@@ -82,6 +84,7 @@ namespace DataProvider.Helpers
                 {
                     cmd.Parameters.AddRange(sqlParams);
                     dt.Load(cmd.ExecuteReader());
+                    cmd.Parameters.Clear();
                 }
 
                 return dt;
@@ -100,6 +103,7 @@ namespace DataProvider.Helpers
                     cmd.Parameters.AddRange(sqlParams);
                     if (conn.State == ConnectionState.Closed) conn.Open();
                     result = cmd.ExecuteScalar();
+                    cmd.Parameters.Clear();
                 }
 
                 return result;
@@ -112,6 +116,15 @@ namespace DataProvider.Helpers
                     if (row[name] != DBNull.Value)return row[name].ToString();
                 }
                 return null;
+            }
+
+            public static string GetValueStringOrEmpty(DataRow row, string name)
+            {
+                if (row.Table.Columns.Contains(name))
+                {
+                    if (row[name] != DBNull.Value) return row[name].ToString();
+                }
+                return String.Empty;
             }
 
             public static int GetValueIntOrDefault(DataRow row, params string[] names)
@@ -261,6 +274,14 @@ namespace DataProvider.Helpers
             {
                 bool result = false;
                 if (row.Table.Columns.Contains(name) && row[name] != DBNull.Value) result=GetValueBool(row[name]);
+                return result;
+            }
+
+            public static bool? GetValueBoolOrNull(DataRow row, string name)
+            {
+                bool result = false;
+                if (row.Table.Columns.Contains(name) && row[name] != DBNull.Value) { result = GetValueBool(row[name]);}
+                else { return null;}
                 return result;
             }
 

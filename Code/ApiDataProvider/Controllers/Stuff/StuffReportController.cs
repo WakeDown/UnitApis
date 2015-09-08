@@ -13,45 +13,30 @@ namespace DataProvider.Controllers.Stuff
 {
     public class StuffReportController : ApiController
     {
-        [AuthorizeAd(Groups = new[] { AdGroup.SystemUser })]
+        [AuthorizeAd(Groups = new[] { AdGroup.SystemUser,AdGroup.SystemUser })]
         public IEnumerable<ItBudgetReportItem> GetItBudgetList(float? peopleCost = 350F)
         {
             if (!peopleCost.HasValue) peopleCost = 350F;
-            var list = Department.GetOrgStructure(userCanViewHiddenDeps: false, hasAdAccount:true);
+            var list = Budget.GetList();
             var result = new List<ItBudgetReportItem>();
 
-            foreach (Department dep in list)
+            foreach (Budget bud in list)
             {
-                var item = FillItBudgetItem(dep, peopleCost.Value);
+                var item = FillItBudgetItem(bud, peopleCost.Value);
                 result.Add(item);
-                if (dep.ChildList.Any())
-                    ItBudgetFillDepChilds(ref result, dep.ChildList, peopleCost.Value);
-                //foreach (Department childDep in dep.ChildList)
-                //{
-                //    var childItem = FillItBudgetItem(dep, peopleCost);
-                //    result.Add(childItem);
-                //}
             }
 
             return result;
         }
 
-        public void ItBudgetFillDepChilds(ref List<ItBudgetReportItem> result, IEnumerable<Department> list, float peopleCost)
-        {
-            foreach (Department dep in list)
-            {
-                var childItem = FillItBudgetItem(dep, peopleCost);
-                result.Add(childItem);
-                if (dep.ChildList.Any())
-                    ItBudgetFillDepChilds(ref result, dep.ChildList, peopleCost);
-            }
-        }
+        
 
-        public ItBudgetReportItem FillItBudgetItem(Department dep, float peopleCost)
+        [AuthorizeAd(Groups = new[] { AdGroup.SystemUser, AdGroup.SystemUser })]
+        public ItBudgetReportItem FillItBudgetItem(Budget bud, float peopleCost)
         {
             var item = new ItBudgetReportItem();
-            item.DepartmentName = dep.Name;
-            var empList = Employee.GetList(dep.Id, showHidden: false);
+            item.BudgetName = bud.Name;
+            var empList = Employee.GetList(idBudget: bud.Id, showHidden: false);
             var peopleList = new List<ItBudgetReportItemPeople>();
             foreach (Employee emp in empList)
             {
@@ -65,11 +50,74 @@ namespace DataProvider.Controllers.Stuff
                 }
             }
             item.Peoples = peopleList;
-            item.PeopleCount = dep.EmployeeCount;
-            item.CostSum = item.PeopleCount * peopleCost;
-            item.Level = dep.OrgStructureLevel;
+            if (bud.EmpCount.HasValue)
+            { item.PeopleCount = bud.EmpCount.Value;}
+            else
+            { item.PeopleCount = 0;}
+           item.CostSum = item.PeopleCount * peopleCost;
+            //item.Level = bud.OrgStructureLevel;
             return item;
         }
+
+        //[AuthorizeAd(Groups = new[] { AdGroup.SystemUser, AdGroup.SystemUser })]
+        //public IEnumerable<ItBudgetReportItem> GetItBudgetList(float? peopleCost = 350F)
+        //{
+        //    if (!peopleCost.HasValue) peopleCost = 350F;
+        //    var list = Department.GetOrgStructure(userCanViewHiddenDeps: false, hasAdAccount: true);
+        //    var result = new List<ItBudgetReportItem>();
+
+        //    foreach (Department dep in list)
+        //    {
+        //        var item = FillItBudgetItem(dep, peopleCost.Value);
+        //        result.Add(item);
+        //        if (dep.ChildList.Any())
+        //            ItBudgetFillDepChilds(ref result, dep.ChildList, peopleCost.Value);
+        //        //foreach (Department childDep in dep.ChildList)
+        //        //{
+        //        //    var childItem = FillItBudgetItem(dep, peopleCost);
+        //        //    result.Add(childItem);
+        //        //}
+        //    }
+
+        //    return result;
+        //}
+
+        //[AuthorizeAd(Groups = new[] { AdGroup.SystemUser, AdGroup.SystemUser })]
+        //public void ItBudgetFillDepChilds(ref List<ItBudgetReportItem> result, IEnumerable<Department> list, float peopleCost)
+        //{
+        //    foreach (Department dep in list)
+        //    {
+        //        var childItem = FillItBudgetItem(dep, peopleCost);
+        //        result.Add(childItem);
+        //        if (dep.ChildList.Any())
+        //            ItBudgetFillDepChilds(ref result, dep.ChildList, peopleCost);
+        //    }
+        //}
+
+        //[AuthorizeAd(Groups = new[] { AdGroup.SystemUser, AdGroup.SystemUser })]
+        //public ItBudgetReportItem FillItBudgetItem(Department dep, float peopleCost)
+        //{
+        //    var item = new ItBudgetReportItem();
+        //    item.DepartmentName = dep.Name;
+        //    var empList = Employee.GetList(dep.Id, showHidden: false);
+        //    var peopleList = new List<ItBudgetReportItemPeople>();
+        //    foreach (Employee emp in empList)
+        //    {
+        //        if (emp.HasAdAccount)
+        //        {
+        //            var p = new ItBudgetReportItemPeople();
+        //            p.FullName = emp.FullName;
+        //            p.PositionName = emp.Position.Name;
+        //            p.Cost = peopleCost;
+        //            peopleList.Add(p);
+        //        }
+        //    }
+        //    item.Peoples = peopleList;
+        //    item.PeopleCount = dep.EmployeeCount;
+        //    item.CostSum = item.PeopleCount * peopleCost;
+        //    item.Level = dep.OrgStructureLevel;
+        //    return item;
+        //}
 
         //public string CreateItBudgetTable(IEnumerable<Department> list, double peopleCost)
         //{

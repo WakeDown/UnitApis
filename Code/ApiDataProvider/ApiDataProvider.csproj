@@ -15,7 +15,7 @@
     <AssemblyName>DataProvider</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
-    <IISExpressSSLPort />
+    <IISExpressSSLPort>44300</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>enabled</IISExpressWindowsAuthentication>
     <IISExpressUseClassicPipelineMode>false</IISExpressUseClassicPipelineMode>
@@ -174,17 +174,27 @@
   <ItemGroup>
     <Compile Include="Controllers\Service\ClassifierController.cs" />
     <Compile Include="Controllers\Service\ClientAccessController.cs" />
+    <Compile Include="Controllers\Service\ContractorAccessController.cs" />
     <Compile Include="Controllers\Service\ContractorController.cs" />
     <Compile Include="Controllers\Service\ClaimController.cs" />
     <Compile Include="Controllers\Service\ContractController.cs" />
     <Compile Include="Controllers\Service\DeviceController.cs" />
+    <Compile Include="Controllers\Service\ServiceIssueResultController.cs" />
+    <Compile Include="Controllers\Stuff\BudgetController.cs" />
+    <Compile Include="Models\Service\PlanServiceIssue.cs" />
+    <Compile Include="Controllers\Service\ServiceIssueController.cs" />
     <Compile Include="Controllers\Service\ServiceSheetController.cs" />
     <Compile Include="Models\ListResult.cs" />
     <Compile Include="Models\Service\ClassifierAttributes.cs" />
     <Compile Include="Models\Service\ClassifierItem.cs" />
     <Compile Include="Models\Service\ClientAccess.cs" />
+    <Compile Include="Models\Service\ContractorAccess.cs" />
+    <Compile Include="Models\Service\ServiceIssue.cs" />
+    <Compile Include="Models\Service\ServiceIssuePlaningItem.cs" />
+    <Compile Include="Models\Service\ServiceIssuePlaningResult.cs" />
     <Compile Include="Models\Service\ServiceSheet.cs" />
     <Compile Include="Models\Service\WorkType.cs" />
+    <Compile Include="Models\Stuff\Budget.cs" />
     <Compile Include="Models\Stuff\ItBudgetReportItemPeople.cs" />
     <Compile Include="Controllers\Stuff\StuffReportController.cs" />
     <Compile Include="Helpers\MathHelper.cs" />
@@ -199,10 +209,10 @@
     <Compile Include="Models\Service\Device.cs" />
     <Compile Include="Models\Service\DeviceInfoResult.cs" />
     <Compile Include="Models\Service\DeviceSearchResult.cs" />
-    <Compile Include="Models\Service\SetNextState.cs" />
     <Compile Include="Models\Service\Vendor.cs" />
     <Compile Include="Models\Stuff\ItBudgetReportItem.cs" />
     <Compile Include="Objects\AccessDenyException.cs" />
+    <Compile Include="Objects\AdOrganization.cs" />
     <Compile Include="_TMPLTS\Controller.cs" />
     <Compile Include="_TMPLTS\Model.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
@@ -292,6 +302,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\Claim\" />
+    <Folder Include="Views\ContractorAccess\" />
     <Folder Include="Views\Document\" />
   </ItemGroup>
   <ItemGroup>

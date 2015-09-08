@@ -70,6 +70,8 @@ namespace DataProvider.Models.Service
             return lst;
         }
 
+       
+
         //public void Save()
         //{
         //    SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = Id, SqlDbType = SqlDbType.Int };

@@ -17,12 +17,15 @@ namespace DataProvider.Models.Service
         public int IdClaim2ClaimState { get; set; }
         public bool ProcessEnabled { get; set; }
         public bool DeviceEnabled { get; set; }
-        public bool ZipClaim { get; set; }
+        public bool? ZipClaim { get; set; }
         public string ZipClaimNumber { get; set; }
-        public int CounterMono { get; set; }
-        public int CounterColor { get; set; }
-        public bool NoTechWork { get; set; }
-
+        public int? CounterMono { get; set; }
+        public int? CounterColor { get; set; }
+        public int? CounterTotal { get; set; }
+        public bool? NoCounter { get; set; }
+        public string Descr { get; set; }
+        public bool? CounterUnavailable { get; set; }
+        public string CounterDescr { get; set; }
 
         public ServiceSheet() { }
 
@@ -50,10 +53,15 @@ namespace DataProvider.Models.Service
             IdClaim2ClaimState = Db.DbHelper.GetValueIntOrDefault(row, "id_claim2claim_state");
             ProcessEnabled = Db.DbHelper.GetValueBool(row, "process_enabled");
             DeviceEnabled = Db.DbHelper.GetValueBool(row, "device_enabled");
-            ZipClaim = Db.DbHelper.GetValueBool(row, "zip_claim");
+            ZipClaim = Db.DbHelper.GetValueBoolOrNull(row, "zip_claim");
             ZipClaimNumber = Db.DbHelper.GetValueString(row, "zip_claim_number");
-            CounterMono = Db.DbHelper.GetValueIntOrDefault(row, "counter_mono");
-            CounterColor = Db.DbHelper.GetValueIntOrDefault(row, "counter_color");
+            CounterMono = Db.DbHelper.GetValueIntOrNull(row, "counter_mono");
+            CounterColor = Db.DbHelper.GetValueIntOrNull(row, "counter_color");
+            CounterTotal = Db.DbHelper.GetValueIntOrNull(row, "counter_total");
+            NoCounter = Db.DbHelper.GetValueBoolOrNull(row, "no_counter");
+            Descr = Db.DbHelper.GetValueString(row, "descr");
+            CounterUnavailable = Db.DbHelper.GetValueBoolOrNull(row, "counter_unavailable");
+            CounterDescr = Db.DbHelper.GetValueString(row, "counter_descr");
         }
 
         public void Save()
@@ -64,11 +72,16 @@ namespace DataProvider.Models.Service
             SqlParameter pDeviceEnabled = new SqlParameter() { ParameterName = "device_enabled", SqlValue = DeviceEnabled, SqlDbType = SqlDbType.Bit };
             SqlParameter pZipClaim = new SqlParameter() { ParameterName = "zip_claim", SqlValue = ZipClaim, SqlDbType = SqlDbType.Int };
             SqlParameter pZipClaimNumber = new SqlParameter() { ParameterName = "zip_claim_number", SqlValue = ZipClaimNumber, SqlDbType = SqlDbType.NVarChar };
-            SqlParameter pCounterMono = new SqlParameter() { ParameterName = "counter_mono", SqlValue = CounterMono, SqlDbType = SqlDbType.Int };
-            SqlParameter pCounterColor = new SqlParameter() { ParameterName = "counter_color", SqlValue = CounterColor, SqlDbType = SqlDbType.Int };
+            SqlParameter pCounterMono = new SqlParameter() { ParameterName = "counter_mono", SqlValue = CounterMono, SqlDbType = SqlDbType.BigInt };
+            SqlParameter pCounterColor = new SqlParameter() { ParameterName = "counter_color", SqlValue = CounterColor, SqlDbType = SqlDbType.BigInt };
+            SqlParameter pCounterTotal = new SqlParameter() { ParameterName = "counter_total", SqlValue = CounterTotal, SqlDbType = SqlDbType.BigInt };
+            SqlParameter pNoCounter = new SqlParameter() { ParameterName = "no_counter", SqlValue = NoCounter, SqlDbType = SqlDbType.Bit };
+            SqlParameter pCounterUnavailable = new SqlParameter() { ParameterName = "counter_unavailable", SqlValue = CounterUnavailable, SqlDbType = SqlDbType.Bit };
+            SqlParameter pDescr = new SqlParameter() { ParameterName = "descr", SqlValue = Descr, SqlDbType = SqlDbType.NVarChar };
             SqlParameter pCreatorAdSid = new SqlParameter() { ParameterName = "creator_sid", SqlValue = CurUserAdSid, SqlDbType = SqlDbType.VarChar };
+            SqlParameter pCounterDescr = new SqlParameter() { ParameterName = "counter_descr", SqlValue = CounterDescr, SqlDbType = SqlDbType.NVarChar };
 
-            var dt = Db.Service.ExecuteQueryStoredProcedure("save_service_sheet", pId, pIdClaim2ClaimState, pProcessEnabled, pDeviceEnabled, pZipClaim, pZipClaimNumber, pCounterMono, pCounterColor, pCreatorAdSid);
+            var dt = Db.Service.ExecuteQueryStoredProcedure("save_service_sheet", pId, pIdClaim2ClaimState, pProcessEnabled, pDeviceEnabled, pZipClaim, pZipClaimNumber, pCounterMono, pCounterColor, pCounterTotal, pNoCounter, pCounterUnavailable, pDescr, pCreatorAdSid, pCounterDescr);
             int id = 0;
             if (dt.Rows.Count > 0)
             {

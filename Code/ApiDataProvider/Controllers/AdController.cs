@@ -21,6 +21,11 @@ namespace DataProvider.Controllers
             return AdHelper.GetUserListByAdGroup(group);
         }
 
+        public IEnumerable<KeyValuePair<string, string>> GetGroupListByAdOrg(AdOrg org)
+        {
+            return AdHelper.GetGroupListByAdOrg(org);
+        }
+
         public string GetSid()
         {
             string curSid = GetCurUser().Sid;
@@ -61,7 +66,7 @@ namespace DataProvider.Controllers
             //RequestContext.Principal
 
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
-            string sid = GetCurUser().Sid;
+            //string sid = GetCurUser().Sid;
             try
             {
                 foreach (Employee emp in Employee.GetList(getPhoto: true))
@@ -69,7 +74,12 @@ namespace DataProvider.Controllers
                     Employee e = emp;
                     try
                     {
-                        AdHelper.SaveUser(e);
+                       string sid= AdHelper.SaveUser(e);
+                        if (!String.IsNullOrEmpty(sid))
+                        {
+                            e.AdSid = sid;
+                            e.Save();
+                        }
                     }
                     catch (UnauthorizedAccessException ex)
                     {

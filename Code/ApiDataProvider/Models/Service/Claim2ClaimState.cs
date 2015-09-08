@@ -22,6 +22,8 @@ namespace DataProvider.Models.Service
         public ClaimState State { get; set; }
         public string SpecialistSid { get; set; }
         public int IdWorkType { get; set; }
+        public int? IdServiceSheet { get; set; }
+        //public virtual ServiceSheet ServiceSheet { get;set;}
 
 
         public Claim2ClaimState() { }
@@ -54,6 +56,11 @@ namespace DataProvider.Models.Service
             State = new ClaimState(row);
             SpecialistSid = Db.DbHelper.GetValueString(row, "specialist_sid");
             IdWorkType = Db.DbHelper.GetValueIntOrDefault(row, "id_work_type");
+            IdServiceSheet = Db.DbHelper.GetValueIntOrNull(row, "id_service_sheet");
+            //if (IdServiceSheet.HasValue)
+            //{
+            //    ServiceSheet = new ServiceSheet(IdServiceSheet.Value);
+            //}
         }
 
         public void Save()
@@ -62,6 +69,8 @@ namespace DataProvider.Models.Service
             SqlParameter pIdClaimState = new SqlParameter() { ParameterName = "id_claim_state", SqlValue = IdClaimState, SqlDbType = SqlDbType.Int };
             SqlParameter pDescr = new SqlParameter() { ParameterName = "descr", SqlValue = Descr, SqlDbType = SqlDbType.NVarChar };
             SqlParameter pCreatorAdSid = new SqlParameter() { ParameterName = "creator_sid", SqlValue = CurUserAdSid, SqlDbType = SqlDbType.VarChar };
+            SqlParameter pSpecialistSid = new SqlParameter() { ParameterName = "specialist_sid", SqlValue = SpecialistSid, SqlDbType = SqlDbType.VarChar };
+            SqlParameter pIdServiceSheet = new SqlParameter() { ParameterName = "id_service_sheet", SqlValue = IdServiceSheet, SqlDbType = SqlDbType.Int };
 
             using (var conn = Db.Service.connection)
             {
@@ -72,15 +81,16 @@ namespace DataProvider.Models.Service
                     try
                     {
                         var dt = Db.Service.ExecuteQueryStoredProcedure("save_claim2claim_state", conn, tran, pIdClaim, pIdClaimState,
-                pDescr, pCreatorAdSid);
+                pDescr, pCreatorAdSid, pSpecialistSid, pIdServiceSheet);
                         int id = 0;
                         if (dt.Rows.Count > 0)
                         {
                             int.TryParse(dt.Rows[0]["id"].ToString(), out id);
                             Id = id;
-                            SqlParameter pIdClaim2 = new SqlParameter() { ParameterName = "id_claim", SqlValue = IdClaim, SqlDbType = SqlDbType.Int };
-                            SqlParameter pIdClaimState2 = new SqlParameter() { ParameterName = "id_claim_state", SqlValue = IdClaimState, SqlDbType = SqlDbType.Int };
-                            Db.Stuff.ExecuteQueryStoredProcedure("set_claim_current_state", conn, tran, pIdClaim2, pIdClaimState2);
+                            //SqlParameter pIdClaim2 = new SqlParameter() { ParameterName = "id_claim", SqlValue = IdClaim, SqlDbType = SqlDbType.Int };
+                            //SqlParameter pIdClaimState2 = new SqlParameter() { ParameterName = "id_claim_state", SqlValue = IdClaimState, SqlDbType = SqlDbType.Int };
+                            //SqlParameter pCreatorAdSid2 = new SqlParameter() { ParameterName = "creator_sid", SqlValue = CurUserAdSid, SqlDbType = SqlDbType.VarChar };
+                            Db.Stuff.ExecuteQueryStoredProcedure("set_claim_current_state", conn, tran, pIdClaim, pIdClaimState, pCreatorAdSid);
                         }
                         tran.Commit();
                     }

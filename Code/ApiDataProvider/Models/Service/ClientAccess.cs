@@ -96,7 +96,7 @@ namespace DataProvider.Models.Service
                 FullName = Db.DbHelper.GetValueString(dtCtrtr.Rows[0], "full_name");
             }
 
-            string adPath = "OU=Zip-client,OU=Users External,DC=UN1T,DC=GROUP";
+            string adPath = AdOrganization.GetAdPathByAdOrg(AdOrg.ZipClient);
             string adSid = AdHelper.CreateSimpleAdUser(IdClientEtalon.ToString(), truePassword, Name, description:"клиент", adPath:adPath);
             AdSid = adSid;
 

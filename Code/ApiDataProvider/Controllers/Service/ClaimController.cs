@@ -18,13 +18,13 @@ namespace DataProvider.Controllers.Service
 
         public ListResult<Claim> GetList(int? idAdmin = null, int? idEngeneer = null, DateTime? dateStart = null, DateTime? dateEnd = null, int? topRows = null)
         {
-            //AdHelper.UserInGroup(GetCurUser().User, AdGroup.ServiceEngeneer, AdGroup.SuperAdmin);
-            int cnt;
-            var list = Claim.GetList(out cnt, idAdmin, idEngeneer, dateStart, dateEnd, topRows);
-            return new ListResult<Claim>(list, cnt);
+                //AdHelper.UserInGroup(GetCurUser().User, AdGroup.ServiceEngeneer, AdGroup.SuperAdmin);
+                int cnt;
+                var list = Claim.GetList(out cnt, idAdmin, idEngeneer, dateStart, dateEnd, topRows);
+                return new ListResult<Claim>(list, cnt);
         }
 
-        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin })]
+        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin, AdGroup.ServiceTech, AdGroup.ServiceControler, AdGroup.ServiceAdmin, AdGroup.ServiceManager })]
         public Claim Get(int id)
         {
             AdHelper.UserInGroup(GetCurUser().User, AdGroup.ServiceEngeneer, AdGroup.ServiceAdmin, AdGroup.ServiceControler, AdGroup.ServiceTech, AdGroup.SuperAdmin);
@@ -45,7 +45,7 @@ namespace DataProvider.Controllers.Service
             return model;
         }
 
-        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin })]
+        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin, AdGroup.ServiceTech, AdGroup.ServiceControler, AdGroup.ServiceAdmin, AdGroup.ServiceManager })]
         public IEnumerable<Claim2ClaimState> GetStateHistory(int? id)
         {
             if (!id.HasValue) return new[] { new Claim2ClaimState() };
@@ -73,7 +73,7 @@ namespace DataProvider.Controllers.Service
         //    return response;
         //}
 
-        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin })]
+        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin, AdGroup.ServiceControler, AdGroup.ServiceTech, AdGroup.ServiceAdmin, AdGroup.ServiceManager })]
         public HttpResponseMessage GoBack(Claim model)
         {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
@@ -82,7 +82,7 @@ namespace DataProvider.Controllers.Service
             {
                 model.CurUserAdSid = GetCurUser().Sid;
                 //model.Save(SetNextState.Back);
-                //model.Go(SetNextState.Back);
+                model.Go(false);
                 //model.Go2State(SetNextState.Back);
                 response.Content = new StringContent(String.Format("{{\"id\":{0},\"sid\":\"{1}\"}}", model.Id, model.Sid));
             }
@@ -117,7 +117,7 @@ namespace DataProvider.Controllers.Service
         //    return response;
         //}
 
-        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin })]
+        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin, AdGroup.ServiceControler, AdGroup.ServiceTech, AdGroup.ServiceAdmin, AdGroup.ServiceManager })]
         public HttpResponseMessage Go(Claim model)
         {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
@@ -137,7 +137,7 @@ namespace DataProvider.Controllers.Service
             return response;
         }
 
-        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin })]
+        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin, AdGroup.ServiceControler, AdGroup.ServiceTech, AdGroup.ServiceAdmin, AdGroup.ServiceManager })]
         public HttpResponseMessage Save(Claim model)
         {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
@@ -157,7 +157,7 @@ namespace DataProvider.Controllers.Service
             return response;
         }
 
-        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin })]
+        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin, AdGroup.ServiceControler })]
         public HttpResponseMessage Close(string sid)
         {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
@@ -178,6 +178,11 @@ namespace DataProvider.Controllers.Service
         public IEnumerable<KeyValuePair<string, string>> GetCurrentClaimSpecialistList(int id)
         {
             return Claim.GetSpecialistList(id);
+        }
+
+        public IEnumerable<KeyValuePair<string, string>> GetWorkTypeSpecialistSelectionList(int idWorkType)
+        {
+            return Claim.GetWorkTypeSpecialistSelectionList(idWorkType);
         }
     }
 }

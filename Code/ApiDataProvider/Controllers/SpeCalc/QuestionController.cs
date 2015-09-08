@@ -13,7 +13,7 @@ using Objects;
 
 namespace DataProvider.Controllers.SpeCalc
 {
-    [AuthorizeAd(Groups = new[] { AdGroup.SpeCalcKontroler, AdGroup.SpeCalcManager })]
+    //[AuthorizeAd(Groups = new[] { AdGroup.SpeCalcKontroler, AdGroup.SpeCalcManager, AdGroup.SpeCalcProduct, AdGroup.SpeCalcOperator })]
     public class QuestionController : BaseApiController
     {
 
