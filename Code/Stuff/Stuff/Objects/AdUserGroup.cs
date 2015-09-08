@@ -25,5 +25,17 @@ namespace Stuff.Objects
             list.Add(new AdUserGroup(AdGroup.SystemUser, "S-1-5-21-1970802976-3466419101-4042325969-4033"));//Системный
             return list;
         }
+
+        public static string GetSidByAdGroup(AdGroup grp)
+        {
+            return GetList().Single(g => g.Group == grp).Sid;
+        }
+
+        public static AdGroup GetAdGroupBySid(string sid)
+        {
+            if (string.IsNullOrEmpty(sid)) return AdGroup.None;
+            var grp = GetList().Single(g => g.Sid == sid).Group;
+            return grp;
+        }
     }
 }

@@ -175,6 +175,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\BudgetController.cs" />
     <Compile Include="Controllers\CityController.cs" />
     <Compile Include="Controllers\DocumentController.cs" />
     <Compile Include="Controllers\EmployeeController.cs" />
@@ -184,9 +185,11 @@
     <Compile Include="Controllers\OrganizationController.cs" />
     <Compile Include="Controllers\PositionController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
+    <Compile Include="Helpers\AdHelper.cs" />
     <Compile Include="Helpers\MultiButtonAttribute.cs" />
     <Compile Include="Helpers\PdfCreator.cs" />
     <Compile Include="Models\Ad.cs" />
+    <Compile Include="Models\Budget.cs" />
     <Compile Include="Models\DocMeetLink.cs" />
     <Compile Include="Models\DocMeetLinkList.cs" />
     <Compile Include="Models\Document.cs" />
@@ -197,6 +200,8 @@
     <Compile Include="Models\Report.cs" />
     <Compile Include="Models\Statement.cs" />
     <Compile Include="Models\DocumentEmployeeList.cs" />
+    <Compile Include="Models\StatementFired.cs" />
+    <Compile Include="Models\StatementRest.cs" />
     <Compile Include="Models\StatementRestFewDays.cs" />
     <Compile Include="Models\StatementRestFewHours.cs" />
     <Compile Include="Objects\AdGroup.cs" />
@@ -218,6 +223,7 @@
     <Compile Include="Objects\ResponseMessage.cs" />
     <Compile Include="Objects\AdUser.cs" />
     <Compile Include="Objects\BaseController.cs" />
+    <Compile Include="Objects\TranslitDate.cs" />
     <Compile Include="Objects\WindowsImpersonationContextFacade.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -332,11 +338,6 @@
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\npm.js" />
-    <Content Include="Scripts\pdf\jspdf.js" />
-    <Content Include="Scripts\pdf\jspdf.plugin.addimage.js" />
-    <Content Include="Scripts\pdf\jspdf.plugin.from_html.js" />
-    <Content Include="Scripts\pdf\jspdf.plugin.split_text_to_size.js" />
-    <Content Include="Scripts\pdf\jspdf.plugin.standard_fonts_metrics.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\site.js" />
@@ -351,6 +352,7 @@
     </Content>
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
@@ -390,6 +392,13 @@
     <Content Include="Views\Document\My.cshtml" />
     <Content Include="Views\Shared\Index.cshtml" />
     <Content Include="Views\Document\Statements.cshtml" />
+    <Content Include="Views\Report\ItBudgetViewDeps.cshtml" />
+    <Content Include="Views\Document\StatementFormFired.cshtml" />
+    <Content Include="Views\Document\StatementFormRest.cshtml" />
+    <Content Include="Views\Document\StatementMatchers.cshtml" />
+    <Content Include="Views\Document\StatementFired.cshtml" />
+    <Content Include="Views\Document\StatementRest.cshtml" />
+    <Content Include="Views\Budget\Index.cshtml" />
     <Content Include="Views\Report\ItBudgetView.cshtml" />
   </ItemGroup>
   <ItemGroup>

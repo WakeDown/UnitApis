@@ -1,4 +1,5 @@
-﻿@using Stuff.Objects
+﻿@using Stuff.Models
+@using Stuff.Objects
 @model Stuff.Models.Employee
 @{
     ViewBag.Title = "Редактирование сотрудника";
@@ -170,8 +171,15 @@
         <div class="form-group">
             <label class="col-lg-2 control-label" for="manager">Руководитель</label>
             <div class="col-lg-5">
-                @Html.LabelFor(m => m, Model.Manager == null ? "--отсутствует--" : Model.Manager.DisplayName, new { @class = "form-control", @id = "manager", })
+                @Html.LabelFor(m => m, Model.Manager == null ? "--отсутствует--" : Model.Manager.DisplayName, new {@class = "form-control", @id = "manager",})
                 @*@Html.DropDownListFor(m => m.Manager.Id, DbList.GetEmployeeList(), "--выберите--", new { @class = "form-control", @id = "manager", })*@
+                <span class="help-block with-errors"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="budget">Бюджет</label>
+            <div class="col-lg-5">
+                @Html.DropDownListFor(m => m.IdBudget, Budget.GetSelectionList(), "--выберите--", new { @class = "form-control required-mark", @id = "budget", required = "required", data_error = "Выберите Бюджет" })
                 <span class="help-block with-errors"></span>
             </div>
         </div>

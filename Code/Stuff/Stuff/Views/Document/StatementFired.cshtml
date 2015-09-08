@@ -1,5 +1,5 @@
 ﻿@using Stuff.Models
-@model Stuff.Models.Statement
+@model Stuff.Models.StatementFired
 
 @{
     Layout = null;
@@ -41,7 +41,7 @@
             </tr>
             <tr><td colspan="2" style="height: 30px;"></td></tr>
             <tr>
-                <td colspan="2" style="text-align: justify">@Model.Text</td>
+                <td colspan="2" style="text-align: center">@Model.Text</td>
             </tr>
             <tr><td colspan="2" style="height: 30px;"></td></tr>
             <tr>
@@ -51,11 +51,15 @@
                     <div class="right">@Model.Employee.DisplayName</div>
                 </td>
             </tr>
+            <tr><td colspan="2" style="height: 30px;"></td></tr>
+            <tr><td colspan="2"><hr style="border: 1px solid black" /></td></tr>
             <tr><td colspan="2" style="height: 100px;"></td></tr>
             <tr>
-                <td class="bold">СОГЛАСОВАНО</td>
+                <td class="bold">УВОЛИТЬ  __________________</td>
                 <td></td>
             </tr>
+            <tr><td colspan="2" style="height: 30px;"></td></tr>
+
             <tr>
                 <td>@Model.Organization.Director.PositionOrg.Name</td>
                 <td>

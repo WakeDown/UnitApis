@@ -171,6 +171,13 @@
             </div>
         </div>
         <div class="form-group">
+            <label class="col-lg-2 control-label" for="budget">Бюджет</label>
+            <div class="col-lg-5">
+                @Html.DropDownListFor(m => m.IdBudget, Budget.GetSelectionList(), "--выберите--", new { @class = "form-control required-mark", @id = "budget", required = "required", data_error = "Выберите Бюджет" })
+                <span class="help-block with-errors"></span>
+            </div>
+        </div>
+        <div class="form-group">
             <label class="col-lg-2 control-label" for="photo">Фотография</label>
             <div class="col-lg-5">
                 <input type="file" name="file" />

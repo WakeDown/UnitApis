@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web;
+using Stuff.Helpers;
 
 namespace Stuff.Objects
 {
@@ -10,80 +11,56 @@ namespace Stuff.Objects
     {
         public string Sid { get; set; }
         public string Login { get; set; }
-
-        private string _fullName;
-        public string FullName
-        {
-            get
-            {
-                return _fullName;
-            }
-            set
-            {
-                _fullName = value;
-                ShortName = GetShortName(_fullName);
-            }
-        }
-
+        public string FullName{get; set; }
         public string Email { get; set; }
-        public string ShortName{get; set;}
-        public List<AdGroup> AdGroups { get; set; }
 
-        private static string GetShortName(string name)
+        public string DisplayName
         {
-            if (String.IsNullOrEmpty(name)) return "Имя отсутствует";
-            var shortName = new StringBuilder();
-            string res = String.Empty;
-            var partNames = name.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
-            if (partNames.Count() > 2)
-            {
-                shortName.Append(partNames[0]);
-                shortName.Append(" ");
-                shortName.Append(partNames[1].Substring(0, 1));
-                shortName.Append(".");
-                shortName.Append(partNames[2].Substring(0, 1));
-                shortName.Append(".");
-
-                res = shortName.ToString();
-            }
-            else if (partNames.Count() == 2)
-            {
-                shortName.Append(partNames[0]);
-                shortName.Append(" ");
-                shortName.Append(partNames[1].Substring(0, 1));
-                shortName.Append(".");
-
-                res = shortName.ToString();
-            }
-            else
-            {
-                res = name;
-            }
-            return res;
+            get { return MainHelper.ShortName(FullName); }
         }
+
+        //public List<AdGroup> AdGroups { get; set; }
+        
 
         public bool UserCanEdit()
         {
-            if (String.IsNullOrEmpty(Sid) || !AdGroups.Any()) return false;
-            return AdGroups.Contains(AdGroup.SuperAdmin) || AdGroups.Contains(AdGroup.PersonalManager);
+            if (String.IsNullOrEmpty(Sid)) return false;
+            return HasAccess(AdGroup.SuperAdmin, AdGroup.PersonalManager);
         }
 
         public bool UserIsAdmin()
         {
-            if (String.IsNullOrEmpty(Sid) || !AdGroups.Any()) return false;
-            return AdGroups.Contains(AdGroup.SuperAdmin);
+            if (String.IsNullOrEmpty(Sid)) return false;
+            return HasAccess(AdGroup.SuperAdmin);
         }
 
         public bool UserIsPersonalManager()
         {
-            if (String.IsNullOrEmpty(Sid) || !AdGroups.Any()) return false;
-            return AdGroups.Contains(AdGroup.PersonalManager) || AdGroups.Contains(AdGroup.SuperAdmin);
+            if (String.IsNullOrEmpty(Sid)) return false;
+            return HasAccess(AdGroup.PersonalManager, AdGroup.SuperAdmin);
         }
 
         public bool IsSystemUser()
         {
-            if (String.IsNullOrEmpty(Sid) || !AdGroups.Any()) return false;
-            return AdGroups.Contains(AdGroup.SystemUser) || AdGroups.Contains(AdGroup.SuperAdmin);
+            if (String.IsNullOrEmpty(Sid)) return false;
+            return HasAccess(AdGroup.SystemUser, AdGroup.SuperAdmin);
+        }
+
+        public bool Is(params AdGroup[] groups)
+        {
+            bool result = false;
+            if (String.IsNullOrEmpty(Sid)) return false;
+            result = AdHelper.UserInGroup(Sid, groups);
+            return result;
+        }
+
+        public bool HasAccess(params AdGroup[] groups)
+        {
+            bool result = false;
+            if (String.IsNullOrEmpty(Sid)) return false;
+            if (AdHelper.UserInGroup(Sid, AdGroup.SuperAdmin)) return true;
+            result = AdHelper.UserInGroup(Sid, groups);
+            return result;
         }
     }
 }

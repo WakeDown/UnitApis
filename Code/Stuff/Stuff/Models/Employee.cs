@@ -46,6 +46,7 @@ namespace Stuff.Models
         public string FullNameRod { get; set; }
         public string ShortNameDat { get; set; }
         public string ShortNameRod { get; set; }
+        public int? IdBudget { get; set; }
 
         public AdGroup[] AdGroups { get; set; }
 
@@ -103,6 +104,7 @@ namespace Stuff.Models
             FullNameRod = emp.FullNameRod;
             ShortNameDat = emp.ShortNameDat;
             ShortNameRod = emp.ShortNameRod;
+            IdBudget = emp.IdBudget;
         }
 
         public void FillAdGroups()

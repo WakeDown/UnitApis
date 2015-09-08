@@ -84,11 +84,11 @@ namespace Stuff.Objects
         private static NetworkCredential nc = GetAdUserCredentials();
         public static NetworkCredential GetAdUserCredentials()
         {
-            string accUserName = @"UN1T\rehov";
-            string accUserPass = "R3xQwi!!";
+            string accUserName = @"UN1T\adUnit_prog";
+            string accUserPass = "1qazXSW@";
 
             string domain = "UN1T";//accUserName.Substring(0, accUserName.IndexOf("\\"));
-            string name = "rehov";//accUserName.Substring(accUserName.IndexOf("\\") + 1);
+            string name = "adUnit_prog";//accUserName.Substring(accUserName.IndexOf("\\") + 1);
 
             NetworkCredential nc = new NetworkCredential(name, accUserPass, domain);
 
@@ -120,16 +120,16 @@ namespace Stuff.Objects
                             var name = userPrincipal.DisplayName;
                             user.Email = mail;
                             user.FullName = name;
-                            user.AdGroups = new List<AdGroup>();
-                            var wp = new WindowsPrincipal(wi);
-                            foreach (var role in AdUserGroup.GetList())
-                            {
-                                var grpSid = new SecurityIdentifier(role.Sid);
-                                if (wp.IsInRole(grpSid))
-                                {
-                                    user.AdGroups.Add(role.Group);
-                                }
-                            }
+                            //user.AdGroups = new List<AdGroup>();
+                            //var wp = new WindowsPrincipal(wi);
+                            //foreach (var role in AdUserGroup.GetList())
+                            //{
+                            //    var grpSid = new SecurityIdentifier(role.Sid);
+                            //    if (wp.IsInRole(grpSid))
+                            //    {
+                            //        user.AdGroups.Add(role.Group);
+                            //    }
+                            //}
                         }
                     }
                 }

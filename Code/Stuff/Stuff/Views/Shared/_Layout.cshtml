@@ -2,6 +2,7 @@
 @using System.Data.SqlClient
 @using Microsoft.Ajax.Utilities
 @using Stuff.Models
+@using Stuff.Objects
 
 @{
     bool userCanEdit = ViewBag.CurUser.UserCanEdit();
@@ -66,9 +67,11 @@
                                 <li><a href='@Url.Action("List", "Department")'>Подразделения</a></li>
                                 <li><a href='@Url.Action("Index", "Organization")'>Юр. лица</a></li>
                                 <li><a href='@Url.Action("Index", "Position")'>Должности</a></li>
+                                <li><a href='@Url.Action("Index", "Budget")'>Бюджеты</a></li>
                             </ul>
                         </li>
                     }
+
                     @*@if (userCanEdit)
                     {
                         <li>
@@ -105,13 +108,22 @@
                             </ul>
                         </li>
                     }
+@if (ViewBag.CurUser.HasAccess(AdGroup.SuperAdmin))
+{
+    <li>
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-book fa-fw"></i>Отчеты <b class="caret"></b></a>
+        <ul class="dropdown-menu">
+            <li><a href='@Url.Action("GetItBudgetReport", "Report")' target="_blank">IT бюджет</a></li>
+        </ul>
+    </li>
+}
                     @*<li>
                         <a href="@Url.Action("My", "Document")"><i class="fa fa-book fa-fw"></i>Мои документы</a>
                     </li>*@
                     @*<li>@Html.ActionLink("Новый запрос", "Request", "Home")</li>*@
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    <li class="navbar-text">Вы вошли как <strong id="userName">@ViewBag.CurUser.ShortName</strong></li>
+                    <li class="navbar-text">Вы вошли как <strong id="userName">@ViewBag.CurUser.DisplayName</strong></li>
                 </ul>
             </div>
         </div>
