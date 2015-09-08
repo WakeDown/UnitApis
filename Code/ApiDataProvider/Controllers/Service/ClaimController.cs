@@ -184,5 +184,10 @@ namespace DataProvider.Controllers.Service
         {
             return Claim.GetWorkTypeSpecialistSelectionList(idWorkType);
         }
+
+        public ServiceSheet GetLastServiceSheet(int idClaim)
+        {
+            return Claim.GetLastServiceSheet(idClaim);
+        }
     }
 }
