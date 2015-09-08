@@ -36,6 +36,10 @@ namespace DataProvider.Models.Service
         public string ClientSdNum { get; set; }
         public string Descr { get; set; }
         public string ChangerSid { get; set; }
+        public string CurEngeneerSid { get; set; }
+        public string CurAdminSid { get; set; }
+        public string CurTechSid { get; set; }
+        public string CurManagerSid { get; set; }
 
         public Claim() { }
 
@@ -133,9 +137,13 @@ namespace DataProvider.Models.Service
             DateStateChange = Db.DbHelper.GetValueDateTimeOrDefault(row, "date_state_change");
             ClientSdNum = Db.DbHelper.GetValueString(row, "client_sd_num");
             ChangerSid = Db.DbHelper.GetValueString(row, "changer_sid");
+            CurEngeneerSid = Db.DbHelper.GetValueString(row, "cur_engeneer_sid");
+            CurAdminSid = Db.DbHelper.GetValueString(row, "cur_admin_sid");
+            CurTechSid = Db.DbHelper.GetValueString(row, "cur_tech_sid");
+            CurManagerSid = Db.DbHelper.GetValueString(row, "cur_manager_sid");
         }
 
-        public int Save(int? nextStateId = null, string sysDescr = null, bool saveStateInfo = true)
+        public int Save()
         {
             //if (State == null) State = ClaimState.GetFirstState();
             if (Admin == null) Admin = new EmployeeSm();
@@ -166,6 +174,10 @@ namespace DataProvider.Models.Service
             SqlParameter pCreatorAdSid = new SqlParameter() { ParameterName = "creator_sid", SqlValue = CurUserAdSid, SqlDbType = SqlDbType.VarChar };
             SqlParameter pSpecialistSid = new SqlParameter() { ParameterName = "specialist_sid", SqlValue = SpecialistSid, SqlDbType = SqlDbType.VarChar };
             SqlParameter pClientSdNum = new SqlParameter() { ParameterName = "client_sd_num", SqlValue = ClientSdNum, SqlDbType = SqlDbType.NVarChar };
+            SqlParameter pEngeneerSid = new SqlParameter() { ParameterName = "cur_engeneer_sid", SqlValue = CurEngeneerSid, SqlDbType = SqlDbType.VarChar };
+            SqlParameter pAdminSid = new SqlParameter() { ParameterName = "cur_admin_sid", SqlValue = CurAdminSid, SqlDbType = SqlDbType.VarChar };
+            SqlParameter pTechSid = new SqlParameter() { ParameterName = "cur_tech_sid", SqlValue = CurTechSid, SqlDbType = SqlDbType.VarChar };
+            SqlParameter pManagerSid = new SqlParameter() { ParameterName = "cur_manager_sid", SqlValue = CurManagerSid, SqlDbType = SqlDbType.VarChar };
             DataTable dt = new DataTable();
             //using (var conn = Db.Service.connection)
             //{
@@ -177,44 +189,43 @@ namespace DataProvider.Models.Service
 
             //Если заявка уже сохранена то основная информаци не будет перезаписана
             dt = Db.Service.ExecuteQueryStoredProcedure("save_claim", pId, pIdContractor, pIdContract, pIdDevice,
-                pContractorName, pContractName, pDeviceName, pIdAdmin, pIdEngeneer, pCreatorAdSid, pIdWorkType, pSpecialistSid, pClientSdNum);
+                pContractorName, pContractName, pDeviceName, pIdAdmin, pIdEngeneer, pCreatorAdSid, pIdWorkType, pSpecialistSid, pClientSdNum, pEngeneerSid, pAdminSid, pTechSid, pManagerSid);
 
             int id = 0;
             if (dt.Rows.Count > 0)
             {
                 Int32.TryParse(dt.Rows[0]["id"].ToString(), out id);
-                Id = id;
             }
 
-            //Сохранение статуса заявки, может быть передан новый статус тогда сохраняем с новым статусом
-            if (Id > 0)
+            if (Id == 0)
             {
-                int stateId = 0;
-                if (nextStateId.HasValue)
-                {
-                    stateId = nextStateId.Value;
-                }
-                else
-                {
-                    stateId = GetClaimCurrentState(Id).Id;
-                }
-                if (stateId > 0) SaveStateStep(stateId, sysDescr, saveStateInfo);
-                //var c2Cs = new Claim2ClaimState();
-                ////c2Cs.State = state;
-                //c2Cs.IdClaim = Id;
-                //c2Cs.IdClaimState = state.Id;
-                //c2Cs.Descr = Descr;
-                //c2Cs.CurUserAdSid = CurUserAdSid;
-                //if (IdWorkType.HasValue) c2Cs.IdWorkType = IdWorkType.Value;
-                //c2Cs.SpecialistSid = SpecialistSid;
-                //c2Cs.Save();
+                Id = id;
+                var st = ClaimState.GetFirstState();
+                SaveStateStep(st.Id, Descr);
             }
+
+            Id = id;
+
+            ////////Сохранение статуса заявки, может быть передан новый статус тогда сохраняем с новым статусом
+            //////if (Id > 0)
+            //////{
+            //////    int stateId = 0;
+            //////    if (nextStateId.HasValue)
+            //////    {
+            //////        stateId = nextStateId.Value;
+            //////    }
+            //////    else
+            //////    {
+            //////        stateId = GetClaimCurrentState(Id).Id;
+            //////    }
+            //////    if (stateId > 0) SaveStateStep(stateId, sysDescr, saveStateInfo);
+            //////}
 
             return Id;
         }
 
 
-        public void SaveStateStep(int stateId, string sysDescr = null, bool saveStateInfo = true)
+        public void SaveStateStep(int stateId, string descr = null, bool saveStateInfo = true)
         {
             if (stateId == 0) throw new ArgumentException("Не указан статус для сохранения в лестнице статусов.");
             var c2Cs = new Claim2ClaimState();
@@ -223,12 +234,12 @@ namespace DataProvider.Models.Service
             c2Cs.CurUserAdSid = CurUserAdSid;
             if (saveStateInfo)
             {
-                c2Cs.Descr = Descr;
-                if (String.IsNullOrEmpty(Descr))
-                {
-                    Descr += "\r\n";
-                }
-                c2Cs.Descr += sysDescr;
+                //c2Cs.Descr = Descr;
+                //if (String.IsNullOrEmpty(Descr))
+                //{
+                //    Descr += "\r\n";
+                //}
+                c2Cs.Descr = descr;
                 if (IdWorkType.HasValue) c2Cs.IdWorkType = IdWorkType.Value;
                 c2Cs.SpecialistSid = SpecialistSid;
                 if (ServiceSheet4Save != null && ServiceSheet4Save.Id > 0)
@@ -239,18 +250,22 @@ namespace DataProvider.Models.Service
             c2Cs.Save();
         }
 
-        public void Clear(bool specialist = false, bool workType = false)
+        public void Clear(bool specialist = false, bool workType = false, bool engeneer = false, bool admin = false, bool tech = false, bool manager = false)
         {
             SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = Id, SqlDbType = SqlDbType.Int };
             SqlParameter pClearSpecialistSid = new SqlParameter() { ParameterName = "clear_specialist_sid", SqlValue = specialist, SqlDbType = SqlDbType.Bit };
             SqlParameter pClearIdWorkType = new SqlParameter() { ParameterName = "clear_id_work_type", SqlValue = workType, SqlDbType = SqlDbType.Bit };
+            SqlParameter pClearEngeneerSid = new SqlParameter() { ParameterName = "clear_engeneer_sid", SqlValue = engeneer, SqlDbType = SqlDbType.Bit };
+            SqlParameter pClearAdminSid = new SqlParameter() { ParameterName = "clear_admin_sid", SqlValue = admin, SqlDbType = SqlDbType.Bit };
+            SqlParameter pClearTechSid = new SqlParameter() { ParameterName = "clear_tech_sid", SqlValue = tech, SqlDbType = SqlDbType.Bit };
+            SqlParameter pClearManagerSid = new SqlParameter() { ParameterName = "clear_manager_sid", SqlValue = manager, SqlDbType = SqlDbType.Bit };
             if (specialist)
             {
                 pClearSpecialistSid.Value = true;
             }
             DataTable dt = new DataTable();
 
-            dt = Db.Service.ExecuteQueryStoredProcedure("clear_claim", pId, pClearSpecialistSid, pClearIdWorkType);
+            dt = Db.Service.ExecuteQueryStoredProcedure("clear_claim", pId, pClearSpecialistSid, pClearIdWorkType, pClearEngeneerSid, pClearAdminSid, pClearTechSid, pClearManagerSid);
         }
 
         public void Go(bool confirm = true)
@@ -258,7 +273,7 @@ namespace DataProvider.Models.Service
             if (Id <= 0) throw new ArgumentException("Невозможно предать заявку. Не указан ID заявки.");
 
             //Save();
-            string sysDescr = String.Empty;
+            string descr = String.Empty;
             var currState = GetClaimCurrentState(Id);
             var nextState = new ClaimState();
             bool saveStateInfo = true;
@@ -280,7 +295,7 @@ namespace DataProvider.Models.Service
                         wtId = IdWorkType;
                     }
                     var wtSysName = new WorkType(wtId.Value).SysName;
-                    sysDescr = $"Установлен тип работ {wtSysName}\r\nУказан специалист {AdHelper.GetUserBySid(SpecialistSid).FullName}";
+                    descr = $"{Descr}\r\nУстановлен тип работ {wtSysName}\r\nНазначен специалист {AdHelper.GetUserBySid(SpecialistSid).FullName}";
 
                     switch (wtSysName)
                     {
@@ -289,6 +304,7 @@ namespace DataProvider.Models.Service
                         case "ТЭО":
                         case "УТЗ":
                             nextState = new ClaimState("TECHSET");
+                            CurTechSid = SpecialistSid;
                             break;
                         case "РТО":
                         case "МТС":
@@ -299,6 +315,7 @@ namespace DataProvider.Models.Service
                         case "РЗРД":
                         case "ЗНЗЧ":
                             nextState = new ClaimState("SERVADMSET");
+                            CurAdminSid = SpecialistSid;
                             break;
                     }
                     break;
@@ -309,9 +326,10 @@ namespace DataProvider.Models.Service
                     }
                     else
                     {
+                        descr = $"Отклонено\r\n{Descr}";
                         nextState = new ClaimState("NEW");
                         //Очищаем выбранного специалиста так как статус заявки поменялся
-                        Clear(specialist: true, workType: true);
+                        Clear(specialist: true, workType: true, tech:true);
                     }
                     break;
                 case "TECHWORK":
@@ -342,10 +360,11 @@ namespace DataProvider.Models.Service
                             //Сначала сохраняем промежуточный статус
                             SaveStateStep(nextState.Id);
                             saveStateInfo = false;
-                            nextState = new ClaimState("ZIPCONFIRM");
+                            nextState = new ClaimState("ZIPCHECK");
                         }
                         else if ((!ServiceSheet4Save.ProcessEnabled || !ServiceSheet4Save.DeviceEnabled) && (!ServiceSheet4Save.ZipClaim.HasValue || !ServiceSheet4Save.ZipClaim.Value))
                         {
+                            
                             nextState = new ClaimState("TECHNODONE");
                             //Сначала сохраняем промежуточный статус
                             SaveStateStep(nextState.Id);
@@ -355,11 +374,13 @@ namespace DataProvider.Models.Service
                     }
                     else
                     {
+                        descr = $"{Descr}";
                         nextState = new ClaimState("TECHNOCONTACT");
                         //Сначала сохраняем промежуточный статус
-                        SaveStateStep(nextState.Id);
+                        SaveStateStep(nextState.Id, descr);
                         saveStateInfo = false;
                         nextState = new ClaimState("SERVADMSETWAIT");
+                        Clear(specialist: true);
                     }
                     ////}
                     ////else if (ServiceSheet4Save.NoTechWork)
@@ -376,12 +397,14 @@ namespace DataProvider.Models.Service
                     if (confirm)
                     {
                         nextState = new ClaimState("SRVADMWORK");
+                        CurAdminSid = SpecialistSid;
                     }
                     else
                     {
+                        descr = $"Отклонено\r\n{Descr}";
                         nextState = new ClaimState("NEW");
                         //Очищаем выбранного специалиста так как статус заявки поменялся
-                        Clear(specialist: true, workType: true);
+                        Clear(specialist: true, admin:true);
                     }
                     break;
                 case "SRVADMWORK":
@@ -390,28 +413,31 @@ namespace DataProvider.Models.Service
                     ServiceIssue4Save.SpecialistSid = SpecialistSid;
                     ServiceIssue4Save.CurUserAdSid = CurUserAdSid;
                     ServiceIssue4Save.Save();
+                    descr = $"Назначен специалист {AdHelper.GetUserBySid(SpecialistSid).FullName}\r\nДата выезда {ServiceIssue4Save.DatePlan:dd.MM.yyyy}\r\n{Descr}";
                     nextState = new ClaimState("SRVENGSET");
+                    CurEngeneerSid = SpecialistSid;
                     break;
                 case "SERVENGSETWAIT":
                     nextState = new ClaimState("SRVENGSET");
                     break;
                 case "SRVENGSET":
-                    if (!confirm)
-                    {
-
-                        nextState = new ClaimState("SRVENGCANCEL");
-                        //Сначала сохраняем промежуточный статус
-                        SaveStateStep(nextState.Id);
-                        saveStateInfo = false;
-                        nextState = new ClaimState("SRVADMWORK");
-                    }
-                    else
+                    if (confirm)
                     {
                         nextState = new ClaimState("SRVENGGET");
                         //Сначала сохраняем промежуточный статус
                         SaveStateStep(nextState.Id);
                         saveStateInfo = false;
                         nextState = new ClaimState("SERVENGOUTWAIT");
+                    }
+                    else
+                    {
+                        descr = $"Отклонено\r\n{Descr}";
+                        nextState = new ClaimState("SRVENGCANCEL");
+                        //Сначала сохраняем промежуточный статус
+                        SaveStateStep(nextState.Id, descr);
+                        saveStateInfo = false;
+                        nextState = new ClaimState("SRVADMWORK");
+                        Clear(specialist: true, engeneer:true);
                     }
                     break;
 
@@ -445,7 +471,7 @@ namespace DataProvider.Models.Service
                     }
 
                     break;
-                case "ZIPCHECK":
+                case "ZIPCHECK"://В настоящий момент по этому статусу происходит заказ ЗИП специалистом Тех поддержки
                     nextState = new ClaimState("ZIPCHECKED");
                     break;
                 case "ZIPCHECKED":
@@ -476,7 +502,8 @@ namespace DataProvider.Models.Service
                     nextState = currState;
                     break;
             }
-            Save(nextState.Id, sysDescr, saveStateInfo);
+            Save();
+            SaveStateStep(nextState.Id, descr, saveStateInfo);
             //SaveStateStep(nextState.Id);
         }
 
@@ -625,6 +652,19 @@ namespace DataProvider.Models.Service
 
 
             return list;
+        }
+
+        public static ServiceSheet GetLastServiceSheet(int idClaim)
+        {
+            SqlParameter pIdClaim = new SqlParameter() { ParameterName = "id_claim", SqlValue = idClaim, SqlDbType = SqlDbType.Int };
+            var dt = Db.Service.ExecuteQueryStoredProcedure("get_last_service_sheet_id", pIdClaim);
+            ServiceSheet sheet = new ServiceSheet();
+            if (dt.Rows.Count > 0)
+            {
+                int lastIdSerSheet = Db.DbHelper.GetValueIntOrDefault(dt.Rows[0], "id_service_sheet");
+                sheet= new ServiceSheet(lastIdSerSheet);
+            }
+            return sheet;
         }
     }
 }
