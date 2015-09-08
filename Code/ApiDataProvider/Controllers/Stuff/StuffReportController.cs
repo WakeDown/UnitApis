@@ -8,6 +8,7 @@ using System.Text;
 using System.Web.Http;
 using DataProvider.Models.Stuff;
 using DataProvider.Objects;
+using WebGrease.Css.Extensions;
 
 namespace DataProvider.Controllers.Stuff
 {
@@ -17,22 +18,69 @@ namespace DataProvider.Controllers.Stuff
         public IEnumerable<ItBudgetReportItem> GetItBudgetList(float? peopleCost = 350F)
         {
             if (!peopleCost.HasValue) peopleCost = 350F;
-            var list = Budget.GetList();
+            var listAll = Budget.GetList().ToList();
             var result = new List<ItBudgetReportItem>();
+            var firstLine = listAll.Where(x => !x.IdParent.HasValue);
+            int level = 0;
 
-            foreach (Budget bud in list)
+            foreach (Budget bud in firstLine)
             {
-                var item = FillItBudgetItem(bud, peopleCost.Value);
+                var item = FillItBudgetItem(bud, peopleCost.Value, level);
                 result.Add(item);
+                var budChildList = listAll.Where(x => x.IdParent == bud.Id).ToList();
+                if (budChildList.Any())
+                    ItBudgetFillBudChilds(ref result, budChildList, peopleCost.Value, listAll, level);
+            }
+
+            //Заполняем правильное количество людей учитывая вложенные бюджеты
+            //var list = listAll;
+            foreach (Budget item in firstLine)
+            {
+                var bud = result.Single(x => x.BudgetName.Equals(item.Name));
+                int count = bud.PeopleCount;
+                if (listAll.Any(x => x.IdParent == item.Id))
+                {
+                    count += GetChildPeopleCount(ref listAll, ref result, item.Id);
+                }
+                bud.PeopleCount = count;
             }
 
             return result;
         }
 
-        
+        public int GetChildPeopleCount(ref List<Budget> listAll, ref List<ItBudgetReportItem> result, int parentId)
+        {
+            int count = 0;
+            var list = listAll.Where(x => x.IdParent == parentId).ToList();
+            foreach (Budget item in list)
+            {
+                var bud = result.Single(x => x.BudgetName.Equals(item.Name));
+
+                if (listAll.Any(x => x.IdParent == item.Id))
+                {
+                    bud.PeopleCount += GetChildPeopleCount(ref listAll, ref result, item.Id);
+                }
+                count += bud.PeopleCount;
+            }
+            return count;
+        }
 
         [AuthorizeAd(Groups = new[] { AdGroup.SystemUser, AdGroup.SystemUser })]
-        public ItBudgetReportItem FillItBudgetItem(Budget bud, float peopleCost)
+        public void ItBudgetFillBudChilds(ref List<ItBudgetReportItem> result, IEnumerable<Budget> childList, float peopleCost, List<Budget> listAll, int level)
+        {
+            level++;
+            foreach (Budget bud in childList)
+            {
+                var childItem = FillItBudgetItem(bud, peopleCost, level);
+                result.Add(childItem);
+                var budChildList = listAll.Where(x => x.IdParent == bud.Id).ToList();
+                if (budChildList.Any())
+                    ItBudgetFillBudChilds(ref result, budChildList, peopleCost, listAll, level);
+            }
+        }
+
+        [AuthorizeAd(Groups = new[] { AdGroup.SystemUser, AdGroup.SystemUser })]
+        public ItBudgetReportItem FillItBudgetItem(Budget bud, float peopleCost, int level)
         {
             var item = new ItBudgetReportItem();
             item.BudgetName = bud.Name;
@@ -55,9 +103,11 @@ namespace DataProvider.Controllers.Stuff
             else
             { item.PeopleCount = 0;}
            item.CostSum = item.PeopleCount * peopleCost;
-            //item.Level = bud.OrgStructureLevel;
+           item.Level = level;
             return item;
         }
+
+        
 
         //[AuthorizeAd(Groups = new[] { AdGroup.SystemUser, AdGroup.SystemUser })]
         //public IEnumerable<ItBudgetReportItem> GetItBudgetList(float? peopleCost = 350F)

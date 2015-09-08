@@ -16,6 +16,10 @@ namespace DataProvider.Models.Stuff
         public string Name { get; set; }
         public string Descr { get; set; }
         public int? EmpCount { get; set; }
+        public int? IdParent { get; set; }
+        public Budget Parent { get; set; }
+        //public int PeopleCount { get; set; }
+        //public int Level { get; set; }
 
         public Budget() { }
 
@@ -42,15 +46,21 @@ namespace DataProvider.Models.Stuff
             Name = Db.DbHelper.GetValueString(row, "name");
             Descr = Db.DbHelper.GetValueString(row, "descr");
             EmpCount = Db.DbHelper.GetValueIntOrNull(row, "emp_count");
+            IdParent = Db.DbHelper.GetValueIntOrNull(row, "id_parent");
+            if (IdParent.HasValue)
+            { Parent = new Budget(IdParent.Value);}
+            else { Parent = new Budget(); }
         }
 
         public void Save()
         {
+            SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = Id, SqlDbType = SqlDbType.Int };
             SqlParameter pName = new SqlParameter() { ParameterName = "name", SqlValue = Name, SqlDbType = SqlDbType.NVarChar };
             SqlParameter pDescr = new SqlParameter() { ParameterName = "descr", SqlValue = Descr, SqlDbType = SqlDbType.NVarChar };
             SqlParameter pCreatorAdSid = new SqlParameter() { ParameterName = "creator_sid", SqlValue = CurUserAdSid, SqlDbType = SqlDbType.VarChar };
+            SqlParameter pIdParent = new SqlParameter() { ParameterName = "id_parent", SqlValue = IdParent, SqlDbType = SqlDbType.Int };
 
-            var dt = Db.Stuff.ExecuteQueryStoredProcedure("save_budget", pName, pDescr, pCreatorAdSid);
+            var dt = Db.Stuff.ExecuteQueryStoredProcedure("save_budget", pId, pName, pDescr, pCreatorAdSid, pIdParent);
             int id = 0;
             if (dt.Rows.Count > 0)
             {
@@ -71,7 +81,7 @@ namespace DataProvider.Models.Stuff
                 lst.Add(model);
             }
 
-            return lst;
+            return lst.OrderBy(x=>x.Parent.Name).ThenBy(x=>x.Name);
         }
 
         public static void Close(int id, string deleterSid)
