@@ -10,5 +10,6 @@ namespace DataProvider.Models.Stuff
         public string FullName { get; set; }
         public string PositionName { get; set; }
         public float Cost { get; set; }
+        public string BudgetName { get; set; }
     }
 }

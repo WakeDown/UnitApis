@@ -94,6 +94,7 @@ namespace DataProvider.Controllers.Stuff
                     p.FullName = emp.FullName;
                     p.PositionName = emp.Position.Name;
                     p.Cost = peopleCost;
+                    p.BudgetName = bud.Name;
                     peopleList.Add(p);
                 }
             }
