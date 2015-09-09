@@ -33,7 +33,7 @@ namespace DataProvider.Controllers.Stuff
             }
 
             //Заполняем правильное количество людей учитывая вложенные бюджеты
-            //var list = listAll;
+            var list = listAll;
             foreach (Budget item in firstLine)
             {
                 var bud = result.Single(x => x.BudgetName.Equals(item.Name));
