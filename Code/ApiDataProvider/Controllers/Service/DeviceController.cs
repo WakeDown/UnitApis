@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Web.Http;
 using System.Web.Mvc;
@@ -12,6 +13,7 @@ using System.Xml;
 using DataProvider.Helpers;
 using DataProvider.Models.Service;
 using DataProvider.Objects;
+using Newtonsoft.Json;
 using Objects;
 
 namespace DataProvider.Controllers.Service
@@ -38,16 +40,30 @@ namespace DataProvider.Controllers.Service
         }
 
         [AuthorizeAd(Groups = new[] { AdGroup.ServiceMobileUser })]
-        public IHttpActionResult GetInfo(string serialNum)
+        public HttpResponseMessage GetInfo(string serialNum)
         {
-            if (String.IsNullOrEmpty(serialNum)) return NotFound();
-            return Ok(Device.GetInfo(serialNum));
+            if (String.IsNullOrEmpty(serialNum)) return Request.CreateResponse(HttpStatusCode.NotFound); ;
+
+            var model =  Device.GetInfo(serialNum);
+            var resp = new HttpResponseMessage()
+            {
+                Content = new StringContent(JsonConvert.SerializeObject(model))
+            };
+            resp.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            return resp;
         }
 
         [AuthorizeAd(Groups = new[] { AdGroup.ServiceMobileUser })]
-        public IHttpActionResult GetInfoList()
+        public HttpResponseMessage GetInfoList()
         {
-            return Ok(Device.GetInfoList());
+            var list = Device.GetInfoList();
+
+            var resp = new HttpResponseMessage()
+            {
+                Content = new StringContent(JsonConvert.SerializeObject(list))
+            };
+            resp.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            return resp;
         }
 
         public byte[] GetInfoListHash()

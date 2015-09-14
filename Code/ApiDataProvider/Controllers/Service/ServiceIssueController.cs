@@ -135,5 +135,11 @@ namespace DataProvider.Controllers.Service
         //    }
         //    return response;
         //}
+
+        [AuthorizeAd(AdGroup.ServiceMobileUser)]
+        public HttpResponseMessage MobileSave(PlanServiceIssue model)
+        {
+            
+        }
     }
 }

@@ -25,20 +25,23 @@ namespace DataProvider.Models.Service
         public string ObjectName { get; set; }
         public int IdClient { get; set; }
         public string ClientName { get; set; }
-
+        public string DeviceSerialNum { get; set; }
+        public string IdWorkType { get; set; }
+        public string CounterMono { get; set; }
+        public string CounterColor { get; set; }
 
         public PlanServiceIssue() { }
 
-        //public PlanServiceIssue(int id)
-        //{
-        //    SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = id, SqlDbType = SqlDbType.Int };
-        //    var dt = Db.Stuff.ExecuteQueryStoredProcedure("get_model", pId);
-        //    if (dt.Rows.Count > 0)
-        //    {
-        //        var row = dt.Rows[0];
-        //        FillSelf(row);
-        //    }
-        //}
+        public PlanServiceIssue(int id)
+        {
+            //SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = id, SqlDbType = SqlDbType.Int };
+            //var dt = Db.Stuff.ExecuteQueryStoredProcedure("get_model", pId);
+            //if (dt.Rows.Count > 0)
+            //{
+            //    var row = dt.Rows[0];
+            //    FillSelf(row);
+            //}
+        }
 
         public PlanServiceIssue(DataRow row)
             : this()
@@ -64,19 +67,19 @@ namespace DataProvider.Models.Service
             ObjectName = Db.DbHelper.GetValueString(row, "object_name");
         }
 
-        //public void Save()
-        //{
-        //    SqlParameter pName = new SqlParameter() { ParameterName = "name", SqlValue = Name, SqlDbType = SqlDbType.NVarChar };
-        //    SqlParameter pCreatorAdSid = new SqlParameter() { ParameterName = "creator_sid", SqlValue = CurUserAdSid, SqlDbType = SqlDbType.VarChar };
+        public void MobileSave()
+        {
+            SqlParameter pIdServiceClaim = new SqlParameter() { ParameterName = "name", SqlValue = IdServiceClaim, SqlDbType = SqlDbType.NVarChar };
+            SqlParameter pCreatorAdSid = new SqlParameter() { ParameterName = "creator_sid", SqlValue = CurUserAdSid, SqlDbType = SqlDbType.VarChar };
 
-        //    var dt = Db.Stuff.ExecuteQueryStoredProcedure("save_model", pName, pCreatorAdSid);
-        //    int id = 0;
-        //    if (dt.Rows.Count > 0)
-        //    {
-        //        int.TryParse(dt.Rows[0]["id"].ToString(), out id);
-        //        Id = id;
-        //    }
-        //}
+            var dt = Db.Stuff.ExecuteQueryStoredProcedure("save_model", pName, pCreatorAdSid);
+            int id = 0;
+            if (dt.Rows.Count > 0)
+            {
+                int.TryParse(dt.Rows[0]["id"].ToString(), out id);
+                //Id = id;
+            }
+        }
 
         public static IEnumerable<PlanServiceIssue> GetList(DateTime month, int? idCity = null, string address=null, int? idClient = null)
         {
