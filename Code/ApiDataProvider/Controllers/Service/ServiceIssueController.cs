@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using DataProvider.Helpers;
 using DataProvider.Models.Service;
 using DataProvider.Models.Stuff;
 using DataProvider.Objects;
@@ -139,7 +140,20 @@ namespace DataProvider.Controllers.Service
         [AuthorizeAd(AdGroup.ServiceMobileUser)]
         public HttpResponseMessage MobileSave(PlanServiceIssue model)
         {
-            
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
+
+            try
+            {
+                model.CurUserAdSid = GetCurUser().Sid;
+                model.MobileSave();
+                response.Content = new StringContent(String.Format("{{\"id\":{0}}}", model.Id));
+            }
+            catch (Exception ex)
+            {
+                response = new HttpResponseMessage(HttpStatusCode.OK);
+                response.Content = new StringContent(MessageHelper.ConfigureExceptionMessage(ex));
+            }
+            return response;
         }
     }
 }

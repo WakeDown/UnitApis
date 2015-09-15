@@ -39,7 +39,7 @@ namespace DataProvider.Controllers.Service
             return Device.GetList(idContractor, contractorName, idContract, contractNumber, idDevice, deviceName);
         }
 
-        [AuthorizeAd(Groups = new[] { AdGroup.ServiceMobileUser })]
+        [AuthorizeAd()]
         public HttpResponseMessage GetInfo(string serialNum)
         {
             if (String.IsNullOrEmpty(serialNum)) return Request.CreateResponse(HttpStatusCode.NotFound); ;
@@ -53,7 +53,7 @@ namespace DataProvider.Controllers.Service
             return resp;
         }
 
-        [AuthorizeAd(Groups = new[] { AdGroup.ServiceMobileUser })]
+        [AuthorizeAd()]
         public HttpResponseMessage GetInfoList()
         {
             var list = Device.GetInfoList();

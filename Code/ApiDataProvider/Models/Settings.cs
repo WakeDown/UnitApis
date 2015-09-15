@@ -13,8 +13,8 @@ namespace DataProvider.Models.SpeCalc
 
         public class SpeCalc
         {
-            public const string Url = "http://uiis-1.un1t.group:10112";
-            public const string DefaultMailFrom = "SpeCalc@un1t.group";
+            public const string Url = "https://spec.unitgroup.ru";
+            public const string DefaultMailFrom = "spec@un1t.group";
         }
         
     }

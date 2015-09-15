@@ -11,6 +11,7 @@ namespace DataProvider.Models.Service
 {
     public class PlanServiceIssue:DbModel
     {
+        public int Id { get; set; }
         public int IdServiceClaim { get; set; }
         public int IdContract { get; set; }
         public int IdDevice { get; set; }

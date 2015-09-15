@@ -180,7 +180,9 @@
     <Compile Include="Controllers\Service\ContractController.cs" />
     <Compile Include="Controllers\Service\DeviceController.cs" />
     <Compile Include="Controllers\Service\ServiceIssueResultController.cs" />
+    <Compile Include="Controllers\Service\ServiceMobileController.cs" />
     <Compile Include="Controllers\Stuff\BudgetController.cs" />
+    <Compile Include="Models\MobileUser.cs" />
     <Compile Include="Models\Service\PlanServiceIssue.cs" />
     <Compile Include="Controllers\Service\ServiceIssueController.cs" />
     <Compile Include="Controllers\Service\ServiceSheetController.cs" />
@@ -304,6 +306,7 @@
     <Folder Include="Views\Claim\" />
     <Folder Include="Views\ContractorAccess\" />
     <Folder Include="Views\Document\" />
+    <Folder Include="Views\ServiceMobile\" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
