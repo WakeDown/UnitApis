@@ -70,7 +70,21 @@ namespace DataProvider.Models.Service
             return lst;
         }
 
-       
+        public static IEnumerable<WorkType> GetPlanActionTypeList()
+        {
+            //SqlParameter pIdAdmin = new SqlParameter() { ParameterName = "id_admin", SqlValue = idAdmin, SqlDbType = SqlDbType.Int };
+            var dt = Db.UnitProg.ExecuteQueryStoredProcedure("get_service_action_type_list");
+
+            var lst = new List<WorkType>();
+
+            foreach (DataRow row in dt.Rows)
+            {
+                var model = new WorkType(row);
+                lst.Add(model);
+            }
+
+            return lst;
+        }
 
         //public void Save()
         //{

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using DataProvider.Helpers;
 using DataProvider.Models.Service;
 using DataProvider.Models.Stuff;
 using DataProvider.Objects;
@@ -20,7 +21,7 @@ namespace DataProvider.Controllers.Service
             if (!month.HasValue) month = DateTime.Now;
             
 
-            var planList = PlanServiceIssue.GetList(month.Value, idCity, address, idClient);
+            var planList = PlanServiceIssue.GetClaimList(month.Value, idCity, address, idClient);
             var clientList = planList.Where(x => x.IdCity == idCity && x.Address == address).GroupBy(x => x.IdDevice)
                 .Select(x => new ServiceIssuePlaningItem(x.Key, x.First().DeviceName, x.Count()))
                 .OrderBy(x => x.Name)
@@ -34,7 +35,7 @@ namespace DataProvider.Controllers.Service
             if (!idCity.HasValue) throw new ArgumentException("Не указан город");
             if (!month.HasValue) month = DateTime.Now;
 
-            var planList = PlanServiceIssue.GetList(month.Value, idCity, address);
+            var planList = PlanServiceIssue.GetClaimList(month.Value, idCity, address);
             var clientList = planList.GroupBy(x => x.IdClient)
                 .Select(x => new ServiceIssuePlaningItem(x.Key, x.First().ClientName, x.Count()))
                 .OrderBy(x => x.Name)
@@ -48,7 +49,7 @@ namespace DataProvider.Controllers.Service
             if (!idCity.HasValue) throw new ArgumentException("Не указан город");
             if (!month.HasValue) month = DateTime.Now;
 
-            var planList = PlanServiceIssue.GetList(month.Value, idCity);
+            var planList = PlanServiceIssue.GetClaimList(month.Value, idCity);
             var addressList = planList.GroupBy(x => x.Address)
                 .Select(x => new ServiceIssuePlaningItem(0, x.Key, x.Count()))
                 .OrderBy(x => x.Name)
@@ -61,7 +62,7 @@ namespace DataProvider.Controllers.Service
         {
             if (!month.HasValue) month = DateTime.Now;
 
-            var planList = PlanServiceIssue.GetList(month.Value);
+            var planList = PlanServiceIssue.GetClaimList(month.Value);
             var citiesList = planList.GroupBy(x => x.IdCity)
                 .Select(x => new ServiceIssuePlaningItem(x.Key, x.First().CityName, x.Count())).OrderBy(x => x.Name).ToArray();
 
@@ -104,7 +105,7 @@ namespace DataProvider.Controllers.Service
         {
             if (!month.HasValue) month = DateTime.Now;
 
-            return PlanServiceIssue.GetList(month.Value);
+            return PlanServiceIssue.GetClaimList(month.Value);
         }
 
         //TODO: отдельно список для инцедентных выездов и общий
@@ -135,5 +136,24 @@ namespace DataProvider.Controllers.Service
         //    }
         //    return response;
         //}
+
+        [AuthorizeAd(AdGroup.ServiceMobileUser)]
+        public HttpResponseMessage MobileSave(PlanServiceIssue model)
+        {
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
+
+            try
+            {
+                model.CurUserAdSid = GetCurUser().Sid;
+                model.MobileSave();
+                response.Content = new StringContent(String.Format("{{\"id\":{0}}}", model.Id));
+            }
+            catch (Exception ex)
+            {
+                response = new HttpResponseMessage(HttpStatusCode.OK);
+                response.Content = new StringContent(MessageHelper.ConfigureExceptionMessage(ex));
+            }
+            return response;
+        }
     }
 }
