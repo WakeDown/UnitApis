@@ -48,6 +48,17 @@ namespace DataProvider.Controllers.Service
             return resp;
         }
 
+        public HttpResponseMessage GetPlanActionTypeList()
+        {
+            var model = WorkType.GetPlanActionTypeList();
+            var resp = new HttpResponseMessage()
+            {
+                Content = new StringContent(JsonConvert.SerializeObject(model))
+            };
+            resp.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            return resp;
+        }
+
         public HttpResponseMessage GetDeviceInfo(string serialNum)
         {
             if (String.IsNullOrEmpty(serialNum)) return Request.CreateResponse(HttpStatusCode.NotFound); ;
