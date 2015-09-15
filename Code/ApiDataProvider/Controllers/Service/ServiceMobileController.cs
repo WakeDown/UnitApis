@@ -84,10 +84,16 @@ namespace DataProvider.Controllers.Service
             return resp;
         }
 
-        public byte[] GetDeviceInfoListHash()
+        public HttpResponseMessage GetDeviceInfoListHash()
         {
             var list = Device.GetInfoList();
-            return MathHelper.GetChecksum(list);
+            var hash = MathHelper.GetChecksum(list);
+                var resp = new HttpResponseMessage()
+{
+    Content = new StringContent(JsonConvert.SerializeObject(hash))
+};
+            resp.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            return resp;
         }
     }
 }
