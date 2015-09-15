@@ -17,7 +17,7 @@ namespace DataProvider.Controllers.Service
     [AuthorizeAd(AdGroup.ServiceMobileUser)]
     public class ServiceMobileController : BaseApiController
     {
-        
+        [HttpPost]
         public HttpResponseMessage SavePlanServiceIssue(PlanServiceIssue model)
         {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
