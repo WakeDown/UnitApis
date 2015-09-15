@@ -25,14 +25,15 @@ namespace DataProvider.Controllers.Service
             try
             {
                 model.CurUserAdSid = GetCurUser().Sid;
-                model.MobileSave();
-                response.Content = new StringContent(String.Format("{{\"id\":{0}}}", model.Id));
+                int id = model.MobileSave();
+                response.Content = new StringContent(String.Format("{{\"id\":{0}}}", id));
             }
             catch (Exception ex)
             {
                 response = new HttpResponseMessage(HttpStatusCode.OK);
                 response.Content = new StringContent(MessageHelper.ConfigureExceptionMessage(ex));
             }
+            response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             return response;
         }
 
