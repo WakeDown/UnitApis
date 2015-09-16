@@ -303,10 +303,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Claim\" />
-    <Folder Include="Views\ContractorAccess\" />
-    <Folder Include="Views\Document\" />
-    <Folder Include="Views\ServiceMobile\" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
