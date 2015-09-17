@@ -14,6 +14,19 @@ namespace DataProvider.Controllers.Service
 {
     public class ServiceIssueController : BaseApiController
     {
+        public IEnumerable<ServiceIssuePeriodItem> GetPeriodList(int? year, int? month)
+        {
+            if (!year.HasValue) year = DateTime.Now.Year;
+            if (!month.HasValue) month = DateTime.Now.Month;
+
+            return ServiceIssue.GetPeriodList(year.Value, month.Value);
+        }
+
+        public IEnumerable<KeyValuePair<string, string>> GetEngeneerList()
+        {
+            return AdHelper.GetUserListByAdGroup(AdGroup.ServiceEngeneer).ToList();
+        }
+
         public IEnumerable<ServiceIssuePlaningItem> GetPlaningDeviceList(DateTime? month, int? idCity, string address, int? idClient)
         {
             if (!idCity.HasValue) throw new ArgumentException("Не указан город");
@@ -137,23 +150,23 @@ namespace DataProvider.Controllers.Service
         //    return response;
         //}
 
-        [AuthorizeAd(AdGroup.ServiceMobileUser)]
-        public HttpResponseMessage MobileSave(PlanServiceIssue model)
-        {
-            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
+        //[AuthorizeAd(AdGroup.ServiceMobileUser)]
+        //public HttpResponseMessage MobileSave(PlanServiceIssue model)
+        //{
+        //    HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
 
-            try
-            {
-                model.CurUserAdSid = GetCurUser().Sid;
-                model.MobileSave();
-                response.Content = new StringContent(String.Format("{{\"id\":{0}}}", model.Id));
-            }
-            catch (Exception ex)
-            {
-                response = new HttpResponseMessage(HttpStatusCode.OK);
-                response.Content = new StringContent(MessageHelper.ConfigureExceptionMessage(ex));
-            }
-            return response;
-        }
+        //    try
+        //    {
+        //        model.CurUserAdSid = GetCurUser().Sid;
+        //        model.MobileSave();
+        //        response.Content = new StringContent(String.Format("{{\"id\":{0}}}", model.Id));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        response = new HttpResponseMessage(HttpStatusCode.OK);
+        //        response.Content = new StringContent(MessageHelper.ConfigureExceptionMessage(ex));
+        //    }
+        //    return response;
+        //}
     }
 }

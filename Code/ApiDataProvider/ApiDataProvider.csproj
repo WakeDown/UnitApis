@@ -182,6 +182,7 @@
     <Compile Include="Controllers\Service\ServiceIssueResultController.cs" />
     <Compile Include="Controllers\Service\ServiceMobileController.cs" />
     <Compile Include="Controllers\Stuff\BudgetController.cs" />
+    <Compile Include="Helpers\DateTimeHelper.cs" />
     <Compile Include="Models\MobileUser.cs" />
     <Compile Include="Models\Service\PlanServiceIssue.cs" />
     <Compile Include="Controllers\Service\ServiceIssueController.cs" />
@@ -192,6 +193,8 @@
     <Compile Include="Models\Service\ClientAccess.cs" />
     <Compile Include="Models\Service\ContractorAccess.cs" />
     <Compile Include="Models\Service\ServiceIssue.cs" />
+    <Compile Include="Models\Service\ServiceIssuePeriodItem.cs" />
+    <Compile Include="Models\Service\ServiceIssuePlan.cs" />
     <Compile Include="Models\Service\ServiceIssuePlaningItem.cs" />
     <Compile Include="Models\Service\ServiceIssuePlaningResult.cs" />
     <Compile Include="Models\Service\ServiceSheet.cs" />
