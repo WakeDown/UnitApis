@@ -10,6 +10,8 @@ namespace Stuff.Objects
         None,
         SuperAdmin,
         PersonalManager,
-        SystemUser
+        SystemUser,
+        VendorStateDelivery,
+        VendorStateEditor
     }
 }

@@ -5,7 +5,9 @@
 @using Stuff.Objects
 
 @{
+   // bool userCanEdit = ViewBag.CurUser.UserCanEdit();
     bool userCanEdit = ViewBag.CurUser.UserCanEdit();
+    bool userIsVendorManager = ViewBag.CurUser.HasAccess(AdGroup.VendorStateEditor);
 }
 
 <!DOCTYPE html>
@@ -51,6 +53,7 @@
                                 <li><a href='@Url.Action("NewbieList", "Employee")'>Новобранцы</a></li>
                             }
                             <li><a href='@Url.Action("List", "Employee")'>Сотрудники</a></li>
+                            <li><a href='@Url.Action("Index", "VendorState")'>Статусы вендоров</a></li>
                             @if (userCanEdit)
                             {
                                 <li><a href='@Url.Action("DecreeList", "Employee")'>В декрете</a></li>
@@ -58,16 +61,24 @@
                             }
                         </ul>
                     </li>
-                    @if (userCanEdit)
+                    @if (userCanEdit || userIsVendorManager)
                     {
                         <li>
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-book fa-fw"></i>Справочники <b class="caret"></b></a>
                             <ul class="dropdown-menu">
-                                <li><a href='@Url.Action("List", "Employee")'>Сотрудники</a></li>
-                                <li><a href='@Url.Action("List", "Department")'>Подразделения</a></li>
-                                <li><a href='@Url.Action("Index", "Organization")'>Юр. лица</a></li>
-                                <li><a href='@Url.Action("Index", "Position")'>Должности</a></li>
-                                <li><a href='@Url.Action("Index", "Budget")'>Бюджеты</a></li>
+                                @if (userCanEdit)
+                                {
+                                    <li><a href='@Url.Action("List", "Employee")'>Сотрудники</a></li>
+                                    <li><a href='@Url.Action("List", "Department")'>Подразделения</a></li>
+                                    <li><a href='@Url.Action("Index", "Organization")'>Юр. лица</a></li>
+                                    <li><a href='@Url.Action("Index", "Position")'>Должности</a></li>
+                                    <li><a href='@Url.Action("Index", "Budget")'>Бюджеты</a></li>
+                                }
+                                @if (userIsVendorManager)
+                                {
+                                    <li><a href='@Url.Action("Index", "Vendor")'>Вендоры</a></li>
+                                }
+                                
                             </ul>
                         </li>
                     }
