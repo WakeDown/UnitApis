@@ -27,7 +27,7 @@ namespace DataProvider.Controllers.Service
             return AdHelper.GetUserListByAdGroup(AdGroup.ServiceEngeneer).ToList();
         }
 
-        public IEnumerable<ServiceIssuePlaningItem> GetPlaningDeviceList(DateTime? month, int? idCity, string address, int? idClient)
+        public IEnumerable<ServiceIssuePlaningItem> GetPlaningDeviceIssueList(DateTime? month, int? idCity, string address, int? idClient)
         {
             if (!idCity.HasValue) throw new ArgumentException("Не указан город");
             if (!idClient.HasValue) throw new ArgumentException("Не указан клиент");
@@ -36,7 +36,7 @@ namespace DataProvider.Controllers.Service
 
             var planList = PlanServiceIssue.GetClaimList(month.Value, idCity, address, idClient);
             var clientList = planList.Where(x => x.IdCity == idCity && x.Address == address).GroupBy(x => x.IdDevice)
-                .Select(x => new ServiceIssuePlaningItem(x.Key, x.First().DeviceName, x.Count()))
+                .Select(x => new ServiceIssuePlaningItem(x.First().IdServiceClaim, x.First().DeviceName, x.Count()))
                 .OrderBy(x => x.Name)
                 .ToArray();
 
