@@ -264,11 +264,18 @@ namespace DataProvider.Helpers
                     search.PropertiesToLoad.Add("l");
                     search.PropertiesToLoad.Add("company");
                     search.PropertiesToLoad.Add("department");
-                    //search.PropertiesToLoad.Add("userAccountControl");
+                    //search.PropertiesToLoad.Add("modifyTimeStamp");
+                    //search.PropertiesToLoad.Add("whenChanged");
+                    //search.PropertiesToLoad.Add("whenCreated");
 
                     SearchResult resultUser = search.FindOne();
 
                     if (resultUser == null) return String.Empty;
+
+                    //string s = resultUser.Properties["modifyTimeStamp"][0].ToString();
+                    //string s1 = resultUser.Properties["whenChanged"][0].ToString();
+                    //string s2 = resultUser.Properties["whenCreated"][0].ToString();
+                    //DateTime d = DateTime.FromFileTime((Int64)resultUser.Properties["uSNChanged"][0]);
 
                     DirectoryEntry user = resultUser.GetDirectoryEntry();
                     //user.Properties["sAMAccountName"].Value =username;
