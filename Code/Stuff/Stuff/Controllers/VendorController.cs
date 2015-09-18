@@ -12,7 +12,7 @@ namespace Stuff.Controllers
     {
         public ActionResult Index()
         {
-            if(!CurUser.HasAccess(AdGroup.VendorStateEditor));
+            if(!CurUser.HasAccess(AdGroup.VendorStateEditor))
             return new HttpStatusCodeResult(403);
             return View();
         }

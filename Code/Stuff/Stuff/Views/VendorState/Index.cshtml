@@ -33,6 +33,7 @@
                 <th></th>
             }
             <th>№</th>
+            <th>Статус</th>
             <th>Вендор</th>
             <th>Описание</th>
             <th>Картинка</th>
@@ -57,9 +58,9 @@
                     </td>
                 }
                 <td>@i</td>
-                <td>@vnd.VendorName
-                </td>
-                <td>@vnd.StateDiscription</td>
+                <td>@vnd.StateName</td>
+                <td>@vnd.VendorName</td>
+                <td>@vnd.StateDescription</td>
                 <td>@if (vnd.Picture != null)
                     {
                     <a class="btn btn-link" href="@Url.Action("Image", "VendorState", new {id = vnd.Id})" target="_blank" data-toggle="tooltip" title="Картинка"><img id="pic-min" src="@Url.Action("GetImage", "VendorState", new {id = @vnd.Id, curIm = @ViewBag.CurIm})" width="50"/></a>
@@ -88,7 +89,7 @@
 {
     <script type="text/javascript">
 
-        $(document).ready(function() { init_vnd_list(); if (@TempData["ServerError"] !== null) alert(@TempData["Server Error"])});
+        $(document).ready(function() { init_vnd_list(); });
 
         function init_vnd_list() {
             $("[name='delete-vnd']").click(deleteVendorState);

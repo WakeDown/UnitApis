@@ -1,14 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Web;
-using System.Web.Mvc;
 using Newtonsoft.Json;
 using Stuff.Objects;
+using StuffDelivery.Models;
 
 namespace Stuff.Models
 {
@@ -52,22 +46,7 @@ namespace Stuff.Models
             UnitOrganizationId = vnd.UnitOrganizationId;
             LanguageId = vnd.LanguageId;
         }
-        public bool Save(out ResponseMessage responseMessage)
-        {
-            
-            Uri uri = new Uri(String.Format("{0}/VendorState/Save", OdataServiceUri));
-            string json = JsonConvert.SerializeObject(this);
-            bool result = PostJson(uri, json, out responseMessage);
-            return result;
-        }
 
-        public static bool Delete(int id, out ResponseMessage responseMessage)
-        {
-            Uri uri = new Uri(String.Format("{0}/VendorState/Close?id={1}", OdataServiceUri, id));
-            string json = String.Empty;//String.Format("{{\"id\":{0}}}",id);
-            bool result = PostJson(uri, json, out responseMessage);
-            return result;
-        }
         public static List<VendorState> GetList()
         {
             Uri uri = new Uri(String.Format("{0}/VendorState/GetList", OdataServiceUri));
@@ -82,6 +61,29 @@ namespace Stuff.Models
             string json = GetJson(uri);
             var list = JsonConvert.DeserializeObject<List<VendorState>>(json);
             return (list);
+        }
+
+        public static List<VendorState> GetExpiredList()
+        {
+            Uri uri = new Uri(String.Format("{0}/VendorState/GetExpiredList",OdataServiceUri));
+            string json = GetJson(uri);
+            var list = JsonConvert.DeserializeObject<List<VendorState>>(json);
+            return (list);
+        }
+
+        public static List<string> GetMailAddressList()
+        {
+            Uri uri = new Uri(String.Format("{0}/VendorState/GetMailAddressList", OdataServiceUri));
+            string json = GetJson(uri);
+            var list = JsonConvert.DeserializeObject<List<string>>(json);
+            return (list);
+        }
+        public static bool SetExpiredDeliverySent(out ResponseMessage responseMessage, params VendorState[] vendorStates)
+        {
+            Uri uri = new Uri(String.Format("{0}/VendorState/SetDeliverySent", OdataServiceUri));
+            string json = JsonConvert.SerializeObject(vendorStates);
+            bool result = PostJson(uri, json, out responseMessage);
+            return result;
         }
     }
 }

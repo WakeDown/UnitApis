@@ -34,7 +34,7 @@ namespace Stuff.Controllers
             var vnd = new VendorState(id);
             byte[] imageData = vnd.Picture;
             
-        return File(imageData, "image"); // Might need to adjust the content type based on your actual image type
+        return File(imageData, "image/jpeg"); // Might need to adjust the content type based on your actual image type
         }
         [HttpPost]
         public ActionResult New(VendorState vnd)
@@ -89,7 +89,7 @@ namespace Stuff.Controllers
 
             try
             {
-                if (user.HasAccess(AdGroup.VendorStateEditor))
+                if (!user.HasAccess(AdGroup.VendorStateEditor))
                     throw new Exception("Нет доступа!");
                 ResponseMessage responseMessage;
                 bool complete = VendorState.Delete(id, out responseMessage);

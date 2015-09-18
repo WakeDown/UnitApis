@@ -11,7 +11,7 @@ namespace Stuff.Objects
 {
     public class DbModel
     {
-        public const string OdataServiceUri = "http://uiis-1:10002/odata";
+        public const string OdataServiceUri = "http://localhost:10001/odata";
 
         protected static string GetJson(Uri uri)
         {
