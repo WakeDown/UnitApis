@@ -1,0 +1,50 @@
+﻿@using Stuff.Objects
+@model Stuff.Models.Position
+
+@{
+    ViewBag.Title = "Новая должность";
+    Layout = "~/Views/Shared/_Editor.cshtml";
+}
+
+@section PanelHead
+{
+    Новая должность
+}
+
+@section PanelBody
+{
+    @using (Html.BeginForm("New", "Position", FormMethod.Post, new { @id = "posForm", @class = "form-horizontal", data_toggle = "validator", role = "form" }))
+    {
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="name">Название</label>
+            <div class="col-lg-5">
+                @Html.TextBoxFor(m => m.Name, new { @class = "form-control required-mark", @id = "name", required = "required", data_error = "Заполните Название" })
+                <span class="help-block with-errors"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="NameDat">Название<br /><small>-дательный падеж- Кому?</small></label>
+            <div class="col-lg-5">
+                @Html.TextBoxFor(m => m.NameDat, new { @class = "form-control required-mark", @id = "NameDat", required = "required", data_error = "Заполните Название (Кому? -дательный падеж-)" })
+                <span class="help-block with-errors"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="NameRod">Название<br /><small>-родительный падеж- От кого?</small></label>
+            <div class="col-lg-5">
+                @Html.TextBoxFor(m => m.NameRod, new { @class = "form-control required-mark", @id = "NameRod", required = "required", data_error = "Заполните Название (От кого? -родительный падеж-)" })
+                <span class="help-block with-errors"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-lg-push-2 col-lg-1">
+                <button type="submit" class="btn btn-success"><i class="fa fa-save"></i>&nbsp;добавить</button>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-lg-push-2 col-lg-push-2 col-lg-6">
+                <span class="text-danger">@TempData["ServerError"]</span>
+            </div>
+        </div>
+    }
+}

@@ -1,0 +1,91 @@
+﻿@using System.Web.UI.WebControls
+@using Stuff.Helpers
+@using Stuff.Models
+@using Stuff.Objects
+@model Stuff.Models.Vendor
+
+@{
+    Layout = "~/Views/Shared/_Editor.cshtml";
+    
+}
+@section PanelHead
+{
+    Вендоры
+}
+
+@section PanelBody
+{
+  @using (Html.BeginForm("Index", "Vendor", FormMethod.Post, new { @id = "vndForm", @class = "form-horizontal", role = "form" }))
+    {
+        <div class="form-group">
+            <div class="col-lg-5">
+                @Html.TextBoxFor(m => m.Name, new { @class = "form-control required-mark", @id = "name", required = "required", data_error = "Заполните Название", placeholder = "Название вендора" })
+                <span class="help-block with-errors"></span>
+            </div>
+            <div class="col-lg-1">
+                <button type="submit" class="btn btn-success"><i class="fa fa-save"></i>&nbsp;добавить</button>
+            </div>
+            <div class="col-lg-6">
+                <span class="text-danger">@TempData["ServerError"]</span>
+                <span class="text-success">@TempData["ServerSuccess"]</span>
+            </div>
+        </div>
+   }
+  
+  @{
+      var list = Vendor.GetList();
+
+      if (list.Any())
+      { 
+        <table class="table table-bordered">
+            <tr>
+                <th class="min-width">№</th>
+                <th>Название вендора</th>
+                <th class="min-width"></th>
+            </tr>
+            @{ int i = 0;}
+            @foreach (var vnd in list)
+            {
+                i++;
+                <tr>
+                    <td>@i</td>
+                    <td>@vnd.Name</td>
+                    <td>
+                            <button class="btn btn-link" name="delele-vnd" vndid="@vnd.Id" data-toggle="tooltip" title="удалить"><i class="fa fa-trash"></i></button>
+                        </td>
+                    }
+                </tr>
+            }
+        </table>
+                }
+}
+}
+
+@section scripts
+{
+    <script type="text/javascript">
+
+        $(document).ready(init);
+
+        function init() {
+            $("[name='delele-vnd']").click(deleteVendor);
+        }
+
+        function deleteVendor(e) {
+            if (!confirm('Вы действительно хотите удалить вендор?')) return;
+            var id = $(this).attr('vndId');
+            $.ajax({
+                type: 'POST',
+                url: "@Url.Action("Delete","Vendor")",
+                data: { id: id },
+                success: function(data) {
+                    if (data != null && data != '') {
+                        alert(data);
+                    } else {
+                        window.location.reload();
+                    }
+                }
+            });
+        }
+    </script>
+}

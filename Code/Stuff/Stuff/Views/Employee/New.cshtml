@@ -1,0 +1,276 @@
+﻿@using Stuff.Helpers
+@using Stuff.Models
+@using Stuff.Objects
+@model Stuff.Models.Employee
+
+@{
+    ViewBag.Title = "Новый сотрудник";
+    Layout = "~/Views/Shared/_Editor.cshtml";
+}
+
+@section PanelHead
+{
+    Новый сотрудник
+}
+
+@section PanelBody
+{
+
+    @using (Html.BeginForm("New", "Employee", FormMethod.Post, new { @class = "form-horizontal", enctype = "multipart/form-data", data_toggle = "validator", role = "form" }))
+    {
+        @*<div class="form-group">
+                <label class="col-lg-2 control-label" for="empState">Статус</label>
+                <div class="col-lg-2">
+                    @Html.DropDownListFor(m => m.EmpState.Id, DbList.GetEmpStateList(), new { @class = "form-control required-mark", @id = "empState", required = "required", data_error = "Выберите Статус" })
+                    <span class="help-block with-errors"></span>
+                </div>
+            </div>*@
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="birthDate">Пол</label>
+            <div class="col-lg-2">
+                <span class="form-control required-mark">
+                    @Html.RadioButtonFor(m => m.Male, true) муж&nbsp;&nbsp;&nbsp; @Html.RadioButtonFor(m => m.Male, false) жен
+                </span>
+                @*@Html.TextBoxFor(m => m.Male, new { @class = "form-control text-right", @id = "birthDate", data_mask = "00.00.0000" })*@
+                <span class="help-block with-errors"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="surname">ФИО</label>
+            <div class="col-lg-3">
+                @Html.TextBoxFor(m => m.Surname, new { @class = "form-control required-mark", @id = "surname", placeholder = "Фамилия", required = "required", data_error = "Заполните поле Фамилия" })
+                <div class="help-block with-errors"></div>
+            </div>
+            <div class="col-lg-3">
+                @Html.TextBoxFor(m => m.Name, new { @class = "form-control required-mark", @id = "name", placeholder = "Имя", required = "required", data_error = "Заполните поле Имя" })
+                <div class="help-block with-errors"></div>
+            </div>
+            <div class="col-lg-3">
+                @Html.TextBoxFor(m => m.Patronymic, new { @class = "form-control", @id = "patronymic", placeholder = "Отчество" })
+                <div class="help-block with-errors"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="fullNameDat">ФИО<br/><small>-дательный падеж- Кому?</small></label>
+            <div class="col-lg-5">
+                @Html.TextBoxFor(m => m.FullNameDat, new { @class = "form-control", @id = "fullNameDat" })
+                <span class="help-block with-errors"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="FullNameRod">ФИО<br /><small>-родительный падеж- От кого?</small></label>
+            <div class="col-lg-5">
+                @Html.TextBoxFor(m => m.FullNameRod, new { @class = "form-control", @id = "FullNameRod" })
+                <span class="help-block with-errors"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="dateCame">Дата прихода</label>
+            <div class="col-lg-2">
+                @Html.TextBoxFor(m => m.DateCame, new { @class = "form-control text-right", @id = "dateCame", data_mask = "00.00.0000" })
+                <span class="help-block with-errors"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="birthDate">Дата рождения</label>
+            <div class="col-lg-2">
+                @Html.TextBoxFor(m => m.BirthDate, new { @class = "form-control text-right", @id = "birthDate", data_mask = "00.00.0000" })
+                <span class="help-block with-errors"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="email">E-mail</label>
+            <div class="col-lg-5">
+                <div class="input-group">
+                    @{
+        var attrsEmail = new Dictionary<string, object>() { { "class", "form-control required-mark" }, { "id", "email" }, { "type", "email" }, { "required", "required" }, { "data_error", "Заполните поле E-mail" } };
+        if (String.IsNullOrEmpty(Model.Email)) { attrsEmail.Add("disabled", "disabled"); }
+                    }
+                    @Html.TextBoxFor(m => m.Email, attrsEmail)
+
+                    <div class="input-group-addon">
+                        <a id="btnGenEmail" href="javascript:void()">сгенерировать</a>
+                    </div>
+                </div>
+                <span class="help-block with-errors"></span>
+            </div>
+            <div class="col-lg-2">
+                <input type="checkbox" name="no-data" data-for="email" @(String.IsNullOrEmpty(Model.Email) ? "checked" : String.Empty) /> отсутствует
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="mobilNum">Мобильный тел.</label>
+            <div class="col-lg-5">
+                @{
+        var attrsMobilNum = new Dictionary<string, object>() { { "class", "form-control required-mark" }, { "id", "mobilNum" }, { "required", "required" }, { "data_error", "Заполните поле Мобильный тел." }, { "data-mask", "+7-000-000-00-00" } };
+        if (String.IsNullOrEmpty(Model.MobilNum)) { attrsMobilNum.Add("disabled", "disabled"); }
+                }
+                @Html.TextBoxFor(m => m.MobilNum, attrsMobilNum)
+                <span class="help-block with-errors"></span>
+            </div>
+            <div class="col-lg-2">
+                <input type="checkbox" name="no-data" data-for="mobilNum" @(String.IsNullOrEmpty(Model.MobilNum) ? "checked" : String.Empty) /> отсутствует
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="workNum">Внутренний тел.</label>
+            <div class="col-lg-5">
+                @{
+        var attrsWorkNum = new Dictionary<string, object>() { { "class", "form-control required-mark" }, { "id", "workNum" }, { "required", "required" }, { "data_error", "Заполните поле Внутренний тел." }, { "data-mask", "0#" } };
+        if (String.IsNullOrEmpty(Model.WorkNum)) { attrsWorkNum.Add("disabled", "disabled"); }
+                }
+                @Html.TextBoxFor(m => m.WorkNum, attrsWorkNum)
+                <span class="help-block with-errors"></span>
+            </div>
+            <div class="col-lg-2">
+                <input type="checkbox" name="no-data" data-for="workNum" @(String.IsNullOrEmpty(Model.WorkNum) ? "checked" : String.Empty) /> отсутствует
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="city">Город</label>
+            <div class="col-lg-5">
+                @Html.DropDownListFor(m => m.City.Id, DbList.GetCityList(), "--выберите--", new { @class = "form-control required-mark", @id = "city", required = "required", data_error = "Выберите Город" })
+                <span class="help-block with-errors"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="organization">Юр. лицо</label>
+            <div class="col-lg-5">
+                @Html.DropDownListFor(m => m.Organization.Id, DbList.GetOrganizationList(), "--выберите--", new { @class = "form-control required-mark", @id = "organization", required = "required", data_error = "Выберите Юр. лицо" })
+                <span class="help-block with-errors"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="positionOrg">Должность Юр. лицо</label>
+            <div class="col-lg-5">
+                @Html.DropDownListFor(m => m.PositionOrg.Id, DbList.GetPositionList(), "--выберите--", new { @class = "form-control required-mark", @id = "positionOrg", required = "required", data_error = "Выберите Должность Юр. лицо" })
+                <span class="help-block with-errors"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="position">Должность ГК</label>
+            <div class="col-lg-5">
+                @Html.DropDownListFor(m => m.Position.Id, DbList.GetPositionList(), "--выберите--", new { @class = "form-control required-mark", @id = "position", required = "required", data_error = "Выберите Должность ГК" })
+                <span class="help-block with-errors"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="department">Подразделение ГК</label>
+            <div class="col-lg-5">
+                @Html.DropDownListFor(m => m.Department.Id, DbList.GetDepartmentList(), "--выберите--", new { @class = "form-control required-mark", @id = "department", required = "required", data_error = "Выберите Подрезделение ГК" })
+                <span class="help-block with-errors"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="manager">Руководитель</label>
+            <div class="col-lg-5">
+                <span id="manager" class="form-control"></span>
+                @*@Html.LabelFor(m => m, Model.Manager == null ? String.Empty : Model.Manager.DisplayName, new { @class = "form-control", @id = "manager" })*@
+                @*@Html.DropDownListFor(m => m.Manager.Id, DbList.GetEmployeeList(), "--выберите--", new { @class = "form-control", @id = "manager", })*@
+                <span class="help-block with-errors"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="budget">Бюджет</label>
+            <div class="col-lg-5">
+                @Html.DropDownListFor(m => m.IdBudget, Budget.GetSelectionList(), "--выберите--", new { @class = "form-control required-mark", @id = "budget", required = "required", data_error = "Выберите Бюджет" })
+                <span class="help-block with-errors"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="photo">Фотография</label>
+            <div class="col-lg-5">
+                <input type="file" name="file" />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-lg-push-2 col-lg-5">
+                @*<a type="submit" class="btn btn-primary btn-sm" href="#"><i class="fa fa-save"></i>&nbsp;добавить</a>*@
+                <button id="btnCreate" type="submit" class="btn btn-success" name="action" value="Create"><i class="fa fa-save"></i>&nbsp;добавить</button>
+            </div>
+            <div class="col-lg-3">@Html.CheckBoxFor(m => m.HasAdAccount, new { @id = "chkCreateAdUser" })&nbsp;создать учетную запись UN1T</div>
+
+        </div>
+        <div class="form-group">
+            <div class="col-lg-push-2 col-lg-5">
+                <p id="ServerError" class="text-danger">
+                    @ViewData["ServerError"]
+                </p>
+            </div>
+        </div>
+    }
+}
+
+@section scripts
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#department").change(showDepartmentChief);
+            $("[name='no-data']").click(avalElement);
+            $("#btnGenEmail").click(generateEmail);
+            $("#dateCame").datepicker({
+                format: "dd.mm.yyyy",
+                autoclose: true,
+                todayBtn: "linked",
+                language: "ru"
+            });
+            $("#dateCame").mask('00.00.0000');
+            $('#mobilNum').mask('+7-000-000-00-00');
+
+            var $err = $("#ServerError");
+            if ($err.innerText !== '') {
+                $err.focus();
+            }
+        });
+        
+        function generateEmail() {
+
+            var surname = $("#surname").val();
+            var name = $("#name").val();
+            if (surname == '' || name == '') {
+                alert('Заполните Имя и Фамилию!');
+                return;
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '/Employee/GenEmailAddressByName?surname=' + surname + '&name=' + name,
+                success:
+                    function (json) {
+                        $("#email").val(json.address);
+                        return;
+                    }
+            });
+
+        }
+
+        function avalElement() {
+            var forId = $(this).attr('data-for');
+            var $element = $("#" + forId);
+            var isDisabled = $element.prop('disabled');
+            $element.prop('disabled', !isDisabled);
+            if (!isDisabled) $element.val('');
+        }
+
+        function showDepartmentChief() {
+            var id = $(this).val();
+            if (id == "" || isNaN(id) || id <= 0) return;
+            $.ajax(
+                {
+                    type: "POST",
+                    url: "/Employee/GetDepartmentChief?idDepartment=" + id,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: {},
+                    success: function (json) {
+                        $("#manager").text(json.name);
+                        //alert(json.name);
+                    },
+                    error: function () {
+                        alert('Не удалось получить ФИО руководителя!');
+                    }
+                }
+            );
+        }
+    </script>
+}

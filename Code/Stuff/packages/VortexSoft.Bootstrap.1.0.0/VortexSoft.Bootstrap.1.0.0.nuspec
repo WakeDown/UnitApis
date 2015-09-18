@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>VortexSoft.Bootstrap</id>
+    <version>1.0.0</version>
+    <title />
+    <authors>Matt Gordon</authors>
+    <owners>Matt Gordon</owners>
+    <projectUrl>https://github.com/gordon-matt/BootstrapHelpers</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Bootstrap HTML Helpers for ASP.NET MVC</description>
+    <language>en-US</language>
+  </metadata>
+</package>

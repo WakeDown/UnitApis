@@ -1,0 +1,102 @@
+﻿@using Stuff.Helpers
+@using Stuff.Models
+@using Stuff.Objects
+@model Stuff.Models.VendorState
+
+@{
+    ViewBag.Title = "Редактировать статус вендора";
+    Layout = "~/Views/Shared/_Editor.cshtml";
+}
+
+@section PanelHead
+{
+    Редактировать статус вендора
+}
+
+@section PanelBody
+{
+
+    @using (Html.BeginForm("Edit", "VendorState", FormMethod.Post, new { @class = "form-horizontal", enctype = "multipart/form-data", role = "form" }))
+    {
+        <div class="alert-danger">@TempData["ServerError"]</div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="Name">Вендор</label>
+            <div class="col-lg-5">
+                @Html.DropDownListFor(m => m.VendorId, DbList.GetVendorNameList(), "--выберите--", new {@class = "form-control required-mark", @id = "organization", required = "required", data_error = "Выберите Юр. лицо"})
+                <span class="help-block with-errors"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="StateName">Название статуса вендора</label>
+            <div class="col-lg-3">
+                @Html.TextBoxFor(m => m.StateName, new { @class = "form-control required-mark", @id = "stateName", required = "required", data_error = "Заполните поле название статуса" })
+                <div class="help-block with-errors"></div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="StateDescription">Описание статуса вендора</label>
+            <div class="col-lg-3">
+                @Html.TextAreaFor(m => m.StateDescription, new {@class = "form-control required-mark", @id = "stateDescription", required = "required", data_error = "Заполните поле Описание статуса"})
+                <div class="help-block with-errors"></div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="photo">Картинка</label>
+            <div class="col-lg-5">
+                <a lass="btn btn-link" href="@Url.Action("Image", "VendorState", new {id = Model.Id, curIm = true})" target="_blank" data-toggle="tooltip" title="Картинка"><img id="pic-min" src="@Url.Action("GetImage", "VendorState", new {id = @Model.Id})" width="50"/>
+                </a>
+                <input type="file" name="file" multiple="multiple"/><small>только jpeg</small>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="endDate">Дата окончания</label>
+            <div class="col-lg-2">
+                @Html.TextBoxFor(m => m.EndDate,"{0:dd.MM.yyyy}", new { @class = "form-control text-right", @id = "endDate", data_mask = "00.00.0000"/*, required = "required", data_error = "Заполните поле Дата окончания"*/ })
+                <span class="help-block with-errors"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="organization">Юр. лицо</label>
+            <div class="col-lg-5">
+                @Html.DropDownListFor(m => m.UnitOrganizationId, DbList.GetUnitOrgList(), "--выберите--", new { @class = "form-control required-mark", @id = "organization", required = "required", data_error = "Выберите Юр. лицо" })
+                <span class="help-block with-errors"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="language">Язык оригинала</label>
+            <div class="col-lg-5">
+                @Html.DropDownListFor(m => m.LanguageId, DbList.GetLangList(), "--выберите--", new {@class = "form-control required-mark", @id = "language", required = "required", data_error = "Выберите Язык оригинала"})
+                <span class="help-block with-errors"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-lg-push-2 col-lg-5">
+                @*<a type="submit" class="btn btn-primary btn-sm" href="#"><i class="fa fa-save"></i>&nbsp;добавить</a>*@
+                <button id="btnChange" type="submit" class="btn btn-success" name="action" value="Create"><i class="fa fa-save"></i>&nbsp;сохранить</button>
+            </div>
+        </div>
+    }
+}
+
+@section scripts
+{
+    <script type="text/javascript">
+        $(document).ready(function() {
+            // $("#btnGenEmail").click(generateEmail);
+            $("#endDate").datepicker({
+                format: "dd.mm.yyyy",
+                autoclose: true,
+                todayBtn: "linked",
+                language: "ru"
+            });
+        });
+          
+    </script>
+}

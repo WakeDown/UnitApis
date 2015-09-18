@@ -1,0 +1,27 @@
+﻿@using Stuff.Models
+@model IEnumerable<Employee>
+
+@if (Model.Any())
+{
+    <div class="sheet">
+        <table class="no-border">
+            @*<tr>
+                    <td colspan="2"><img class="logo-unit-statement" src="~/Content/images/logo-unit-statement.png" /></td>
+                </tr>*@
+            <tr><td colspan="2" style="height: 30px;"></td></tr>
+            <tr>
+                <td class="bold">Согласовано:</td>
+            </tr>
+            <tr><td colspan="2" style="height: 20px;"></td></tr>
+            @foreach (Employee mact in Model)
+                {
+                <tr><td colspan="2" style="height: 50px;"></td></tr>
+                    <tr>
+                        <td>
+                            Подпись____________________/@mact.DisplayName/_____________ @DateTime.Now.Year г.
+                        </td>
+                    </tr>
+            }
+        </table>
+    </div>
+}

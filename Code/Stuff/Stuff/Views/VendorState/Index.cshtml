@@ -1,0 +1,110 @@
+﻿@using Stuff.Models
+@using System
+@using System.Collections.Generic;
+@using Microsoft.Ajax.Utilities
+@using Stuff.Objects
+@model IEnumerable<Stuff.Models.VendorState>
+
+@{
+    ViewBag.Title = "Список вендоров";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    // bool userCanEdit = ViewBag.CurUser.UserCanEdit();
+    bool userCanEdit = ViewBag.CurUser.HasAccess(AdGroup.VendorStateEditor);
+}
+
+@if (userCanEdit)
+{
+    <p>
+        <a href='@Url.Action("New", "VendorState")' class="btn btn-primary">
+            <i class="fa fa-plus"></i>новый
+        </a>
+    </p>
+}
+<p>
+    <span class="text-danger">@ViewData["ServerError"]</span>
+</p>
+@if (Model.Any())
+{
+    
+    <table class="table table-bordered">
+        <tr class="bg-primary">
+            @if (userCanEdit)
+            {
+                <th></th>
+            }
+            <th>№</th>
+            <th>Статус</th>
+            <th>Вендор</th>
+            <th>Описание</th>
+            <th>Картинка</th>
+            <th>Дата окончания</th>
+            <th>Юр лицо Юнит</th>
+            <th>Язык оригинала</th>
+            @if (userCanEdit)
+            {
+                <th>История</th>
+                <th></th>
+            }
+        </tr>
+        @{int i = 0;}
+        @foreach (var vnd in Model)
+        {
+            i++;
+            <tr>
+                @if (userCanEdit)
+                {
+                    <td>
+                        <a class="btn btn-link" href="@Url.Action("Edit", "VendorState", new {id = vnd.Id})" data-toggle="tooltip" title="изменить"><i class="fa fa-edit"></i></a>
+                    </td>
+                }
+                <td>@i</td>
+                <td>@vnd.StateName</td>
+                <td>@vnd.VendorName</td>
+                <td>@vnd.StateDescription</td>
+                <td>@if (vnd.Picture != null)
+                    {
+                    <a class="btn btn-link" href="@Url.Action("Image", "VendorState", new {id = vnd.Id})" target="_blank" data-toggle="tooltip" title="Картинка"><img id="pic-min" src="@Url.Action("GetImage", "VendorState", new {id = @vnd.Id, curIm = @ViewBag.CurIm})" width="50"/></a>
+                    }
+ 
+                </td>
+                <td>@vnd.EndDate.ToShortDateString()</td>
+                <td>@vnd.UnitOrganizationName</td>
+                <td>@vnd.LanguageName</td>
+                @if (userCanEdit)
+                {
+                    <td><a href="@Url.Action("History", "VendorState", new {id = vnd.Id})" target="_blank">
+                        <button name="history-vnd" class="btn btn-link" vndId="@vnd.Id" data-toggle="tooltip" title="история"><i class="fa fa-history"></i></button>
+                        </a>
+                    </td>
+                    <td>
+                        <button name="delete-vnd" class="btn btn-link" vndId="@vnd.Id" data-toggle="tooltip" title="удалить"><i class="fa fa-trash"></i></button>
+                    </td>
+                }
+            </tr>
+        }
+    </table>
+            }
+
+@section scripts
+{
+    <script type="text/javascript">
+
+        $(document).ready(function() { init_vnd_list(); });
+
+        function init_vnd_list() {
+            $("[name='delete-vnd']").click(deleteVendorState);
+        }
+        function deleteVendorState() {
+            if (!confirm('Вы действительно хотите удалить вендор?')) return;
+            var id = $(this).attr('vndId');
+            $.post("@Url.Action("Delete", "VendorState")", { id: id }, function(data) {
+                if (data != null && data != '') {
+                    alert(data);
+                } else {
+                    window.location.reload();
+                }
+            }
+            );
+        }
+    </script>
+}

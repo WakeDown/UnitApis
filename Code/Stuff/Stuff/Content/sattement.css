@@ -1,0 +1,75 @@
+﻿@page {
+    size: auto; /* auto is the current printer page size */
+    margin: 0mm; /* this affects the margin in the printer settings */
+}
+
+body {
+    margin: 0mm;
+    
+    font-size: 14pt;
+    font-family: Verdana, Arial, sans-serif;
+}
+.sheet {
+    width: 1020px !important;
+    
+    padding: 10mm;  
+    padding-left: 20mm;
+}
+.print {
+    
+    page-break-after: always;
+}
+
+
+.no-border {
+    border-color: transparent;
+}
+
+table.bordered {
+    border-collapse: collapse;
+}
+
+    table.bordered, table.bordered tr, table.bordered td, table.bordered th {
+        border: 1px solid #333 !important;
+    }
+
+        table.bordered td, table.bordered th {
+            padding: 3px;
+        }
+
+.logo-unit-statement {
+    width: 200px;
+}
+
+.bold {
+    font-weight: 700;
+}
+
+.top-left {
+    text-align: left;
+    vertical-align: top;
+}
+
+.center {
+    text-align: center;
+}
+
+.text-sm {
+    font-size: 0.8em;
+}
+
+img.org-state {
+    height: 100px;
+}
+
+.right {
+    text-align: right;
+}
+
+.top {
+    vertical-align: top;
+}
+
+.text-nowrap {
+    white-space: nowrap;
+}

@@ -1,0 +1,147 @@
+﻿@using Stuff.Models
+@using Stuff.Objects
+@model IEnumerable<Stuff.Models.ItBudgetReportItem>
+
+@{
+    Layout = null;
+    double onePeopleCost = 0D;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+    <style type="text/css">
+        body {
+            padding: 60px 35px;
+            font-family: 'Calibri';
+        }
+
+        .it-bud-list {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid black;
+        }
+
+            .it-bud-list td, .it-bud-list th {
+                padding: 3px;
+                border: 1px solid black;
+            }
+
+        .it-bud-dep-row {
+            background: #d3d3d3;
+            font-size: 1.2em;
+        }
+
+        .it-bud-peaple-row td:first-child {
+            padding-left: 10px;
+        }
+
+        .level-1 td:first-child {
+        }
+
+        .level-1.it-bud-peaple-row td:first-child {
+            padding-left: 10px;
+        }
+
+        .level-2 td:first-child {
+            padding-left: 15px;
+        }
+
+        .level-2.it-bud-peaple-row td:first-child {
+            padding-left: 25px;
+        }
+
+        .level-3 td:first-child {
+            padding-left: 40px;
+        }
+
+        .level-3.it-bud-peaple-row td:first-child {
+            padding-left: 50px;
+        }
+
+        .level-4 td:first-child {
+            padding-left: 80px;
+        }
+
+        .level-4.it-bud-peaple-row td:first-child {
+            padding-left: 90px;
+        }
+
+        .level-5 td:first-child {
+            padding-left: 120px;
+        }
+
+        .level-5.it-bud-peaple-row td:first-child {
+            padding-left: 130px;
+        }
+
+        .money-cell {
+            text-align: right;
+        }
+
+
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-nowrap {
+            white-space: nowrap;
+        }
+
+        .print {
+            page-break-after: auto;
+        }
+    </style>
+</head>
+<body>
+    @if (Model.Any())
+    {
+        <div class="print">
+            <h3 class="text-center">
+                Отчет об обслуживаемых рабочих станциях ГК "ЮНИТ" за @(new TranslitDate().GetMonthName(DateTime.Now.AddMonths(-1).Month)) @DateTime.Now.AddMonths(-1).Year
+            </h3>
+
+            <table class="it-bud-list">
+                @{
+                    int i = 0;
+                }
+                @foreach (ItBudgetReportItem item in Model)
+                {
+                if (item.Peoples.Any())
+                {
+                    foreach (ItBudgetReportItemPeople peop in item.Peoples)
+                    {
+                        i++;
+                        <tr class="it-bud-peaple-row">
+                            <td>@i</td>
+                            <td>@item.BudgetName</td>
+                            <td>@peop.FullName</td>
+                            <td class="money-cell text-nowrap">@String.Format("{0:N0} р.", peop.Cost)</td>
+                            @{ onePeopleCost = peop.Cost;}
+                        </tr>
+                                        }
+                                    }
+                                }
+            </table>
+            <p style="height: 20px"></p>
+            <table class="it-bud-list">
+                @{
+                    var budList = Model.GroupBy(m => new { m.BudgetName, m.Level }).Select(m => new { BudgetName = m.Key.BudgetName, Level = m.Key.Level, PeopleCount = m.Sum(p => p.PeopleCount) });
+                }
+                @foreach (var dep in budList)
+                {
+                    <tr class="level-@dep.Level"><td>@dep.BudgetName</td><td class="text-center">@dep.PeopleCount</td><td class="money-cell text-nowrap">@(String.Format("{0:N0} р.", dep.PeopleCount * onePeopleCost))</td></tr>
+                }
+                @{
+                    int peopleCountTotal = budList.Select(m => m.PeopleCount).Sum();
+                }
+                <tr><th>ИТОГО</th><th class="text-center">@peopleCountTotal</th><th class="money-cell text-nowrap">@(String.Format("{0:N0} р.", peopleCountTotal * onePeopleCost))</th></tr>
+            </table>
+        </div>
+                    }
+</body>
+</html>

@@ -1,0 +1,77 @@
+﻿@using Stuff.Models
+@model Stuff.Models.Statement
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Заявление</title>
+    @Styles.Render("~/Content/statement")
+</head>
+<body>
+    <div class="print sheet">
+        <table class="no-border">
+            <colgroup>
+                <col style="width: 50%;" />
+            </colgroup>
+            @Html.Partial("DocumentHeader", Model.Organization)
+            <tr>
+                <td></td>
+                <td>
+                    <div>@Model.Organization.Director.PositionOrg.NameDat @Model.Organization.Name</div>
+                    <div>@Model.Organization.Director.ShortNameDat</div>
+                    <div>от @Model.Employee.PositionOrg.NameRod</div>
+                    <div>@Model.Employee.ShortNameRod</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="height: 30px;"></td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <h3 class="center">@Model.Name</h3>
+                </td>
+            </tr>
+            <tr><td colspan="2" style="height: 30px;"></td></tr>
+            <tr>
+                <td colspan="2" style="text-align: justify">@Model.Text</td>
+            </tr>
+            <tr><td colspan="2" style="height: 30px;"></td></tr>
+            <tr>
+                <td class="top">@DateTime.Now.ToString("dd MMMM yyyy") г.</td>
+                <td>
+                    <div class="right">Подпись___________________</div>
+                    <div class="right">@Model.Employee.DisplayName</div>
+                </td>
+            </tr>
+            <tr><td colspan="2" style="height: 100px;"></td></tr>
+            <tr>
+                <td class="bold">СОГЛАСОВАНО</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>@Model.Organization.Director.PositionOrg.Name</td>
+                <td>
+                    <div class="right">Подпись___________________</div>
+                    <div class="right">@Model.Organization.Director.DisplayName</div>
+                </td>
+            </tr>
+            <tr><td colspan="2" style="height: 10px;"></td></tr>
+            <tr>
+                <td></td>
+                <td class="right">
+                    _____________ @DateTime.Now.Year г.
+                </td>
+            </tr>
+        </table>
+    </div>
+    @Html.Partial("StatementMatchers", Model.Matchers)
+</body>
+</html>

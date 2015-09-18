@@ -1,0 +1,84 @@
+﻿@using Stuff.Models
+@model Stuff.Models.Organization
+
+@*<tr>
+    <td colspan="2">
+        <img class="logo-unit-statement" src="~/Content/images/logo-unit-statement.png" />
+    </td>
+</tr>*@
+<tr class="text-sm">
+    <td class="bold top-left">
+        @*Группа компаний &laquo;ЮНИТ&raquo;*@
+        <div class="bold">@Model.Name</div>
+    </td>
+    <td class="bold top-left">
+        Юридический адрес:
+    </td>
+</tr>
+<tr class="top-left text-sm">
+    <td>
+        @*<div class="bold">@Model.Name</div>*@
+        <div>@Model.AddressFact</div>
+        <div>@Model.Phone</div>
+        <div>@Model.Email</div>
+        <div>@Model.Site</div>
+        <div style="height: 20px;"></div>
+        @foreach (var image in Model.StateImages)
+        {
+            if (image.Image.Length > 0)
+            {
+                var base64 = Convert.ToBase64String(image.Image);
+                var imgSrc = String.Format("data:image/gif;base64,{0}", base64);
+                <div>
+                    <img class="org-state" src="@imgSrc" />
+                </div>
+            }
+        }
+
+    </td>
+    <td>
+        <div>@Model.AddressUr</div>
+        <div>ИНН/КПП @Model.Inn / @Model.Kpp</div>
+        <div>
+            @if (!String.IsNullOrEmpty(Model.Ogrn))
+            {
+                @:ОГРН @Model.Ogrn
+                        }
+        </div>
+        <div>
+            @if (!String.IsNullOrEmpty(Model.Rs))
+            {
+                @:Р/С @Model.Rs
+                        }
+        </div>
+        <div>@Model.Bank</div>
+        <div>
+            @if (!String.IsNullOrEmpty(Model.Ks))
+            {
+                @:К/С @Model.Ks
+                        }
+        </div>
+        <div>
+            @if (!String.IsNullOrEmpty(Model.Bik))
+            {
+                @:БИК @Model.Bik
+                        }
+        </div>
+        <div>
+            @if (!String.IsNullOrEmpty(Model.Okpo))
+            {
+                @:ОКПО @Model.Okpo
+                        }
+        </div>
+        <div>
+            @if (!String.IsNullOrEmpty(Model.Okved))
+            {
+                @:ОКВЭД @Model.Okved
+                        }
+        </div>
+
+    </td>
+</tr>
+<tr>
+    <td colspan="2" style="height: 10px;"><hr /></td>
+</tr>

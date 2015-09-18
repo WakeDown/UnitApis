@@ -1,0 +1,214 @@
+﻿@using System.Configuration
+@using System.Data.SqlClient
+@using Microsoft.Ajax.Utilities
+@using Stuff.Models
+@using Stuff.Objects
+
+@{
+   // bool userCanEdit = ViewBag.CurUser.UserCanEdit();
+    bool userCanEdit = ViewBag.CurUser.UserCanEdit();
+    bool userIsVendorManager = ViewBag.CurUser.HasAccess(AdGroup.VendorStateEditor);
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/common")
+</head>
+<body>
+
+    <div class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="~/">
+                    <img class="headLogo" src="~/Content/images/logo-unit.png" alt="" />
+                    <div class="h5"><strong>ЮНИТ</strong>&nbsp;<span class="h6">Портал</span></div>
+                </a>
+                @*@Html.ActionLink("", "Index", "Home", null, new { @class = "navbar-brand" })*@
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-list fa-fw"></i>Списки <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a href='@Url.Action("Index", "Department")'>Оргструктура</a></li>
+                            <li><a href='@Url.Action("Employees", "Department")'>Подразделения</a></li>
+                            @if (userCanEdit)
+                            {
+                                <li><a href='@Url.Action("NewbieList", "Employee")'>Новобранцы</a></li>
+                            }
+                            <li><a href='@Url.Action("List", "Employee")'>Сотрудники</a></li>
+                            <li><a href='@Url.Action("Index", "VendorState")'>Статусы вендоров</a></li>
+                            @if (userCanEdit)
+                            {
+                                <li><a href='@Url.Action("DecreeList", "Employee")'>В декрете</a></li>
+                                <li><a href='@Url.Action("FiredList", "Employee")'>Уволенные</a></li>
+                            }
+                        </ul>
+                    </li>
+                    @if (userCanEdit || userIsVendorManager)
+                    {
+                        <li>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-book fa-fw"></i>Справочники <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                @if (userCanEdit)
+                                {
+                                    <li><a href='@Url.Action("List", "Employee")'>Сотрудники</a></li>
+                                    <li><a href='@Url.Action("List", "Department")'>Подразделения</a></li>
+                                    <li><a href='@Url.Action("Index", "Organization")'>Юр. лица</a></li>
+                                    <li><a href='@Url.Action("Index", "Position")'>Должности</a></li>
+                                    <li><a href='@Url.Action("Index", "Budget")'>Бюджеты</a></li>
+                                }
+                                @if (userIsVendorManager)
+                                {
+                                    <li><a href='@Url.Action("Index", "Vendor")'>Вендоры</a></li>
+                                }
+                                
+                            </ul>
+                        </li>
+                    }
+
+                    @*@if (userCanEdit)
+                    {
+                        <li>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-book fa-fw"></i>Заявления <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="@Url.Action("StatementRestFewHours", "Document")" target="_blank">
+                                        Отсутствие на 1 или несколько часов
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("StatementRestFewDays", "Document")" target="_blank">
+                                        Отсутствие на 1 или несколько дней
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    }*@
+                    @if (ViewBag.CurUser.UserIsPersonalManager())
+                    {
+                        <li>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-book fa-fw"></i>Документы <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="@Url.Action("DocumentEmployeeList", "Document")" target="_blank">
+                                        Список сотрудников
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Links", "Document")" target="_blank">
+                                        Сопоставление документов
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    }
+@if (ViewBag.CurUser.HasAccess(AdGroup.SuperAdmin))
+{
+    <li>
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-book fa-fw"></i>Отчеты <b class="caret"></b></a>
+        <ul class="dropdown-menu">
+            <li><a href='@Url.Action("GetItBudgetReport", "Report")' target="_blank">IT бюджет</a></li>
+        </ul>
+    </li>
+}
+                    @*<li>
+                        <a href="@Url.Action("My", "Document")"><i class="fa fa-book fa-fw"></i>Мои документы</a>
+                    </li>*@
+                    @*<li>@Html.ActionLink("Новый запрос", "Request", "Home")</li>*@
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="navbar-text">Вы вошли как <strong id="userName">@ViewBag.CurUser.DisplayName</strong></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="container body-content">
+        @if (!String.IsNullOrEmpty(ConfigurationManager.AppSettings["Environment"]))
+        {
+            <blockquote class="bg-warning">
+                @ConfigurationManager.AppSettings["Environment"]<br />
+                <small>@ConfigurationManager.AppSettings["OdataServiceUri"]</small>
+            </blockquote>
+        }
+        @RenderBody()
+        <div class="clearfix"></div>
+        <hr class="last" />
+        <footer>
+            <div class="pull-left">
+                <h5>
+                    2015 @if (DateTime.Now.Year > 2015)
+                    {
+                        @String.Format("- {0}", DateTime.Now.Year);
+                    }
+                    &copy; UN1T
+                    <br />
+                    <small>v&nbsp;1.0</small>
+                </h5>
+            </div>
+            <div class="pull-right">
+                <h5><small><a href='http://support.unitgroup.ru' target="_blank">Техподдержка</a></small></h5>
+            </div>
+        </footer>
+    </div>
+
+
+    <!-- Modal -->
+    @*@Html.Action("StatementRestFewHours", "Document")*@
+    @*@Html.Partial("StatementFewHours", new StatementRestFewHours())*@
+
+
+    <!-- Modal -->
+    @*<div class="modal fade" id="modalStatementRestFewDays" tabindex="-1" role="dialog" aria-labelledby="modalStatementRestFewDaysLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="modalStatementRestFewDaysLabel">Заявление на отгул (1 или несколько дней)</h4>
+                    </div>
+                    <div class="modal-body">
+                        ...
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
+                        <button type="button" class="btn btn-primary">Распечатать</button>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+
+
+    @*@Scripts.Render("~/bundles/fuelux")*@
+    @RenderSection("scripts", required: false)
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#userName').click(function () {
+                $.ajax({
+                    url: '@Url.Action("GetServerUserName", "Employee")',
+                    type: 'POST',
+                    success: function (data) { alert(data.sid) }
+                });
+            });
+        });
+
+    </script>
+</body>
+
+</html>

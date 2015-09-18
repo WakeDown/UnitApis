@@ -1,0 +1,83 @@
+﻿@using Stuff.Models
+@model IEnumerable<Stuff.Models.Employee>
+
+@{
+    ViewBag.Title = "Уволенные сотрудники";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    bool userCanEdit = ViewBag.CurUser.UserCanEdit();
+}
+
+<p>
+    <span class="text-danger">@ViewData["ServerError"]</span>
+</p>
+<p class="h4">
+    Уволенные сотрудники
+</p>
+@if (Model.Any())
+{
+    <table class="table table-bordered">
+        <tr class="bg-primary">
+            @if (userCanEdit)
+            {
+                <th></th>
+            }
+            <th>№</th>
+            <th>ФИО</th>
+            <th>Должность</th>
+            <th>Подразделение</th>
+            @if (userCanEdit)
+            {
+                <th></th>
+            }
+        </tr>
+        @{int i = 0;}
+        @foreach (var emp in Model)
+        {
+            i++;
+            <tr>
+                @if (userCanEdit)
+                {
+                    <td>
+                        <a class="btn btn-link" href="@Url.Action("Edit", "Employee", new {id = emp.Id})" data-toggle="tooltip" title="изменить"><i class="fa fa-edit"></i></a>
+                    </td>
+                }
+                <td>@i</td>
+                <td>@emp.FullName</td>
+                <td>@(emp.Position != null ? emp.Position.Name : "--не указано--")</td>
+                <td>
+                    @(emp.Department != null ? emp.Department.Name : "--не указано--")
+                </td>
+                @if (userCanEdit)
+                {
+                    <td>
+                        <button name="delete-emp" class="btn btn-link" empid="@emp.Id" data-toggle="tooltip" title="удалить"><i class="fa fa-trash"></i></button>
+                    </td>
+                }
+            </tr>
+        }
+    </table>
+}
+@section scripts
+{
+    <script type="text/javascript">
+
+        $(document).ready(function() { init_emp_list(); });
+
+        function init_emp_list() {
+            $("[name='delete-emp']").click(deleteEmployee);
+        }
+
+        function deleteEmployee() {
+            if (!confirm('Вы действительно хотите удалить сотрудника?')) return;
+            var id = $(this).attr('empId');
+            $.post("@Url.Action("Delete", "Employee")", { id: id }, function(data) {
+                if (data != null && data != '') {
+                    alert(data);
+                } else {
+                    window.location.reload();
+                }
+            }
+            );
+        }
+    </script>
+}

@@ -1,0 +1,17 @@
+﻿@model Stuff.Models.Document
+
+@using (Html.BeginForm("SaveFile", "Document", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <table>
+        <tr>
+            <td>
+                <input type="file" name="file" multiple="multiple" accept="application/pdf" class="pull-left"/>
+
+            </td>
+            <td rowspan="2"><button class="btn btn-success btn-sm" type="submit">добавить в базу</button><span class="text-danger">@TempData["noPdf"]</span></td>
+        </tr>
+        <tr>
+            <td class="small">только PDF файлы</td>
+        </tr>
+    </table>
+}

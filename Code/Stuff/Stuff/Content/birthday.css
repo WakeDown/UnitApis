@@ -1,0 +1,133 @@
+.love-pop {
+  font: bold 22px/.3 Open Sans;
+  text-shadow: 0 3px 15px #ccc;
+  position: relative;
+  right: -96px;
+  top: 73px;
+  transform: rotate(45deg);
+  background-color: #DF151A;
+  background: linear-gradient(235deg, #DF151A, #FD8603, #F4F328, #00DA3C, #00CBE7);
+  line-height: 38px;
+  padding: 0 71px;
+  text-transform: capitalize;
+  z-index: 1000; }
+
+.love-box {
+  height: 100px;
+  width: 65px;
+  display: inline-block;
+  position: relative;
+  margin: 0 5px; }
+
+.love-container {
+  position: relative;
+  top: 70px;
+  left: 50%;
+  white-space: nowrap;
+  text-align: center;
+  text-transform: uppercase;
+  font: bold 50px/.8 Open Sans, Impact;
+  -webkit-transform: translateX(-50%) translateY(-50%);
+  transform: translateX(-50%) translateY(-50%); }
+
+.balloon {
+  height: 100px;
+  width: 55px;
+  border-radius: 50%;
+  position: relative;
+  z-index: 100; }
+  .balloon:before, .balloon:after {
+    content: "";
+    position: absolute; }
+  .balloon:before {
+    height: 8px;
+    width: 9px;
+    left: 40%;
+    top: 95%;
+    background: inherit;
+    z-index: 10; }
+  .balloon:after {
+    width: 1px;
+    height: 67px;
+    background: #999;
+    top: 100%;
+    left: 45%;
+    z-index: 1; }
+
+.text {
+  position: absolute;
+  display: none;
+  top: 25%;
+  left: 10%;
+  width: 55px;
+  margin: 0 auto;
+  z-index: 1; }
+
+.red {
+  background: #DF151A;
+  animation: float1 6s ease-in-out infinite; }
+
+.orange {
+  background: #FD8603;
+  animation: float2 4s ease-in-out infinite; }
+
+.yellow {
+  background: #F4F328;
+  animation: float3 5s ease-in-out infinite; }
+
+.green {
+  background: #00DA3C;
+  animation: float4 4s ease-in-out infinite; }
+
+.blue {
+  background: #00CBE7;
+  animation: float5 6s ease-in-out infinite; }
+
+.text.red {
+  background-color: transparent;
+  color: #DF151A; }
+
+.text.orange {
+  background-color: transparent;
+  color: #FD8603; }
+
+.text.yellow {
+  background-color: transparent;
+  color: #F4F328; }
+
+.text.green {
+  background-color: transparent;
+  color: #00DA3C; }
+
+.text.blue {
+  background-color: transparent;
+  color: #00CBE7; }
+
+@keyframes float1 {
+  0%, 100% {
+    transform: translateY(-25%);
+    transform: translateX(9%); }
+  50% {
+    transform: translateY(-14%); } }
+@keyframes float2 {
+  0%, 100% {
+    transform: translateY(5%); }
+  50% {
+    transform: translateY(-12%); } }
+@keyframes float3 {
+  0%, 100% {
+    transform: translateY(10%); }
+  50% {
+    transform: translateY(-8%); } }
+@keyframes float4 {
+  0%, 100% {
+    transform: translateY(10%); }
+  50% {
+    transform: translateY(-12%); } }
+@keyframes float5 {
+  0%, 100% {
+    transform: translateY(10%); }
+  50% {
+    transform: translateY(-13%); } }
+
+/*# sourceMappingURL=birthday.css.map */

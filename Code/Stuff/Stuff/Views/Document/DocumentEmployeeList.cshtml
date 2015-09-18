@@ -1,0 +1,64 @@
+﻿@using Stuff.Models
+@model Stuff.Models.DocumentEmployeeList
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список сотрудников</title>
+    @Styles.Render("~/Content/statement")
+</head>
+<body>
+    <div class="print">
+        <table class="sheet">
+            <colgroup>
+                <col style="width: 50%;" />
+            </colgroup>
+            @Html.Partial("DocumentHeader", Model.Organization)
+            <tr>
+                <td colspan="2">
+                    @{ int i = 0;}
+                    <table class="bordered text-sm">
+                        @foreach (Employee emp in Model.Employees)
+                    {
+                        i++;
+
+                        <tr>
+                            <td>@i</td>
+                            <td class="text-nowrap">@emp.FullName</td>
+                            <td>@emp.Position.Name</td>
+                            <td>@emp.Department.Name</td>
+                        </tr>
+
+                    }
+                    </table>
+                </td>
+            </tr>
+            <tr><td colspan="2" style="height: 50px;"></td></tr>
+            <tr>
+                <td></td>
+                <td class="right">
+                    <div>Список действителен на:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@DateTime.Now.ToShortDateString() г.</div>
+                </td>
+            </tr>
+            <tr><td colspan="2" style="height: 20px;"></td></tr>
+            <tr>
+                <td></td>
+                <td class="right">
+                    <div>Список принял ______________ /___________/</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <script type="text/javascript">
+        window.print();
+    </script>
+</body>
+</html>

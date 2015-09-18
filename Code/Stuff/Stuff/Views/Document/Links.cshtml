@@ -1,0 +1,277 @@
+﻿@using Stuff.Models
+@using Stuff.Objects
+
+
+@{
+    ViewBag.Title = "Сопоставление документов";
+    Layout = "~/Views/Shared/_Editor.cshtml";
+}
+@section PanelHead
+{
+    Сопоставление документов
+}
+
+@section PanelBody
+{
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="clearfix"></div>
+            <h4>Документы</h4>
+            <p>
+                @Html.Partial("SaveFile")
+            </p>
+            @{ var docs = Document.GetSelectionList(); }
+            @if (docs.Any())
+            {
+                <p>
+                    <table class="table table-bordered" id="docs">
+                        @foreach (Document doc in docs)
+                        {
+                            <tr docid="@doc.Id">
+                                <td>
+                                    
+                                    <a target="_blank" href="@DbModel.OdataServiceUri/Document/GetData?sid=@doc.Sid">@doc.Name</a><button name="doc-del" class="btn btn-link pull-right" docid="@doc.Id"><i class="fa fa-trash"></i></button>
+                                </td>
+                            </tr>
+                        }
+                    </table>
+                </p>
+            }
+            else
+            {
+                <h4>
+                    нет сохраненных документов
+                </h4>
+            }
+        </div>
+        <div class="col-lg-6">
+            <ul class="nav nav-tabs">
+                <li id="depTab" class="active"><a data-toggle="pill" href="#depList">Подразделения<div class="tab-mark hidden">&#8226;</div></a></li>
+                <li id="posTab"><a data-toggle="pill" href="#posList">Должности<div class="tab-mark hidden">&#8226;</div></a></li>
+                <li id="empTab"><a data-toggle="pill" href="#empList">Сотрудники<div class="tab-mark hidden">&#8226;</div></a></li>
+            </ul>
+            <div class="tab-content">
+                <div id="depList" class="tab-pane fade in active">
+                    <table class="table table-bordered list4link" id="deps">
+                        @foreach (Department dep in Department.GetSelectionList())
+                        {
+                            <tr depid="@dep.Id">
+                                <td>@dep.Name<span class="act pull-right text-success"><i class="fa fa-check-circle"></i></span></td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+                <div id="posList" class="tab-pane fade">
+                    <table class="table table-bordered list4link" id="poss">
+                        @foreach (Position pos in Position.GetSelectionList())
+                        {
+                            <tr posid="@pos.Id">
+                                <td>@pos.Name<span class="act pull-right text-success"><i class="fa fa-check-circle"></i></span></td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+                <div id="empList" class="tab-pane fade">
+                    <table class="table table-bordered list4link" id="emps">
+                        @foreach (Employee emp in Employee.GetSelectionList())
+                        {
+                            <tr empid="@emp.Id">
+                                <td>@emp.FullName<span class="act pull-right text-success"><i class="fa fa-check-circle"></i></span></td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section scripts
+{
+    <script type="text/javascript">
+    $(document).ready(function () {
+        $("#docs").find("tr").click(displayDocMeetLinks);
+        $("#poss").find("tr").click(saveDocMeetLinkPos);
+        $("#deps").find("tr").click(saveDocMeetLinkDep);
+        $("#emps").find("tr").click(saveDocMeetLinkEmp);
+        $('#docs [name="doc-del"]').click(deleteDocument);
+    });
+
+    function deleteDocument(e) {
+        if (!confirm('Вы действительно хотите удалить документ?')) return;
+        var idDoc = $(this).attr('docid');
+        $.ajax({
+            url: '@Url.Action("DeleteDocument")',
+            data: { id: idDoc },
+            method: 'POST',
+            success: function(data) {
+                if (data.errorMessage) {
+                    alert(data.errorMessage);
+                } else {
+                    $('#docs tr[docid="'+data.id+'"]').hide();
+                    clearDocMeetLinks();
+                }
+                //window.location.reload();
+            }
+        });
+        //e.preventDefault();
+    }
+
+    function saveDocMeetLinkDep(e) {
+        var $row = $(this);
+        $row.toggleClass('selected');
+        var idDep = $row.attr('depid');
+        var idDoc = $('#docs').find('tr.selected').attr('docid');
+        if ($row.hasClass('selected')) {
+            $.ajax({
+                url: '@Url.Action("SaveDocMeetLink")',
+                type: 'POST',
+                data: { idDocument: idDoc, idDepartment: idDep },
+                success: function (data) {
+                    if (!data.errorMessage) {
+                        $row.addClass('db-success');
+                        $('#depTab').children().find('div.tab-mark').removeClass('hidden');
+                    } else {
+                        $row.addClass('db-error');
+                        
+                    }
+                }
+            });
+        } else {
+            $.ajax({
+                url: '@Url.Action("CloseDocMeetLink")',
+                type: 'POST',
+                data: { idDocument: idDoc, idDepartment: idDep },
+                success: function (data) {
+                    if (!data.errorMessage) {
+                        $row.addClass('db-success'); 
+                        if ($('#deps').find('tr.selected').length === 0) $('#depTab').children().find('div.tab-mark').addClass('hidden');
+                    } else {
+                        $row.addClass('db-error');
+                    }
+                }
+            });
+        }
+    }
+
+    function saveDocMeetLinkPos(e) {
+        var $row = $(this);
+        $row.toggleClass('selected');
+        var idPos = $row.attr('posid');
+        var idDoc = $('#docs').find('tr.selected').attr('docid');
+        if ($row.hasClass('selected')) {
+            $.ajax({
+                url: '@Url.Action("SaveDocMeetLink")',
+                type: 'POST',
+                data: { idDocument: idDoc, idPosition: idPos },
+                success: function (data) {
+                    if (!data.errorMessage) {
+                        $row.addClass('db-success');
+                        $('#posTab').children().find('div.tab-mark').removeClass('hidden');
+                    } else {
+                        $row.addClass('db-error');
+                    }
+                }
+            });
+        } else {
+            $.ajax({
+                url: '@Url.Action("CloseDocMeetLink")',
+                    type: 'POST',
+                    data: { idDocument: idDoc, idPosition: idPos },
+                    success: function(data) {
+                        if (!data.errorMessage) {
+                            $row.addClass('db-success');
+                            if ($('#poss').find('tr.selected').length === 0) $('#posTab').children().find('div.tab-mark').addClass('hidden');
+                        } else {
+                            $row.addClass('db-error');
+                        }
+                    }
+                });
+            }
+        }
+
+        function saveDocMeetLinkEmp(e) {
+            var $row = $(this);
+            $row.toggleClass('selected');
+            var idEmp = $row.attr('empid');
+            var idDoc = $('#docs').find('tr.selected').attr('docid');
+            if ($row.hasClass('selected')) {
+                $.ajax({
+                    url: '@Url.Action("SaveDocMeetLink")',
+                    type: 'POST',
+                    data: { idDocument: idDoc, idEmployee: idEmp },
+                    success: function (data) {
+                        if (!data.errorMessage) {
+                            $row.addClass('db-success');
+                            $('#empTab').children().find('div.tab-mark').removeClass('hidden');
+                        } else {
+                            $row.addClass('db-error');
+                        }
+                    }
+                });
+            } else {
+                $.ajax({
+                    url: '@Url.Action("CloseDocMeetLink")',
+                    type: 'POST',
+                    data: { idDocument: idDoc, idEmployee: idEmp },
+                    success: function (data) {
+                        if (!data.errorMessage) {
+                            $row.addClass('db-success');
+                            if ($('#emps').find('tr.selected').length === 0) $('#empTab').children().find('div.tab-mark').addClass('hidden');
+                        } else {
+                            $row.addClass('db-error');
+                        }
+                    }
+                });
+            }
+        }
+
+        function displayDocMeetLinks() {
+            clearDocMeetLinks();
+            $(this).toggleClass('selected');
+            var id = $(this).attr('docid');
+            $.ajax({
+                url: '@Url.Action("GetDocMeetLinks")',
+            type: 'POST',
+            data: { idDocument: id },
+            success: function (data) {
+                if (data.IdDepartments) {
+                    if (data.IdDepartments.length > 0) $('#depTab').children().find('div.tab-mark').removeClass('hidden');
+                    for (var i = 0; i < data.IdDepartments.length; i++) {
+                        $('#deps').find('[depid="' + data.IdDepartments[i] + '"]').addClass('selected');
+                    }
+                }
+                if (data.IdPositions) {
+                    if (data.IdPositions.length > 0) $('#posTab').children().find('div.tab-mark').removeClass('hidden');
+
+                    for (var j = 0; j < data.IdPositions.length; j++) {
+                        $('#poss').find('[posid="' + data.IdPositions[j] + '"]').addClass('selected');
+                    }
+                }
+                if (data.IdEmployees) {
+                    if (data.IdEmployees.length > 0) $('#empTab').children().find('div.tab-mark').removeClass('hidden');
+                    for (var k = 0; k < data.IdEmployees.length; k++) {
+                        $('#emps').find('[empid="' + data.IdEmployees[k] + '"]').addClass('selected');
+                    }
+                }
+            },
+            error: function () {
+                clearDocMeetLinks();
+            }
+        });
+    }
+
+    function clearDocMeetLinks() {
+        $("#docs").find("tr").removeClass('selected');
+        $('#deps').find('tr.selected').removeClass('selected');
+        $('#deps').find('tr.db-success').removeClass('db-success');
+        $('#depTab').children().find('div.tab-mark').addClass('hidden');
+        $('#poss').find('tr.selected').removeClass('selected');
+        $('#poss').find('tr.db-success').removeClass('db-success');
+        $('#posTab').children().find('div.tab-mark').addClass('hidden');
+        $('#emps').find('tr.selected').removeClass('selected');
+        $('#emps').find('tr.db-success').removeClass('db-success');
+        $('#empTab').children().find('div.tab-mark').addClass('hidden');
+    }
+    </script>
+}
