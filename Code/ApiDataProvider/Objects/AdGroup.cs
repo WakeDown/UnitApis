@@ -13,6 +13,8 @@ namespace DataProvider.Objects
         //Personal
         PersonalManager,
         NewEmployeeNote,
+        VendorStateExpiresDelivery,
+        VendorStateEditor,
         // />
         //SpeCalc
         SpeCalcKontroler,

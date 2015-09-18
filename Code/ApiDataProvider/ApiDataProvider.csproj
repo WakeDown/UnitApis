@@ -182,6 +182,9 @@
     <Compile Include="Controllers\Service\ServiceIssueResultController.cs" />
     <Compile Include="Controllers\Service\ServiceMobileController.cs" />
     <Compile Include="Controllers\Stuff\BudgetController.cs" />
+    <Compile Include="Controllers\Stuff\LanguageController.cs" />
+    <Compile Include="Controllers\Stuff\VendorController.cs" />
+    <Compile Include="Controllers\Stuff\VendorStateController.cs" />
     <Compile Include="Models\MobileUser.cs" />
     <Compile Include="Models\Service\PlanServiceIssue.cs" />
     <Compile Include="Controllers\Service\ServiceIssueController.cs" />
@@ -213,6 +216,9 @@
     <Compile Include="Models\Service\DeviceSearchResult.cs" />
     <Compile Include="Models\Service\Vendor.cs" />
     <Compile Include="Models\Stuff\ItBudgetReportItem.cs" />
+    <Compile Include="Models\Stuff\Language.cs" />
+    <Compile Include="Models\Stuff\Vendor.cs" />
+    <Compile Include="Models\Stuff\VendorState.cs" />
     <Compile Include="Objects\AccessDenyException.cs" />
     <Compile Include="Objects\AdOrganization.cs" />
     <Compile Include="_TMPLTS\Controller.cs" />
