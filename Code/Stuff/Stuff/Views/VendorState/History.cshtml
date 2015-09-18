@@ -1,0 +1,57 @@
+﻿@using Stuff.Models
+@using System
+@using System.Collections.Generic;
+@using Microsoft.Ajax.Utilities
+@model IEnumerable<Stuff.Models.VendorState>
+
+@{
+    ViewBag.Title = "История статусa";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+   // bool userCanEdit = ViewBag.CurUser.UserCanEdit();
+    bool userCanEdit = true;
+}
+
+
+<p>
+    <span class="text-danger">@ViewData["ServerError"]</span>
+</p>
+@if (Model.Any())
+{
+    <table class="table table-bordered">
+        <tr class="bg-primary">
+            <th>№</th>
+            <th>Статус</th>
+            <th>Вендор</th>
+            <th>Описание</th>
+            <th>Картинка</th>
+            <th>Дата окончания</th>
+            <th>Юр лицо Юнит</th>
+            <th>Язык оригинала</th>
+            <th>Автор</th>
+            <th>Дата изменения</th>
+        </tr>
+        @{int i = 0;}
+        @foreach (var vnd in Model)
+        {
+            i++;
+            <tr>
+                <td>@i</td>
+                <td>@vnd.StateName</td>
+                <td>@vnd.VendorName</td>
+                <td>@vnd.StateDescription</td>
+                <td>@if (vnd.Picture != null)
+                    {
+                    <a lass="btn btn-link" href="@Url.Action("Image", "VendorState", new {id = vnd.Id, curIm = true})" target="_blank" data-toggle="tooltip" title="Картинка"><img id="pic-min" src="@Url.Action("GetImage", "VendorState", new {id = @vnd.Id})" width="50"/></a>
+                    }
+ 
+                </td>
+                <td>@vnd.EndDate.ToShortDateString()</td>
+                <td>@vnd.UnitOrganizationName</td>
+                <td>@vnd.LanguageName</td>
+                <td>@vnd.Author</td>
+                <td>@vnd.CreationDate</td>
+            </tr>
+        }
+    </table>
+            }
+
