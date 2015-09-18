@@ -14,14 +14,6 @@ namespace DataProvider.Controllers.Service
 {
     public class ServiceIssueController : BaseApiController
     {
-        public IEnumerable<ServiceIssuePeriodItem> GetPeriodList(int? year, int? month)
-        {
-            if (!year.HasValue) year = DateTime.Now.Year;
-            if (!month.HasValue) month = DateTime.Now.Month;
-
-            return ServiceIssue.GetPeriodList(year.Value, month.Value);
-        }
-
         public IEnumerable<KeyValuePair<string, string>> GetEngeneerList()
         {
             return AdHelper.GetUserListByAdGroup(AdGroup.ServiceEngeneer).ToList();

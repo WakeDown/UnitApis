@@ -20,16 +20,16 @@ namespace DataProvider.Models.Service
 
         public ServiceIssuePlan() { }
 
-        public ServiceIssuePlan(int id)
-        {
-            //SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = id, SqlDbType = SqlDbType.Int };
-            //var dt = Db.Stuff.ExecuteQueryStoredProcedure("get_model", pId);
-            //if (dt.Rows.Count > 0)
-            //{
-            //    var row = dt.Rows[0];
-            //    FillSelf(row);
-            //}
-        }
+        //public ServiceIssuePlan(int id)
+        //{
+        //    //SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = id, SqlDbType = SqlDbType.Int };
+        //    //var dt = Db.Stuff.ExecuteQueryStoredProcedure("get_model", pId);
+        //    //if (dt.Rows.Count > 0)
+        //    //{
+        //    //    var row = dt.Rows[0];
+        //    //    FillSelf(row);
+        //    //}
+        //}
 
         public ServiceIssuePlan(DataRow row)
             : this()
@@ -39,29 +39,67 @@ namespace DataProvider.Models.Service
 
         private void FillSelf(DataRow row)
         {
-            //Id = Db.DbHelper.GetValueIntOrDefault(row, "id");
-            //IdClaim = Db.DbHelper.GetValueIntOrDefault(row, "id_claim");
-            //SpecialistSid = Db.DbHelper.GetValueString(row, "specialist_sid");
-            //Descr = Db.DbHelper.GetValueString(row, "descr");
-            //DatePlan = Db.DbHelper.GetValueDateTimeOrDefault(row, "date_plan");
+            Id = Db.DbHelper.GetValueIntOrDefault(row, "id");
+            IdServiceIssue = Db.DbHelper.GetValueIntOrDefault(row, "id_service_issue");
+            IdServiceIssueType = Db.DbHelper.GetValueIntOrDefault(row, "id_service_issue_type");
+            PeriodStart = Db.DbHelper.GetValueDateTimeOrDefault(row, "period_start");
+            PeriodEnd = Db.DbHelper.GetValueDateTimeOrDefault(row, "period_end");
         }
 
         public void Save()
         {
-            //SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = Id, SqlDbType = SqlDbType.Int };
-            //SqlParameter pIdClaim = new SqlParameter() { ParameterName = "id_claim", SqlValue = IdClaim, SqlDbType = SqlDbType.Int };
-            //SqlParameter pSpecialistSid = new SqlParameter() { ParameterName = "specialist_sid", SqlValue = SpecialistSid, SqlDbType = SqlDbType.VarChar };
-            //SqlParameter pDescr = new SqlParameter() { ParameterName = "descr", SqlValue = Descr, SqlDbType = SqlDbType.NVarChar };
-            //SqlParameter pDatePlan = new SqlParameter() { ParameterName = "date_plan", SqlValue = DatePlan, SqlDbType = SqlDbType.DateTime };
-            //SqlParameter pCreatorAdSid = new SqlParameter() { ParameterName = "creator_sid", SqlValue = CurUserAdSid, SqlDbType = SqlDbType.VarChar };
+            SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = Id, SqlDbType = SqlDbType.Int };
+            SqlParameter pIdServiceIssue = new SqlParameter() { ParameterName = "id_service_issue", SqlValue = IdServiceIssue, SqlDbType = SqlDbType.Int };
+            SqlParameter pIdServiceIssueType = new SqlParameter() { ParameterName = "id_service_issue_type", SqlValue = IdServiceIssueType, SqlDbType = SqlDbType.Int };
+            SqlParameter pPeriodStart = new SqlParameter() { ParameterName = "period_start", SqlValue = PeriodStart, SqlDbType = SqlDbType.Date };
+            SqlParameter pPeriodEnd = new SqlParameter() { ParameterName = "period_end", SqlValue = PeriodEnd, SqlDbType = SqlDbType.Date };
+            SqlParameter pCreatorAdSid = new SqlParameter() { ParameterName = "creator_sid", SqlValue = CurUserAdSid, SqlDbType = SqlDbType.VarChar };
 
-            //var dt = Db.Service.ExecuteQueryStoredProcedure("save_service_issue", pId, pIdClaim, pSpecialistSid, pDescr, pDatePlan, pCreatorAdSid);
-            //int id = 0;
-            //if (dt.Rows.Count > 0)
-            //{
-            //    int.TryParse(dt.Rows[0]["id"].ToString(), out id);
-            //    Id = id;
-            //}
+            var dt = Db.Service.ExecuteQueryStoredProcedure("save_service_issue_plan", pId, pIdServiceIssue, pIdServiceIssueType, pPeriodStart, pPeriodEnd, pCreatorAdSid);
+            int id = 0;
+            if (dt.Rows.Count > 0)
+            {
+                Int32.TryParse(dt.Rows[0]["id"].ToString(), out id);
+                Id = id;
+            }
+        }
+
+        public static IEnumerable<ServiceIssuePlan> GetList(DateTime periodStart, DateTime periodEnd)
+        {
+            SqlParameter pPeriodStart = new SqlParameter() { ParameterName = "period_start", SqlValue = periodStart, SqlDbType = SqlDbType.Date };
+            SqlParameter pPeriodEnd = new SqlParameter() { ParameterName = "period_end", SqlValue = periodEnd, SqlDbType = SqlDbType.Date };
+            var dt = Db.Service.ExecuteQueryStoredProcedure("get_service_issue_plan_list", pPeriodStart, pPeriodEnd);
+
+            var lst = new List<ServiceIssuePlan>();
+
+            foreach (DataRow row in dt.Rows)
+            {
+                var model = new ServiceIssuePlan(row);
+                lst.Add(model);
+            }
+
+            return lst;
+        }
+
+        public static IEnumerable<ServiceIssuePeriodItem> GetPeriodList(int year, int month)
+        {
+            var list = new List<ServiceIssuePeriodItem>();
+
+            DateTime lastDayOfMonth = new DateTime(year, month, DateTime.DaysInMonth(year, month));
+            DateTime lastDay = lastDayOfMonth;//DateTimeHelper.GetNextWeekday(lastDayOfMonth, DayOfWeek.Monday);
+            DateTime firstDayOfMonth = new DateTime(year, month, 1);
+            DateTime day = DateTimeHelper.GetPrevWeekday(firstDayOfMonth, DayOfWeek.Monday).AddDays(-1);
+
+            while (day < lastDay)
+            {
+                DateTime monday = DateTimeHelper.GetNextWeekday(day, DayOfWeek.Monday);
+                day = monday;
+                DateTime sunday = DateTimeHelper.GetNextWeekday(day, DayOfWeek.Sunday);
+                day = sunday;
+                list.Add(new ServiceIssuePeriodItem(monday, sunday));
+            }
+
+            return list;
         }
     }
 }

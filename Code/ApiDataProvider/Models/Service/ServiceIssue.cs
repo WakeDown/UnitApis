@@ -81,41 +81,6 @@ namespace DataProvider.Models.Service
             return lst;
         }
 
-        //public static IEnumerable<ServiceIssue> GetPlanList(DateTime periodStart, DateTime periodEnd)
-        //{
-        //    SqlParameter pSome = new SqlParameter() { ParameterName = "some", SqlValue = some, SqlDbType = SqlDbType.NVarChar };
-        //    var dt = Db.Stuff.ExecuteQueryStoredProcedure("get_model_list", pSome);
-
-        //    var lst = new List<ServiceIssue>();
-
-        //    foreach (DataRow row in dt.Rows)
-        //    {
-        //        var model = new ServiceIssue(row);
-        //        lst.Add(model);
-        //    }
-
-        //    return lst;
-        //}
-
-        public static IEnumerable<ServiceIssuePeriodItem> GetPeriodList(int year, int month)
-        {
-            var list = new List<ServiceIssuePeriodItem>();
-
-            DateTime lastDayOfMonth = new DateTime(year, month, DateTime.DaysInMonth(year, month));
-            DateTime lastDay = lastDayOfMonth;//DateTimeHelper.GetNextWeekday(lastDayOfMonth, DayOfWeek.Monday);
-            DateTime firstDayOfMonth = new DateTime(year, month,1);
-            DateTime day = DateTimeHelper.GetPrevWeekday(firstDayOfMonth, DayOfWeek.Monday).AddDays(-1);
-
-            while (day < lastDay)
-            {
-                DateTime monday = DateTimeHelper.GetNextWeekday(day, DayOfWeek.Monday);
-                day = monday;
-                DateTime sunday = DateTimeHelper.GetNextWeekday(day, DayOfWeek.Sunday);
-                day = sunday;
-                list.Add(new ServiceIssuePeriodItem(monday, sunday));
-            }
-
-            return list;
-        }
+        
     }
 }

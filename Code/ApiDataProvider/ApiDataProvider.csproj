@@ -179,6 +179,7 @@
     <Compile Include="Controllers\Service\ClaimController.cs" />
     <Compile Include="Controllers\Service\ContractController.cs" />
     <Compile Include="Controllers\Service\DeviceController.cs" />
+    <Compile Include="Controllers\Service\ServiceIssuePlanController.cs" />
     <Compile Include="Controllers\Service\ServiceIssueResultController.cs" />
     <Compile Include="Controllers\Service\ServiceMobileController.cs" />
     <Compile Include="Controllers\Stuff\BudgetController.cs" />
