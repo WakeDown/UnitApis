@@ -29,6 +29,32 @@ namespace DataProvider.Controllers.Stuff
             return VendorState.GetList();
         }
 
+        public IEnumerable<VendorState> GetExpiredList()
+        {
+            return VendorState.ExpiredList();
+        }
+        public HttpResponseMessage SetDeliverySent(VendorState[] vendorStates)
+        {
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
+
+            try
+            {
+                foreach (VendorState vendorState in vendorStates)
+                {
+                    VendorState.SetDeliverySent(vendorState.Id);
+                }
+            }
+            catch (Exception ex)
+            {
+                response = new HttpResponseMessage(HttpStatusCode.OK);
+                response.Content = new StringContent(MessageHelper.ConfigureExceptionMessage(ex));
+            }
+            return response;
+        }
+        public IEnumerable<string> GetMailAddressList()
+        {
+           return(VendorState.GetMailAddressList());
+        }
         public IEnumerable<VendorState> GetHistoryList(int id)
         {
             return VendorState.GetHistoryList(id);
