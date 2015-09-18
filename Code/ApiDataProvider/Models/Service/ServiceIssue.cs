@@ -81,21 +81,21 @@ namespace DataProvider.Models.Service
             return lst;
         }
 
-        public static IEnumerable<ServiceIssue> GetPlanList(DateTime periodStart, DateTime periodEnd)
-        {
-            SqlParameter pSome = new SqlParameter() { ParameterName = "some", SqlValue = some, SqlDbType = SqlDbType.NVarChar };
-            var dt = Db.Stuff.ExecuteQueryStoredProcedure("get_model_list", pSome);
+        //public static IEnumerable<ServiceIssue> GetPlanList(DateTime periodStart, DateTime periodEnd)
+        //{
+        //    SqlParameter pSome = new SqlParameter() { ParameterName = "some", SqlValue = some, SqlDbType = SqlDbType.NVarChar };
+        //    var dt = Db.Stuff.ExecuteQueryStoredProcedure("get_model_list", pSome);
 
-            var lst = new List<ServiceIssue>();
+        //    var lst = new List<ServiceIssue>();
 
-            foreach (DataRow row in dt.Rows)
-            {
-                var model = new ServiceIssue(row);
-                lst.Add(model);
-            }
+        //    foreach (DataRow row in dt.Rows)
+        //    {
+        //        var model = new ServiceIssue(row);
+        //        lst.Add(model);
+        //    }
 
-            return lst;
-        }
+        //    return lst;
+        //}
 
         public static IEnumerable<ServiceIssuePeriodItem> GetPeriodList(int year, int month)
         {
