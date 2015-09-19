@@ -16,20 +16,20 @@ namespace DataProvider.Models.Service
         public int IdServiceIssueType { get; set; }
         public DateTime PeriodStart { get; set; }
         public DateTime PeriodEnd { get; set; }
-
+        public string CreatorSid { get; set; }
 
         public ServiceIssuePlan() { }
 
-        //public ServiceIssuePlan(int id)
-        //{
-        //    //SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = id, SqlDbType = SqlDbType.Int };
-        //    //var dt = Db.Stuff.ExecuteQueryStoredProcedure("get_model", pId);
-        //    //if (dt.Rows.Count > 0)
-        //    //{
-        //    //    var row = dt.Rows[0];
-        //    //    FillSelf(row);
-        //    //}
-        //}
+        public ServiceIssuePlan(int id)
+        {
+            SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = id, SqlDbType = SqlDbType.Int };
+            var dt = Db.Service.ExecuteQueryStoredProcedure("get_service_issue_plan", pId);
+            if (dt.Rows.Count > 0)
+            {
+                var row = dt.Rows[0];
+                FillSelf(row);
+            }
+        }
 
         public ServiceIssuePlan(DataRow row)
             : this()
@@ -44,6 +44,7 @@ namespace DataProvider.Models.Service
             IdServiceIssueType = Db.DbHelper.GetValueIntOrDefault(row, "id_service_issue_type");
             PeriodStart = Db.DbHelper.GetValueDateTimeOrDefault(row, "period_start");
             PeriodEnd = Db.DbHelper.GetValueDateTimeOrDefault(row, "period_end");
+            CreatorSid = Db.DbHelper.GetValueString(row, "creator_sid");
         }
 
         public void Save()
@@ -61,6 +62,12 @@ namespace DataProvider.Models.Service
             {
                 Int32.TryParse(dt.Rows[0]["id"].ToString(), out id);
                 Id = id;
+
+                if (Db.DbHelper.GetValueBool(dt.Rows[0], "exists"))//Если запись существует
+                {
+                    FillSelf(dt.Rows[0]);
+                    throw new ItemExistsException($"Заявка №{IdServiceIssue} уже влючена в план на период {PeriodStart:dd.MM.yy} - {PeriodEnd:dd.MM.yy} пользователем {AdHelper.GetUserBySid(CreatorSid).DisplayName}");
+                }
             }
         }
 

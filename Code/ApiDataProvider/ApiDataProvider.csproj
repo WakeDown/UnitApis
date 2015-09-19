@@ -219,6 +219,7 @@
     <Compile Include="Models\Stuff\ItBudgetReportItem.cs" />
     <Compile Include="Objects\AccessDenyException.cs" />
     <Compile Include="Objects\AdOrganization.cs" />
+    <Compile Include="Objects\ItemExistsException.cs" />
     <Compile Include="_TMPLTS\Controller.cs" />
     <Compile Include="_TMPLTS\Model.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />

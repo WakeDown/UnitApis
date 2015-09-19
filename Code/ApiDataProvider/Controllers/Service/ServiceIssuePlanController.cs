@@ -12,6 +12,32 @@ namespace DataProvider.Controllers.Service
 {
     public class ServiceIssuePlanController : BaseApiController
     {
+        public IHttpActionResult Get(int? id)
+        {
+            if (!id.HasValue) return NotFound();
+            
+            return Ok(new ServiceIssuePlan(id.Value));
+        }
+
+        public IHttpActionResult Get(int? idServiceIssue, int? IdServiceType)
+        {
+            if (!idServiceIssue.HasValue || !IdServiceType.HasValue) return NotFound();
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.OK);
+            try
+            {
+                new ServiceIssuePlan(idServiceIssue.Value, IdServiceType.Value);
+                response.Content = new StringContent(String.Format("{{\"id\":{0}}}", model.Id));
+            }
+            catch (Exception ex)
+            {
+                response = new HttpResponseMessage(HttpStatusCode.NotFound);
+                response.Content = new StringContent(MessageHelper.ConfigureExceptionMessage(ex));
+
+            }
+
+            return Ok();
+        }
+
         public IEnumerable<ServiceIssuePlan> GetList(DateTime? periodStart, DateTime? periodEnd)
         {
             if (!periodStart.HasValue) periodStart = DateTime.Now;
