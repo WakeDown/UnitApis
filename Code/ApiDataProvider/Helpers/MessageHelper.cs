@@ -70,7 +70,7 @@ namespace DataProvider.Helpers
 
             client.EnableSsl = false;
 
-            if (!isTest)
+            if (ConfigurationManager.AppSettings["Environment"].Equals("Production") && !isTest)
             {
                 if (mailTo != null)
                 {
@@ -131,7 +131,6 @@ namespace DataProvider.Helpers
                 
                 throw new Exception(String.Format("Сообщение не было отправлено. Текст ошибки - {0}", ex.Message));
             }
-            
         }
     }
 }

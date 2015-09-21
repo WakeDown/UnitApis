@@ -116,6 +116,8 @@ namespace DataProvider.Models.Stuff
         }
         internal void Save()
         {
+            bool isNew = Id == 0;
+
             SqlParameter pId = new SqlParameter()
             {
                 ParameterName = "id",
@@ -176,9 +178,17 @@ namespace DataProvider.Models.Stuff
             var body = new StringBuilder("Добрый день.<br/>");
             UnitOrganizationName = new Organization(UnitOrganizationId).Name;
             VendorName = new Vendor(VendorId).Name;
-            var mailTo = GetMailAddressVendorStateExpiresDeliveryList();
+            var mailTo = Employee.GetFullRecipientList();
             var stuffUrl = ConfigurationManager.AppSettings["StuffUrl"];
-            if (Id == 0)
+
+            if (dt.Rows.Count > 0)
+            {
+                int id;
+                int.TryParse(dt.Rows[0]["id"].ToString(), out id);
+                Id = id;
+            }
+
+            if (isNew)
             {
 
                 var subject = string.Format("Новый статус {0} от {1}.", StateName, VendorName);
@@ -186,9 +196,8 @@ namespace DataProvider.Models.Stuff
                     VendorName);
                 body.AppendFormat("Срок действия до {0}.<br/>", EndDate.ToShortDateString());
                 body.AppendFormat("{0}<br/>", StateDescription);
-                body.AppendFormat("<a href='{0}/VendorState/Index/'>{1}</a><br/>", stuffUrl, StateName);
-                MessageHelper.SendMailSmtp(subject, body.ToString(), true, mailTo, null, null, true);
-
+                body.AppendFormat("<a href='{0}/VendorState/Index/#vs-{1}'>{0}/VendorState/Index/#vs-{1}</a><br/>", stuffUrl, Id);
+                MessageHelper.SendMailSmtp(subject, body.ToString(), true, mailTo, null, null);
             }
             else
             {
@@ -205,15 +214,9 @@ namespace DataProvider.Models.Stuff
                     body.AppendFormat("Вендор {0}<br/>", VendorName);
                     body.AppendFormat("Статус {0}<br/>", StateName);
                     body.AppendFormat("Срок действия до {0}<br/>", EndDate.ToShortDateString());
-                    body.AppendFormat("{0}<br/><a href='{1}/VendorState/Index/'>{2}</a><br/>", StateDescription, stuffUrl, StateName);
-                    MessageHelper.SendMailSmtp(subject, body.ToString(), true, mailTo, null, null, true);
+                    body.AppendFormat("{0}<br/><a href='{1}/VendorState/Index/#vs-{2}'>{1}/VendorState/Index/#vs-{2}</a><br/>", StateDescription, stuffUrl, Id);
+                    MessageHelper.SendMailSmtp(subject, body.ToString(), true, mailTo, null, null);
                 }
-            }
-            if (dt.Rows.Count > 0)
-            {
-                int id;
-                int.TryParse(dt.Rows[0]["id"].ToString(), out id);
-                Id = id;
             }
         }
 

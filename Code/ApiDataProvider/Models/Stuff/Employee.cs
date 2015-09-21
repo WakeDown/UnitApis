@@ -388,7 +388,7 @@ namespace DataProvider.Models.Stuff
             SqlParameter pIdEmpState = new SqlParameter() { ParameterName = "id_emp_state", SqlValue = EmpState.GetStuffState().Id, SqlDbType = SqlDbType.Int };
             Db.Stuff.ExecuteStoredProcedure("set_employee_state", pId, pIdEmpState);
         }
-        public static IEnumerable<string> GetFullRecipientList(int? idCity)
+        public static IEnumerable<string> GetFullRecipientList(int? idCity=null)
         {
             List<string> result = new List<string>();
             foreach (Employee emp in GetList(idCity: idCity))
