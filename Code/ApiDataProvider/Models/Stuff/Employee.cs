@@ -554,6 +554,7 @@ namespace DataProvider.Models.Stuff
         {
             var emp = new Employee(employeeSid);
             var dir = GetDirector();
+
             if (emp.Manager.AdSid == dir.AdSid || emp.AdSid==dir.AdSid) return emp;
             //Employee.GetDepartmentDirector(employeeSid);
             //GetList(idManager: GetDirector().Id)
@@ -589,9 +590,9 @@ namespace DataProvider.Models.Stuff
                     result = true;
                     break;
                 }
-                else
+                else if (CheckStuffInChilds(child, sid2Find))
                 {
-                    CheckStuffInChilds(child, sid2Find);
+                    return true;
                 }
             }
             return result;

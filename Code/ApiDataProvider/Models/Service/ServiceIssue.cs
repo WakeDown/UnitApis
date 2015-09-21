@@ -17,6 +17,7 @@ namespace DataProvider.Models.Service
         public string SpecialistSid { get; set; }
         public string Descr { get; set; }
         public DateTime DatePlan { get; set; }
+        
 
         public ServiceIssue() { }
 
@@ -79,5 +80,7 @@ namespace DataProvider.Models.Service
 
             return lst;
         }
+
+        
     }
 }

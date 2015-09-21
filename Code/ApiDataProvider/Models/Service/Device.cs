@@ -48,6 +48,7 @@ namespace DataProvider.Models.Service
             if (dt.Rows.Count > 0)
             {
                 var row = dt.Rows[0];
+                result.DeviceId = Db.DbHelper.GetValueIntOrNull(row, "id_device");
                 result.DeviceSerialNum = Db.DbHelper.GetValueString(row, "serial_num");
                 result.ContractorStr = Db.DbHelper.GetValueString(row, "contractor_name");
                 result.ContractStr = Db.DbHelper.GetValueString(row, "contract_number");
@@ -66,6 +67,7 @@ namespace DataProvider.Models.Service
                 foreach (DataRow row in dt.Rows)
                 {
                     var info = new DeviceInfoResult();
+                    info.DeviceId = Db.DbHelper.GetValueIntOrNull(row, "id_device");
                     info.DeviceSerialNum = Db.DbHelper.GetValueString(row, "serial_num");
                     info.ContractorStr = Db.DbHelper.GetValueString(row, "contractor_name");
                     info.ContractStr = Db.DbHelper.GetValueString(row, "contract_number");

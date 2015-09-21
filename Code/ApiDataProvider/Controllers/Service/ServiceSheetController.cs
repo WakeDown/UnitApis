@@ -13,20 +13,20 @@ namespace DataProvider.Controllers.Service
 {
     public class ServiceSheetController : BaseApiController
     {
-        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin })]
+        [AuthorizeAd(AdGroup.ServiceControler, AdGroup.ServiceEngeneer, AdGroup.ServiceAdmin, AdGroup.ServiceTech)]
         public IEnumerable<ServiceSheet> GetList(int? idClaim=null, int? idClaim2ClaimState = null)
         {
             return ServiceSheet.GetList(idClaim, idClaim2ClaimState);
         }
 
-        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin })]
+        [AuthorizeAd(AdGroup.ServiceControler, AdGroup.ServiceEngeneer, AdGroup.ServiceAdmin, AdGroup.ServiceTech)]
         public ServiceSheet Get(int id)
         {
             var model = new ServiceSheet(id);
             return model;
         }
 
-        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin })]
+        [AuthorizeAd(AdGroup.ServiceControler, AdGroup.ServiceEngeneer, AdGroup.ServiceAdmin, AdGroup.ServiceTech)]
         public HttpResponseMessage Save(ServiceSheet model)
         {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);

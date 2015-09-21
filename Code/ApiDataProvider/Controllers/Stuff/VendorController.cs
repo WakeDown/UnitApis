@@ -3,29 +3,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Web;
+using System.Web.Http;
+using System.Web.Http.OData;
 using DataProvider.Helpers;
 using DataProvider.Models.Stuff;
 using DataProvider.Objects;
 using Objects;
 
-namespace DataProvider._TMPLTS
+namespace DataProvider.Controllers.Stuff
 {
-    public class Controller : BaseApiController
+    public class VendorController : BaseApiController
     {
-        public IEnumerable<Model> GetList()
+        public IEnumerable<Vendor> GetList()
         {
-            return Model.GetList();
+            return Vendor.GetList();
         }
 
-        public Model Get(int id)
+        public Vendor Get(int id)
         {
-            var model = new Model(id);
+            var model = new Vendor(id);
             return model;
         }
-
-        [AuthorizeAd()]
-        public HttpResponseMessage Save(Model model)
+        
+       [AuthorizeAd(AdGroup.VendorStateEditor)]
+        public HttpResponseMessage Save(Vendor model)
         {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
 
@@ -43,15 +44,14 @@ namespace DataProvider._TMPLTS
             }
             return response;
         }
-
-        [AuthorizeAd()]
+        [AuthorizeAd(AdGroup.VendorStateEditor)]
         public HttpResponseMessage Close(int id)
         {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
-
+            var deleter = GetCurUser().Sid;
             try
             {
-                Model.Close(id,GetCurUser().Sid);
+                Vendor.Close(id, deleter);
             }
             catch (Exception ex)
             {

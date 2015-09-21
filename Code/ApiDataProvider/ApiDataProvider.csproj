@@ -179,8 +179,15 @@
     <Compile Include="Controllers\Service\ClaimController.cs" />
     <Compile Include="Controllers\Service\ContractController.cs" />
     <Compile Include="Controllers\Service\DeviceController.cs" />
+    <Compile Include="Controllers\Service\ServiceIssuePlanController.cs" />
     <Compile Include="Controllers\Service\ServiceIssueResultController.cs" />
+    <Compile Include="Controllers\Service\ServiceMobileController.cs" />
     <Compile Include="Controllers\Stuff\BudgetController.cs" />
+    <Compile Include="Helpers\DateTimeHelper.cs" />
+    <Compile Include="Controllers\Stuff\LanguageController.cs" />
+    <Compile Include="Controllers\Stuff\VendorController.cs" />
+    <Compile Include="Controllers\Stuff\VendorStateController.cs" />
+    <Compile Include="Models\MobileUser.cs" />
     <Compile Include="Models\Service\PlanServiceIssue.cs" />
     <Compile Include="Controllers\Service\ServiceIssueController.cs" />
     <Compile Include="Controllers\Service\ServiceSheetController.cs" />
@@ -190,6 +197,8 @@
     <Compile Include="Models\Service\ClientAccess.cs" />
     <Compile Include="Models\Service\ContractorAccess.cs" />
     <Compile Include="Models\Service\ServiceIssue.cs" />
+    <Compile Include="Models\Service\ServiceIssuePeriodItem.cs" />
+    <Compile Include="Models\Service\ServiceIssuePlan.cs" />
     <Compile Include="Models\Service\ServiceIssuePlaningItem.cs" />
     <Compile Include="Models\Service\ServiceIssuePlaningResult.cs" />
     <Compile Include="Models\Service\ServiceSheet.cs" />
@@ -211,8 +220,12 @@
     <Compile Include="Models\Service\DeviceSearchResult.cs" />
     <Compile Include="Models\Service\Vendor.cs" />
     <Compile Include="Models\Stuff\ItBudgetReportItem.cs" />
+    <Compile Include="Models\Stuff\Language.cs" />
+    <Compile Include="Models\Stuff\Vendor.cs" />
+    <Compile Include="Models\Stuff\VendorState.cs" />
     <Compile Include="Objects\AccessDenyException.cs" />
     <Compile Include="Objects\AdOrganization.cs" />
+    <Compile Include="Objects\ItemExistsException.cs" />
     <Compile Include="_TMPLTS\Controller.cs" />
     <Compile Include="_TMPLTS\Model.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
@@ -301,9 +314,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Claim\" />
-    <Folder Include="Views\ContractorAccess\" />
-    <Folder Include="Views\Document\" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
