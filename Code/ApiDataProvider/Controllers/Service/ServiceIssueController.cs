@@ -14,7 +14,12 @@ namespace DataProvider.Controllers.Service
 {
     public class ServiceIssueController : BaseApiController
     {
-        public IEnumerable<ServiceIssuePlaningItem> GetPlaningDeviceList(DateTime? month, int? idCity, string address, int? idClient)
+        public IEnumerable<KeyValuePair<string, string>> GetEngeneerList()
+        {
+            return AdHelper.GetUserListByAdGroup(AdGroup.ServiceEngeneer).ToList();
+        }
+
+        public IEnumerable<ServiceIssuePlaningItem> GetPlaningDeviceIssueList(DateTime? month, int? idCity, string address, int? idClient)
         {
             if (!idCity.HasValue) throw new ArgumentException("Не указан город");
             if (!idClient.HasValue) throw new ArgumentException("Не указан клиент");
@@ -23,7 +28,7 @@ namespace DataProvider.Controllers.Service
 
             var planList = PlanServiceIssue.GetClaimList(month.Value, idCity, address, idClient);
             var clientList = planList.Where(x => x.IdCity == idCity && x.Address == address).GroupBy(x => x.IdDevice)
-                .Select(x => new ServiceIssuePlaningItem(x.Key, x.First().DeviceName, x.Count()))
+                .Select(x => new ServiceIssuePlaningItem(x.First().IdServiceClaim, x.First().DeviceName, x.Count()))
                 .OrderBy(x => x.Name)
                 .ToArray();
 
@@ -137,23 +142,23 @@ namespace DataProvider.Controllers.Service
         //    return response;
         //}
 
-        [AuthorizeAd(AdGroup.ServiceMobileUser)]
-        public HttpResponseMessage MobileSave(PlanServiceIssue model)
-        {
-            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
+        //[AuthorizeAd(AdGroup.ServiceMobileUser)]
+        //public HttpResponseMessage MobileSave(PlanServiceIssue model)
+        //{
+        //    HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
 
-            try
-            {
-                model.CurUserAdSid = GetCurUser().Sid;
-                model.MobileSave();
-                response.Content = new StringContent(String.Format("{{\"id\":{0}}}", model.Id));
-            }
-            catch (Exception ex)
-            {
-                response = new HttpResponseMessage(HttpStatusCode.OK);
-                response.Content = new StringContent(MessageHelper.ConfigureExceptionMessage(ex));
-            }
-            return response;
-        }
+        //    try
+        //    {
+        //        model.CurUserAdSid = GetCurUser().Sid;
+        //        model.MobileSave();
+        //        response.Content = new StringContent(String.Format("{{\"id\":{0}}}", model.Id));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        response = new HttpResponseMessage(HttpStatusCode.OK);
+        //        response.Content = new StringContent(MessageHelper.ConfigureExceptionMessage(ex));
+        //    }
+        //    return response;
+        //}
     }
 }
