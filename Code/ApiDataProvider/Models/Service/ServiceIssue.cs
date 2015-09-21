@@ -80,7 +80,7 @@ namespace DataProvider.Models.Service
 
             return lst;
         }
-        
 
+        
     }
 }
