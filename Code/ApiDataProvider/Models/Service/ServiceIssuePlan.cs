@@ -31,6 +31,18 @@ namespace DataProvider.Models.Service
             }
         }
 
+        public ServiceIssuePlan(int idServiceIssue, int idServiceIssueType)
+        {
+            SqlParameter pIdServiceIssue = new SqlParameter() { ParameterName = "id_service_issue", SqlValue = idServiceIssue, SqlDbType = SqlDbType.Int };
+            SqlParameter pIdServiceIssueType = new SqlParameter() { ParameterName = "id_service_issue_type", SqlValue = idServiceIssueType, SqlDbType = SqlDbType.Int };
+            var dt = Db.Service.ExecuteQueryStoredProcedure("get_service_issue_plan", pIdServiceIssue, pIdServiceIssueType);
+            if (dt.Rows.Count > 0)
+            {
+                var row = dt.Rows[0];
+                FillSelf(row);
+            }
+        }
+
         public ServiceIssuePlan(DataRow row)
             : this()
         {
