@@ -13,6 +13,8 @@ using DataProvider.Models.SpeCalc;
 using DataProvider.Objects;
 using Microsoft.Ajax.Utilities;
 using Microsoft.OData.Core.UriParser.Semantic;
+using System.Text;
+using System.Configuration;
 
 namespace DataProvider.Models.Stuff
 {
@@ -171,13 +173,41 @@ namespace DataProvider.Models.Stuff
 
             var dt = Db.Stuff.ExecuteQueryStoredProcedure("save_vendor_state", pId, pName, pIdVendor, pDescription,
                 pDateEnd, pIdOrganization, pIdLanguage, pCreatorSid, pPicData);
-            var changed = (Id == 0) || Db.Stuff.ExecuteQueryStoredProcedure("check_vendor_state_is_changed", pId).Rows[0].ItemArray.Length > 1;
-            if (changed)
+            var body = new StringBuilder("Добрый день.<br/>");
+            UnitOrganizationName = new Organization(UnitOrganizationId).Name;
+            VendorName = new Vendor(VendorId).Name;
+            var mailTo = GetMailAddressVendorStateExpiresDeliveryList();
+            var stuffUrl = ConfigurationManager.AppSettings["StuffUrl"];
+            if (Id == null || Id == 0)
             {
-                string subject = (Id == 0) ? "New" : "Edit";
-                var mailTo = GetMailAddressVendorStateExpiresDeliveryList();
-                VendorName = new Vendor(VendorId).Name;
-                MessageHelper.SendMailSmtp(subject, VendorName, false, mailTo, null, null, true);
+
+                var subject = string.Format("Новый статус {0} от {1}.", StateName, VendorName);
+                body.AppendFormat("У организации {0} появился новый статус {1} от {2}.<br/>", UnitOrganizationName, StateName,
+                    VendorName);
+                body.AppendFormat("Срок действия до {0}.<br/>", EndDate.ToShortDateString());
+                body.AppendFormat("{0}<br/>", StateDescription);
+                body.AppendFormat("<a href='{0}VendorState/Index/'>{1}</a><br/>", stuffUrl, StateName);
+                MessageHelper.SendMailSmtp(subject, body.ToString(), true, mailTo, null, null, true);
+
+            }
+            else
+            {
+                var vnd = new VendorState((Db.Stuff.ExecuteQueryStoredProcedure("check_vendor_state_is_changed", pId)).Rows[0]);
+                vnd.VendorName = new Vendor(vnd.VendorId).Name;
+                vnd.UnitOrganizationName = new Organization(vnd.UnitOrganizationId).Name;
+                var changed = !(vnd.Id == null || vnd.Id == 0);
+                if (changed)
+                {
+                    string subject = string.Format("Обновление статуса {0} от {1}", vnd.StateName, vnd.VendorName);
+                    body.AppendFormat("Обновился статус {0} от {1} для организации {2}.<br/>", vnd.StateName, vnd.VendorName, vnd.UnitOrganizationName);
+                    body.Append("<br/>Новая версия статуса:<br/>");
+                    body.AppendFormat("Организация {0}<br/>", UnitOrganizationName);
+                    body.AppendFormat("Вендор {0}<br/>", VendorName);
+                    body.AppendFormat("Статус {0}<br/>", StateName);
+                    body.AppendFormat("Срок действия до {0}<br/>", EndDate.ToShortDateString());
+                    body.AppendFormat("{0}<br/><a href='{1}/VendorState/Index/'>{2}</a><br/>", StateDescription, stuffUrl, StateName);
+                    MessageHelper.SendMailSmtp(subject, body.ToString(), true, mailTo, null, null, true);
+                }
             }
             if (dt.Rows.Count > 0)
             {
