@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -298,7 +299,7 @@ namespace DataProvider.Models.Stuff
                 {
                     adCreate = false;
                     string body = String.Format("<p>Не удалось создать/обновить пользователя в Active Directory по причине:</p><p>{0}</p>", ex.Message);
-                    MessageHelper.SendMailSmtp("Active Directory ERROR", body, true, Settings.Emails4SysError);
+                    MessageHelper.SendMailSmtp("Active Directory ERROR", body, true, ConfigurationManager.AppSettings["Emails4SysError"]);
                     //throw new Exception(String.Format("Не удалось создать пользователя в Active Directory по причине - {0}", ex.Message));
                 }
 
@@ -308,7 +309,7 @@ namespace DataProvider.Models.Stuff
                         City.Name);
                     if (!adCreate) body += "<p style='color:red; font-size: 14pt;'>Не удалось создать пользователя в AD!</p>";
                     //var recipients = AdHelper.GetRecipientsFromAdGroup(AdGroup.NewEmployeeNote);
-                    var recipients = Settings.Emails4NewEmployee;
+                    var recipients = AdHelper.GetRecipientsFromAdGroup(AdGroup.NewEmployeeNote);
                     MessageHelper.SendMailSmtp("Новый сотрудник", body, true, recipients);//Оповещение сисадмину
                 }
             }

@@ -178,7 +178,7 @@ namespace DataProvider.Models.Stuff
             VendorName = new Vendor(VendorId).Name;
             var mailTo = GetMailAddressVendorStateExpiresDeliveryList();
             var stuffUrl = ConfigurationManager.AppSettings["StuffUrl"];
-            if (Id == null || Id == 0)
+            if (Id == 0)
             {
 
                 var subject = string.Format("Новый статус {0} от {1}.", StateName, VendorName);
@@ -186,7 +186,7 @@ namespace DataProvider.Models.Stuff
                     VendorName);
                 body.AppendFormat("Срок действия до {0}.<br/>", EndDate.ToShortDateString());
                 body.AppendFormat("{0}<br/>", StateDescription);
-                body.AppendFormat("<a href='{0}VendorState/Index/'>{1}</a><br/>", stuffUrl, StateName);
+                body.AppendFormat("<a href='{0}/VendorState/Index/'>{1}</a><br/>", stuffUrl, StateName);
                 MessageHelper.SendMailSmtp(subject, body.ToString(), true, mailTo, null, null, true);
 
             }
@@ -195,7 +195,7 @@ namespace DataProvider.Models.Stuff
                 var vnd = new VendorState((Db.Stuff.ExecuteQueryStoredProcedure("check_vendor_state_is_changed", pId)).Rows[0]);
                 vnd.VendorName = new Vendor(vnd.VendorId).Name;
                 vnd.UnitOrganizationName = new Organization(vnd.UnitOrganizationId).Name;
-                var changed = !(vnd.Id == null || vnd.Id == 0);
+                var changed = vnd.Id != 0;
                 if (changed)
                 {
                     string subject = string.Format("Обновление статуса {0} от {1}", vnd.StateName, vnd.VendorName);

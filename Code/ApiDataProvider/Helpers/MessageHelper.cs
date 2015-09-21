@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Mail;
@@ -90,7 +91,8 @@ namespace DataProvider.Helpers
             }
             else
             {
-                foreach (var email in Settings.Emails4Test)
+                string[] testMails = ConfigurationManager.AppSettings["Emails4Test"].Split('|');
+                foreach (var email in testMails)
                 {
                     if (String.IsNullOrEmpty(email)) continue;
                     mail.To.Add(email);
