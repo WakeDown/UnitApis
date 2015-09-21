@@ -190,7 +190,7 @@ namespace DataProvider.Models.SpeCalc
             string body = String.Format("<p>Добрый день!</p><p>Вам направлен вопрос в системе СпецРасчет.</p>" +
                                         "<p>Ссылка: <a href='{0}'>{0}</a></p>", Settings.SpeCalc.Url + "/Question/Index/" + id);
             var recipients = QuePosition.GetList(id).Select(p => new Employee(p.User.AdSid).Email).ToArray();
-            MessageHelper.SendMailSmtp("Новый вопрос в системе СпецРасчет", body, true, recipients, null, Settings.SpeCalc.DefaultMailFrom, isTest);
+            MessageHelper.SendMailSmtp("Новый вопрос в системе СпецРасчет", body, true, recipients, null, Settings.SpeCalc.DefaultMailFrom, isTest: isTest);
         }
 
         public static void SetProcessState(int id, string descr, string creatorSid)
@@ -217,7 +217,7 @@ namespace DataProvider.Models.SpeCalc
             string body = String.Format("<p>Добрый день!</p><p>Получен ответ на ваш вопрос в системе СпецРасчет.</p>" +
                                         "<p>Ссылка: <a href='{0}'>{0}</a></p>", Settings.SpeCalc.Url + "/Question/Index/" + id);
             var recipients = new Employee(new Question(id).Manager.AdSid).Email;
-            MessageHelper.SendMailSmtp("Ответ на вопрос в системе СпецРасчет", body, true, recipients, null, Settings.SpeCalc.DefaultMailFrom, isTest);
+            MessageHelper.SendMailSmtp("Ответ на вопрос в системе СпецРасчет", body, true, recipients, null, Settings.SpeCalc.DefaultMailFrom, isTest:isTest);
         }
 
         public static void SetAprovedState(int id, string descr, string creatorSid)
