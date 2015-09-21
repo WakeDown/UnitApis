@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Security.Principal;
 using System.Web;
@@ -25,6 +26,6 @@ namespace DataProvider.Objects
         //    }
         //}
         public string CurUserAdSid { get; set; }
-
+        public static string StuffUri = ConfigurationManager.AppSettings["StuffUri"];
     }
 }

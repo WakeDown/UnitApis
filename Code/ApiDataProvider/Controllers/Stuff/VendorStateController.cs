@@ -59,8 +59,7 @@ namespace DataProvider.Controllers.Stuff
         {
             return VendorState.GetHistoryList(id);
         }
-        [AuthorizeAd()]
-        public HttpResponseMessage Save(VendorState vnd)
+         public HttpResponseMessage Save(VendorState vnd)
         {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
 

@@ -13,7 +13,6 @@ namespace DataProvider.Controllers.Stuff
 {
     public class LanguageController : BaseApiController
     {
-        [EnableQuery]
         public IQueryable<Language> GetList()
         {
             return new EnumerableQuery<Language>(Language.GetList());

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Net.Mail;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Threading;
 using System.Web;
 using DataProvider.Helpers;
@@ -166,21 +168,46 @@ namespace DataProvider.Models.Stuff
                 SqlValue = Picture,
                 SqlDbType = SqlDbType.VarBinary
             };
-            try
-            {
+            
 
                 var dt = Db.Stuff.ExecuteQueryStoredProcedure("save_vendor_state", pId,pName, pIdVendor, pDescription,
                     pDateEnd, pIdOrganization, pIdLanguage, pCreatorSid, pPicData);
-                var changed = (Id == null || Id == 0)
-                    ? true
-                    :Db.Stuff.ExecuteQueryStoredProcedure("check_vendor_state_is_changed", pId).Rows[0].ItemArray.Length > 1;
+            var body = new StringBuilder("Добрый день.<br/>");
+            UnitOrganizationName = new Organization(UnitOrganizationId).Name;
+            VendorName = new Vendor(VendorId).Name;
+            var mailTo = GetMailAddressList();
+            if (Id == null || Id == 0) 
+            {
+                
+                var subject = string.Format("Новый статус {0} от {1}.", StateName, VendorName);
+                body.AppendFormat("У организации {0} появился новый статус {1} от {2}.<br/>", UnitOrganizationName, StateName,
+                    VendorName);
+                body.AppendFormat("Срок действия до {0}.<br/>", EndDate.ToShortDateString());
+                body.AppendFormat("{0}<br/>", StateDescription);
+                body.AppendFormat("<a href='{0}/VendorState/Index/'>{1}</a><br/>", StuffUri, StateName);
+                MessageHelper.SendMailSmtp(subject, body.ToString(), true, mailTo, null, null, true);
+
+            }
+            else
+            {
+                var vnd = new VendorState(( Db.Stuff.ExecuteQueryStoredProcedure("check_vendor_state_is_changed", pId)).Rows[0]);
+                vnd.VendorName = new Vendor(vnd.VendorId).Name;
+                vnd.UnitOrganizationName = new Organization(vnd.UnitOrganizationId).Name;
+                var changed = !(vnd.Id == null || vnd.Id == 0);
                 if (changed)
                 {
-                    string subject = (Id == null || Id == 0) ? "New" : "Edit";
-                    var mailTo = GetMailAddressList();
-                    VendorName = new Vendor(VendorId).Name;
-                    MessageHelper.SendMailSmtp(subject, VendorName, false, mailTo, null, null, true);
+                    string subject = string.Format("Обновление статуса {0} от {1}",vnd.StateName, vnd.VendorName);
+                    body.AppendFormat("Обновился статус {0} от {1} для организации {2}.<br/>", vnd.StateName, vnd.VendorName, vnd.UnitOrganizationName);
+                    body.Append("<br/>Новая версия статуса:<br/>");
+                    body.AppendFormat("Организация {0}<br/>", UnitOrganizationName);
+                    body.AppendFormat("Вендор {0}<br/>", VendorName);
+                    body.AppendFormat("Статус {0}<br/>", StateName);
+                    body.AppendFormat("Срок действия до {0}<br/>", EndDate.ToShortDateString());
+                    body.AppendFormat("{0}<br/><a href='{1}/VendorState/Index/'>{2}</a><br/>",StateDescription,StuffUri,StateName);
+                    MessageHelper.SendMailSmtp(subject, body.ToString(), true, mailTo, null, null, true);
                 }
+            }
+                
                 if (dt.Rows.Count > 0)
                 {
                     
@@ -188,13 +215,9 @@ namespace DataProvider.Models.Stuff
                     int.TryParse(dt.Rows[0]["id"].ToString(), out id);
                     Id = id;
                 }
-            }
-            catch (Exception ex)
-            {
-                
-            }
+            
         }
-
+// Получение списка email`ов  для рассылок
         public static IEnumerable<string> GetMailAddressList()
         {
             var sidList = AdHelper.GetUserListByAdGroup(AdGroup.VendorStateDelivery);
@@ -208,8 +231,7 @@ namespace DataProvider.Models.Stuff
         }
         public static void Close(int id, string deleter)
         {
-            try
-            {
+            
                 SqlParameter pDeleter = new SqlParameter()
                 {
                     ParameterName = "deleter_sid",
@@ -223,10 +245,7 @@ namespace DataProvider.Models.Stuff
                     SqlDbType = SqlDbType.Int
                 };
                 Db.Stuff.ExecuteStoredProcedure("close_vendor_state", pId, pDeleter);
-            }
-            catch (Exception ex)
-            {
-            }
+            
             
 
 

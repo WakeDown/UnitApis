@@ -13,7 +13,6 @@ namespace DataProvider.Controllers.Stuff
 {
     public class VendorController : BaseApiController
     {
-        [EnableQuery]
         public IQueryable<Vendor> GetList()
         {
             return new EnumerableQuery<Vendor>(Vendor.GetList());
@@ -25,7 +24,6 @@ namespace DataProvider.Controllers.Stuff
             return model;
         }
         
-       [AuthorizeAd(Groups = new[] { AdGroup.SpeCalcKontroler })]
         public HttpResponseMessage Save(Vendor model)
         {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
