@@ -193,7 +193,7 @@ namespace DataProvider.Controllers.Service
 
         [System.Web.Http.AllowAnonymous]
         [System.Web.Http.HttpGet]
-        public IHttpActionResult RemoteStateChange(int? idClaim, string stateSysName, string creatorSid, string descr)
+        public IHttpActionResult RemoteStateChange(int? idClaim, string stateSysName, string creatorSid, string descr=null)
         {
             if (!idClaim.HasValue || String.IsNullOrEmpty(stateSysName)) return NotFound();
             Claim.RemoteStateChange(idClaim.Value, stateSysName, creatorSid, descr);
