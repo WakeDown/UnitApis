@@ -97,13 +97,15 @@ namespace DataProvider.Models.Service
             return id;
         }
 
-        public static IEnumerable<PlanServiceIssue> GetClaimList(DateTime month, int? idCity = null, string address=null, int? idClient = null)
+        public static IEnumerable<PlanServiceIssue> GetClaimList(DateTime month, int? idCity = null, string address=null, int? idClient = null, string serviceAdminSid=null, string serviceEngeneerSid = null)
         {
             SqlParameter pMonth = new SqlParameter() { ParameterName = "date_month", SqlValue = month, SqlDbType = SqlDbType.Date };
             SqlParameter pIdCity = new SqlParameter() { ParameterName = "id_city", SqlValue = idCity, SqlDbType = SqlDbType.Int };
             SqlParameter pAddress = new SqlParameter() { ParameterName = "address", SqlValue = address, SqlDbType = SqlDbType.NVarChar };
             SqlParameter pIdClient = new SqlParameter() { ParameterName = "id_contractor", SqlValue = idClient, SqlDbType = SqlDbType.Int };
-            var dt = Db.UnitProg.ExecuteQueryStoredProcedure("get_service_claim_list", pMonth, pIdCity, pAddress, pIdClient);
+            SqlParameter pServiceAdminSid = new SqlParameter() { ParameterName = "service_admin_sid", SqlValue = serviceAdminSid, SqlDbType = SqlDbType.VarChar };
+            SqlParameter pServiceEngeneerSid = new SqlParameter() { ParameterName = "service_engeneer_sid", SqlValue = serviceEngeneerSid, SqlDbType = SqlDbType.VarChar };
+            var dt = Db.UnitProg.ExecuteQueryStoredProcedure("get_service_claim_list", pMonth, pIdCity, pAddress, pIdClient, pServiceAdminSid, pServiceEngeneerSid);
 
             var lst = new List<PlanServiceIssue>();
 

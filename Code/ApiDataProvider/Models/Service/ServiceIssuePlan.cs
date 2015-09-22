@@ -18,6 +18,8 @@ namespace DataProvider.Models.Service
         public DateTime PeriodEnd { get; set; }
         public string CreatorSid { get; set; }
 
+
+
         public ServiceIssuePlan() { }
 
         public ServiceIssuePlan(int id)

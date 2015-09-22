@@ -396,6 +396,32 @@ namespace DataProvider.Helpers
             }
         }
 
+        public static bool UserIs(IPrincipal user, params AdGroup[] groups)
+        {
+            using (WindowsImpersonationContextFacade impersonationContext
+                = new WindowsImpersonationContextFacade(
+                    nc))
+            {
+                var context = new PrincipalContext(ContextType.Domain);
+                var userPrincipal = UserPrincipal.FindByIdentity(context, IdentityType.SamAccountName,
+                    user.Identity.Name);
+
+                if (userPrincipal == null) return false;
+                //if (userPrincipal.IsMemberOf(context, IdentityType.Sid, AdUserGroup.GetSidByAdGroup(AdGroup.SuperAdmin))) { return true; }//Если юзер Суперадмин
+
+                foreach (var grp in groups)
+                {
+                    if (userPrincipal.IsMemberOf(context, IdentityType.Sid, AdUserGroup.GetSidByAdGroup(grp)))
+                    {
+                        return true;
+                    }
+                }
+
+
+                return false;
+            }
+        }
+
         public static string CreateSimpleAdUser(string username, string password, string name, string description, string adPath = "OU=Users,OU=UNIT,DC=UN1T,DC=GROUP")
         {
             using (WindowsImpersonationContextFacade impersonationContext
