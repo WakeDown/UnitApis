@@ -1,0 +1,21 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4>
+            @RenderSection("PanelHead")
+        </h4>
+    </div>
+    <div class="panel-body">
+        @RenderSection("PanelBody")
+    </div>
+</div>
+
+@section scripts
+{
+    @RenderSection("scripts", required: false)
+}

@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net.Mail;
 using System.Web;
 using DataProvider.Models.SpeCalc;
+using DataProvider.Objects;
 
 namespace DataProvider.Helpers
 {
@@ -21,13 +24,13 @@ namespace DataProvider.Helpers
         }
 
         public static void SendMailSmtp(string subject, string body, bool isBodyHtml, string mailTo, string hiddenMailTo = null,
-            string mailFrom = null, bool isTest = false)
+            string mailFrom = null, AttachmentFile file = null, bool isTest = false)
         {
-            SendMailSmtp(subject, body, isBodyHtml, new[] { mailTo }, new [] { hiddenMailTo }, mailFrom, isTest);
+            SendMailSmtp(subject, body, isBodyHtml, new[] { mailTo }, new [] { hiddenMailTo }, mailFrom, file, isTest: isTest);
         }
 
         public static void SendMailSmtp(string subject, string body, bool isBodyHtml, IEnumerable<string> mailTo, IEnumerable<string> hiddenMailTo = null,
-            string mailFrom = null, bool isTest = false)
+            string mailFrom = null, AttachmentFile file = null, bool isTest = false)
         {
             var recipients = new List<MailAddress>();
             if (mailTo != null)
@@ -50,10 +53,10 @@ namespace DataProvider.Helpers
             }
 
             if (String.IsNullOrEmpty(mailFrom)) mailFrom = defaultMailFrom.Address;
-            SendMailSmtp(subject, body, isBodyHtml, recipients.ToArray(),recHidden.ToArray(), new MailAddress(mailFrom), isTest);
+            SendMailSmtp(subject, body, isBodyHtml, recipients.ToArray(),recHidden.ToArray(), new MailAddress(mailFrom), file, isTest: isTest);
         }
 
-        public static void SendMailSmtp(string subject, string body, bool isBodyHtml, MailAddress[] mailTo, MailAddress[] hiddenMailTo=null, MailAddress mailFrom = null, bool isTest = false)
+        public static void SendMailSmtp(string subject, string body, bool isBodyHtml, MailAddress[] mailTo, MailAddress[] hiddenMailTo=null, MailAddress mailFrom = null, AttachmentFile file = null, bool isTest = false)
         {
             if (!mailTo.Any() && !hiddenMailTo.Any()) throw new Exception("Не указаны получатели письма!");
 
@@ -69,7 +72,7 @@ namespace DataProvider.Helpers
 
             client.EnableSsl = false;
 
-            if (!isTest)
+            if (ConfigurationManager.AppSettings["Environment"].Equals("Production") && !isTest)
             {
                 if (mailTo != null)
                 {
@@ -90,7 +93,8 @@ namespace DataProvider.Helpers
             }
             else
             {
-                foreach (var email in Settings.Emails4Test)
+                string[] testMails = ConfigurationManager.AppSettings["Emails4Test"].Split('|');
+                foreach (var email in testMails)
                 {
                     if (String.IsNullOrEmpty(email)) continue;
                     mail.To.Add(email);
@@ -120,6 +124,13 @@ namespace DataProvider.Helpers
 
             client.Host = "ums-1";
 
+            if (file != null && file.Data.Length > 0)
+            {
+                MemoryStream stream = new MemoryStream(file.Data);
+                Attachment attachment = new Attachment(stream, file.FileName, file.DataMimeType);
+                mail.Attachments.Add(attachment);
+            }
+
             try
             {
                 client.Send(mail);
@@ -129,7 +140,6 @@ namespace DataProvider.Helpers
                 
                 throw new Exception(String.Format("Сообщение не было отправлено. Текст ошибки - {0}", ex.Message));
             }
-            
         }
     }
 }

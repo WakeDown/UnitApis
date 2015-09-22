@@ -1,0 +1,29 @@
+﻿
+@{
+    ViewBag.Title = "Служебные записки";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<table class="table table-striped">
+    <tr>
+        <td>
+            <a href="@Url.Action("StatementRestFewHours")">Отсутствие на 1 или несколько часов</a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <a href="@Url.Action("StatementRestFewDays")">Отсутствие на 1 или несколько дней</a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <a href="@Url.Action("StatementFormRest")">Отпуск</a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <a href="@Url.Action("StatementFormFired")">Увольнение</a>
+        </td>
+    </tr>
+</table>
+

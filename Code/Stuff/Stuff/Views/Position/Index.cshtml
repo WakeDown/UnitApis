@@ -1,0 +1,73 @@
+﻿@using System.Web.UI.WebControls
+@using Stuff.Models
+@using Stuff.Objects
+@model IEnumerable<Stuff.Models.Position>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<p>
+    <a class="btn btn-primary" href="@Url.Action("New")"><i class="fa fa-plus"></i> Новая должность</a>
+</p>
+
+
+@if (Model.Any())
+{
+    <table class="table table-bordered">
+        <tr class="bg-primary">
+            <th class="min-width"></th>
+            <th class="min-width">№</th>
+            <th>Название должности</th>
+            <th class="min-width text-nowrap">Кол-во сотрудников</th>
+            <th class="min-width"></th>
+        </tr>
+        @{ int i = 0;}
+        @foreach (var pos in Model)
+        {
+            i++;
+            <tr>
+                <td>
+                    <a class="btn btn-link" href="@Url.Action("Edit", "Position", new {id = pos.Id})" data-toggle="tooltip" title="изменить"><i class="fa fa-edit"></i></a>
+                </td>
+                <td>@i</td>
+                <td>@pos.Name</td>
+                <td>@pos.EmpCount</td>
+                <td>
+                    <button class="btn btn-link" name="delele-pos" posid="@pos.Id" data-toggle="tooltip" title="удалить"><i class="fa fa-trash"></i></button>
+                </td>
+            </tr>
+        }
+    </table>
+}
+
+
+@section scripts
+{
+    <script type="text/javascript">
+
+        $(document).ready(init);
+
+        function init() {
+            $("#posForm").validator();
+            $("[name='delele-pos']").click(deleteDepartment);
+        }
+
+        function deleteDepartment(e) {
+            if (!confirm('Вы действительно хотите удалить должность?')) return;
+            var id = $(this).attr('posId');
+            $.ajax({
+                type: 'POST',
+                url: "@Url.Action("Delete", "Position")",
+                data: { id: id },
+                success: function (data) {
+                    if (data != null && data != '') {
+                        alert(data);
+                    } else {
+                        window.location.reload();
+                    }
+                }
+            });
+        }
+    </script>
+}

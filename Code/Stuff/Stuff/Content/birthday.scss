@@ -1,0 +1,175 @@
+﻿$rainbowRed: #DF151A;
+$rainbowOrange: #FD8603;
+$rainbowYellow: #F4F328;
+$rainbowGreen: #00DA3C;
+$rainbowBlue: #00CBE7;
+$balloonHeight: 100px;
+$balloonWidth: 55px;
+
+//body {
+//  overflow: hidden;
+//  background: #000;
+//  color: #FFF;
+//}
+
+.love-pop {
+  font: bold 22px/.3 Open Sans;
+  text-shadow: 0 3px 15px #ccc;
+  position: relative;
+  right: -96px;
+  top: 73px;
+  transform: rotate(45deg);
+  background-color: $rainbowRed;
+  background: linear-gradient(235deg, $rainbowRed, $rainbowOrange, $rainbowYellow, $rainbowGreen, $rainbowBlue);
+  line-height: 38px;
+  padding: 0 71px;
+  text-transform: capitalize;
+  z-index: 1000;
+}
+
+.love-box {
+  height: $balloonHeight;
+  width: 65px;
+  display: inline-block;
+  position: relative;
+  margin: 0 5px;
+}
+
+.love-container {
+  position: relative;
+  //top: 50%;
+  top:70px;
+  left: 50%;
+  white-space: nowrap;
+  text-align: center;
+  text-transform: uppercase;
+  font: bold 50px/.8 Open Sans, Impact;
+  -webkit-transform: translateX(-50%) translateY(-50%);
+  transform: translateX(-50%) translateY(-50%);
+}
+
+.balloon {
+  height: $balloonHeight;
+  width: $balloonWidth;
+  border-radius: 50%;
+  position: relative;
+  z-index: 100;
+    &:before, &:after {
+      content:"";
+      position:absolute;
+   }
+  &:before {
+      height:8px;
+      width: 9px;
+      left: 40%;
+      top: 95%;
+      background: inherit;
+      z-index: 10;
+  }
+  &:after {
+      width: 1px;
+      height: 67px;
+      background: #999;
+      top: 100%;
+      left:
+        45%;
+    ;
+      z-index: 1;
+  } 
+}
+
+.text {
+  position: absolute;
+  display: none;
+  top: 25%;
+  left: 10%;
+  width: 55px;
+  margin: 0 auto;
+  z-index: 1;
+}
+
+
+
+.red {
+  background: $rainbowRed;
+    animation: float1 6s ease-in-out infinite;
+}
+.orange {
+  background: $rainbowOrange;
+  animation: float2 4s ease-in-out infinite;
+}
+.yellow {
+  background: $rainbowYellow;
+  animation: float3 5s ease-in-out infinite;
+}
+.green {
+  background: $rainbowGreen;
+  animation: float4 4s ease-in-out infinite;
+}
+.blue {
+  background: $rainbowBlue;
+  animation: float5 6s ease-in-out infinite;
+}
+
+.text.red{
+background-color:transparent;
+color:$rainbowRed;
+}
+.text.orange{
+background-color:transparent;
+color:$rainbowOrange;
+}
+.text.yellow{
+background-color:transparent;
+color:$rainbowYellow;
+}
+.text.green{
+background-color:transparent;
+color:$rainbowGreen;
+}
+.text.blue{
+background-color:transparent;
+color:$rainbowBlue;
+}
+
+@keyframes float1 {
+  0%, 100% {
+    transform: translateY(-25%);
+    transform: translateX(9%);
+  }
+  50% {
+    transform: translateY(-14%);
+  }
+}
+@keyframes float2 {
+  0%, 100% {
+    transform: translateY(5%);
+  }
+  50% {
+    transform: translateY(-12%);
+  }
+}
+@keyframes float3 {
+  0%, 100% {
+    transform: translateY(10%);
+  }
+  50% {
+    transform: translateY(-8%);
+  }
+}
+@keyframes float4 {
+  0%, 100% {
+    transform: translateY(10%);
+  }
+  50% {
+    transform: translateY(-12%);
+  }
+}
+@keyframes float5 {
+  0%, 100% {
+    transform: translateY(10%);
+  }
+  50% {
+    transform: translateY(-13%);
+  }
+}

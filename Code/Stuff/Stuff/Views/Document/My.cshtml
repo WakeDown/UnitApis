@@ -1,0 +1,29 @@
+﻿@using Stuff.Objects
+@model IEnumerable<Stuff.Models.Document>
+
+@{
+    Layout = "~/Views/Shared/_Editor.cshtml";
+}
+
+@section PanelHead
+{
+    Список моих документов
+}
+@section PanelBody
+{
+    @if (Model != null && Model.Any())
+    {
+        <table class="table table-striped">
+            @foreach (var doc in Model)
+            {
+                <tr>
+                    <td><a target="_blank" href="@DbModel.OdataServiceUri/Document/GetData?sid=@doc.Sid">@doc.Name</a></td>
+                </tr>
+            }
+        </table>
+    }
+    else
+    {
+        <p>пуст</p>
+    }
+}

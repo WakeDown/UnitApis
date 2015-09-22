@@ -1,0 +1,95 @@
+﻿@model Stuff.Models.StatementRestFewHours
+
+@{
+    Layout = "~/Views/Shared/_Editor.cshtml";
+}
+@section PanelHead
+{
+    Заявление на отсутствие (1 или несколько часов)
+}
+@section PanelBody
+{
+@*<div class="modal fade" id="modalStatementRestFewHours" tabindex="-1" role="dialog" aria-labelledby="modalStatementRestFewHoursLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="modalStatementRestFewHoursLabel">Заявление на отгул (1 или несколько часов)</h4>
+            </div>*@
+            @using (Html.BeginForm("StatementRestFewHours", "Document", FormMethod.Post, new { @class = "form-horizontal", data_toggle = "validator", role = "form" }))
+            {
+                @Html.HiddenFor(m=>m.SidEmployee, new {id="sid"})
+                @*<div class="modal-body">*@
+                    <div class="form-group">
+                        <label class="col-lg-2 control-label" for="dateRest">Дата отсутствия</label>
+                        <div class="col-lg-2">
+                            @Html.TextBoxFor(m => m.DateRest, new { @class = "form-control required-mark", @id = "dateRest", required="required" })
+                            <span class="help-block with-errors"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-2 control-label" for="hourStart">Время начала</label>
+                        <div class="col-lg-2 bootstrap-timepicker">
+                            @Html.TextBoxFor(m => m.HourStart, "{0:HH:mm}", new { @class = "form-control required-mark", @id = "hourStart", required = "required" })
+                            <span class="help-block with-errors"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-2 control-label" for="hourCount">Количество часов</label>
+                        <div class="col-lg-1">
+                            @Html.TextBoxFor(m => m.HoursCount, new { @class = "form-control required-mark", @id = "hourCount", required = "required" })
+                            <span class="help-block with-errors"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-2 control-label" for="cause">Причина</label>
+                        <div class="col-lg-8">
+                            @Html.TextAreaFor(m => m.Cause, new { @class = "form-control required-mark", @id = "cause", required = "required", rows = 3 })
+                            <span class="help-block with-errors"></span>
+                        </div>
+                    </div>
+                <div class="form-group">
+                    <div class="col-lg-push-2 col-lg-8">
+                        <button type="submit" class="btn btn-primary" id="printStatementRestFewHours"><i class="fa fa-print"></i> На печать</button>
+                        <p class="text-danger" id="serverError">
+                            @TempData["ServerError"]
+                        </p>
+                    </div>
+                    
+                </div>
+                
+                @*</div>*@
+                @**@
+                @*<div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary" id="printStatementRestFewHours">Распечатать</button>
+                    
+                </div>*@
+            }
+        @*</div>
+    </div>
+</div>*@
+
+}
+
+@section scripts
+{
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#dateRest").datepicker({
+                format: "dd.mm.yyyy",
+                autoclose: true,
+                todayBtn: "linked",
+                language: "ru"
+            });
+            $("#dateRest").mask('00.00.0000');
+            //$("#hourStart").timepicker({
+            //    showMeridian: false
+            //});
+            $("#hourStart").mask('00:00');
+            $("#hourCount").mask('0');
+        });
+
+</script>
+}

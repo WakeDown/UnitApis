@@ -1,0 +1,14 @@
+﻿@using Stuff.Helpers
+@using Stuff.Models
+@using Stuff.Objects
+@model Stuff.Models.VendorState
+
+@{
+    Layout = null;
+}
+<head><title>Картинка статуса вендора</title></head>
+<body>
+    <img id="pic-min" src="@Url.Action("GetImage", "VendorState", new {id = @Model.Id})" />
+</body>
+
+  

@@ -13,6 +13,10 @@ using DataProvider.Models.SpeCalc;
 using DataProvider.Objects;
 using Microsoft.Ajax.Utilities;
 using Microsoft.OData.Core.UriParser.Semantic;
+using System.Text;
+using System.Configuration;
+using System.IO;
+using System.Net.Mime;
 
 namespace DataProvider.Models.Stuff
 {
@@ -114,6 +118,8 @@ namespace DataProvider.Models.Stuff
         }
         internal void Save()
         {
+            bool isNew = Id == 0;
+
             SqlParameter pId = new SqlParameter()
             {
                 ParameterName = "id",
@@ -171,20 +177,53 @@ namespace DataProvider.Models.Stuff
 
             var dt = Db.Stuff.ExecuteQueryStoredProcedure("save_vendor_state", pId, pName, pIdVendor, pDescription,
                 pDateEnd, pIdOrganization, pIdLanguage, pCreatorSid, pPicData);
-            var changed = (Id == 0) || Db.Stuff.ExecuteQueryStoredProcedure("check_vendor_state_is_changed", pId).Rows[0].ItemArray.Length > 1;
-            if (changed)
-            {
-                string subject = (Id == 0) ? "New" : "Edit";
-                var mailTo = GetMailAddressVendorStateExpiresDeliveryList();
-                VendorName = new Vendor(VendorId).Name;
-                MessageHelper.SendMailSmtp(subject, VendorName, false, mailTo, null, null, true);
-            }
+            var body = new StringBuilder("Добрый день.<br/>");
+            UnitOrganizationName = new Organization(UnitOrganizationId).Name;
+            VendorName = new Vendor(VendorId).Name;
+            var mailTo = Employee.GetFullRecipientList();
+            var stuffUrl = ConfigurationManager.AppSettings["StuffUrl"];
+
             if (dt.Rows.Count > 0)
             {
                 int id;
                 int.TryParse(dt.Rows[0]["id"].ToString(), out id);
                 Id = id;
             }
+
+            //if (isNew)
+            //{
+
+            //    var subject = string.Format("Новый статус {0} от {1}.", StateName, VendorName);
+            //    body.AppendFormat("У организации {0} появился новый статус {1} от {2}.<br/>", UnitOrganizationName, StateName,
+            //        VendorName);
+            //    body.AppendFormat("Срок действия до {0}.<br/>", EndDate.ToShortDateString());
+            //    body.AppendFormat("{0}<br/>", StateDescription);
+            //    body.AppendFormat("<a href='{0}/VendorState/Index/#vs-{1}'>{0}/VendorState/Index/#vs-{1}</a><br/>", stuffUrl, Id);
+            //    MemoryStream stream = new MemoryStream(new VendorState(Id).Picture.ToArray());;
+            //    var file = new AttachmentFile() { Data = stream.ToArray(), FileName = "state.jpeg", DataMimeType = MediaTypeNames.Image.Jpeg };
+            //    MessageHelper.SendMailSmtp(subject, body.ToString(), true, mailTo, null, null, file);
+            //}
+            //else
+            //{
+            //    var vnd = new VendorState((Db.Stuff.ExecuteQueryStoredProcedure("check_vendor_state_is_changed", pId)).Rows[0]);
+            //    vnd.VendorName = new Vendor(vnd.VendorId).Name;
+            //    vnd.UnitOrganizationName = new Organization(vnd.UnitOrganizationId).Name;
+            //    var changed = vnd.Id != 0;
+            //    if (changed)
+            //    {
+            //        string subject = string.Format("Обновление статуса {0} от {1}", vnd.StateName, vnd.VendorName);
+            //        body.AppendFormat("Обновился статус {0} от {1} для организации {2}.<br/>", vnd.StateName, vnd.VendorName, vnd.UnitOrganizationName);
+            //        body.Append("<br/>Новая версия статуса:<br/>");
+            //        body.AppendFormat("Организация {0}<br/>", UnitOrganizationName);
+            //        body.AppendFormat("Вендор {0}<br/>", VendorName);
+            //        body.AppendFormat("Статус {0}<br/>", StateName);
+            //        body.AppendFormat("Срок действия до {0}<br/>", EndDate.ToShortDateString());
+            //        body.AppendFormat("{0}<br/><a href='{1}/VendorState/Index/#vs-{2}'>{1}/VendorState/Index/#vs-{2}</a><br/>", StateDescription, stuffUrl, Id);
+            //        MemoryStream stream = new MemoryStream(new VendorState(Id).Picture.ToArray()); ;
+            //        var file = new AttachmentFile() { Data = stream.ToArray(), FileName = "state.jpeg", DataMimeType = MediaTypeNames.Image.Jpeg };
+            //        MessageHelper.SendMailSmtp(subject, body.ToString(), true, mailTo, null, null, file);
+            //    }
+            //}
         }
 
         public static IEnumerable<string> GetMailAddressVendorStateExpiresDeliveryList()

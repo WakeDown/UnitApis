@@ -1,0 +1,187 @@
+﻿@using Stuff.Objects
+@model Stuff.Models.Employee
+
+@{
+    ViewBag.Title = "Карточка сотрудника";
+    Layout = "~/Views/Shared/_Editor.cshtml";
+    bool userCanEdit = ViewBag.CurUser.UserCanEdit();
+}
+
+@section PanelHead
+{
+    @if (userCanEdit)
+    {
+        <span class="pull-right"><a class="btn btn-link" href="@Url.Action("Edit", new {id = Model.Id})">@*<i class="fa fa-edit"></i>&nbsp;*@изменить</a></span>
+    }
+    @Html.Label(Model.FullName)
+    @if (ViewBag.CurUser.UserIsAdmin())
+    {
+        <small>
+            @Html.Label(Model.AdSid)
+        </small>
+    }
+
+    <p>
+        @*<small>
+            @Html.LabelFor(m=>m, Model.EmpState.Name)</small>*@
+    </p>
+}
+
+@section PanelBody
+{
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="emp-photo"><img id="photo" src="@DbModel.OdataServiceUri/Employee/GetPhoto?id=@Model.Id" /></div>
+        </div>
+        <div class="col-lg-9">
+            <table class="table table-condensed">
+                <colgroup>
+                    <col class="col-lg-1" />
+                    <col class="col-lg-4" />
+                </colgroup>
+                @*<tr>
+                        <td class="text-right">пол:</td>
+                        <td>@Html.LabelFor(m => m, Model.Male != null ? Model.Male ? "мужской" : "женский" : "--не указан--")</td>
+                    </tr>*@
+                <tr>
+                    <td class="text-right">дата рождения:</td>
+                    <td>@Html.LabelFor(m => m, Model.BirthDate != null ? String.Format("{0:dd MMMM}", Model.BirthDate.Value) : String.Empty)</td>
+                </tr>
+                @*<tr>
+                        <td class="text-right">дата прихода:</td>
+                        <td>@Html.LabelFor(m => m, Model.DateCame != null ? Model.DateCame.Value.ToShortDateString() : String.Empty)</td>
+                    </tr>*@
+                <tr>
+                    <td class="text-right">Стаж работы:</td>
+                    <td>@Html.LabelFor(m => m, Model.DateCame.HasValue ? Model.ExpirenceString : String.Empty)</td>
+                </tr>
+
+                <tr>
+                    <td class="text-right">почта:</td>
+                    <td><a href="mailto:@(Model.Email)">@Model.Email</a></td>
+                </tr>
+                <tr>
+                    <td class="text-right">мобильный:</td>
+                    <td>@Html.LabelFor(m => m, Model.MobilNum)</td>
+                </tr>
+                <tr>
+                    <td class="text-right">внутренний:</td>
+                    <td>@Html.LabelFor(m => m, Model.WorkNum)</td>
+                </tr>
+                <tr>
+                    <td class="text-right">город:</td>
+                    <td>@Html.LabelFor(m => m, Model.City.Name)</td>
+                </tr>
+                <tr>
+                    <td class="text-right">юр. лицо:</td>
+                    <td>@Html.LabelFor(m => m, Model.Organization.Name)</td>
+                </tr>
+                <tr>
+                    <td class="text-right">подразделение:</td>
+                    <td>@Html.LabelFor(m => m, Model.Department.Name)</td>
+                </tr>
+                <tr>
+                    <td class="text-right">должность:</td>
+                    <td>@Html.LabelFor(m => m, Model.Position.Name)</td>
+                </tr>
+                <tr>
+                    <td class="text-right">руководитель: </td>
+                    <td>@Html.LabelFor(m => m, Model.Manager.DisplayName)</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    @if (Model.BirthDate.HasValue && Model.BirthDate.Value.Day == DateTime.Now.Day && Model.BirthDate.Value.Month == DateTime.Now.Month)
+    {
+        <div class="clearfix"></div>
+        <div>
+            @Styles.Render("~/Content/birthday")
+            @*<div class="love-pop">go ahead, pop 'em!</div>*@
+            <div class="love-container">
+                <div class="love-box">
+                    <div class="balloon red"></div>
+                    <div class="text red">С</div>
+                </div>
+                <div class="love-box">
+                    <div class="balloon blue"></div>
+                    <div class="text blue"></div>
+                </div>
+                <div class="love-box">
+                    <div class="balloon orange"></div>
+                    <div class="text orange">д</div>
+                </div>
+                <div class="love-box">
+                    <div class="balloon green"></div>
+                    <div class="text green">н</div>
+                </div>
+                <div class="love-box">
+                    <div class="balloon yellow"></div>
+                    <div class="text yellow">е</div>
+                </div>
+                <div class="love-box">
+                    <div class="balloon blue"></div>
+                    <div class="text blue">м</div>
+                </div>
+                <div class="love-box">
+                    <div class="balloon blue"></div>
+                    <div class="text blue"></div>
+                </div>
+                <div class="love-box">
+                    <div class="balloon red"></div>
+                    <div class="text red">р</div>
+                </div>
+                <div class="love-box">
+                    <div class="balloon yellow"></div>
+                    <div class="text yellow">о</div>
+                </div>
+                <div class="love-box">
+                    <div class="balloon orange"></div>
+                    <div class="text orange">ж</div>
+                </div>
+                <div class="love-box">
+                    <div class="balloon green"></div>
+                    <div class="text green">д</div>
+                </div>
+                <div class="love-box">
+                    <div class="balloon yellow"></div>
+                    <div class="text yellow">е</div>
+                </div>
+                <div class="love-box">
+                    <div class="balloon orange"></div>
+                    <div class="text orange">н</div>
+                </div>
+                <div class="love-box">
+                    <div class="balloon green"></div>
+                    <div class="text green">и</div>
+                </div>
+                <div class="love-box">
+                    <div class="balloon blue"></div>
+                    <div class="text blue">я</div>
+                </div>
+                <div class="love-box">
+                    <div class="balloon red"></div>
+                    <div class="text red">!</div>
+                </div>
+            </div>
+
+        </div>
+    }
+
+
+}
+
+@section scripts
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".balloon").hover(function () {
+                $(this).next().show();
+                //$(this).hide();
+                $(this).hide("explode", { pieces: 6 }, 100);
+            });
+        });
+
+    </script>
+
+}

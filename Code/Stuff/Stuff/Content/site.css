@@ -1,0 +1,274 @@
+﻿/*body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}*/
+
+body {
+    font-family: Arial;
+    background: #B4B4B4 url(../Content/images/bg1.png) repeat left top;
+}
+
+.container {
+    width: 1400px;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.body-content {
+    background: #fff;
+    padding-top: 70px;
+}
+
+.body-content {
+    box-shadow: 0 0 10px #666;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+.navbar {
+    box-shadow: 0 0 25px #333;
+    margin-bottom: 0px !important;
+}
+
+.navbar-brand {
+    padding-top: 3px;
+}
+
+    .navbar-brand div {
+        padding: 3px 0 0 8px;
+        margin: 0;
+    }
+
+.brand-prefix {
+    padding-top: 5px;
+}
+
+.headLogo {
+    display: block;
+    height: 25px;
+    padding-left: 25px;
+}
+
+input.required-mark, select.required-mark, span.required-mark, textarea.required-mark {
+    background-color: #fcf8e3;
+}
+
+/*.val-form .required-mark:before {
+    content: '* ';
+    color:  red;
+    font-size: 1.2em;
+}*/
+
+#filter .panel-heading {
+    cursor: pointer;
+}
+
+#filter .panel-title .title:after {
+    font-family: 'FontAwesome';
+    content: "\f0d7";
+    float: right;
+    color: #999;
+}
+
+#filter .collapsed .title:after {
+    content: "\f0d8";
+}
+
+#filter .panel-title:after {
+    content: "скрыть фильтр";
+}
+
+#filter .collapsed:after {
+    content: "показать фильтр";
+}
+
+#filterPanel {
+    background: #eee;
+}
+
+.field-validation-error {
+    color: #d9534f;
+}
+
+.field-validation-valid {
+    display: none;
+}
+
+.input-validation-error {
+    border: 1px solid #d43f3a;
+    background-color: #fee;
+}
+
+.validation-summary-errors {
+    font-weight: bold;
+    color: #d9534f;
+}
+
+.validation-summary-valid {
+    display: none;
+}
+
+ul.tree {
+    list-style: none;
+}
+
+    ul.tree li {
+        padding-bottom: 10px;
+    }
+
+.tree li div.panel-title.collapsed .h4:before {
+    font-family: FontAwesome;
+    content: "\f0da   ";
+}
+
+.tree li div.panel-title .h4:before {
+    font-family: FontAwesome;
+    content: "\f0d7   ";
+}
+
+.tree li div.panel-title {
+    cursor: pointer;
+}
+
+.btn-taped {
+    position: relative;
+    top: 3px;
+}
+
+#photo {
+    width: 250px;
+    overflow: hidden;
+}
+
+#photo-min {
+    width: 50px;
+}
+
+table .btn {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.dep-stuff {
+    padding-left: 14px;
+    padding-bottom: 10px;
+}
+
+.table-stuff {
+    padding: 0;
+    margin: 0;
+}
+
+.min-width {
+    width: 1px !important;
+}
+
+.width-20p {
+    width: 20%;
+}
+
+.btn-nopadding {
+    padding: 0;
+    margin: 0;
+}
+
+.photo-info {
+    width: 250px;
+    padding-right: 5px;
+    padding-top: 5px;
+}
+
+.bold {
+    font-weight: 700;
+}
+
+.text-warning.light {
+    color: #d58512;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+
+
+img.org-state-preview {
+    height: 80px;
+}
+
+#docs tr:hover {
+    cursor: pointer;
+    background-color: #fcf8e3; 
+}
+#docs tr.selected, #docs tr.selected:hover {
+    background-color: #f7ecb5; 
+}
+
+table.list4link tr:hover {
+    cursor: pointer;
+    background-color: #fcf8e3; 
+}
+table.list4link tr.selected, #docs tr.selected:hover {
+    background-color: #f7ecb5; 
+}
+
+table.list4link tr .act {
+    display: none;
+}
+
+table.list4link tr.db-success .act {
+    display: block;
+}
+
+table.list4link tr.db-error .act {
+    display: block;
+}
+
+.tab-mark {
+    position: absolute;
+    color: #e38d13;
+    overflow: hidden;
+    font-size: 3em;
+    bottom: 0px;
+    right: 0px;
+    float: right;
+}
+
+.tab-mark.hidden {
+    display: none;
+}
+
+
+.main-menu {
+    width: 100%;
+}
+
+.main-menu tr.clear {
+    height: 50px;
+}
+
+.main-menu td {
+    margin: 5px;
+    padding: 15px 40px;
+    text-align: center;
+    border: 2px solid #fff;
+}
+
+.main-menu td:hover {
+   /*background-color: #e3e3e3;*/
+   /*border: 2px solid #e3e3e3;*/
+}
+
+.main-icon {
+     width: 60px;
+}
+
+
+.main-icon-label {
+    font-size: 2em;
+    text-align: center;
+}
