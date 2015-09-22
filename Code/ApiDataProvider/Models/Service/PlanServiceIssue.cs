@@ -22,6 +22,7 @@ namespace DataProvider.Models.Service
         public string Descr { get; set; }
         public int IdCity { get; set; }
         public string CityName { get; set; }
+        public string CityShortName { get; set; }
         public string Address { get; set; }
         public string ObjectName { get; set; }
         public int IdClient { get; set; }
@@ -62,6 +63,7 @@ namespace DataProvider.Models.Service
             Descr = Db.DbHelper.GetValueString(row, "descr");
             IdCity = Db.DbHelper.GetValueIntOrDefault(row, "id_city");
             CityName = Db.DbHelper.GetValueString(row, "city");
+            CityShortName = Db.DbHelper.GetValueString(row, "city_short");
             Address = Db.DbHelper.GetValueStringOrEmpty(row, "address");
             IdClient = Db.DbHelper.GetValueIntOrDefault(row, "id_contractor");
             ClientName = Db.DbHelper.GetValueString(row, "contractor");

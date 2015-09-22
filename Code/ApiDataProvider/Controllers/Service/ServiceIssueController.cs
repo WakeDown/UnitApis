@@ -69,7 +69,7 @@ namespace DataProvider.Controllers.Service
 
             var planList = PlanServiceIssue.GetClaimList(month.Value);
             var citiesList = planList.GroupBy(x => x.IdCity)
-                .Select(x => new ServiceIssuePlaningItem(x.Key, x.First().CityName, x.Count())).OrderBy(x => x.Name).ToArray();
+                .Select(x => new ServiceIssuePlaningItem(x.Key, x.First().CityName, x.Count(), x.First().CityShortName)).OrderBy(x => x.ShortName).ToArray();
 
             return citiesList;
 

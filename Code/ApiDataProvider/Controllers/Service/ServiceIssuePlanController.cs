@@ -55,12 +55,21 @@ namespace DataProvider.Controllers.Service
 
         
 
-        public IEnumerable<ServiceIssuePeriodItem> GetPeriodList(int? year, int? month)
+        public IEnumerable<ServiceIssuePeriodItem> GetPeriodMonthList(int? year, int? month)
         {
             if (!year.HasValue) year = DateTime.Now.Year;
             if (!month.HasValue) month = DateTime.Now.Month;
 
-            return ServiceIssuePlan.GetPeriodList(year.Value, month.Value);
+            return ServiceIssuePlan.GetPeriodMonthList(year.Value, month.Value);
         }
+
+        public IEnumerable<ServiceIssuePeriodItem> GetPeriodMonthCurPrevNextList(int? year, int? month)
+        {
+            if (!year.HasValue) year = DateTime.Now.Year;
+            if (!month.HasValue) month = DateTime.Now.Month;
+
+            return ServiceIssuePlan.GetPeriodMonthCurPrevNextList(year.Value, month.Value);
+        }
+        
     }
 }

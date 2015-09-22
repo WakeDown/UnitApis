@@ -99,26 +99,59 @@ namespace DataProvider.Models.Service
 
             return lst;
         }
-
-        public static IEnumerable<ServiceIssuePeriodItem> GetPeriodList(int year, int month)
+        /// <summary>
+        /// Текущий
+        /// </summary>
+        /// <param name="year"></param>
+        /// <param name="month"></param>
+        /// <returns></returns>
+        public static IEnumerable<ServiceIssuePeriodItem> GetPeriodMonthList(int year, int month)
         {
             var list = new List<ServiceIssuePeriodItem>();
 
             DateTime lastDayOfMonth = new DateTime(year, month, DateTime.DaysInMonth(year, month));
-            DateTime lastDay = lastDayOfMonth;//DateTimeHelper.GetNextWeekday(lastDayOfMonth, DayOfWeek.Monday);
+            //DateTime lastDay = lastDayOfMonth;//DateTimeHelper.GetNextWeekday(lastDayOfMonth, DayOfWeek.Monday);
             DateTime firstDayOfMonth = new DateTime(year, month, 1);
-            DateTime day = DateTimeHelper.GetPrevWeekday(firstDayOfMonth, DayOfWeek.Monday).AddDays(-1);
-
-            while (day < lastDay)
+            DateTime fDay = firstDayOfMonth;//DateTimeHelper.GetPrevWeekday(firstDayOfMonth, DayOfWeek.Monday).AddDays(-1);
+            bool isFirst = true;
+            DateTime lDay = new DateTime();
+            while (lDay < lastDayOfMonth)
             {
-                DateTime monday = DateTimeHelper.GetNextWeekday(day, DayOfWeek.Monday);
-                day = monday;
-                DateTime sunday = DateTimeHelper.GetNextWeekday(day, DayOfWeek.Sunday);
-                day = sunday;
-                list.Add(new ServiceIssuePeriodItem(monday, sunday));
+                if (!isFirst)
+                {
+                    fDay = DateTimeHelper.GetNextWeekday(lDay, DayOfWeek.Monday);
+                }
+                else
+                {
+                    isFirst = false;
+                    fDay = firstDayOfMonth;
+                }
+
+                lDay = DateTimeHelper.GetNextWeekday(fDay, DayOfWeek.Sunday);
+                if (lDay > lastDayOfMonth) lDay = lastDayOfMonth;
+                list.Add(new ServiceIssuePeriodItem(fDay, lDay));
             }
 
             return list;
         }
+        /// <summary>
+        /// Текущий, прошлый и будущий
+        /// </summary>
+        /// <param name="curYear"></param>
+        /// <param name="curMonth"></param>
+        /// <returns></returns>
+        public static IEnumerable<ServiceIssuePeriodItem> GetPeriodMonthCurPrevNextList(int curYear, int curMonth)
+        {
+            var list = new List<ServiceIssuePeriodItem>();
+            DateTime curDate = new DateTime(curYear, curMonth, 1);
+            DateTime prevDate = curDate.AddMonths(-1);
+            DateTime nextDate = curDate.AddMonths(1);
+            list.AddRange(GetPeriodMonthList(prevDate.Year, prevDate.Month));
+            list.AddRange(GetPeriodMonthList(curDate.Year, curDate.Month));
+            list.AddRange(GetPeriodMonthList(nextDate.Year, nextDate.Month));
+
+            return list;
+        }
+
     }
 }
