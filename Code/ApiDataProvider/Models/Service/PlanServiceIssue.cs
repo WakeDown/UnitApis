@@ -97,7 +97,7 @@ namespace DataProvider.Models.Service
             return id;
         }
 
-        public static IEnumerable<PlanServiceIssue> GetClaimList(DateTime month, int? idCity = null, string address=null, int? idClient = null, string serviceAdminSid=null, string serviceEngeneerSid = null)
+        public static IEnumerable<PlanServiceIssue> GetClaimList(DateTime month, int? idCity = null, string address=null, int? idClient = null, string serviceAdminSid = null, string serviceEngeneerSid = null)
         {
             SqlParameter pMonth = new SqlParameter() { ParameterName = "date_month", SqlValue = month, SqlDbType = SqlDbType.Date };
             SqlParameter pIdCity = new SqlParameter() { ParameterName = "id_city", SqlValue = idCity, SqlDbType = SqlDbType.Int };
