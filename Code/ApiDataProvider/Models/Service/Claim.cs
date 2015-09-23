@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -16,14 +17,18 @@ namespace DataProvider.Models.Service
     {
         public int Id { get; set; }
         public string Sid { get; set; }
+        public int IdContractor { get; set; }
         public Contractor Contractor { get; set; }
+        public int IdContract { get; set; }
         public Contract Contract { get; set; }
+        public int IdDevice { get; set; }
         public Device Device { get; set; }
         public string ContractorName { get; set; }
         public string ContractName { get; set; }
         public string DeviceName { get; set; }
-        public EmployeeSm Admin { get; set; }
-        public EmployeeSm Engeneer { get; set; }
+        //public EmployeeSm Admin { get; set; }
+        //public EmployeeSm Engeneer { get; set; }
+        public int IdState { get; set; }
         public ClaimState State { get; set; }
         public DateTime DateStateChange { get; set; }
         public int? IdWorkType { get; set; }
@@ -43,14 +48,14 @@ namespace DataProvider.Models.Service
 
         public Claim() { }
 
-        public Claim(int id, bool getNames = false)
+        public Claim(int id, bool getNames = false, bool loadObject = true)
         {
             SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = id, SqlDbType = SqlDbType.Int };
             var dt = Db.Service.ExecuteQueryStoredProcedure("get_claim", pId);
             if (dt.Rows.Count > 0)
             {
                 var row = dt.Rows[0];
-                FillSelf(row);
+                FillSelf(row, loadObject);
                 if (getNames) GetNames();
             }
 
@@ -116,23 +121,21 @@ namespace DataProvider.Models.Service
             Device = new Device(Device.Id);
         }
 
-        private void FillSelf(DataRow row)
+        private void FillSelf(DataRow row, bool loadObj = true)
         {
             Sid = Db.DbHelper.GetValueString(row, "sid");
             Id = Db.DbHelper.GetValueIntOrDefault(row, "id");
-            Contractor = new Contractor() { Id = Db.DbHelper.GetValueIntOrDefault(row, "id_contractor") };
-            Contract = new Contract() { Id = Db.DbHelper.GetValueIntOrDefault(row, "id_contract") };
-            Device = new Device() { Id = Db.DbHelper.GetValueIntOrDefault(row, "id_device") };
+            IdContractor = Db.DbHelper.GetValueIntOrDefault(row, "id_contractor");
+            IdContract = Db.DbHelper.GetValueIntOrDefault(row, "id_contract");
+            IdDevice =Db.DbHelper.GetValueIntOrDefault(row, "id_device");
             ContractorName = Db.DbHelper.GetValueString(row, "contractor_name");
             ContractName = Db.DbHelper.GetValueString(row, "contract_name");
             DeviceName = Db.DbHelper.GetValueString(row, "device_name");
-            Admin = new EmployeeSm(Db.DbHelper.GetValueIntOrDefault(row, "id_admin"));
-            Engeneer = new EmployeeSm(Db.DbHelper.GetValueIntOrDefault(row, "id_engeneer"));
-            State = new ClaimState(Db.DbHelper.GetValueIntOrDefault(row, "id_claim_state"));
+            //Admin = new EmployeeSm(Db.DbHelper.GetValueIntOrDefault(row, "id_admin"));
+            //Engeneer = new EmployeeSm(Db.DbHelper.GetValueIntOrDefault(row, "id_engeneer"));
+            
             IdWorkType = Db.DbHelper.GetValueIntOrNull(row, "id_work_type");
-            if (IdWorkType.HasValue && IdWorkType.Value > 0) WorkType = new WorkType(IdWorkType.Value);
             SpecialistSid = Db.DbHelper.GetValueString(row, "specialist_sid");
-            Specialist = new EmployeeSm(SpecialistSid);
             DateCreate = Db.DbHelper.GetValueDateTimeOrDefault(row, "date_create");
             DateStateChange = Db.DbHelper.GetValueDateTimeOrDefault(row, "date_state_change");
             ClientSdNum = Db.DbHelper.GetValueString(row, "client_sd_num");
@@ -141,13 +144,25 @@ namespace DataProvider.Models.Service
             CurAdminSid = Db.DbHelper.GetValueString(row, "cur_admin_sid");
             CurTechSid = Db.DbHelper.GetValueString(row, "cur_tech_sid");
             CurManagerSid = Db.DbHelper.GetValueString(row, "cur_manager_sid");
-        }
 
+            if (loadObj)
+            {
+
+                if (IdWorkType.HasValue && IdWorkType.Value > 0) WorkType = new WorkType(IdWorkType.Value);
+                Specialist = new EmployeeSm(SpecialistSid);
+                State = new ClaimState(Db.DbHelper.GetValueIntOrDefault(row, "id_claim_state"));
+                Contractor = new Contractor() { Id = Db.DbHelper.GetValueIntOrDefault(row, "id_contractor") };
+                Contract = new Contract() { Id = Db.DbHelper.GetValueIntOrDefault(row, "id_contract") };
+                Device = new Device() { Id = Db.DbHelper.GetValueIntOrDefault(row, "id_device") };
+            }
+        }
+        
         public int Save()
         {
+            bool isNew = Id == 0;
             //if (State == null) State = ClaimState.GetFirstState();
-            if (Admin == null) Admin = new EmployeeSm();
-            if (Engeneer == null) Engeneer = new EmployeeSm();
+            //if (Admin == null) Admin = new EmployeeSm();
+            //if (Engeneer == null) Engeneer = new EmployeeSm();
             if (Contract == null) Contract = new Contract();
             if (Contractor == null) Contractor = new Contractor();
             if (Device == null) Device = new Device();
@@ -158,6 +173,7 @@ namespace DataProvider.Models.Service
             //    var wt = new WorkType(IdWorkType);
             //    Descr = Descr.Replace(wtReplace, $"{wt.SysName} ({wt.Name})");
             //}
+            if (isNew) CurManagerSid = CurUserAdSid;
 
             SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = Id, SqlDbType = SqlDbType.Int };
             SqlParameter pIdContractor = new SqlParameter() { ParameterName = "id_contractor", SqlValue = Contractor.Id, SqlDbType = SqlDbType.Int };
@@ -166,8 +182,8 @@ namespace DataProvider.Models.Service
             SqlParameter pContractorName = new SqlParameter() { ParameterName = "contractor_name", SqlValue = ContractorName, SqlDbType = SqlDbType.NVarChar };
             SqlParameter pContractName = new SqlParameter() { ParameterName = "contract_number", SqlValue = ContractName, SqlDbType = SqlDbType.NVarChar };
             SqlParameter pDeviceName = new SqlParameter() { ParameterName = "device_name", SqlValue = DeviceName, SqlDbType = SqlDbType.NVarChar };
-            SqlParameter pIdAdmin = new SqlParameter() { ParameterName = "id_admin", SqlValue = Admin.Id, SqlDbType = SqlDbType.Int };
-            SqlParameter pIdEngeneer = new SqlParameter() { ParameterName = "id_engeneer", SqlValue = Engeneer.Id, SqlDbType = SqlDbType.Int };
+            //SqlParameter pIdAdmin = new SqlParameter() { ParameterName = "id_admin", SqlValue = Admin.Id, SqlDbType = SqlDbType.Int };
+            //SqlParameter pIdEngeneer = new SqlParameter() { ParameterName = "id_engeneer", SqlValue = Engeneer.Id, SqlDbType = SqlDbType.Int };
             //Статус сохраняем отдельной процедурой так как надо хранить историю
             //SqlParameter pIdClaimState = new SqlParameter() { ParameterName = "id_claim_state", SqlValue = State.Id, SqlDbType = SqlDbType.Int };
             SqlParameter pIdWorkType = new SqlParameter() { ParameterName = "id_work_type", SqlValue = IdWorkType, SqlDbType = SqlDbType.Int };
@@ -189,15 +205,15 @@ namespace DataProvider.Models.Service
 
             //Если заявка уже сохранена то основная информаци не будет перезаписана
             dt = Db.Service.ExecuteQueryStoredProcedure("save_claim", pId, pIdContractor, pIdContract, pIdDevice,
-                pContractorName, pContractName, pDeviceName, pIdAdmin, pIdEngeneer, pCreatorAdSid, pIdWorkType, pSpecialistSid, pClientSdNum, pEngeneerSid, pAdminSid, pTechSid, pManagerSid);
-
+                pContractorName, pContractName, pDeviceName, /*pIdAdmin, pIdEngeneer,*/ pCreatorAdSid, pIdWorkType, pSpecialistSid, pClientSdNum, pEngeneerSid, pAdminSid, pTechSid, pManagerSid);
+            
             int id = 0;
             if (dt.Rows.Count > 0)
             {
-                Int32.TryParse(dt.Rows[0]["id"].ToString(), out id);
+                int.TryParse(dt.Rows[0]["id"].ToString(), out id);
             }
-
-            if (Id == 0)
+            
+            if (isNew)
             {
                 Id = id;
                 var st = ClaimState.GetFirstState();
@@ -224,10 +240,10 @@ namespace DataProvider.Models.Service
             return Id;
         }
 
-        public static void RemoteStateChange(int idClaim, string stateSysName, string creatorSid, string descr=null)
+        public static void RemoteStateChange(int idClaim, string stateSysName, string creatorSid, string descr = null)
         {
             var claim = new Claim(idClaim);
-            claim.CurUserAdSid =creatorSid;
+            claim.CurUserAdSid = creatorSid;
             if (claim.Id > 0)
             {
                 var state = new ClaimState(stateSysName);
@@ -287,8 +303,12 @@ namespace DataProvider.Models.Service
             var currState = GetClaimCurrentState(Id);
             var nextState = new ClaimState();
             bool saveStateInfo = true;
+            bool sendNote = false;
+            MailTo[] noteTo = {MailTo.CurSpecialist};
+            string noteText = String.Empty;
+            string noteSubject = String.Empty;
 
-            switch (currState.SysName.ToUpper())
+            switch (currState.SysName.ToUpper())//Текущий статус
             {
                 //case "NEW":
                 //    nextState = new ClaimState("NEWADD");
@@ -328,6 +348,10 @@ namespace DataProvider.Models.Service
                             CurAdminSid = SpecialistSid;
                             break;
                     }
+                    sendNote = true;
+                    noteTo = new[] { MailTo.CurSpecialist };
+                    noteText = $@"Вам назначена заявка №%ID% %LINK%";
+                    noteSubject = $"Назначена заявка №%ID%";
                     break;
                 case "TECHSET":
                     if (confirm)
@@ -339,7 +363,11 @@ namespace DataProvider.Models.Service
                         descr = $"Отклонено\r\n{Descr}";
                         nextState = new ClaimState("NEW");
                         //Очищаем выбранного специалиста так как статус заявки поменялся
-                        Clear(specialist: true, workType: true, tech:true);
+                        Clear(specialist: true, workType: true, tech: true);
+                        sendNote = true;
+                        noteTo = new[] { MailTo.Admin };
+                        noteText = $@"Отклонено назначение заявки №%ID% %LINK%";
+                        noteSubject = $"Отклонено назначение заявки №%ID%";
                     }
                     break;
                 case "TECHWORK":
@@ -374,7 +402,7 @@ namespace DataProvider.Models.Service
                         }
                         else if ((!ServiceSheet4Save.ProcessEnabled || !ServiceSheet4Save.DeviceEnabled) && (!ServiceSheet4Save.ZipClaim.HasValue || !ServiceSheet4Save.ZipClaim.Value))
                         {
-                            
+
                             nextState = new ClaimState("TECHNODONE");
                             //Сначала сохраняем промежуточный статус
                             SaveStateStep(nextState.Id);
@@ -402,6 +430,10 @@ namespace DataProvider.Models.Service
                     break;
                 case "SERVADMSETWAIT":
                     nextState = new ClaimState("SERVADMSET");
+                    sendNote = true;
+                    noteTo = new[] { MailTo.CurSpecialist };
+                    noteText = $@"Вам назначена заявка №%ID% %LINK%";
+                    noteSubject = $"Назначена заявка №%ID%";
                     break;
                 case "SERVADMSET":
                     if (confirm)
@@ -414,7 +446,11 @@ namespace DataProvider.Models.Service
                         descr = $"Отклонено\r\n{Descr}";
                         nextState = new ClaimState("NEW");
                         //Очищаем выбранного специалиста так как статус заявки поменялся
-                        Clear(specialist: true, admin:true);
+                        Clear(specialist: true, admin: true);
+                        sendNote = true;
+                        noteTo = new[] { MailTo.Manager };
+                        noteText = $@"Отклонено назначение заявки №%ID% %LINK%";
+                        noteSubject = $"Отклонено назначение заявки №%ID%";
                     }
                     break;
                 case "SRVADMWORK":
@@ -426,6 +462,10 @@ namespace DataProvider.Models.Service
                     descr = $"Назначен специалист {AdHelper.GetUserBySid(SpecialistSid).FullName}\r\nДата выезда {ServiceIssue4Save.DatePlan:dd.MM.yyyy}\r\n{Descr}";
                     nextState = new ClaimState("SRVENGSET");
                     CurEngeneerSid = SpecialistSid;
+                    sendNote = true;
+                    noteTo = new[] { MailTo.CurSpecialist };
+                    noteText = $@"Вам назначена заявка №%ID% %LINK%";
+                    noteSubject = $"Назначена заявка №%ID%";
                     break;
                 case "SERVENGSETWAIT":
                     nextState = new ClaimState("SRVENGSET");
@@ -447,7 +487,11 @@ namespace DataProvider.Models.Service
                         SaveStateStep(nextState.Id, descr);
                         saveStateInfo = false;
                         nextState = new ClaimState("SRVADMWORK");
-                        Clear(specialist: true, engeneer:true);
+                        Clear(specialist: true, engeneer: true);
+                        sendNote = true;
+                        noteTo = new[] { MailTo.Admin };
+                        noteText = $@"Отклонено назначение заявки №%ID% %LINK%";
+                        noteSubject = $"Отклонено назначение заявки №%ID%";
                     }
                     break;
 
@@ -507,6 +551,10 @@ namespace DataProvider.Models.Service
                     }
                 case "DONE":
                     nextState = new ClaimState("END");
+                    sendNote = true;
+                    noteTo = new[] { MailTo.Manager };
+                    noteText = $@"Заявка №%ID% закрыта  %LINK%";
+                    noteSubject = $"Заявка №%ID% закрыта";
                     break;
                 default:
                     nextState = currState;
@@ -515,18 +563,88 @@ namespace DataProvider.Models.Service
             Save();
             SaveStateStep(nextState.Id, descr, saveStateInfo);
             //SaveStateStep(nextState.Id);
+            if (sendNote)
+            {
+                //Замена по маске
+                noteSubject = noteSubject.Replace("%ID%", Id.ToString());
+
+                noteText = noteText.Replace("%ID%", Id.ToString());
+                string link = $"{ConfigurationManager.AppSettings["ServiceUrl"]}/Claim/Index/{Id}";
+                noteText = noteText.Replace("%LINK%", $@"<p><a href=""{link}"">{link}</a></p>");
+
+                SendMailToCurrent(noteText, noteSubject, noteTo);
+            }
         }
 
-
-
-        public static IEnumerable<Claim> GetList(out int cnt, int? idAdmin = null, int? idEngeneer = null, DateTime? dateStart = null, DateTime? dateEnd = null, int? topRows = 30)
+        public enum MailTo
         {
-            SqlParameter pIdAdmin = new SqlParameter() { ParameterName = "id_admin", SqlValue = idAdmin, SqlDbType = SqlDbType.Int };
-            SqlParameter pIdEngeneer = new SqlParameter() { ParameterName = "id_engeneer", SqlValue = idEngeneer, SqlDbType = SqlDbType.Int };
+            Engeneer,
+            Admin,
+            Tech,
+            Manager,
+            CurSpecialist
+        }
+
+        public void SendMailToCurrent(string message, string subject, params MailTo[] mailTo)
+        {
+            foreach (MailTo mt in mailTo)
+            {
+                string email = String.Empty;
+
+                if (mt == MailTo.Admin)
+                {
+                   string sid = new Claim(Id, loadObject:false).CurAdminSid;
+                   email = Employee.GetEmailBySid(sid);
+                }
+                else if (mt == MailTo.Engeneer)
+                {
+                    string sid = new Claim(Id, loadObject: false).CurEngeneerSid;
+                    email = Employee.GetEmailBySid(sid);
+                }
+                else if (mt == MailTo.Manager)
+                {
+                    string sid = new Claim(Id, loadObject: false).CurManagerSid;
+                    email = Employee.GetEmailBySid(sid);
+                    
+                }
+                else if (mt == MailTo.Tech)
+                {
+                    string sid = new Claim(Id, loadObject: false).CurTechSid;
+                    email = Employee.GetEmailBySid(sid);
+                }
+                else if (mt == MailTo.Tech)
+                {
+                    string sid = new Claim(Id, loadObject: false).CurTechSid;
+                    email = Employee.GetEmailBySid(sid);
+                }
+                else if (mt == MailTo.CurSpecialist)
+                {
+                    string sid = new Claim(Id, loadObject: false).SpecialistSid;
+                    email = Employee.GetEmailBySid(sid);
+                }
+                else
+                {
+                    throw new ArgumentException("Указанный получатель не обрабатывается");
+                }
+                if (!String.IsNullOrEmpty(email))MessageHelper.SendMailSmtp(subject, message, true, email);
+            }
+        }
+
+        public static IEnumerable<Claim> GetList(AdUser user, out int cnt, string adminSid = null, string engeneerSid = null, DateTime? dateStart = null, DateTime? dateEnd = null, int? topRows = 30, string managerSid = null, string techSid = null)
+        {
+            if (user.Is(AdGroup.ServiceAdmin)) adminSid = user.Sid;
+            if (user.Is(AdGroup.ServiceEngeneer)) engeneerSid = user.Sid;
+            if (user.Is(AdGroup.ServiceManager)) managerSid = user.Sid;
+            if (user.Is(AdGroup.ServiceTech)) techSid = user.Sid;
+
+            SqlParameter pServAdminSid = new SqlParameter() { ParameterName = "admin_sid", SqlValue = adminSid, SqlDbType = SqlDbType.VarChar };
+            SqlParameter pServEngeneerSid = new SqlParameter() { ParameterName = "engeneer_sid", SqlValue = engeneerSid, SqlDbType = SqlDbType.VarChar };
             SqlParameter pDateStart = new SqlParameter() { ParameterName = "date_start", SqlValue = dateStart, SqlDbType = SqlDbType.Date };
             SqlParameter pDateEnd = new SqlParameter() { ParameterName = "date_end", SqlValue = dateEnd, SqlDbType = SqlDbType.Date };
             SqlParameter pTopRows = new SqlParameter() { ParameterName = "top_rows", SqlValue = topRows, SqlDbType = SqlDbType.Int };
-            var dt = Db.Service.ExecuteQueryStoredProcedure("get_claim_list", pIdAdmin, pIdEngeneer, pDateStart, pDateEnd, pTopRows);
+            SqlParameter pManagerSid = new SqlParameter() { ParameterName = "manager_sid", SqlValue = managerSid, SqlDbType = SqlDbType.VarChar };
+            SqlParameter pTechSid = new SqlParameter() { ParameterName = "tech_sid", SqlValue = techSid, SqlDbType = SqlDbType.VarChar };
+            var dt = Db.Service.ExecuteQueryStoredProcedure("get_claim_list", pServAdminSid, pServEngeneerSid, pDateStart, pDateEnd, pTopRows, pManagerSid, pTechSid);
 
             var lst = new List<Claim>();
 
@@ -537,7 +655,7 @@ namespace DataProvider.Models.Service
             }
 
             //Общее количество
-            var dtCnt = Db.Service.ExecuteQueryStoredProcedure("get_claim_list_count", pIdAdmin, pIdEngeneer, pDateStart, pDateEnd);
+            var dtCnt = Db.Service.ExecuteQueryStoredProcedure("get_claim_list_count", pServAdminSid, pServEngeneerSid, pDateStart, pDateEnd, pManagerSid, pTechSid);
             cnt = 0;
             if (dtCnt.Rows.Count > 0)
             {
@@ -672,7 +790,7 @@ namespace DataProvider.Models.Service
             if (dt.Rows.Count > 0)
             {
                 int lastIdSerSheet = Db.DbHelper.GetValueIntOrDefault(dt.Rows[0], "id_service_sheet");
-                sheet= new ServiceSheet(lastIdSerSheet);
+                sheet = new ServiceSheet(lastIdSerSheet);
             }
             return sheet;
         }
