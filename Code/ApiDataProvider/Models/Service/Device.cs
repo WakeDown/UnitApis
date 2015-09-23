@@ -54,6 +54,7 @@ namespace DataProvider.Models.Service
                 result.ContractStr = Db.DbHelper.GetValueString(row, "contract_number");
                 result.AddressStr = Db.DbHelper.GetValueString(row, "device_address");
                 result.DeviceStr = Db.DbHelper.GetValueString(row, "device_name");
+                result.DescrStr = Db.DbHelper.GetValueString(row, "descr");
             }
             return result;
         }
@@ -73,6 +74,7 @@ namespace DataProvider.Models.Service
                     info.ContractStr = Db.DbHelper.GetValueString(row, "contract_number");
                     info.AddressStr = Db.DbHelper.GetValueString(row, "device_address");
                     info.DeviceStr = Db.DbHelper.GetValueString(row, "device_name");
+                    info.DescrStr = Db.DbHelper.GetValueString(row, "descr");
 
                     list.Add(info);
                 }
