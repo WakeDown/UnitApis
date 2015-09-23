@@ -224,6 +224,16 @@ namespace DataProvider.Models.Service
             return Id;
         }
 
+        public static void RemoteStateChange(int idClaim, string stateSysName, string creatorSid, string descr=null)
+        {
+            var claim = new Claim(idClaim);
+            claim.CurUserAdSid =creatorSid;
+            if (claim.Id > 0)
+            {
+                var state = new ClaimState(stateSysName);
+                claim.SaveStateStep(state.Id, descr);
+            }
+        }
 
         public void SaveStateStep(int stateId, string descr = null, bool saveStateInfo = true)
         {

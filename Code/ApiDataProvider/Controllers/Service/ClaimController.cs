@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Mvc;
 using DataProvider.Helpers;
 using DataProvider.Models;
 using DataProvider.Models.Service;
@@ -188,6 +189,15 @@ namespace DataProvider.Controllers.Service
         public ServiceSheet GetLastServiceSheet(int idClaim)
         {
             return Claim.GetLastServiceSheet(idClaim);
+        }
+
+        [System.Web.Http.AllowAnonymous]
+        [System.Web.Http.HttpGet]
+        public IHttpActionResult RemoteStateChange(int? idClaim, string stateSysName, string creatorSid, string descr=null)
+        {
+            if (!idClaim.HasValue || String.IsNullOrEmpty(stateSysName)) return NotFound();
+            Claim.RemoteStateChange(idClaim.Value, stateSysName, creatorSid, descr);
+            return Ok();
         }
     }
 }
