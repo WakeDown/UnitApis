@@ -20,8 +20,7 @@ namespace DataProvider.Controllers.Service
         public ListResult<Claim> GetList(string servAdminSid = null, string servEngeneerSid = null, DateTime? dateStart = null, DateTime? dateEnd = null, int? topRows = null, string managerSid = null, string techSid = null)
         {
             int cnt;
-            var user = GetCurUser();
-            var list = Claim.GetList(user, out cnt, servAdminSid, servEngeneerSid, dateStart, dateEnd, topRows, managerSid, techSid);
+            var list = Claim.GetList(GetCurUser(), out cnt, servAdminSid, servEngeneerSid, dateStart, dateEnd, topRows, managerSid, techSid);
             return new ListResult<Claim>(list, cnt);
         }
 

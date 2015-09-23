@@ -65,21 +65,33 @@ namespace DataProvider.Models.Service
             //}
         }
 
-        public Claim(int id, AdUser user, bool getNames = false) : this(id, getNames)
+        public Claim(int id, AdUser user, bool getNames = false, bool loadObject = true) : this(id, getNames, loadObject)
         {
-            //SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = id, SqlDbType = SqlDbType.Int };
-            //var dt = Db.Service.ExecuteQueryStoredProcedure("get_claim", pId);
-            //if (dt.Rows.Count > 0)
-            //{
-            //    var row = dt.Rows[0];
-            //    FillSelf(row);
-            //    if (getNames) GetNames();
-            //}
 
-            if (!UserCanViewClaimNow(user))
+            bool access = true;
+            if (user.Is(AdGroup.ServiceEngeneer) && CurEngeneerSid != user.Sid && SpecialistSid != user.Sid)
             {
-                throw new AccessDenyException($"В настоящий момент у вас нет доступа к заявке №{id}.");
+                access = false;
             }
+            else if (user.Is(AdGroup.ServiceManager) && CurManagerSid != user.Sid && SpecialistSid != user.Sid)
+            {
+                access = false;
+            }
+            else if (user.Is(AdGroup.ServiceAdmin) && CurAdminSid != user.Sid && SpecialistSid != user.Sid)
+            {
+                access = false;
+            }
+            else if (user.Is(AdGroup.ServiceTech) && CurTechSid != user.Sid && SpecialistSid != user.Sid)
+            {
+                access = false;
+            }
+
+            if (!access) throw new AccessDenyException("У вас нет доступа к заявке №{id}");
+
+            //if (!UserCanViewClaimNow(user))
+            //{
+            //    throw new AccessDenyException($"В настоящий момент у вас нет доступа к заявке №{id}.");
+            //}
         }
 
         /// <summary>
