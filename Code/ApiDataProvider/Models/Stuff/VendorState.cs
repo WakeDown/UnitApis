@@ -100,14 +100,71 @@ namespace DataProvider.Models.Stuff
             }
             return (list);
         }
-        public static void SetDeliverySent(int id)
+        public static void SetDeliverySent(int id, byte expires, byte newbie, byte updated)
         {
-            SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = id, SqlDbType = SqlDbType.Int };
-            Db.Stuff.ExecuteStoredProcedure("set_vendor_state_delivery_sent", pId);
+            SqlParameter pExp = new SqlParameter()
+            {
+                ParameterName = "expired",
+                SqlValue = expires,
+                SqlDbType = SqlDbType.Bit
+            };
+            SqlParameter pNew = new SqlParameter()
+            {
+                ParameterName = "new",
+                SqlValue = newbie,
+                SqlDbType = SqlDbType.Bit
+            };
+            SqlParameter pUpd = new SqlParameter()
+            {
+                ParameterName = "updated",
+                SqlValue = updated,
+                SqlDbType = SqlDbType.Bit
+            };
+            SqlParameter pId = new SqlParameter()
+            {
+                ParameterName = "id",
+                SqlValue = id,
+                SqlDbType = SqlDbType.Int
+            };
+            Db.Stuff.ExecuteStoredProcedure("set_vendor_state_delivery_sent", pId, pExp, pNew, pUpd);
         }
-        public static IEnumerable<VendorState> ExpiredList()
+
+        public static VendorState GetPrevValue(int id)
         {
-            var dt = Db.Stuff.ExecuteQueryStoredProcedure("get_expires_vendor_state_list");
+            if (id != 0)
+            {
+                SqlParameter pId = new SqlParameter()
+                {
+                    ParameterName = "id",
+                    SqlValue = id,
+                    SqlDbType = SqlDbType.Int
+                };
+                var prev = new VendorState(Db.Stuff.ExecuteQueryStoredProcedure("get_vendor_state_prev_version", pId).Rows[0]);
+                return prev;
+            }
+            return null;
+        }
+        public static IEnumerable<VendorState> DeliverList(byte expires, byte newbie, byte updated)
+        {
+            SqlParameter pExp =new SqlParameter()
+            {
+                ParameterName = "expires",
+                SqlValue = expires,
+                SqlDbType = SqlDbType.Bit
+            };
+            SqlParameter pNew = new SqlParameter()
+            {
+                ParameterName = "newbie",
+                SqlValue = newbie,
+                SqlDbType = SqlDbType.Bit
+            };
+            SqlParameter pUpd = new SqlParameter()
+            {
+                ParameterName = "updated",
+                SqlValue = updated,
+                SqlDbType = SqlDbType.Bit
+            };
+            var dt = Db.Stuff.ExecuteQueryStoredProcedure("get_expires_vendor_state_list", pExp, pNew, pUpd);
             var list = new List<VendorState>();
             foreach (DataRow row in dt.Rows)
             {
@@ -180,7 +237,7 @@ namespace DataProvider.Models.Stuff
             var body = new StringBuilder("Добрый день.<br/>");
             UnitOrganizationName = new Organization(UnitOrganizationId).Name;
             VendorName = new Vendor(VendorId).Name;
-            var mailTo = Employee.GetFullRecipientList();
+            var mailTo = Employee.GetFullRecipientList(null);
             var stuffUrl = ConfigurationManager.AppSettings["StuffUrl"];
 
             if (dt.Rows.Count > 0)
