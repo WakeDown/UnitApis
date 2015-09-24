@@ -180,7 +180,7 @@ namespace DataProvider.Models.Stuff
             var body = new StringBuilder("Добрый день.<br/>");
             UnitOrganizationName = new Organization(UnitOrganizationId).Name;
             VendorName = new Vendor(VendorId).Name;
-            var mailTo = Employee.GetFullRecipientList();
+            var mailTo = Employee.GetFullRecipientList(null);
             var stuffUrl = ConfigurationManager.AppSettings["StuffUrl"];
 
             if (dt.Rows.Count > 0)
