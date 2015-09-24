@@ -5,6 +5,9 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Web;
@@ -12,6 +15,12 @@ using DataProvider.Helpers;
 using DataProvider.Models.SpeCalc;
 using DataProvider.Objects;
 using Microsoft.Ajax.Utilities;
+using DataProvider.Helpers;
+using DataProvider.Models.Stuff;
+using DocumentFormat.OpenXml.ExtendedProperties;
+using DocumentFormat.OpenXml.Office2010.Excel;
+using DocumentFormat.OpenXml.Office2010.ExcelAc;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.OData.Core.UriParser.Semantic;
 
 namespace DataProvider.Models.Stuff
@@ -151,7 +160,19 @@ namespace DataProvider.Models.Stuff
             return email;
         }
 
-        public int GetManagerId(int idDep)
+    public static string GetEmailBySid(string sid)
+    {
+        SqlParameter pSid = new SqlParameter() { ParameterName = "sid", SqlValue = sid, SqlDbType = SqlDbType.VarChar };
+        var dt = Db.Stuff.ExecuteQueryStoredProcedure("get_email", pSid);
+        string email = String.Empty;
+        if (dt.Rows.Count > 0)
+        {
+            email = Db.DbHelper.GetValueString(dt.Rows[0], "email");
+        }
+        return email;
+    }
+
+    public int GetManagerId(int idDep)
         {
             var dep = new Department(idDep);
             int id = dep.Chief.Id;
