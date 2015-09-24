@@ -69,7 +69,7 @@ namespace DataProvider.Models.Service
         {
 
             bool access = false;
-            if (user.Is(AdGroup.SuperAdmin))
+            if (user.Is(AdGroup.SuperAdmin) || user.Is(AdGroup.ServiceManager))
             {
                 access = true;
             }
