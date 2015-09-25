@@ -625,5 +625,22 @@ namespace DataProvider.Models.Stuff
             SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = id, SqlDbType = SqlDbType.Int };
             Db.Stuff.ExecuteStoredProcedure("set_employee_delivery_send", pId);
         }
+
+        public static IEnumerable<KeyValuePair<string, string>> GetSubordinatesSimple(string sid)
+        {
+            var list = new Dictionary<string, string>();
+                SqlParameter pSid = new SqlParameter() { ParameterName = "sid", SqlValue = sid, SqlDbType = SqlDbType.VarChar };
+                var dt = Db.Stuff.ExecuteQueryStoredProcedure("get_subordinate_list", pSid);
+
+                if (dt.Rows.Count > 0)
+                {
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        list.Add(Db.DbHelper.GetValueString(row, "ad_sid"), Db.DbHelper.GetValueString(row, "display_name"));
+                    }
+                }
+            return list;
+        }
+        
     }
 }

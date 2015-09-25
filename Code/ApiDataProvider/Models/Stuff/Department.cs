@@ -192,7 +192,7 @@ namespace DataProvider.Models.Stuff
             return result;
         }
 
-        private static IEnumerable<Department> GetDepartmentChilds(int id, ref List<Department> deps, int level)
+        public static IEnumerable<Department> GetDepartmentChilds(int id, ref List<Department> deps, int level)
         {
             level++;
             var result = new List<Department>();
@@ -207,6 +207,15 @@ namespace DataProvider.Models.Stuff
                 dep.ChildList = childs;
 
             }
+
+            return result;
+        }
+
+        public static IEnumerable<Department> GetDepartmentChildList(int id, bool userCanViewHiddenDeps = false, bool hasAdAccount = true)
+        {
+            var deps = GetList(true, userCanViewHiddenDeps, hasAdAccount).ToList();
+
+            var result= new Department(id).ChildList = GetDepartmentChilds(id, ref deps, 0);
 
             return result;
         }
