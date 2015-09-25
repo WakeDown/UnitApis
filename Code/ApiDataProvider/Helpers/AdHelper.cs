@@ -26,7 +26,7 @@ namespace DataProvider.Helpers
                     nc))
             {
                 string sid = AdUserGroup.GetSidByAdGroup(group);
-                PrincipalContext ctx = new PrincipalContext(ContextType.Domain, DomainPath);
+                PrincipalContext ctx = new PrincipalContext(ContextType.Domain);
                 GroupPrincipal grp = GroupPrincipal.FindByIdentity(ctx, IdentityType.Sid, sid);
 
                 if (grp != null)
