@@ -60,7 +60,7 @@ namespace DataProvider.Controllers
         }
         
         [HttpGet]
-        [AuthorizeAd(Groups = new[] { AdGroup.SystemUser })]
+        [AuthorizeAd(AdGroup.SystemUser)]
         public HttpResponseMessage Synchronyze()
         {
             //RequestContext.Principal

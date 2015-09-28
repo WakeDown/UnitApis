@@ -17,18 +17,16 @@ namespace DataProvider.Controllers.Service
     public class ClaimController : BaseApiController
     {
 
-        public ListResult<Claim> GetList(int? idAdmin = null, int? idEngeneer = null, DateTime? dateStart = null, DateTime? dateEnd = null, int? topRows = null)
+        public ListResult<Claim> GetList(string servAdminSid = null, string servEngeneerSid = null, DateTime? dateStart = null, DateTime? dateEnd = null, int? topRows = null, string managerSid = null, string techSid = null, string serialNum = null, int? idDevice = null)
         {
-                //AdHelper.UserInGroup(GetCurUser().User, AdGroup.ServiceEngeneer, AdGroup.SuperAdmin);
-                int cnt;
-                var list = Claim.GetList(out cnt, idAdmin, idEngeneer, dateStart, dateEnd, topRows);
-                return new ListResult<Claim>(list, cnt);
+            int cnt;
+            var list = Claim.GetList(GetCurUser(), out cnt, servAdminSid, servEngeneerSid, dateStart, dateEnd, topRows, managerSid, techSid, serialNum, idDevice);
+            return new ListResult<Claim>(list, cnt);
         }
 
-        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin, AdGroup.ServiceTech, AdGroup.ServiceControler, AdGroup.ServiceAdmin, AdGroup.ServiceManager })]
+        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin, AdGroup.ServiceTech, AdGroup.ServiceControler, AdGroup.ServiceAdmin, AdGroup.ServiceManager, AdGroup.ServiceEngeneer })]
         public Claim Get(int id)
         {
-            AdHelper.UserInGroup(GetCurUser().User, AdGroup.ServiceEngeneer, AdGroup.ServiceAdmin, AdGroup.ServiceControler, AdGroup.ServiceTech, AdGroup.SuperAdmin);
             Claim model;
             try
             {
@@ -190,13 +188,19 @@ namespace DataProvider.Controllers.Service
         {
             return Claim.GetLastServiceSheet(idClaim);
         }
-
+        
         [System.Web.Http.AllowAnonymous]
         [System.Web.Http.HttpGet]
-        public IHttpActionResult RemoteStateChange(int? idClaim, string stateSysName, string creatorSid, string descr=null)
+        public IHttpActionResult RemoteStateChange(int? idClaim, string stateSysName, string creatorSid, string descr = null)
         {
             if (!idClaim.HasValue || String.IsNullOrEmpty(stateSysName)) return NotFound();
-            Claim.RemoteStateChange(idClaim.Value, stateSysName, creatorSid, descr);
+
+            var claim = new Claim(idClaim.Value);
+            claim.CurUserAdSid = creatorSid;
+            claim.Descr = descr;
+            claim.Go();
+
+            //Claim.RemoteStateChange(idClaim.Value, stateSysName, creatorSid, descr);
             return Ok();
         }
     }

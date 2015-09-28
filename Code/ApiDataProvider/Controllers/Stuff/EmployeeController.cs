@@ -264,5 +264,18 @@ namespace DataProvider.Controllers.Stuff
             }
             return response;
         }
+        [HttpGet]
+        public bool IsChief(string sid)
+        {
+            bool result = new Employee(sid).IsChief;
+            return result;
+        }
+
+        public IEnumerable<KeyValuePair<string,string>> GetSubordinatesSimple(string sid)
+        {
+            var list = Employee.GetSubordinatesSimple(sid);
+
+            return list;
+        } 
     }
 }

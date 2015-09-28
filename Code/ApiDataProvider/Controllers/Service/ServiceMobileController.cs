@@ -88,10 +88,10 @@ namespace DataProvider.Controllers.Service
         {
             var list = Device.GetInfoList();
             var hash = MathHelper.GetChecksum(list);
-                var resp = new HttpResponseMessage()
-{
-    Content = new StringContent(JsonConvert.SerializeObject(hash))
-};
+            var resp = new HttpResponseMessage()
+            {
+                Content = new StringContent(JsonConvert.SerializeObject(hash))
+            };
             resp.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             return resp;
         }

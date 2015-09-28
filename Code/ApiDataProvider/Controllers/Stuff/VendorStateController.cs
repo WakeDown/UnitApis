@@ -28,19 +28,29 @@ namespace DataProvider.Controllers.Stuff
             return VendorState.GetList();
         }
 
-        public IEnumerable<VendorState> GetExpiredList()
+        public IEnumerable<VendorState> GetDeliverList(byte listType)
         {
-            return VendorState.ExpiredList();
+            byte expires = (byte)(listType==2? 1 : 0);
+            byte newbie = (byte)(listType == 0 ? 1 : 0);
+            byte updated = (byte)(listType == 1 ? 1 : 0);
+            return VendorState.DeliverList(expires, newbie, updated);
         }
-        public HttpResponseMessage SetDeliverySent(VendorState[] vendorStates)
+
+        public VendorState GetPrevValue(int id)
+        {
+            return VendorState.GetPrevValue(id);
+        } 
+        public HttpResponseMessage SetDeliverySent(VendorState[] vendorStates, byte deliveryType)
         {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
-
+            byte expires = (byte) (deliveryType == 2 ? 1 : 0);
+            byte newbie = (byte)(deliveryType == 0 ? 1 : 0);
+            byte updated = (byte)(deliveryType == 1 ? 1 : 0);
             try
             {
                 foreach (VendorState vendorState in vendorStates)
                 {
-                    VendorState.SetDeliverySent(vendorState.Id);
+                    VendorState.SetDeliverySent(vendorState.Id, expires, newbie, updated);
                 }
             }
             catch (Exception ex)
@@ -50,7 +60,7 @@ namespace DataProvider.Controllers.Stuff
             }
             return response;
         }
-        public IEnumerable<string> GetMailAddressList()
+        public IEnumerable<string> GetExpiredMailAddressList()
         {
            return(VendorState.GetMailAddressVendorStateExpiresDeliveryList());
         }
