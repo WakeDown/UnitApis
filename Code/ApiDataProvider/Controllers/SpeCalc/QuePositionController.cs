@@ -24,7 +24,7 @@ namespace DataProvider.Controllers.SpeCalc
             var model = new QuePosition(id);
             return model;
         }
-        [AuthorizeAd(Groups = new[] { AdGroup.SpeCalcKontroler, AdGroup.SpeCalcManager })]
+        [AuthorizeAd(Groups = new[] { AdGroup.SpeCalcKontroler, AdGroup.SpeCalcManager, AdGroup.SpeCalcOperator })]
         public HttpResponseMessage Save(QuePosition model)
         {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
@@ -44,7 +44,7 @@ namespace DataProvider.Controllers.SpeCalc
             return response;
         }
 
-        [AuthorizeAd(Groups = new[] { AdGroup.SpeCalcKontroler, AdGroup.SpeCalcManager })]
+        [AuthorizeAd(Groups = new[] { AdGroup.SpeCalcKontroler, AdGroup.SpeCalcManager, AdGroup.SpeCalcOperator })]
         public HttpResponseMessage Close(int id)
         {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);

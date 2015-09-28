@@ -60,9 +60,9 @@ namespace DataProvider.Objects
             transliter.Add("ч", "ch");
             transliter.Add("ш", "sh");
             transliter.Add("щ", "sch");
-            transliter.Add("ъ", "j");
+            transliter.Add("ъ", "");
             transliter.Add("ы", "i");
-            transliter.Add("ь", "j");
+            transliter.Add("ь", "");
             transliter.Add("э", "e");
             transliter.Add("ю", "yu");
             transliter.Add("я", "ya");
@@ -93,9 +93,9 @@ namespace DataProvider.Objects
             transliter.Add("Ч", "Ch");
             transliter.Add("Ш", "Sh");
             transliter.Add("Щ", "Sch");
-            transliter.Add("Ъ", "J");
+            transliter.Add("Ъ", "");
             transliter.Add("Ы", "I");
-            transliter.Add("Ь", "J");
+            transliter.Add("Ь", "");
             transliter.Add("Э", "E");
             transliter.Add("Ю", "Yu");
             transliter.Add("Я", "Ya");
