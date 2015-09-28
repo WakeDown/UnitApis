@@ -60,7 +60,7 @@ namespace DataProvider.Controllers.Stuff
             }
             return response;
         }
-        public IEnumerable<string> GetMailAddressList()
+        public IEnumerable<string> GetExpiredMailAddressList()
         {
            return(VendorState.GetMailAddressVendorStateExpiresDeliveryList());
         }
