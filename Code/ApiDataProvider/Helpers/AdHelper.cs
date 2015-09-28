@@ -100,7 +100,7 @@ namespace DataProvider.Helpers
 
         private static string GetLoginFromEmail(string email)
         {
-            return !string.IsNullOrEmpty(email) ? email.Substring(0, email.IndexOf("@", StringComparison.Ordinal)) : String.Empty;
+            return !string.IsNullOrEmpty(email) ? StringHelper.Trim(email.Substring(0, email.IndexOf("@", StringComparison.Ordinal))) : String.Empty;
         }
 
         public static NetworkCredential GetAdUserCredentials()
@@ -155,17 +155,17 @@ namespace DataProvider.Helpers
                 = new WindowsImpersonationContextFacade(
                     nc))
             {
-                string username = String.IsNullOrEmpty(emp.AdLogin) ? GetLoginFromEmail(emp.Email) : emp.AdLogin;
+                string username = String.IsNullOrEmpty(emp.AdLogin) ? GetLoginFromEmail(emp.Email) : StringHelper.Trim(emp.AdLogin);
 
                 if (String.IsNullOrEmpty(username.Trim())) return string.Empty;
-                string mail = emp.Email;
-                string fullName = emp.FullName;
-                string surname = emp.Surname;
-                string name = emp.Name;
+                string mail = StringHelper.Trim(emp.Email);
+                string fullName = StringHelper.Trim(emp.FullName);
+                string surname = StringHelper.Trim(emp.Surname);
+                string name = StringHelper.Trim(emp.Name);
                 string position = emp.Position != null ? emp.Position.Id > 0 && String.IsNullOrEmpty(emp.Position.Name) ? new Position(emp.Position.Id).Name : emp.Position.Name : String.Empty;
-                string workNum = emp.WorkNum;
-                string mobilNum = emp.MobilNum;
-                string city = emp.City != null ? emp.City.Name : String.Empty;
+                string workNum = StringHelper.Trim(emp.WorkNum);
+                string mobilNum = StringHelper.Trim(emp.MobilNum);
+                string city = emp.City != null ? StringHelper.Trim(emp.City.Name) : String.Empty;
                 string org = emp.Organization != null ? emp.Organization.Id > 0 && String.IsNullOrEmpty(emp.Organization.Name) ? new Organization(emp.Organization.Id).Name : emp.Organization.Name : String.Empty;
                 string dep = emp.Department != null ? emp.Department.Id > 0 && String.IsNullOrEmpty(emp.Department.Name) ? new Department(emp.Department.Id).Name : emp.Department.Name : String.Empty;
                 var photo = emp.Photo != null && emp.Photo.Length > 0 ? emp.Photo : null;

@@ -220,8 +220,19 @@ namespace DataProvider.Models.Stuff
 
             if (EmpState == null) EmpState = EmpState.GetNewbieState();
 
-            FullName = String.Format("{0} {1} {2}", Surname, Name, Patronymic);
-            DisplayName = String.Format("{0} {1}{2}", Surname, !String.IsNullOrEmpty(Name) ? Name[0] + "." : String.Empty, !String.IsNullOrEmpty(Patronymic) ? Patronymic[0] + "." : String.Empty);
+            Name = StringHelper.Trim(Name);
+            Surname = StringHelper.Trim(Surname);
+            Patronymic = StringHelper.Trim(Patronymic);
+
+            FullName = $"{Surname} {Name} {Patronymic}";
+            DisplayName =
+                $"{Surname} {(!String.IsNullOrEmpty(Name) ? Name[0] + "." : String.Empty)}{(!String.IsNullOrEmpty(Patronymic) ? Patronymic[0] + "." : String.Empty)}";
+            DisplayName = StringHelper.Trim(DisplayName);
+            Email = StringHelper.Trim(Email);
+            WorkNum = StringHelper.Trim(WorkNum);
+            MobilNum = StringHelper.Trim(MobilNum);
+            FullNameDat=StringHelper.Trim(FullNameDat);
+            FullNameRod = StringHelper.Trim(FullNameRod);
 
             SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = Id, SqlDbType = SqlDbType.Int };
             SqlParameter pAdSid = new SqlParameter() { ParameterName = "ad_sid", SqlValue = AdSid, SqlDbType = SqlDbType.VarChar };

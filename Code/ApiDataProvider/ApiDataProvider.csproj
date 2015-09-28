@@ -187,6 +187,7 @@
     <Compile Include="Controllers\Stuff\LanguageController.cs" />
     <Compile Include="Controllers\Stuff\VendorController.cs" />
     <Compile Include="Controllers\Stuff\VendorStateController.cs" />
+    <Compile Include="Helpers\StringHelper.cs" />
     <Compile Include="Models\MobileUser.cs" />
     <Compile Include="Models\Service\PlanServiceIssue.cs" />
     <Compile Include="Controllers\Service\ServiceIssueController.cs" />
