@@ -19,7 +19,7 @@ namespace DataProvider.Models.Service
         public int OrderNum { get; set; }
         public string BackgroundColor { get; set; }
         public string ForegroundColor { get; set; }
-
+        public int ClaimCount { get; set; }
         
 
         public ClaimState() { }
@@ -60,24 +60,25 @@ namespace DataProvider.Models.Service
             OrderNum = Db.DbHelper.GetValueIntOrDefault(row, "order_num");
             BackgroundColor = Db.DbHelper.GetValueString(row, "background_color");
             ForegroundColor = Db.DbHelper.GetValueString(row, "foreground_color");
+            ClaimCount = Db.DbHelper.GetValueIntOrDefault(row, "cnt");
         }
-        
-        //public static IEnumerable<ClaimState> GetList(string some)
-        //{
-        //    SqlParameter pSome = new SqlParameter() { ParameterName = "some", SqlValue = some, SqlDbType = SqlDbType.NVarChar };
-        //    var dt = Db.Stuff.ExecuteQueryStoredProcedure("get_model_list", pSome);
 
-        //    var lst = new List<ClaimState>();
+        public static IEnumerable<ClaimState> GetFilterList()
+        {
+            //SqlParameter pSome = new SqlParameter() { ParameterName = "some", SqlValue = some, SqlDbType = SqlDbType.NVarChar };
+            var dt = Db.Stuff.ExecuteQueryStoredProcedure("get_claim_state_list_filter");
 
-        //    foreach (DataRow row in dt.Rows)
-        //    {
-        //        var model = new ClaimState(row);
-        //        lst.Add(model);
-        //    }
+            var lst = new List<ClaimState>();
 
-        //    return lst;
-        //}
-        
+            foreach (DataRow row in dt.Rows)
+            {
+                var model = new ClaimState(row);
+                lst.Add(model);
+            }
+
+            return lst;
+        }
+
         internal static ClaimState GetFirstState()
         {
             return GetNewState();

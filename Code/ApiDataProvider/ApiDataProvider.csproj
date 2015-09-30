@@ -172,6 +172,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\Service\ClaimStateController.cs" />
     <Compile Include="Controllers\Service\ClassifierController.cs" />
     <Compile Include="Controllers\Service\ClientAccessController.cs" />
     <Compile Include="Controllers\Service\ContractorAccessController.cs" />
