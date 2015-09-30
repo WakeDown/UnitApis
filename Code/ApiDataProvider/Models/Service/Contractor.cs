@@ -16,6 +16,7 @@ namespace DataProvider.Models.Service
         public string Name { get; set; }
         public string FullName { get; set; }
         public string Inn { get; set; }
+        public int ClaimCount { get; set; }
 
         public Contractor()
         {
@@ -43,11 +44,12 @@ namespace DataProvider.Models.Service
             Name = Db.DbHelper.GetValueString(row, "name");
             FullName = Db.DbHelper.GetValueString(row, "full_name");
             Inn = Db.DbHelper.GetValueString(row, "inn");
+            ClaimCount = Db.DbHelper.GetValueIntOrDefault(row, "cnt");
 
             if (!String.IsNullOrEmpty(Inn)) Name = String.Format("{0} (ИНН {1})", Name, Inn);
         }
 
-        public static IEnumerable<Contractor> GetServiceList(int? idContractor = null, string contractorName = null, int? idContract = null, string contractNumber = null, int? idDevice=null, string deviceName = null)
+        public static IEnumerable<Contractor> GetServicePlanList(int? idContractor = null, string contractorName = null, int? idContract = null, string contractNumber = null, int? idDevice=null, string deviceName = null)
         {
             //if (idContractor.HasValue) contractorName = null;
             //if (idContract.HasValue) contractNumber = null;
@@ -66,6 +68,21 @@ namespace DataProvider.Models.Service
             SqlParameter pIdDevice = new SqlParameter() { ParameterName = "id_device", SqlValue = idDevice, SqlDbType = SqlDbType.Int };
             SqlParameter pDeviceName = new SqlParameter() { ParameterName = "device_name", SqlValue = deviceName, SqlDbType = SqlDbType.NVarChar };
             var dt = Db.UnitProg.ExecuteQueryStoredProcedure("get_contractor_list", pId, pName, pIdContract, pContractNumber, pIdDevice, pDeviceName);
+
+            var lst = new List<Contractor>();
+
+            foreach (DataRow row in dt.Rows)
+            {
+                var model = new Contractor(row);
+                lst.Add(model);
+            }
+
+            return lst;
+        }
+
+        public static IEnumerable<Contractor> GetServiceClaimFilterList()
+        {
+            var dt = Db.Service.ExecuteQueryStoredProcedure("get_claim_client_list");
 
             var lst = new List<Contractor>();
 

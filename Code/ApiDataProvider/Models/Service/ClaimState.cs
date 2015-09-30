@@ -66,7 +66,7 @@ namespace DataProvider.Models.Service
         public static IEnumerable<ClaimState> GetFilterList()
         {
             //SqlParameter pSome = new SqlParameter() { ParameterName = "some", SqlValue = some, SqlDbType = SqlDbType.NVarChar };
-            var dt = Db.Stuff.ExecuteQueryStoredProcedure("get_claim_state_list_filter");
+            var dt = Db.Service.ExecuteQueryStoredProcedure("get_claim_state_list_filter");
 
             var lst = new List<ClaimState>();
 
