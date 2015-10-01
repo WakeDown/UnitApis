@@ -24,7 +24,10 @@ namespace DataProvider.Controllers.Stuff
         //{
         //    Employee.RefillManager();
         //}
-        
+        public EmployeeSm GetSimple(string sid)
+        {
+            return new EmployeeSm(sid);
+        }
         public IEnumerable<Employee> GetList(int? idDepartment = null, int? idCity = null, bool showHidden = true)
         {
             bool userCanViewHiddenEmps = AdHelper.UserInGroup(GetCurUser().User, AdGroup.PersonalManager, AdGroup.SuperAdmin);

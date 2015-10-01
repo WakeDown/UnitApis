@@ -13,6 +13,7 @@ namespace DataProvider.Models.Service
     public class ServiceSheet:DbModel
     {
         public int Id { get; set; }
+        public int IdServiceIssue { get; set; }
         public int IdClaim { get; set; }
         public int IdClaim2ClaimState { get; set; }
         public bool ProcessEnabled { get; set; }
@@ -26,6 +27,9 @@ namespace DataProvider.Models.Service
         public string Descr { get; set; }
         public bool? CounterUnavailable { get; set; }
         public string CounterDescr { get; set; }
+        public string CreatorSid { get; set; }
+        public string EngeneerSid { get; set; }
+        public string AdminSid { get; set; }
 
         public ServiceSheet() { }
 
@@ -62,11 +66,15 @@ namespace DataProvider.Models.Service
             Descr = Db.DbHelper.GetValueString(row, "descr");
             CounterUnavailable = Db.DbHelper.GetValueBoolOrNull(row, "counter_unavailable");
             CounterDescr = Db.DbHelper.GetValueString(row, "counter_descr");
+            CreatorSid = Db.DbHelper.GetValueString(row, "creator_sid");
+            EngeneerSid = Db.DbHelper.GetValueString(row, "engeneer_sid");
+            AdminSid = Db.DbHelper.GetValueString(row, "admin_sid");
         }
 
         public void Save()
         {
             SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = Id, SqlDbType = SqlDbType.Int };
+            SqlParameter pIdServiceIssue = new SqlParameter() { ParameterName = "id_service_issue", SqlValue = IdServiceIssue, SqlDbType = SqlDbType.Int };
             SqlParameter pProcessEnabled = new SqlParameter() { ParameterName = "process_enabled", SqlValue = ProcessEnabled, SqlDbType = SqlDbType.Bit };
             SqlParameter pDeviceEnabled = new SqlParameter() { ParameterName = "device_enabled", SqlValue = DeviceEnabled, SqlDbType = SqlDbType.Bit };
             SqlParameter pZipClaim = new SqlParameter() { ParameterName = "zip_claim", SqlValue = ZipClaim, SqlDbType = SqlDbType.Int };
@@ -79,8 +87,10 @@ namespace DataProvider.Models.Service
             SqlParameter pDescr = new SqlParameter() { ParameterName = "descr", SqlValue = Descr, SqlDbType = SqlDbType.NVarChar };
             SqlParameter pCreatorAdSid = new SqlParameter() { ParameterName = "creator_sid", SqlValue = CurUserAdSid, SqlDbType = SqlDbType.VarChar };
             SqlParameter pCounterDescr = new SqlParameter() { ParameterName = "counter_descr", SqlValue = CounterDescr, SqlDbType = SqlDbType.NVarChar };
+            SqlParameter pEngeneerSid = new SqlParameter() { ParameterName = "engeneer_sid", SqlValue = EngeneerSid, SqlDbType = SqlDbType.VarChar };
+            SqlParameter pAdminSid = new SqlParameter() { ParameterName = "admin_sid", SqlValue = AdminSid, SqlDbType = SqlDbType.VarChar };
 
-            var dt = Db.Service.ExecuteQueryStoredProcedure("save_service_sheet", pId, pProcessEnabled, pDeviceEnabled, pZipClaim, pZipClaimNumber, pCounterMono, pCounterColor, pCounterTotal, pNoCounter, pCounterUnavailable, pDescr, pCreatorAdSid, pCounterDescr);
+            var dt = Db.Service.ExecuteQueryStoredProcedure("save_service_sheet", pId, pProcessEnabled, pDeviceEnabled, pZipClaim, pZipClaimNumber, pCounterMono, pCounterColor, pCounterTotal, pNoCounter, pCounterUnavailable, pDescr, pCreatorAdSid, pCounterDescr, pEngeneerSid, pAdminSid, pIdServiceIssue);
             int id = 0;
             if (dt.Rows.Count > 0)
             {

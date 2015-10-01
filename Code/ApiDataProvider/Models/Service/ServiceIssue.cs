@@ -47,7 +47,7 @@ namespace DataProvider.Models.Service
             DatePlan = Db.DbHelper.GetValueDateTimeOrDefault(row, "date_plan");
         }
 
-        public void Save()
+        public int Save()
         {
             SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = Id, SqlDbType = SqlDbType.Int };
             SqlParameter pIdClaim = new SqlParameter() { ParameterName = "id_claim", SqlValue = IdClaim, SqlDbType = SqlDbType.Int };
@@ -63,6 +63,7 @@ namespace DataProvider.Models.Service
                 int.TryParse(dt.Rows[0]["id"].ToString(), out id);
                 Id = id;
             }
+            return Id;
         }
 
         public static IEnumerable<ServiceIssue> GetList()

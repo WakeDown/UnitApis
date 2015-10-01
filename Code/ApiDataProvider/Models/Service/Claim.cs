@@ -45,6 +45,7 @@ namespace DataProvider.Models.Service
         public string CurAdminSid { get; set; }
         public string CurTechSid { get; set; }
         public string CurManagerSid { get; set; }
+        public int? CurServiceIssueId { get; set; }
 
         public Claim() { }
 
@@ -161,10 +162,10 @@ namespace DataProvider.Models.Service
             CurAdminSid = Db.DbHelper.GetValueString(row, "cur_admin_sid");
             CurTechSid = Db.DbHelper.GetValueString(row, "cur_tech_sid");
             CurManagerSid = Db.DbHelper.GetValueString(row, "cur_manager_sid");
+            CurServiceIssueId = Db.DbHelper.GetValueIntOrNull(row, "cur_service_issue_id");
 
             if (loadObj)
             {
-
                 if (IdWorkType.HasValue && IdWorkType.Value > 0) WorkType = new WorkType(IdWorkType.Value);
                 Specialist = new EmployeeSm(SpecialistSid);
                 State = new ClaimState(Db.DbHelper.GetValueIntOrDefault(row, "id_claim_state"));
@@ -220,6 +221,7 @@ namespace DataProvider.Models.Service
             SqlParameter pTechSid = new SqlParameter() { ParameterName = "cur_tech_sid", SqlValue = CurTechSid, SqlDbType = SqlDbType.VarChar };
             SqlParameter pManagerSid = new SqlParameter() { ParameterName = "cur_manager_sid", SqlValue = CurManagerSid, SqlDbType = SqlDbType.VarChar };
             SqlParameter pSerialNum = new SqlParameter() { ParameterName = "serial_num", SqlValue = Device.SerialNum, SqlDbType = SqlDbType.NVarChar };
+            SqlParameter pCurServiceIssueId = new SqlParameter() { ParameterName = "cur_service_issue_id", SqlValue = CurServiceIssueId, SqlDbType = SqlDbType.Int };
             DataTable dt = new DataTable();
             //using (var conn = Db.Service.connection)
             //{
@@ -231,7 +233,7 @@ namespace DataProvider.Models.Service
 
             //Если заявка уже сохранена то основная информаци не будет перезаписана
             dt = Db.Service.ExecuteQueryStoredProcedure("save_claim", pId, pIdContractor, pIdContract, pIdDevice,
-                pContractorName, pContractName, pDeviceName, /*pIdAdmin, pIdEngeneer,*/ pCreatorAdSid, pIdWorkType, pSpecialistSid, pClientSdNum, pEngeneerSid, pAdminSid, pTechSid, pManagerSid, pSerialNum);
+                pContractorName, pContractName, pDeviceName, /*pIdAdmin, pIdEngeneer,*/ pCreatorAdSid, pIdWorkType, pSpecialistSid, pClientSdNum, pEngeneerSid, pAdminSid, pTechSid, pManagerSid, pSerialNum, pCurServiceIssueId);
 
             int id = 0;
             if (dt.Rows.Count > 0)
@@ -374,6 +376,11 @@ namespace DataProvider.Models.Service
             return result;
         }
 
+
+        /// <summary>
+        /// Перевод заявки на следующую стадию
+        /// </summary>
+        /// <param name="confirm">Подтвердить или отклонить назначение заявки</param>
         public void Go(bool confirm = true)
         {
             if (Id <= 0) throw new ArgumentException("Невозможно предать заявку. Не указан ID заявки.");
@@ -471,6 +478,8 @@ namespace DataProvider.Models.Service
                         ////if (!ServiceSheet4Save.NoTechWork)
                         ////{
                         ServiceSheet4Save.CurUserAdSid = CurUserAdSid;
+                        ServiceSheet4Save.EngeneerSid = CurUserAdSid;
+                        ServiceSheet4Save.IdServiceIssue = -999;
                         ServiceSheet4Save.Save();
                         if (ServiceSheet4Save.ProcessEnabled && ServiceSheet4Save.DeviceEnabled)
                         {
@@ -479,7 +488,6 @@ namespace DataProvider.Models.Service
                             SaveStateStep(nextState.Id);
                             saveStateInfo = false;
                             nextState = new ClaimState("DONE");
-
                         }
                         else if ((!ServiceSheet4Save.ProcessEnabled || !ServiceSheet4Save.DeviceEnabled) && ServiceSheet4Save.ZipClaim.HasValue && ServiceSheet4Save.ZipClaim.Value)
                         {
@@ -553,7 +561,8 @@ namespace DataProvider.Models.Service
                     ServiceIssue4Save.Descr = Descr;
                     ServiceIssue4Save.SpecialistSid = SpecialistSid;
                     ServiceIssue4Save.CurUserAdSid = CurUserAdSid;
-                    ServiceIssue4Save.Save();
+                    int serviceIssueId = ServiceIssue4Save.Save();
+                    CurServiceIssueId = serviceIssueId;//Устанавливает текущий заявку на выезд
                     descr = $"Назначен специалист {AdHelper.GetUserBySid(SpecialistSid).FullName}\r\nДата выезда {ServiceIssue4Save.DatePlan:dd.MM.yyyy}\r\n{Descr}";
                     nextState = new ClaimState("SRVENGSET");
                     CurEngeneerSid = SpecialistSid;
@@ -611,7 +620,11 @@ namespace DataProvider.Models.Service
                     if (ServiceSheet4Save == null || ServiceSheet4Save.IdClaim == 0)
                     { throw new ArgumentException("Сервисный лист отсутствует. Операция не завершена!"); }
 
+                    var cl = new Claim(Id);
+
                     ServiceSheet4Save.CurUserAdSid = CurUserAdSid;
+                    ServiceSheet4Save.EngeneerSid = CurUserAdSid;
+                    ServiceSheet4Save.IdServiceIssue = cl.CurServiceIssueId ?? -1;
                     ServiceSheet4Save.Save();
 
                     if (ServiceSheet4Save.ProcessEnabled && ServiceSheet4Save.DeviceEnabled)
