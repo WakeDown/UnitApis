@@ -59,9 +59,10 @@ namespace DataProvider.Models.Service
             return result;
         }
 
-        public static IEnumerable<DeviceInfoResult> GetInfoList()
+        public static IEnumerable<DeviceInfoResult> GetInfoList(DateTime? lastModifyDate = null)
         {
-            var dt = Db.UnitProg.ExecuteQueryStoredProcedure("get_device_info");
+            SqlParameter pLastModifyDate = new SqlParameter() { ParameterName = "last_modify_date", SqlValue = lastModifyDate, SqlDbType = SqlDbType.Date };
+            var dt = Db.UnitProg.ExecuteQueryStoredProcedure("get_device_info", pLastModifyDate);
             var list = new List<DeviceInfoResult>();
             if (dt.Rows.Count > 0)
             {
@@ -82,7 +83,7 @@ namespace DataProvider.Models.Service
             }
             return list;
         }
-
+       
         public Device(DataRow row)
         {
             FillSelf(row);

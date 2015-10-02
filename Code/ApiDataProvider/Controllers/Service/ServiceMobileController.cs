@@ -71,14 +71,34 @@ namespace DataProvider.Controllers.Service
             resp.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             return resp;
         }
-
-        public HttpResponseMessage GetDeviceInfoList()
+        /// <summary>
+        /// Вывод списка аппаратов для мобильной базы
+        /// </summary>
+        /// <param name="lastModifyDate">Если указана дата то функция возвращает список изменения на момент этой даты</param>
+        /// <returns></returns>
+        public HttpResponseMessage GetDeviceInfoList(DateTime? lastModifyDate = null)
         {
-            var list = Device.GetInfoList();
+            var list = Device.GetInfoList(lastModifyDate);
 
             var resp = new HttpResponseMessage()
             {
                 Content = new StringContent(JsonConvert.SerializeObject(list))
+            };
+            resp.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            return resp;
+        }
+        /// <summary>
+        /// Проверяет были ли изменения в списке аппаратов
+        /// </summary>
+        /// <param name="lastModifyDate"></param>
+        /// <returns></returns>
+        public HttpResponseMessage CheckDeviceInfoListIsChanged(DateTime lastModifyDate)
+        {
+            bool flag = Device.GetInfoList(lastModifyDate).Any();
+
+            var resp = new HttpResponseMessage()
+            {
+                Content = new StringContent($"{{isChanged:{flag}}}")
             };
             resp.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             return resp;
