@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using DataProvider.Helpers;
+using DataProvider.Models.Stuff;
 using DataProvider.Objects;
 using DataProvider._TMPLTS;
 
@@ -29,6 +30,9 @@ namespace DataProvider.Models.Service
         public string CounterDescr { get; set; }
         public string CreatorSid { get; set; }
         public string EngeneerSid { get; set; }
+        public EmployeeSm Admin { get; set; }
+        public EmployeeSm Creator { get; set; }
+        public EmployeeSm Engeneer { get; set; }
         public string AdminSid { get; set; }
         //public string DeviceSerialNum { get; set; }
         public int DeviceId { get; set; }
@@ -36,6 +40,7 @@ namespace DataProvider.Models.Service
         public ClassifierCaterory DeviceClassifierCaterory { get; set; }
         public int WorkTypeId { get; set; }
         public WorkType WorkType { get; set; }
+        public int? TimeOnWorkMinutes { get; set; }//Время на работу в минутах (от статуса В работе до создания заявки
 
         public ServiceSheet() { }
 
@@ -46,7 +51,7 @@ namespace DataProvider.Models.Service
             if (dt.Rows.Count > 0)
             {
                 var row = dt.Rows[0];
-                FillSelf(row, true);
+                FillSelf(row, true, true);
             }
         }
 
@@ -56,7 +61,7 @@ namespace DataProvider.Models.Service
             FillSelf(row);
         }
 
-        private void FillSelf(DataRow row, bool fillObj = false)
+        private void FillSelf(DataRow row, bool fillObj = false, bool fillNames = false)
         {
             Id = Db.DbHelper.GetValueIntOrDefault(row, "id");
             IdClaim = Db.DbHelper.GetValueIntOrDefault(row, "id_claim");
@@ -77,6 +82,14 @@ namespace DataProvider.Models.Service
             AdminSid = Db.DbHelper.GetValueString(row, "admin_sid");
             DeviceId = Db.DbHelper.GetValueIntOrDefault(row, "id_device");
             WorkTypeId = Db.DbHelper.GetValueIntOrDefault(row, "id_work_type");
+            TimeOnWorkMinutes = Db.DbHelper.GetValueIntOrNull(row, "time_on_work_minutes");
+
+            if (fillNames)
+            {
+                Admin = new EmployeeSm(AdminSid);
+                Engeneer = new EmployeeSm(EngeneerSid);
+                Creator = new EmployeeSm(CreatorSid);
+            }
 
             if (fillObj)
             {
@@ -88,6 +101,13 @@ namespace DataProvider.Models.Service
 
         public void Save()
         {
+            //TimeOnWorkMinutes = время от статуса в работу до создания заявки
+            var stateInWork = Claim.GetLastState(IdClaim, "SRVENGWORK");
+            if (stateInWork != null)
+            {
+                TimeOnWorkMinutes = (int) (DateTime.Now - stateInWork.DateCreate).TotalMinutes;
+            }
+
             SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = Id, SqlDbType = SqlDbType.Int };
             SqlParameter pIdClaim = new SqlParameter() { ParameterName = "id_claim", SqlValue = IdClaim, SqlDbType = SqlDbType.Int };
             SqlParameter pIdServiceIssue = new SqlParameter() { ParameterName = "id_service_issue", SqlValue = IdServiceIssue, SqlDbType = SqlDbType.Int };
@@ -105,8 +125,9 @@ namespace DataProvider.Models.Service
             SqlParameter pCounterDescr = new SqlParameter() { ParameterName = "counter_descr", SqlValue = CounterDescr, SqlDbType = SqlDbType.NVarChar };
             SqlParameter pEngeneerSid = new SqlParameter() { ParameterName = "engeneer_sid", SqlValue = EngeneerSid, SqlDbType = SqlDbType.VarChar };
             SqlParameter pAdminSid = new SqlParameter() { ParameterName = "admin_sid", SqlValue = AdminSid, SqlDbType = SqlDbType.VarChar };
+            SqlParameter pTimeOnWorkMinutes = new SqlParameter() { ParameterName = "time_on_work_minutes", SqlValue = TimeOnWorkMinutes, SqlDbType = SqlDbType.Int };
 
-            var dt = Db.Service.ExecuteQueryStoredProcedure("save_service_sheet", pId, pProcessEnabled, pDeviceEnabled, pZipClaim, pZipClaimNumber, pCounterMono, pCounterColor, pCounterTotal, pNoCounter, pCounterUnavailable, pDescr, pCreatorAdSid, pCounterDescr, pEngeneerSid, pAdminSid, pIdServiceIssue, pIdClaim);
+            var dt = Db.Service.ExecuteQueryStoredProcedure("save_service_sheet", pId, pProcessEnabled, pDeviceEnabled, pZipClaim, pZipClaimNumber, pCounterMono, pCounterColor, pCounterTotal, pNoCounter, pCounterUnavailable, pDescr, pCreatorAdSid, pCounterDescr, pEngeneerSid, pAdminSid, pIdServiceIssue, pIdClaim, pTimeOnWorkMinutes);
             int id = 0;
             if (dt.Rows.Count > 0)
             {
@@ -131,6 +152,8 @@ namespace DataProvider.Models.Service
 
             return lst;
         }
+
+        
 
         //public static void Close(int id, string deleterSid)
         //{

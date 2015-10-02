@@ -979,6 +979,20 @@ namespace DataProvider.Models.Service
 
             return list;
         }
+        public static IEnumerable<Claim2ClaimState> GetStateHistory(int id)
+        {
+            return Claim2ClaimState.GetList(id);
+        }
+        /// <summary>
+        /// Получение последнего статуса
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="sysName">Интересующий статус его системное имя</param>
+        /// <returns></returns>
+        public static Claim2ClaimState GetLastState(int id, string sysName)
+        {
+            return Claim2ClaimState.GetLastState(id, sysName);
+        }
 
         public static ServiceSheet GetLastServiceSheet(int idClaim)
         {

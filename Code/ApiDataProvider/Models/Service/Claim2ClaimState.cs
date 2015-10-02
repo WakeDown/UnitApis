@@ -119,6 +119,20 @@ namespace DataProvider.Models.Service
             return lst;
         }
 
+        public static Claim2ClaimState GetLastState(int idClaim, string sysName)
+        {
+            SqlParameter pIdClaim = new SqlParameter() { ParameterName = "id_claim", SqlValue = idClaim, SqlDbType = SqlDbType.Int };
+            SqlParameter pSysName = new SqlParameter() { ParameterName = "sys_name", SqlValue = sysName, SqlDbType = SqlDbType.NVarChar };
+            var dt = Db.Service.ExecuteQueryStoredProcedure("get_claim_last_added _claim_state", pIdClaim, pSysName);
+            var model = new Claim2ClaimState();
+            if (dt.Rows.Count > 0)
+            {
+                model = new Claim2ClaimState(dt.Rows[0]);
+            }
+
+            return model;
+        }
+
         public static void Close(int id, string deleterSid)
         {
             SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = id, SqlDbType = SqlDbType.Int };
