@@ -125,7 +125,7 @@ namespace DataProvider.Controllers.Service
             {
                 model.CurUserAdSid = GetCurUser().Sid;
                 model.Go();
-                response.Content = new StringContent(String.Format("{{\"id\":{0},\"sid\":\"{1}\"}}", model.Id, model.Sid));
+                response.Content = new StringContent($"{{\"id\":{model.Id},\"sid\":\"{model.Sid}\"}}");
             }
             catch (Exception ex)
             {
@@ -195,13 +195,14 @@ namespace DataProvider.Controllers.Service
         {
             if (!idClaim.HasValue || String.IsNullOrEmpty(stateSysName)) return NotFound();
 
+            Claim.RemoteStateChange(idClaim.Value, stateSysName, creatorSid, descr);
+
             var claim = new Claim(idClaim.Value);
             claim.CurUserAdSid = creatorSid;
-            claim.Descr = descr;
+            //claim.Descr = descr;
             claim.Go();
-
-            //Claim.RemoteStateChange(idClaim.Value, stateSysName, creatorSid, descr);
             return Ok();
         }
+
     }
 }

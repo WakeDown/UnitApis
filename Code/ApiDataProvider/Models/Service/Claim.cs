@@ -495,7 +495,7 @@ namespace DataProvider.Models.Service
                             //Сначала сохраняем промежуточный статус
                             SaveStateStep(nextState.Id);
                             saveStateInfo = false;
-                            nextState = new ClaimState("ZIPCHECK");
+                            nextState = new ClaimState("ZIPORDER");
 
                         }
                         else if ((!ServiceSheet4Save.ProcessEnabled || !ServiceSheet4Save.DeviceEnabled) && (!ServiceSheet4Save.ZipClaim.HasValue || !ServiceSheet4Save.ZipClaim.Value))
@@ -602,7 +602,6 @@ namespace DataProvider.Models.Service
                         noteSubject = $"Отклонено назначение заявки №%ID%";
                     }
                     break;
-
                 case "SERVENGOUTWAIT":
                     goNext = true;
                     saveClaim = true;
@@ -635,14 +634,14 @@ namespace DataProvider.Models.Service
                     else if ((!ServiceSheet4Save.ProcessEnabled || !ServiceSheet4Save.DeviceEnabled) && ServiceSheet4Save.ZipClaim.HasValue &&
                              ServiceSheet4Save.ZipClaim.Value)
                     {
-                        nextState = new ClaimState("ZIPCHECK");
+                        nextState = new ClaimState("ZIPORDER");
                     }
                     else if ((!ServiceSheet4Save.ProcessEnabled || !ServiceSheet4Save.DeviceEnabled) && (!ServiceSheet4Save.ZipClaim.HasValue || !ServiceSheet4Save.ZipClaim.Value))
                     {
-                        nextState = new ClaimState("ZIPCHECK");
+                        nextState = new ClaimState("ZIPORDER");
                     }
 
-                    if (nextState.SysName.Equals("ZIPCHECK"))
+                    if (nextState.SysName.Equals("ZIPORDER"))
                     {
                         sendNote = true;
                         noteTo = new[] { ServiceRole.AllTech };
@@ -651,7 +650,25 @@ namespace DataProvider.Models.Service
                     }
 
                     break;
-                case "ZIPCHECK"://В настоящий момент по этому статусу происходит заказ ЗИП специалистом Тех поддержки
+                case "ZIPORDER"://В настоящий момент по этому статусу происходит заказ ЗИП специалистом Тех поддержки
+                    if (!GetClaimCurrentState(Id).SysName.Equals("ZIPCLINWORK"))//На всякий случай проверяем еще раз
+                    {
+                        goNext = true;
+                        saveClaim = true;
+                        CurTechSid = CurUserAdSid;
+                        SpecialistSid = CurUserAdSid;
+                        nextState = new ClaimState("ZIPCLINWORK");
+                    }
+                    else
+                    {
+                        throw new ArgumentException("Заказ уже в работе.");
+                    }
+                    break;
+                case "ZIPCLINWORK":
+                    var curCl = new Claim(Id);
+                    if (curCl.SpecialistSid != CurUserAdSid && curCl.CurTechSid != CurUserAdSid) throw new ArgumentException("Заказ уже в работе.");
+                    break;
+                case "ZIPCHECK":
                     goNext = true;
                     saveClaim = true;
                     nextState = new ClaimState("ZIPCHECKED");
@@ -777,11 +794,11 @@ namespace DataProvider.Models.Service
                     string sid = cl.CurTechSid;
                     email = new[] { Employee.GetEmailBySid(sid)};
                 }
-                else if (mt == ServiceRole.CurTech)
-                {
-                    string sid = cl.CurTechSid;
-                    email = new[] { Employee.GetEmailBySid(sid)};
-                }
+                //else if (mt == ServiceRole.CurTech)
+                //{
+                //    string sid = cl.CurTechSid;
+                //    email = new[] { Employee.GetEmailBySid(sid)};
+                //}
                 else if (mt == ServiceRole.CurSpecialist)
                 {
                     string sid = cl.SpecialistSid;
