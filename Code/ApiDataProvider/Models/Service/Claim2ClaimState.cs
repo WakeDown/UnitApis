@@ -24,7 +24,7 @@ namespace DataProvider.Models.Service
         public int IdWorkType { get; set; }
         public int? IdServiceSheet { get; set; }
         //public virtual ServiceSheet ServiceSheet { get;set;}
-
+        public int? ZipClaimId { get; set; }
 
         public Claim2ClaimState() { }
 
@@ -57,6 +57,7 @@ namespace DataProvider.Models.Service
             SpecialistSid = Db.DbHelper.GetValueString(row, "specialist_sid");
             IdWorkType = Db.DbHelper.GetValueIntOrDefault(row, "id_work_type");
             IdServiceSheet = Db.DbHelper.GetValueIntOrNull(row, "id_service_sheet");
+            ZipClaimId = Db.DbHelper.GetValueIntOrNull(row, "id_zip_claim");
             //if (IdServiceSheet.HasValue)
             //{
             //    ServiceSheet = new ServiceSheet(IdServiceSheet.Value);
@@ -71,6 +72,7 @@ namespace DataProvider.Models.Service
             SqlParameter pCreatorAdSid = new SqlParameter() { ParameterName = "creator_sid", SqlValue = CurUserAdSid, SqlDbType = SqlDbType.VarChar };
             SqlParameter pSpecialistSid = new SqlParameter() { ParameterName = "specialist_sid", SqlValue = SpecialistSid, SqlDbType = SqlDbType.VarChar };
             SqlParameter pIdServiceSheet = new SqlParameter() { ParameterName = "id_service_sheet", SqlValue = IdServiceSheet, SqlDbType = SqlDbType.Int };
+            SqlParameter pZipClaimId = new SqlParameter() { ParameterName = "id_zip_claim", SqlValue = ZipClaimId, SqlDbType = SqlDbType.Int };
 
             using (var conn = Db.Service.connection)
             {
@@ -81,7 +83,7 @@ namespace DataProvider.Models.Service
                     try
                     {
                         var dt = Db.Service.ExecuteQueryStoredProcedure("save_claim2claim_state", conn, tran, pIdClaim, pIdClaimState,
-                pDescr, pCreatorAdSid, pSpecialistSid, pIdServiceSheet);
+                pDescr, pCreatorAdSid, pSpecialistSid, pIdServiceSheet, pZipClaimId);
                         int id = 0;
                         if (dt.Rows.Count > 0)
                         {
@@ -123,7 +125,7 @@ namespace DataProvider.Models.Service
         {
             SqlParameter pIdClaim = new SqlParameter() { ParameterName = "id_claim", SqlValue = idClaim, SqlDbType = SqlDbType.Int };
             SqlParameter pSysName = new SqlParameter() { ParameterName = "sys_name", SqlValue = sysName, SqlDbType = SqlDbType.NVarChar };
-            var dt = Db.Service.ExecuteQueryStoredProcedure("get_claim_last_added _claim_state", pIdClaim, pSysName);
+            var dt = Db.Service.ExecuteQueryStoredProcedure("get_claim_last_added_claim_state", pIdClaim, pSysName);
             var model = new Claim2ClaimState();
             if (dt.Rows.Count > 0)
             {

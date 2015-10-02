@@ -268,7 +268,7 @@ namespace DataProvider.Models.Service
             return Id;
         }
 
-        public static void RemoteStateChange(int idClaim, string stateSysName, string creatorSid, string descr = null)
+        public static void RemoteStateChange(int idClaim, string stateSysName, string creatorSid, string descr = null, int? idZipClaim = null)
         {
             var claim = new Claim(idClaim);
             claim.CurUserAdSid = creatorSid;
@@ -284,13 +284,14 @@ namespace DataProvider.Models.Service
             }
         }
 
-        public void SaveStateStep(int stateId, string descr = null, bool saveStateInfo = true)
+        public void SaveStateStep(int stateId, string descr = null, bool saveStateInfo = true, int? idZipClaim = null)
         {
             if (stateId == 0) throw new ArgumentException("Не указан статус для сохранения в лестнице статусов.");
             var c2Cs = new Claim2ClaimState();
             c2Cs.IdClaim = Id;
             c2Cs.IdClaimState = stateId;
             c2Cs.CurUserAdSid = CurUserAdSid;
+            c2Cs.ZipClaimId = idZipClaim;
             if (saveStateInfo)
             {
                 //c2Cs.Descr = Descr;
@@ -480,7 +481,7 @@ namespace DataProvider.Models.Service
                         ServiceSheet4Save.CurUserAdSid = CurUserAdSid;
                         ServiceSheet4Save.EngeneerSid = CurUserAdSid;
                         ServiceSheet4Save.IdServiceIssue = -999;
-                        ServiceSheet4Save.Save();
+                        ServiceSheet4Save.Save("TECHWORK");
                         if (ServiceSheet4Save.ProcessEnabled && ServiceSheet4Save.DeviceEnabled)
                         {
                             nextState = new ClaimState("TECHDONE");
@@ -624,7 +625,7 @@ namespace DataProvider.Models.Service
                     ServiceSheet4Save.CurUserAdSid = CurUserAdSid;
                     ServiceSheet4Save.EngeneerSid = CurUserAdSid;
                     ServiceSheet4Save.IdServiceIssue = cl.CurServiceIssueId ?? -1;
-                    ServiceSheet4Save.Save();
+                    ServiceSheet4Save.Save("SRVENGWORK");
 
                     if (ServiceSheet4Save.ProcessEnabled && ServiceSheet4Save.DeviceEnabled)
                     {
@@ -821,14 +822,15 @@ namespace DataProvider.Models.Service
             }
         }
 
-        public static IEnumerable<Claim> GetList(AdUser user, out int cnt, string adminSid = null, string engeneerSid = null, DateTime? dateStart = null, DateTime? dateEnd = null, int? topRows = 30, string managerSid = null, string techSid = null, string serialNum=null, int? idDevice = null, bool? activeClaimsOnly = false, int? idClaimState = null, int? clientId = null)
+        public static IEnumerable<Claim> GetList(AdUser user, out int cnt, string adminSid = null, string engeneerSid = null, DateTime? dateStart = null, DateTime? dateEnd = null, int? topRows = null, string managerSid = null, string techSid = null, string serialNum=null, int? idDevice = null, bool? activeClaimsOnly = false, int? idClaimState = null, int? clientId = null)
         {
             if (user.Is(AdGroup.ServiceAdmin)) adminSid = user.Sid;
             if (user.Is(AdGroup.ServiceEngeneer)) engeneerSid = user.Sid;
             if (user.Is(AdGroup.ServiceManager)) managerSid = user.Sid;
             if (user.Is(AdGroup.ServiceTech)) techSid = user.Sid;
-
+            
             //!!!!ЕСЛИ МЕНЯЕШЬ ЭТУ ФУНКЦИЮ ПОМИ ЧТО НАДО ПОПРАВИТЬ ФУНКЦИЮ ЧУТЬ НИЖЕ 
+            if (!topRows.HasValue) topRows = 30;
 
             SqlParameter pServAdminSid = new SqlParameter() { ParameterName = "admin_sid", SqlValue = adminSid, SqlDbType = SqlDbType.VarChar };
             SqlParameter pServEngeneerSid = new SqlParameter() { ParameterName = "engeneer_sid", SqlValue = engeneerSid, SqlDbType = SqlDbType.VarChar };

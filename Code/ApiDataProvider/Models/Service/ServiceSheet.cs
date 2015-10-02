@@ -40,7 +40,8 @@ namespace DataProvider.Models.Service
         public ClassifierCaterory DeviceClassifierCaterory { get; set; }
         public int WorkTypeId { get; set; }
         public WorkType WorkType { get; set; }
-        public int? TimeOnWorkMinutes { get; set; }//Время на работу в минутах (от статуса В работе до создания заявки
+        //Время на работу в минутах (от статуса В работе до создания заявки
+        public int? TimeOnWorkMinutes { get; set; }
 
         public ServiceSheet() { }
 
@@ -99,13 +100,14 @@ namespace DataProvider.Models.Service
             }
         }
 
-        public void Save()
+        public void Save(string lastStateSysName)
         {
             //TimeOnWorkMinutes = время от статуса в работу до создания заявки
-            var stateInWork = Claim.GetLastState(IdClaim, "SRVENGWORK");
+            var stateInWork = Claim.GetLastState(IdClaim, lastStateSysName);
             if (stateInWork != null)
             {
                 TimeOnWorkMinutes = (int) (DateTime.Now - stateInWork.DateCreate).TotalMinutes;
+                if (TimeOnWorkMinutes == 0) TimeOnWorkMinutes = 1;
             }
 
             SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = Id, SqlDbType = SqlDbType.Int };

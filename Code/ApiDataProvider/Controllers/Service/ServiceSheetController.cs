@@ -26,24 +26,24 @@ namespace DataProvider.Controllers.Service
             return model;
         }
 
-        [AuthorizeAd(AdGroup.ServiceControler, AdGroup.ServiceEngeneer, AdGroup.ServiceAdmin, AdGroup.ServiceTech)]
-        public HttpResponseMessage Save(ServiceSheet model)
-        {
-            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
+        //[AuthorizeAd(AdGroup.ServiceControler, AdGroup.ServiceEngeneer, AdGroup.ServiceAdmin, AdGroup.ServiceTech)]
+        //public HttpResponseMessage Save(ServiceSheet model)
+        //{
+        //    HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
 
-            try
-            {
-                model.CurUserAdSid = GetCurUser().Sid;
-                model.Save();
-                response.Content = new StringContent(String.Format("{{\"id\":{0}}}", model.Id));
-            }
-            catch (Exception ex)
-            {
-                response = new HttpResponseMessage(HttpStatusCode.OK);
-                response.Content = new StringContent(String.Format("{{\"errorMessage\":\"{0}\"}}", ex.Message));
+        //    try
+        //    {
+        //        model.CurUserAdSid = GetCurUser().Sid;
+        //        model.Save();
+        //        response.Content = new StringContent(String.Format("{{\"id\":{0}}}", model.Id));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        response = new HttpResponseMessage(HttpStatusCode.OK);
+        //        response.Content = new StringContent(String.Format("{{\"errorMessage\":\"{0}\"}}", ex.Message));
 
-            }
-            return response;
-        }
+        //    }
+        //    return response;
+        //}
     }
 }
