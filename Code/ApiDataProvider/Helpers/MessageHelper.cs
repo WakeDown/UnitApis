@@ -56,9 +56,9 @@ namespace DataProvider.Helpers
             SendMailSmtp(subject, body, isBodyHtml, recipients.ToArray(),recHidden.ToArray(), new MailAddress(mailFrom), file, isTest: isTest);
         }
 
-        public static void SendMailSmtp(string subject, string body, bool isBodyHtml, MailAddress[] mailTo, MailAddress[] hiddenMailTo=null, MailAddress mailFrom = null, AttachmentFile file = null, bool isTest = false)
+        public static void SendMailSmtp(string subject, string body, bool isBodyHtml, MailAddress[] mailTo, MailAddress[] hiddenMailTo = null, MailAddress mailFrom = null, AttachmentFile file = null, bool isTest = false)
         {
-            if (!mailTo.Any() && hiddenMailTo == null || (hiddenMailTo !=null && !hiddenMailTo.Any())) throw new Exception("Не указаны получатели письма!");
+            if (!mailTo.Any() && (hiddenMailTo == null || !hiddenMailTo.Any())) throw new Exception("Не указаны получатели письма!");
 
             if (mailFrom == null || String.IsNullOrEmpty(mailFrom.Address)) mailFrom = defaultMailFrom;
 
