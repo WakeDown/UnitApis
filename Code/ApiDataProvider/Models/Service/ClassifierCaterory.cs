@@ -25,6 +25,17 @@ namespace DataProvider.Models.Service
 
         public ClassifierCaterory() { }
 
+        public ClassifierCaterory(int id)
+        {
+            SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = id, SqlDbType = SqlDbType.Int };
+            var dt = Db.Service.ExecuteQueryStoredProcedure("get_classifier_category", pId);
+
+            if (dt.Rows.Count > 0)
+            {
+                FillSelf(dt.Rows[0]);
+            }
+        }
+
         public ClassifierCaterory(string number)
         {
             SqlParameter pNumber = new SqlParameter() { ParameterName = "number", SqlValue = number, SqlDbType = SqlDbType.NVarChar };

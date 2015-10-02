@@ -23,7 +23,8 @@ namespace DataProvider.Models.Service
         public string Descr { get; set; }
         public string FullName { get; set; }
         public string ExtendedName { get; set; }
-        
+        public int ClassifierCategoryId { get; set; }
+
 
         public Device()
         {
@@ -102,6 +103,8 @@ namespace DataProvider.Models.Service
             Descr = Db.DbHelper.GetValueString(row, "comment");
             FullName = $"{Vendor} {ModelName} №{SerialNum}";
             ExtendedName = $"{FullName} {Address} {ObjectName}";
+            ClassifierCategoryId = Db.DbHelper.GetValueIntOrDefault(row, "id_classifier_category");
+
         }
 
 

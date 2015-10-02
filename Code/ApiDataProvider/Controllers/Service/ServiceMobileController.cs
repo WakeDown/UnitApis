@@ -92,6 +92,7 @@ namespace DataProvider.Controllers.Service
         /// </summary>
         /// <param name="lastModifyDate"></param>
         /// <returns></returns>
+        [HttpGet]
         public HttpResponseMessage CheckDeviceInfoListIsChanged(DateTime lastModifyDate)
         {
             bool flag = Device.GetInfoList(lastModifyDate).Any();

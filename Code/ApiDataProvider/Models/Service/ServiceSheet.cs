@@ -30,6 +30,12 @@ namespace DataProvider.Models.Service
         public string CreatorSid { get; set; }
         public string EngeneerSid { get; set; }
         public string AdminSid { get; set; }
+        //public string DeviceSerialNum { get; set; }
+        public int DeviceId { get; set; }
+        public Device Device { get; set; }
+        public ClassifierCaterory DeviceClassifierCaterory { get; set; }
+        public int WorkTypeId { get; set; }
+        public WorkType WorkType { get; set; }
 
         public ServiceSheet() { }
 
@@ -40,7 +46,7 @@ namespace DataProvider.Models.Service
             if (dt.Rows.Count > 0)
             {
                 var row = dt.Rows[0];
-                FillSelf(row);
+                FillSelf(row, true);
             }
         }
 
@@ -50,7 +56,7 @@ namespace DataProvider.Models.Service
             FillSelf(row);
         }
 
-        private void FillSelf(DataRow row)
+        private void FillSelf(DataRow row, bool fillObj = false)
         {
             Id = Db.DbHelper.GetValueIntOrDefault(row, "id");
             IdClaim = Db.DbHelper.GetValueIntOrDefault(row, "id_claim");
@@ -69,6 +75,15 @@ namespace DataProvider.Models.Service
             CreatorSid = Db.DbHelper.GetValueString(row, "creator_sid");
             EngeneerSid = Db.DbHelper.GetValueString(row, "engeneer_sid");
             AdminSid = Db.DbHelper.GetValueString(row, "admin_sid");
+            DeviceId = Db.DbHelper.GetValueIntOrDefault(row, "id_device");
+            WorkTypeId = Db.DbHelper.GetValueIntOrDefault(row, "id_work_type");
+
+            if (fillObj)
+            {
+                Device = new Device(DeviceId);
+                WorkType = new WorkType(WorkTypeId);
+                DeviceClassifierCaterory = new ClassifierCaterory(Device.ClassifierCategoryId);
+            }
         }
 
         public void Save()
