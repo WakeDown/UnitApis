@@ -186,9 +186,16 @@ namespace DataProvider.Models.Service
             //if (Admin == null) Admin = new EmployeeSm();
             //if (Engeneer == null) Engeneer = new EmployeeSm();
             if (Contract == null) Contract = new Contract();
-            if (Contractor == null) Contractor = new Contractor();
+            if (Contractor == null)
+            {
+                Contractor = new Contractor();
+            }
+            else if (Contractor.Id > 0)
+            {
+                IdContractor = Contractor.Id;
+            }
             if (Device == null) Device = new Device();
-            if (isNew && IdContractor > 0 && String.IsNullOrEmpty(ContractorName))//Загрузка названия контрагента из Эталон
+            if (isNew && IdContractor>0 && String.IsNullOrEmpty(ContractorName))//Загрузка названия контрагента из Эталон
             {
                 Contractor = new Contractor(IdContractor);
                 ContractorName = Contractor.Name;
