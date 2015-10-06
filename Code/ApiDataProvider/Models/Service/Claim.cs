@@ -246,7 +246,10 @@ namespace DataProvider.Models.Service
             {
                 IdContractor = Contractor.Id;
             }
-            if (Device == null) Device = new Device();
+            if (Device == null) { Device = new Device();}else if (Device.Id > 0)
+            {
+                IdDevice = Device.Id;
+            }
             if (isNew && IdContractor>0 && String.IsNullOrEmpty(ContractorName))//Загрузка названия контрагента из Эталон
             {
                 Contractor = new Contractor(IdContractor);
@@ -261,13 +264,13 @@ namespace DataProvider.Models.Service
             if (isNew)
             {
                 CurManagerSid = CurUserAdSid;
-                if (Device != null && Device.Id > 0) Device = new Device(Device.Id);
+                if (IdDevice > 0) Device = new Device(IdDevice);
             }
 
             SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = Id, SqlDbType = SqlDbType.Int };
             SqlParameter pIdContractor = new SqlParameter() { ParameterName = "id_contractor", SqlValue = IdContractor, SqlDbType = SqlDbType.Int };
             SqlParameter pIdContract = new SqlParameter() { ParameterName = "id_contract", SqlValue = IdContract, SqlDbType = SqlDbType.Int };
-            SqlParameter pIdDevice = new SqlParameter() { ParameterName = "id_device", SqlValue = Device.Id, SqlDbType = SqlDbType.Int };
+            SqlParameter pIdDevice = new SqlParameter() { ParameterName = "id_device", SqlValue = IdDevice, SqlDbType = SqlDbType.Int };
             SqlParameter pContractorName = new SqlParameter() { ParameterName = "contractor_name", SqlValue = ContractorName, SqlDbType = SqlDbType.NVarChar };
             SqlParameter pContractName = new SqlParameter() { ParameterName = "contract_number", SqlValue = ContractName, SqlDbType = SqlDbType.NVarChar };
             SqlParameter pDeviceName = new SqlParameter() { ParameterName = "device_name", SqlValue = DeviceName, SqlDbType = SqlDbType.NVarChar };
