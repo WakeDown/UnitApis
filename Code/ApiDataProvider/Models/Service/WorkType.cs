@@ -88,7 +88,7 @@ namespace DataProvider.Models.Service
 
         public static WorkType GetWorkTypeForZipClaim()
         {
-            return new WorkType("ДНО-ЗИП");
+            return new WorkType("РТО-ЗИП");
         }
 
         //public void Save()

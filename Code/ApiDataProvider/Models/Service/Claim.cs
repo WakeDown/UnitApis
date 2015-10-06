@@ -10,6 +10,7 @@ using DataProvider.Helpers;
 using DataProvider.Models.Stuff;
 using DataProvider.Objects;
 using DataProvider.Objects.Interfaces;
+using static System.String;
 
 namespace DataProvider.Models.Service
 {
@@ -251,7 +252,7 @@ namespace DataProvider.Models.Service
             {
                 IdDevice = Device.Id;
             }
-            if (isNew && IdContractor>0 && String.IsNullOrEmpty(ContractorName))//Загрузка названия контрагента из Эталон
+            if (isNew && IdContractor>0 && IsNullOrEmpty(ContractorName))//Загрузка названия контрагента из Эталон
             {
                 Contractor = new Contractor(IdContractor);
                 ContractorName = Contractor.Name;
@@ -412,7 +413,7 @@ namespace DataProvider.Models.Service
 
         private bool UserIsCurrentClaimRole(ServiceRole role, bool roleOrSpecialist = false)
         {
-            if (String.IsNullOrEmpty(CurUserAdSid)) return false;
+            if (IsNullOrEmpty(CurUserAdSid)) return false;
             bool result = false;
 
             var cl = new Claim(Id, loadObject: false);
@@ -455,14 +456,14 @@ namespace DataProvider.Models.Service
             if (Id <= 0) throw new ArgumentException("Невозможно предать заявку. Не указан ID заявки.");
 
             //Save();
-            string descr = String.Empty;
+            string descr = Empty;
             var currState = GetClaimCurrentState(Id);
             var nextState = new ClaimState();
             bool saveStateInfo = true;
             bool sendNote = false;
             ServiceRole[] noteTo = { ServiceRole.CurSpecialist };
-            string noteText = String.Empty;
-            string noteSubject = String.Empty;
+            string noteText = Empty;
+            string noteSubject = Empty;
             bool goNext = false;
             bool saveClaim = false;//Метод вызывается из удаленных программ и поэтому не всегда нухно схранять статус
 
@@ -690,8 +691,8 @@ namespace DataProvider.Models.Service
 
                     var cl = new Claim(Id);
 
-                    ServiceSheet4Save.CurUserAdSid = CurUserAdSid;
-                    ServiceSheet4Save.EngeneerSid = CurUserAdSid;
+                    if (IsNullOrEmpty(ServiceSheet4Save.CurUserAdSid)) ServiceSheet4Save.CurUserAdSid = CurUserAdSid;
+                    if (IsNullOrEmpty(ServiceSheet4Save.EngeneerSid))ServiceSheet4Save.EngeneerSid = CurUserAdSid;
                     ServiceSheet4Save.IdServiceIssue = cl.CurServiceIssueId ?? -1;
                     ServiceSheet4Save.Save("SRVENGWORK");
 
