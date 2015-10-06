@@ -276,7 +276,7 @@ namespace DataProvider.Controllers.Stuff
 
         public IEnumerable<KeyValuePair<string,string>> GetSubordinatesSimple(string sid)
         {
-            var list = Employee.GetSubordinatesSimple(sid);
+            var list = Employee.GetSubordinatesSimple(sid).ToList();
 
             return list;
         } 

@@ -46,6 +46,7 @@ namespace DataProvider.Models.Service
         public string CurTechSid { get; set; }
         public string CurManagerSid { get; set; }
         public int? CurServiceIssueId { get; set; }
+        public int? IdServiceCame { get; set; }
 
         public Claim() { }
 
@@ -167,6 +168,7 @@ namespace DataProvider.Models.Service
             CurTechSid = Db.DbHelper.GetValueString(row, "cur_tech_sid");
             CurManagerSid = Db.DbHelper.GetValueString(row, "cur_manager_sid");
             CurServiceIssueId = Db.DbHelper.GetValueIntOrNull(row, "cur_service_issue_id");
+            IdServiceCame = Db.DbHelper.GetValueIntOrNull(row, "id_service_came");
 
             if (loadObj)
             {
@@ -179,13 +181,63 @@ namespace DataProvider.Models.Service
             }
         }
 
-        public int Save()
+        /// <summary>
+        /// Для удаленного создания заявки на ЗИП из системы планирования (ДСУ)
+        /// </summary>
+        /// <param name="idServiceCame"></param>
+        /// <param name="creatorSid"></param>
+        /// <returns></returns>
+        public static int SaveFromServicePlan4ZipClaim(int idServiceCame, string creatorSid)
+        {
+            var came = new PlanServiceCame(idServiceCame);
+            if (!came.NeedZip.HasValue || !came.NeedZip.Value) return 0;
+            var claim = new Claim();
+            claim.IdDevice = came.IdDevice;
+            claim.IdContract = came.IdContract;
+            claim.IdContractor = came.IdContractor;
+            claim.CurUserAdSid = creatorSid;
+            claim.IdServiceCame = idServiceCame;
+            claim.IdWorkType = Service.WorkType.GetWorkTypeForZipClaim().Id;
+            claim.CurAdminSid = came.CreatorSid;
+            claim.CurEngeneerSid = came.ServiceEngeneerSid;
+            claim.Descr = came.Descr;
+
+            var sheet = new ServiceSheet();
+            sheet.Descr= came.Descr;
+            sheet.AdminSid= came.CreatorSid;
+            sheet.EngeneerSid = came.ServiceEngeneerSid;
+            sheet.CounterMono = came.Counter;
+            sheet.CounterColor = came.CounterColor;
+            sheet.ProcessEnabled = came.ProcessEnabled.HasValue ? came.ProcessEnabled.Value : false;
+            sheet.DeviceEnabled = came.DeviceEnabled.HasValue ? came.DeviceEnabled.Value : false;
+            sheet.ZipClaim = came.NeedZip;
+            sheet.NoCounter = came.NoCounter;
+            sheet.CounterUnavailable = came.CounterAvailable;
+            sheet.IdServiceIssue = -999;
+
+            claim.ServiceSheet4Save = sheet;
+
+            var firstState = new ClaimState("SRVENGWORK");
+            int id = claim.Save(firstState);
+            claim.Go();
+            return id;
+        }
+        /// <summary>
+        /// Сохранение заявки
+        /// </summary>
+        /// <param name="firstState">Передается если нужно чтобы заявка сохранилась с другим первым статусом</param>
+        /// <returns></returns>
+        public int Save(ClaimState firstState = null)
         {
             bool isNew = Id == 0;
             //if (State == null) State = ClaimState.GetFirstState();
             //if (Admin == null) Admin = new EmployeeSm();
             //if (Engeneer == null) Engeneer = new EmployeeSm();
-            if (Contract == null) Contract = new Contract();
+            if (Contract == null) { Contract = new Contract();}
+            else if (Contract.Id > 0)
+            {
+                IdContract = Contract.Id;
+            }
             if (Contractor == null)
             {
                 Contractor = new Contractor();
@@ -213,8 +265,8 @@ namespace DataProvider.Models.Service
             }
 
             SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = Id, SqlDbType = SqlDbType.Int };
-            SqlParameter pIdContractor = new SqlParameter() { ParameterName = "id_contractor", SqlValue = Contractor.Id, SqlDbType = SqlDbType.Int };
-            SqlParameter pIdContract = new SqlParameter() { ParameterName = "id_contract", SqlValue = Contract.Id, SqlDbType = SqlDbType.Int };
+            SqlParameter pIdContractor = new SqlParameter() { ParameterName = "id_contractor", SqlValue = IdContractor, SqlDbType = SqlDbType.Int };
+            SqlParameter pIdContract = new SqlParameter() { ParameterName = "id_contract", SqlValue = IdContract, SqlDbType = SqlDbType.Int };
             SqlParameter pIdDevice = new SqlParameter() { ParameterName = "id_device", SqlValue = Device.Id, SqlDbType = SqlDbType.Int };
             SqlParameter pContractorName = new SqlParameter() { ParameterName = "contractor_name", SqlValue = ContractorName, SqlDbType = SqlDbType.NVarChar };
             SqlParameter pContractName = new SqlParameter() { ParameterName = "contract_number", SqlValue = ContractName, SqlDbType = SqlDbType.NVarChar };
@@ -233,6 +285,7 @@ namespace DataProvider.Models.Service
             SqlParameter pManagerSid = new SqlParameter() { ParameterName = "cur_manager_sid", SqlValue = CurManagerSid, SqlDbType = SqlDbType.VarChar };
             SqlParameter pSerialNum = new SqlParameter() { ParameterName = "serial_num", SqlValue = Device.SerialNum, SqlDbType = SqlDbType.NVarChar };
             SqlParameter pCurServiceIssueId = new SqlParameter() { ParameterName = "cur_service_issue_id", SqlValue = CurServiceIssueId, SqlDbType = SqlDbType.Int };
+            SqlParameter pIdServiceCame = new SqlParameter() { ParameterName = "id_service_came", SqlValue = IdServiceCame, SqlDbType = SqlDbType.Int };
             DataTable dt = new DataTable();
             //using (var conn = Db.Service.connection)
             //{
@@ -244,7 +297,7 @@ namespace DataProvider.Models.Service
 
             //Если заявка уже сохранена то основная информаци не будет перезаписана
             dt = Db.Service.ExecuteQueryStoredProcedure("save_claim", pId, pIdContractor, pIdContract, pIdDevice,
-                pContractorName, pContractName, pDeviceName, /*pIdAdmin, pIdEngeneer,*/ pCreatorAdSid, pIdWorkType, pSpecialistSid, pClientSdNum, pEngeneerSid, pAdminSid, pTechSid, pManagerSid, pSerialNum, pCurServiceIssueId);
+                pContractorName, pContractName, pDeviceName, /*pIdAdmin, pIdEngeneer,*/ pCreatorAdSid, pIdWorkType, pSpecialistSid, pClientSdNum, pEngeneerSid, pAdminSid, pTechSid, pManagerSid, pSerialNum, pCurServiceIssueId, pIdServiceCame);
 
             int id = 0;
             if (dt.Rows.Count > 0)
@@ -255,7 +308,7 @@ namespace DataProvider.Models.Service
             if (isNew)
             {
                 Id = id;
-                var st = ClaimState.GetFirstState();
+                var st = firstState??ClaimState.GetFirstState();
                 SaveStateStep(st.Id, Descr);
             }
 
@@ -756,15 +809,29 @@ namespace DataProvider.Models.Service
             //SaveStateStep(nextState.Id);
             if (sendNote)
             {
-                //Замена по маске
-                noteSubject = noteSubject.Replace("%ID%", Id.ToString());
+                SendNote(noteSubject, noteText, noteTo);
 
-                noteText = noteText.Replace("%ID%", Id.ToString());
-                string link = $"{ConfigurationManager.AppSettings["ServiceUrl"]}/Claim/Index/{Id}";
-                noteText = noteText.Replace("%LINK%", $@"<p><a href=""{link}"">{link}</a></p>");
+                ////Замена по маске
+                //noteSubject = noteSubject.Replace("%ID%", Id.ToString());
 
-                SendMailTo(noteText, noteSubject, noteTo);
+                //noteText = noteText.Replace("%ID%", Id.ToString());
+                //string link = $"{ConfigurationManager.AppSettings["ServiceUrl"]}/Claim/Index/{Id}";
+                //noteText = noteText.Replace("%LINK%", $@"<p><a href=""{link}"">{link}</a></p>");
+
+                //SendMailTo(noteText, noteSubject, noteTo);
             }
+        }
+
+        public void SendNote(string subject, string text, ServiceRole[] to)
+        {
+            //Замена по маске
+            subject = subject.Replace("%ID%", Id.ToString());
+
+            text = text.Replace("%ID%", Id.ToString());
+            string link = $"{ConfigurationManager.AppSettings["ServiceUrl"]}/Claim/Index/{Id}";
+            text = text.Replace("%LINK%", $@"<p><a href=""{link}"">{link}</a></p>");
+
+            SendMailTo(text, subject, to);
         }
 
         public enum ServiceRole

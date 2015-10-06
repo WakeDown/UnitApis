@@ -86,6 +86,11 @@ namespace DataProvider.Models.Service
             return lst;
         }
 
+        public static WorkType GetWorkTypeForZipClaim()
+        {
+            return new WorkType("ДНО-ЗИП");
+        }
+
         //public void Save()
         //{
         //    SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = Id, SqlDbType = SqlDbType.Int };

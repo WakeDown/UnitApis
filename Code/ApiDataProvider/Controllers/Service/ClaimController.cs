@@ -204,5 +204,17 @@ namespace DataProvider.Controllers.Service
             return Ok();
         }
 
+        [System.Web.Http.AllowAnonymous]
+        [System.Web.Http.HttpGet]
+        public IHttpActionResult RemoteCreate4ZipClaim(int? idServiceCame, string creatorSid)
+        {
+            if (!idServiceCame.HasValue) return NotFound();
+
+            int id = Claim.SaveFromServicePlan4ZipClaim(idServiceCame.Value, creatorSid);
+            //var claim = new Claim(id);
+            //claim.CurUserAdSid = creatorSid;
+           
+            return Ok();
+        }
     }
 }
