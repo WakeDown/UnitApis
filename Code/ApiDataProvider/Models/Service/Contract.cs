@@ -15,6 +15,7 @@ namespace DataProvider.Models.Service
         public int Id { get; set; }
         public string Name { get; set; }
         public string Number { get; set; }
+        public bool? ClientSdNumRequired { get; set; }
 
         public Contract()
         {
@@ -41,6 +42,7 @@ namespace DataProvider.Models.Service
             Id = Db.DbHelper.GetValueIntOrDefault(row, "id");
             Name = Db.DbHelper.GetValueString(row, "name");
             Number = Db.DbHelper.GetValueString(row, "number");
+            ClientSdNumRequired = Db.DbHelper.GetValueBoolOrNull(row, "client_sd_num_required");
         }
 
         public static IEnumerable<Contract> GetList(int? idContractor = null, string contractorName = null, int? idContract = null, string contractNumber = null, int? idDevice = null, string deviceName = null)

@@ -187,15 +187,16 @@ namespace DataProvider.Models.Service
         /// <param name="idServiceCame"></param>
         /// <param name="creatorSid"></param>
         /// <returns></returns>
-        public static int SaveFromServicePlan4ZipClaim(int idServiceCame, string creatorSid)
+        public static int SaveFromServicePlan4ZipClaim(int idServiceCame)
         {
             var came = new PlanServiceCame(idServiceCame);
             if (!came.NeedZip.HasValue || !came.NeedZip.Value) return 0;
             var claim = new Claim();
+            claim.CurUserAdSid = came.CreatorSid;
             claim.IdDevice = came.IdDevice;
             claim.IdContract = came.IdContract;
             claim.IdContractor = came.IdContractor;
-            claim.CurUserAdSid = creatorSid;
+            claim.CurUserAdSid = came.CreatorSid;
             claim.IdServiceCame = idServiceCame;
             claim.IdWorkType = Service.WorkType.GetWorkTypeForZipClaim().Id;
             claim.CurAdminSid = came.CreatorSid;

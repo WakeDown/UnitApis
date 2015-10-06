@@ -204,12 +204,13 @@ namespace DataProvider.Controllers.Service
             return Ok();
         }
 
-        [AuthorizeAd(AdGroup.ServiceAdmin, AdGroup.ServiceControler)]
+        //[AuthorizeAd(AdGroup.ServiceAdmin, AdGroup.ServiceControler)]
+        [System.Web.Http.AllowAnonymous]
         [System.Web.Http.HttpGet]
         public IHttpActionResult RemoteCreate4ZipClaim(int? idServiceCame)
         {
             if (!idServiceCame.HasValue) return NotFound();
-            int id = Claim.SaveFromServicePlan4ZipClaim(idServiceCame.Value, GetCurUser().Sid);
+            int id = Claim.SaveFromServicePlan4ZipClaim(idServiceCame.Value);
             return Ok();
         }
     }
