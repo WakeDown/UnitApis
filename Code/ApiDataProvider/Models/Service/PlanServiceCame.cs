@@ -31,6 +31,9 @@ namespace DataProvider.Models.Service
         public int IdDevice { get; set; }
         public int IdContract { get; set; }
         public int IdContractor { get; set; }
+        public string ZipDescr { get; set; }
+        public string DateWorkStart { get; set; }
+        public string DateWorkEnd { get; set; }
 
         public PlanServiceCame() { }
 
@@ -71,6 +74,9 @@ namespace DataProvider.Models.Service
             IdDevice= Db.DbHelper.GetValueIntOrDefault(row, "id_device");
             IdContract = Db.DbHelper.GetValueIntOrDefault(row, "id_contract");
             IdContractor = Db.DbHelper.GetValueIntOrDefault(row, "id_contractor");
+            ZipDescr = Db.DbHelper.GetValueString(row, "zip_descr");
+            DateWorkStart = Db.DbHelper.GetValueString(row, "date_work_start");
+            DateWorkEnd = Db.DbHelper.GetValueString(row, "date_work_end");
         }
     }
 }

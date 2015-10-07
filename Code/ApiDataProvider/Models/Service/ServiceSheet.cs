@@ -103,11 +103,14 @@ namespace DataProvider.Models.Service
         public void Save(string lastStateSysName)
         {
             //TimeOnWorkMinutes = время от статуса в работу до создания заявки
-            var stateInWork = Claim.GetLastState(IdClaim, lastStateSysName);
-            if (stateInWork != null)
+            if (!TimeOnWorkMinutes.HasValue)
             {
-                TimeOnWorkMinutes = (int) (DateTime.Now - stateInWork.DateCreate).TotalMinutes;
-                if (TimeOnWorkMinutes == 0) TimeOnWorkMinutes = 1;
+                var stateInWork = Claim.GetLastState(IdClaim, lastStateSysName);
+                if (stateInWork != null)
+                {
+                    TimeOnWorkMinutes = (int) (DateTime.Now - stateInWork.DateCreate).TotalMinutes;
+                    if (TimeOnWorkMinutes == 0) TimeOnWorkMinutes = 1;
+                }
             }
 
             SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = Id, SqlDbType = SqlDbType.Int };

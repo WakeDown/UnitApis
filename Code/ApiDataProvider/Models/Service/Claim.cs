@@ -202,10 +202,11 @@ namespace DataProvider.Models.Service
             claim.IdWorkType = Service.WorkType.GetWorkTypeForZipClaim().Id;
             claim.CurAdminSid = came.CreatorSid;
             claim.CurEngeneerSid = came.ServiceEngeneerSid;
-            claim.Descr = came.Descr;
+            claim.Descr = came.ZipDescr;
 
             var sheet = new ServiceSheet();
-            sheet.Descr= came.Descr;
+            sheet.CounterDescr= came.Descr;
+            sheet.Descr = came.ZipDescr;
             sheet.AdminSid= came.CreatorSid;
             sheet.EngeneerSid = came.ServiceEngeneerSid;
             sheet.CounterMono = came.Counter;
