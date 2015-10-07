@@ -202,7 +202,7 @@ namespace DataProvider.Models.Service
             claim.IdWorkType = Service.WorkType.GetWorkTypeForZipClaim().Id;
             claim.CurAdminSid = came.CreatorSid;
             claim.CurEngeneerSid = came.ServiceEngeneerSid;
-            claim.Descr = came.ZipDescr;
+            //claim.Descr = came.ZipDescr;
 
             var sheet = new ServiceSheet();
             sheet.CounterDescr= came.Descr;
@@ -908,7 +908,10 @@ namespace DataProvider.Models.Service
 
         public static IEnumerable<Claim> GetList(AdUser user, out int cnt, string adminSid = null, string engeneerSid = null, DateTime? dateStart = null, DateTime? dateEnd = null, int? topRows = null, string managerSid = null, string techSid = null, string serialNum=null, int? idDevice = null, bool? activeClaimsOnly = false, int? idClaimState = null, int? clientId = null)
         {
-            if (user.Is(AdGroup.ServiceAdmin)) adminSid = user.Sid;
+            if (user.Is(AdGroup.ServiceAdmin))
+            {
+                adminSid = user.Sid;
+            }
             if (user.Is(AdGroup.ServiceEngeneer)) engeneerSid = user.Sid;
             if (user.Is(AdGroup.ServiceManager)) managerSid = user.Sid;
             if (user.Is(AdGroup.ServiceTech)) techSid = user.Sid;

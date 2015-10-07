@@ -42,6 +42,7 @@ namespace DataProvider.Models.Service
         public WorkType WorkType { get; set; }
         //Время на работу в минутах (от статуса В работе до создания заявки
         public int? TimeOnWorkMinutes { get; set; }
+        public string ClientSdNum { get; set; }
 
         public ServiceSheet() { }
 
@@ -84,6 +85,7 @@ namespace DataProvider.Models.Service
             DeviceId = Db.DbHelper.GetValueIntOrDefault(row, "id_device");
             WorkTypeId = Db.DbHelper.GetValueIntOrDefault(row, "id_work_type");
             TimeOnWorkMinutes = Db.DbHelper.GetValueIntOrNull(row, "time_on_work_minutes");
+            ClientSdNum = Db.DbHelper.GetValueString(row, "client_sd_num");
 
             if (fillNames)
             {
