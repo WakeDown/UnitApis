@@ -780,7 +780,7 @@ namespace DataProvider.Models.Service
                     noteText = $@"Заявка №%ID% закрыта  %LINK%";
                     noteSubject = $"Заявка №%ID% закрыта";
                     break;
-                case "ZIPCL-FAIL":
+                case "ZIPCL-CANCELED":
                     goNext = true;
                     saveClaim = true;
                     descr = Descr;
