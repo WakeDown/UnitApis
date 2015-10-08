@@ -99,7 +99,7 @@ namespace DataProvider.Controllers.Service
 
             var resp = new HttpResponseMessage()
             {
-                Content = new StringContent($"{{isChanged:{flag}}}")
+                Content = new StringContent($"{{\"isChanged\":\"{flag}\"}}")
             };
             resp.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             return resp;

@@ -264,7 +264,7 @@ namespace DataProvider.Helpers
 
                 if (!String.IsNullOrEmpty(value.ToString()))
                 {
-                    result = value.ToString().Equals("1");
+                    result = (value.ToString().Equals("1") || value.ToString().Equals("True"));
                 }
 
                 return result;

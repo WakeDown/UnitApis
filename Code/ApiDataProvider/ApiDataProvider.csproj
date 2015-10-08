@@ -184,6 +184,7 @@
     <Compile Include="Controllers\Service\ServiceIssueResultController.cs" />
     <Compile Include="Controllers\Service\ServiceMobileController.cs" />
     <Compile Include="Controllers\Stuff\BudgetController.cs" />
+    <Compile Include="Controllers\Stuff\RestHolidayController.cs" />
     <Compile Include="Helpers\DateTimeHelper.cs" />
     <Compile Include="Controllers\Stuff\LanguageController.cs" />
     <Compile Include="Controllers\Stuff\VendorController.cs" />
@@ -224,6 +225,7 @@
     <Compile Include="Models\Service\Vendor.cs" />
     <Compile Include="Models\Stuff\ItBudgetReportItem.cs" />
     <Compile Include="Models\Stuff\Language.cs" />
+    <Compile Include="Models\Stuff\RestHoliday.cs" />
     <Compile Include="Models\Stuff\Vendor.cs" />
     <Compile Include="Models\Stuff\VendorState.cs" />
     <Compile Include="Objects\AccessDenyException.cs" />
