@@ -345,7 +345,7 @@ namespace DataProvider.Models.Service
             if (claim.Id > 0)
             {
                 var state = new ClaimState(stateSysName);
-                claim.SaveStateStep(state.Id, descr);
+                claim.SaveStateStep(state.Id, descr, idZipClaim: idZipClaim);
                 //if (stateSysName.ToUpper().Equals("ZIPCL-FAIL"))
                 //{
                 //    var nextState = new ClaimState("ZIPBUYCANCEL");
