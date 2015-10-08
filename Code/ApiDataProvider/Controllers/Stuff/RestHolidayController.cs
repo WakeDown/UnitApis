@@ -13,9 +13,22 @@ namespace DataProvider.Controllers.Stuff
 {
     public class RestHolidayController : BaseApiController
     {
-        public IEnumerable<RestHoliday> GetList()
+        /// <summary>
+        /// Список периодов
+        /// </summary>
+        /// <param name="employeeSid"></param>
+        /// <param name="year"></param>
+        /// <returns></returns>
+        public IEnumerable<RestHoliday> GetList(string employeeSid = null, int? year = null)
         {
-            return RestHoliday.GetList();
+            var curUser = GetCurUser();
+            if (!curUser.HasAccess(AdGroup.RestHolidayViewAllEmpList))
+            {
+                employeeSid = curUser.Sid;
+                
+            }
+            
+            return RestHoliday.GetList(employeeSid, year ?? DateTime.Now.Year);
         }
 
         public RestHoliday Get(int id)
@@ -44,7 +57,13 @@ namespace DataProvider.Controllers.Stuff
             return response;
         }
 
-        [AuthorizeAd()]
+        /// <summary>
+        /// Закрытие/открытие возможности редактировани периода автору
+        /// </summary>
+        /// <param name="idArray"></param>
+        /// <param name="canEdit"></param>
+        /// <returns></returns>
+        [AuthorizeAd(AdGroup.RestHolidayConfirm)]
         public HttpResponseMessage CanEdit(int[] idArray, bool canEdit = false)
         {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
@@ -63,7 +82,7 @@ namespace DataProvider.Controllers.Stuff
             return response;
         }
 
-        [AuthorizeAd()]
+        [AuthorizeAd(AdGroup.RestHolidayConfirm)]
         public HttpResponseMessage Confirm(int[] idArray)
         {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);

@@ -29,6 +29,8 @@ namespace DataProvider.Objects
             list.Add(new AdUserGroup(AdGroup.NewEmployeeNote, "S-1-5-21-1970802976-3466419101-4042325969-4036", "NewEmployeeNote"));//Уведомление о новом пользователе
             list.Add(new AdUserGroup(AdGroup.VendorStateExpiresDelivery, "S-1-5-21-1970802976-3466419101-4042325969-4555", "VendorStateExpiresDelivery"));
             list.Add(new AdUserGroup(AdGroup.VendorStateEditor, "S-1-5-21-1970802976-3466419101-4042325969-4556", "VendorStateEditor"));
+            list.Add(new AdUserGroup(AdGroup.RestHolidayViewAllEmpList, "S-1-5-21-1970802976-3466419101-4042325969-6626", "RestHolidayViewAllEmpList"));
+            list.Add(new AdUserGroup(AdGroup.RestHolidayConfirm, "S-1-5-21-1970802976-3466419101-4042325969-6627", "RestHolidayConfirm"));
             //SpeCalc
             list.Add(new AdUserGroup(AdGroup.SpeCalcKontroler, "S-1-5-21-1970802976-3466419101-4042325969-4286", "SpeCalcKontroler"));
             list.Add(new AdUserGroup(AdGroup.SpeCalcManager, "S-1-5-21-1970802976-3466419101-4042325969-4283", "SpeCalcManager"));

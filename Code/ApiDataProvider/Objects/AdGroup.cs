@@ -15,6 +15,8 @@ namespace DataProvider.Objects
         NewEmployeeNote,
         VendorStateExpiresDelivery,
         VendorStateEditor,
+        RestHolidayViewAllEmpList,
+        RestHolidayConfirm,
         // />
         //SpeCalc
         SpeCalcKontroler,
