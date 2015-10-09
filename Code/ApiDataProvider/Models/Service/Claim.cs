@@ -975,7 +975,7 @@ namespace DataProvider.Models.Service
             }
         }
         
-        public static IEnumerable<Claim> GetList(AdUser user, out int cnt, string adminSid = null, string engeneerSid = null, DateTime? dateStart = null, DateTime? dateEnd = null, int? topRows = null, string managerSid = null, string techSid = null, string serialNum=null, int? idDevice = null, bool? activeClaimsOnly = false, int? idClaimState = null, int? clientId = null)
+        public static IEnumerable<Claim> GetList(AdUser user, out int cnt, string adminSid = null, string engeneerSid = null, DateTime? dateStart = null, DateTime? dateEnd = null, int? topRows = null, string managerSid = null, string techSid = null, string serialNum=null, int? idDevice = null, bool? activeClaimsOnly = false, int? idClaimState = null, int? clientId = null, string clientSdNum = null)
         {
             if (user.Is(AdGroup.ServiceAdmin))
             {
@@ -1000,7 +1000,8 @@ namespace DataProvider.Models.Service
             SqlParameter pActiveClaimsOnly = new SqlParameter() { ParameterName = "active_claims_only", SqlValue = activeClaimsOnly, SqlDbType = SqlDbType.Bit };
             SqlParameter pIdClaimState = new SqlParameter() { ParameterName = "id_claim_state", SqlValue = idClaimState, SqlDbType = SqlDbType.Int };
             SqlParameter pClientId = new SqlParameter() { ParameterName = "id_client", SqlValue = clientId, SqlDbType = SqlDbType.Int };
-            var dt = Db.Service.ExecuteQueryStoredProcedure("get_claim_list", pServAdminSid, pServEngeneerSid, pDateStart, pDateEnd, pTopRows, pManagerSid, pTechSid, pSerialNum, pIdDevice, pActiveClaimsOnly, pIdClaimState, pClientId);
+            SqlParameter pClientSdNum = new SqlParameter() { ParameterName = "client_sd_num", SqlValue = clientSdNum, SqlDbType = SqlDbType.Int };
+            var dt = Db.Service.ExecuteQueryStoredProcedure("get_claim_list", pServAdminSid, pServEngeneerSid, pDateStart, pDateEnd, pTopRows, pManagerSid, pTechSid, pSerialNum, pIdDevice, pActiveClaimsOnly, pIdClaimState, pClientId, pClientSdNum);
 
             var lst = new List<Claim>();
 

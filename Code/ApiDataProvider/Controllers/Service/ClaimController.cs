@@ -17,10 +17,10 @@ namespace DataProvider.Controllers.Service
     public class ClaimController : BaseApiController
     {
 
-        public ListResult<Claim> GetList(string servAdminSid = null, string servEngeneerSid = null, DateTime? dateStart = null, DateTime? dateEnd = null, int? topRows = null, string managerSid = null, string techSid = null, string serialNum = null, int? idDevice = null, bool? activeClaimsOnly = false, int? idClaimState = null, int? clientId = null)
+        public ListResult<Claim> GetList(string servAdminSid = null, string servEngeneerSid = null, DateTime? dateStart = null, DateTime? dateEnd = null, int? topRows = null, string managerSid = null, string techSid = null, string serialNum = null, int? idDevice = null, bool? activeClaimsOnly = false, int? idClaimState = null, int? clientId = null, string clientSdNum = null)
         {
             int cnt;
-            var list = Claim.GetList(GetCurUser(), out cnt, servAdminSid, servEngeneerSid, dateStart, dateEnd, topRows, managerSid, techSid, serialNum, idDevice, activeClaimsOnly, idClaimState, clientId);
+            var list = Claim.GetList(GetCurUser(), out cnt, servAdminSid, servEngeneerSid, dateStart, dateEnd, topRows, managerSid, techSid, serialNum, idDevice, activeClaimsOnly, idClaimState, clientId, clientSdNum);
             return new ListResult<Claim>(list, cnt);
         }
 
