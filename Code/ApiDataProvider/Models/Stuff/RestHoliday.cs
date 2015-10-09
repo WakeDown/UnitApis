@@ -63,7 +63,7 @@ namespace DataProvider.Models.Stuff
             SqlParameter pStartDate = new SqlParameter() { ParameterName = "start_date", SqlValue = StartDate, SqlDbType = SqlDbType.DateTime };
             SqlParameter pEndDate = new SqlParameter() { ParameterName = "end_date", SqlValue = EndDate, SqlDbType = SqlDbType.DateTime };
             SqlParameter pYear = new SqlParameter() { ParameterName = "year", SqlValue = Year, SqlDbType = SqlDbType.Int };
-            SqlParameter pDuration = new SqlParameter() { ParameterName = "duration", SqlValue = Id, SqlDbType = SqlDbType.Int };
+            SqlParameter pDuration = new SqlParameter() { ParameterName = "duration", SqlValue = Duration, SqlDbType = SqlDbType.Int };
             SqlParameter pCreatorAdSid = new SqlParameter() { ParameterName = "creator_sid", SqlValue = CurUserAdSid, SqlDbType = SqlDbType.VarChar };
 
             var dt = Db.Stuff.ExecuteQueryStoredProcedure("rest_holiday_save", pEmployeeSid, pStartDate, pEndDate, pYear, pDuration, pCreatorAdSid);

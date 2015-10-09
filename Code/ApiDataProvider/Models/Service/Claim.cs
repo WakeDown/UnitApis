@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Net.Mail;
 using System.Runtime.Remoting.Channels;
 using System.Web;
 using DataProvider.Helpers;
@@ -258,6 +259,11 @@ namespace DataProvider.Models.Service
                 Contractor = new Contractor(IdContractor);
                 ContractorName = Contractor.Name;
             }
+            if (isNew && String.IsNullOrEmpty(CurAdminSid))
+            {
+                CurAdminSid = Device.GetCurServiceAdminSid(IdDevice, IdContract);
+            }
+
             //string wtReplace = "%work_type%";
             //if (Descr.IndexOf(wtReplace, StringComparison.Ordinal) > 0)
             //{
@@ -856,28 +862,68 @@ namespace DataProvider.Models.Service
 
             foreach (ServiceRole mt in mailTo)
             {
-                string[] email = null;
+                List<MailAddress> recipients = null;
 
                 if (mt == ServiceRole.CurAdmin)
                 {
                     string sid = cl.CurAdminSid;
-                    email = new[] {Employee.GetEmailBySid(sid)};
+                    string email = Employee.GetEmailBySid(sid);
+                    if (!String.IsNullOrEmpty(email))
+                    {
+                        recipients.Add(new MailAddress(email));
+                    }
+                    else
+                    {
+                        message =
+                            $"Сообщение для Сервисного Администратора не может быть доставлено, поэтому в рассылку включен контролер процесса.\r\n{message}";
+                        recipients.AddRange(AdHelper.GetRecipientsFromAdGroup(AdGroup.ServiceControler));
+                    }
                 }
                 else if (mt == ServiceRole.CurEngeneer)
                 {
                     string sid = cl.CurEngeneerSid;
-                    email = new[] { Employee.GetEmailBySid(sid)};
+                    string email = Employee.GetEmailBySid(sid);
+                    if (!String.IsNullOrEmpty(email))
+                    {
+                        recipients.Add(new MailAddress(email));
+                    }
+                    else
+                    {
+                        message =
+                            $"Сообщение для Сервисного Инженера не может быть доставлено, поэтому в рассылку включен контролер процесса.\r\n{message}";
+                        recipients.AddRange(AdHelper.GetRecipientsFromAdGroup(AdGroup.ServiceControler));
+                    }
                 }
                 else if (mt == ServiceRole.CurManager)
                 {
                     string sid = cl.CurManagerSid;
-                    email = new[] { Employee.GetEmailBySid(sid)};
+                    string email = Employee.GetEmailBySid(sid);
+                    if (!String.IsNullOrEmpty(email))
+                    {
+                        recipients.Add(new MailAddress(email));
+                    }
+                    else
+                    {
+                        message =
+                               $"Сообщение для Менеджера сервисного центра не может быть доставлено, поэтому в рассылку включен контролер процесса.\r\n{message}";
+                        recipients.AddRange(AdHelper.GetRecipientsFromAdGroup(AdGroup.ServiceControler));
+                    }
 
                 }
                 else if (mt == ServiceRole.CurTech)
                 {
                     string sid = cl.CurTechSid;
-                    email = new[] { Employee.GetEmailBySid(sid)};
+                    string email = Employee.GetEmailBySid(sid);
+                    if (!String.IsNullOrEmpty(email))
+                    {
+                        recipients.Add(new MailAddress(email));
+                    }
+                    else
+                    {
+                        message =
+                            $"Сообщение для Специалиста Технической Поддержки не может быть доставлено, поэтому в рассылку включен контролер процесса.\r\n{message}";
+                        recipients.AddRange(AdHelper.GetRecipientsFromAdGroup(AdGroup.ServiceControler));
+                    }
                 }
                 //else if (mt == ServiceRole.CurTech)
                 //{
@@ -887,25 +933,47 @@ namespace DataProvider.Models.Service
                 else if (mt == ServiceRole.CurSpecialist)
                 {
                     string sid = cl.SpecialistSid;
-                    email = new[] { Employee.GetEmailBySid(sid)};
+                    string email = Employee.GetEmailBySid(sid);
+                    if (!String.IsNullOrEmpty(email))
+                    {
+                        recipients.Add(new MailAddress(email));
+                    }
+                    else
+                    {
+                        message =
+                            $"Сообщение для текущего Специалиста заявки не может быть доставлено, поэтому в рассылку включен контролер процесса.\r\n{message}";
+                        recipients.AddRange(AdHelper.GetRecipientsFromAdGroup(AdGroup.ServiceControler));
+                    }
                 }
                 else if (mt == ServiceRole.AllTech)
                 {
-                    var emailList = new List<string>();
+                    //var emailList = new List<string>();
                     foreach (var item in AdHelper.GetUserListByAdGroup(AdGroup.ServiceTech))
                     {
-                        emailList.Add(Employee.GetEmailBySid(item.Key));
+                        string email = Employee.GetEmailBySid(item.Key);
+                        if (!String.IsNullOrEmpty(email))
+                        {
+                            recipients.Add(new MailAddress(email));
+                        }
+                        else
+                        {
+                            message =
+                            $"Сообщение для Специалиста Технической Поддержки не может быть доставлено поэтому в рассылку включен контролер процесса.\r\n{message}";
+                            recipients.AddRange(AdHelper.GetRecipientsFromAdGroup(AdGroup.ServiceControler));
+                        }
                     }
-                    email = emailList.ToArray();
+                    //email = emailList.ToArray();
                 }
                 else
                 {
                     throw new ArgumentException("Указанный получатель не обрабатывается");
                 }
-                if (email.Any()) MessageHelper.SendMailSmtp(subject, message, true, email);
+                
+
+                if (recipients.Any()) MessageHelper.SendMailSmtp(subject, message, true, recipients.ToArray());
             }
         }
-
+        
         public static IEnumerable<Claim> GetList(AdUser user, out int cnt, string adminSid = null, string engeneerSid = null, DateTime? dateStart = null, DateTime? dateEnd = null, int? topRows = null, string managerSid = null, string techSid = null, string serialNum=null, int? idDevice = null, bool? activeClaimsOnly = false, int? idClaimState = null, int? clientId = null)
         {
             if (user.Is(AdGroup.ServiceAdmin))

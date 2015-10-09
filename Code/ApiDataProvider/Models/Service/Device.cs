@@ -107,6 +107,18 @@ namespace DataProvider.Models.Service
 
         }
 
+        public static string GetCurServiceAdminSid(int idDevice, int idContract)
+        {
+            string sid = String.Empty;
+            SqlParameter pIdDevice = new SqlParameter() { ParameterName = "id_device", SqlValue = idDevice, SqlDbType = SqlDbType.Int };
+            SqlParameter pIdContract = new SqlParameter() { ParameterName = "id_contract", SqlValue = idContract, SqlDbType = SqlDbType.Int };
+            var dt = Db.UnitProg.ExecuteQueryStoredProcedure("device_get_current_service_admin", pIdDevice, pIdContract);
+            if (dt.Rows.Count > 0)
+            {
+                sid = dt.Rows[0]["service_admin_sid"].ToString();
+            }
+            return sid;
+        }
 
         public static IEnumerable<Device> GetList(int? idContractor = null, string contractorName = null, int? idContract = null, string contractNumber = null, int? idDevice = null, string deviceName = null, string serialNum = null)
         {
