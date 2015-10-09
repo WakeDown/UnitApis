@@ -863,7 +863,7 @@ namespace DataProvider.Models.Service
 
             foreach (ServiceRole mt in mailTo)
             {
-                List<MailAddress> recipients = null;
+                List<MailAddress> recipients = new List<MailAddress>();
 
                 if (mt == ServiceRole.CurAdmin)
                 {
