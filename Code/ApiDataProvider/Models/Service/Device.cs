@@ -120,7 +120,7 @@ namespace DataProvider.Models.Service
             return sid;
         }
 
-        public static IEnumerable<Device> GetList(int? idContractor = null, string contractorName = null, int? idContract = null, string contractNumber = null, int? idDevice = null, string deviceName = null, string serialNum = null, string clientSdNum = null)
+        public static IEnumerable<Device> GetList(int? idContractor = null, string contractorName = null, int? idContract = null, string contractNumber = null, int? idDevice = null, string deviceName = null, string serialNum = null)
         {
             //if (idContractor.HasValue) contractorName = null;
             //if (idContract.HasValue) contractNumber = null;
@@ -133,7 +133,7 @@ namespace DataProvider.Models.Service
             SqlParameter pIdDevice = new SqlParameter() { ParameterName = "id_device", SqlValue = idDevice, SqlDbType = SqlDbType.Int };
             SqlParameter pDeviceName = new SqlParameter() { ParameterName = "device_name", SqlValue = deviceName, SqlDbType = SqlDbType.NVarChar };
             SqlParameter pSerialNum = new SqlParameter() { ParameterName = "serial_num", SqlValue = serialNum, SqlDbType = SqlDbType.NVarChar };
-            var dt = Db.UnitProg.ExecuteQueryStoredProcedure("get_device_list", pId, pName, pIdContract, pContractNumber, pIdDevice, pDeviceName, pSerialNum, pClientSdNum);
+            var dt = Db.UnitProg.ExecuteQueryStoredProcedure("get_device_list", pId, pName, pIdContract, pContractNumber, pIdDevice, pDeviceName, pSerialNum);
 
             var lst = new List<Device>();
 
