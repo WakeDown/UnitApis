@@ -793,6 +793,7 @@ namespace DataProvider.Models.Service
                     nextState = new ClaimState("ZIPBUYCANCEL");
                     break;
                 case "ZIPCL-ETPREP-GET":
+                case "ZIPCL-ETSHIP-GET":
                     goNext = true;
                     saveClaim = true;
                     nextState = new ClaimState("SERVADMSET");
