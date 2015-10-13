@@ -1138,9 +1138,9 @@ namespace DataProvider.Models.Service
 
             return list;
         }
-        public static IEnumerable<Claim2ClaimState> GetStateHistory(int id)
+        public static IEnumerable<Claim2ClaimState> GetStateHistory(int id, int topRows)
         {
-            return Claim2ClaimState.GetList(id);
+            return Claim2ClaimState.GetList(id, topRows);
         }
         /// <summary>
         /// Получение последнего статуса
@@ -1155,6 +1155,8 @@ namespace DataProvider.Models.Service
 
         public static ServiceSheet GetLastServiceSheet(int idClaim)
         {
+            ServiceSheet.GetList(idClaim);
+
             SqlParameter pIdClaim = new SqlParameter() { ParameterName = "id_claim", SqlValue = idClaim, SqlDbType = SqlDbType.Int };
             var dt = Db.Service.ExecuteQueryStoredProcedure("get_last_service_sheet_id", pIdClaim);
             ServiceSheet sheet = new ServiceSheet();
@@ -1164,6 +1166,43 @@ namespace DataProvider.Models.Service
                 sheet = new ServiceSheet(lastIdSerSheet);
             }
             return sheet;
+        }
+
+        public static IEnumerable<ServiceSheet> GetClaimServiceSheetList(int idClaim)
+        {
+            //return ServiceSheet.GetClaimServiceSheetList(idClaim);
+
+            SqlParameter pIdClaim = new SqlParameter() { ParameterName = "id_claim", SqlValue = idClaim, SqlDbType = SqlDbType.Int };
+            var dt = Db.Service.ExecuteQueryStoredProcedure("get_claim_service_sheet_list", pIdClaim);
+
+            var list = new List<ServiceSheet>();
+
+            foreach (DataRow row in dt.Rows)
+            {
+                //int idServiceSheet;
+                //int.TryParse(row["id_service_sheet"].ToString(), out idServiceSheet);
+                list.Add(new ServiceSheet(row));
+            }
+            return list;
+            //return (from DataRow row in dt.Rows select new ServiceSheet(row)).ToList();
+        }
+
+        public static IEnumerable<ZipClaim> GetClaimZipClaimList(int idClaim)
+        {
+            SqlParameter pIdClaim = new SqlParameter() { ParameterName = "id_claim", SqlValue = idClaim, SqlDbType = SqlDbType.Int };
+            var dt = Db.Service.ExecuteQueryStoredProcedure("get_claim_zip_claim_list", pIdClaim);
+
+            var list = new List<ZipClaim>();
+
+            foreach (DataRow row in dt.Rows)
+            {
+                //int idServiceSheet;
+                //int.TryParse(row["id_service_sheet"].ToString(), out idServiceSheet);
+                list.Add(new ZipClaim(row));
+            }
+            return list;
+
+            //return (from DataRow row in dt.Rows select new ZipClaim(row)).ToList();
         }
     }
 }

@@ -207,6 +207,7 @@
     <Compile Include="Models\Service\ServiceIssuePlaningResult.cs" />
     <Compile Include="Models\Service\ServiceSheet.cs" />
     <Compile Include="Models\Service\WorkType.cs" />
+    <Compile Include="Models\Service\ZipClaim.cs" />
     <Compile Include="Models\Stuff\Budget.cs" />
     <Compile Include="Models\Stuff\ItBudgetReportItemPeople.cs" />
     <Compile Include="Controllers\Stuff\StuffReportController.cs" />

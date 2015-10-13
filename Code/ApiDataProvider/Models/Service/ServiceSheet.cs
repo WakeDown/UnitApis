@@ -43,6 +43,7 @@ namespace DataProvider.Models.Service
         //Время на работу в минутах (от статуса В работе до создания заявки
         public int? TimeOnWorkMinutes { get; set; }
         public string ClientSdNum { get; set; }
+        public DateTime DateCreate { get; set; }
 
         public ServiceSheet() { }
 
@@ -86,6 +87,7 @@ namespace DataProvider.Models.Service
             WorkTypeId = Db.DbHelper.GetValueIntOrDefault(row, "id_work_type");
             TimeOnWorkMinutes = Db.DbHelper.GetValueIntOrNull(row, "time_on_work_minutes");
             ClientSdNum = Db.DbHelper.GetValueString(row, "client_sd_num");
+            DateCreate = Db.DbHelper.GetValueDateTimeOrDefault(row, "date_create");
 
             if (fillNames)
             {
@@ -160,7 +162,13 @@ namespace DataProvider.Models.Service
             return lst;
         }
 
-        
+        //public static IEnumerable<ServiceSheet> GetClaimServiceSheetList(int idClaim)
+        //{
+        //    SqlParameter pIdClaim = new SqlParameter() { ParameterName = "id_claim", SqlValue = idClaim, SqlDbType = SqlDbType.Int };
+        //    var dt = Db.Service.ExecuteQueryStoredProcedure("get_claim_service_sheet_list", pIdClaim);
+
+        //    return (from DataRow row in dt.Rows select new ServiceSheet(row)).ToList();
+        //}
 
         //public static void Close(int id, string deleterSid)
         //{

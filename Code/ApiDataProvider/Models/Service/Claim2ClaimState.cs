@@ -105,10 +105,11 @@ namespace DataProvider.Models.Service
             }
         }
 
-        public static IEnumerable<Claim2ClaimState> GetList(int idClaim)
+        public static IEnumerable<Claim2ClaimState> GetList(int idClaim, int? topRows)
         {
             SqlParameter pIdClaim = new SqlParameter() { ParameterName = "id_claim", SqlValue = idClaim, SqlDbType = SqlDbType.Int };
-            var dt = Db.Service.ExecuteQueryStoredProcedure("get_claim2claim_state_list", pIdClaim);
+            SqlParameter pTopRows = new SqlParameter() { ParameterName = "top_rows", SqlValue = topRows, SqlDbType = SqlDbType.Int };
+            var dt = Db.Service.ExecuteQueryStoredProcedure("get_claim2claim_state_list", pIdClaim, pTopRows);
 
             var lst = new List<Claim2ClaimState>();
 

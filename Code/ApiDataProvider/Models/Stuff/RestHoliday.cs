@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -59,12 +60,49 @@ namespace DataProvider.Models.Stuff
 
         public void Save()
         {
+            if (Year <= 0)Year = StartDate.Year;
+
+            int restHolidaysMaxCount;
+            int.TryParse(ConfigurationManager.AppSettings["restHolidaysMaxCount"], out restHolidaysMaxCount);
+            
+
+            //Дней отпуска осталось
+            int daysExists = GetYears4Employee(EmployeeSid, year: Year).FirstOrDefault().Value;
+
+            if (daysExists + Duration > restHolidaysMaxCount)
+            {
+                throw new ArgumentException($"Количество дней отпуска в {Year} году превышает {restHolidaysMaxCount} дней. Период не был сохранен.");
+            }
+
+            //Должен быть один период создаржащий указанное количество дней
+            int oneMinPeriodDays = 14;
+
+            //Проверка есть ли хотябы один период не менее 14 дней
+            if (!GetList(EmployeeSid, Year).Any(x => x.Duration >= oneMinPeriodDays) && (daysExists + Duration - restHolidaysMaxCount) < oneMinPeriodDays) throw new ArgumentException("Необходимо указать хотябы один период не менее 14 дней. Период не был сохранен.");
+
             SqlParameter pEmployeeSid = new SqlParameter() { ParameterName = "employee_sid", SqlValue = EmployeeSid, SqlDbType = SqlDbType.VarChar };
             SqlParameter pStartDate = new SqlParameter() { ParameterName = "start_date", SqlValue = StartDate, SqlDbType = SqlDbType.DateTime };
             SqlParameter pEndDate = new SqlParameter() { ParameterName = "end_date", SqlValue = EndDate, SqlDbType = SqlDbType.DateTime };
             SqlParameter pYear = new SqlParameter() { ParameterName = "year", SqlValue = Year, SqlDbType = SqlDbType.Int };
             SqlParameter pDuration = new SqlParameter() { ParameterName = "duration", SqlValue = Duration, SqlDbType = SqlDbType.Int };
             SqlParameter pCreatorAdSid = new SqlParameter() { ParameterName = "creator_sid", SqlValue = CurUserAdSid, SqlDbType = SqlDbType.VarChar };
+
+            //Проверка есть ли пересечения
+            var dtCheck = Db.Stuff.ExecuteQueryStoredProcedure("rest_holiday_check_period_cross", pEmployeeSid, pStartDate, pEndDate);
+            bool hasCrosses = true;
+
+            if (dtCheck.Rows.Count > 0)
+            {
+                hasCrosses = Db.DbHelper.GetValueBool(dtCheck.Rows[0], "result");
+            }
+
+            if (hasCrosses) throw new ArgumentException("Найдены пересечения с другими периодами. Период не был сохранен.");
+
+            
+           
+
+
+
 
             var dt = Db.Stuff.ExecuteQueryStoredProcedure("rest_holiday_save", pEmployeeSid, pStartDate, pEndDate, pYear, pDuration, pCreatorAdSid);
             int id = 0;
@@ -117,6 +155,35 @@ namespace DataProvider.Models.Stuff
             SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = id, SqlDbType = SqlDbType.Int };
             SqlParameter pDeleterSid = new SqlParameter() { ParameterName = "deleter_sid", SqlValue = deleterSid, SqlDbType = SqlDbType.VarChar };
             var dt = Db.Stuff.ExecuteQueryStoredProcedure("rest_holiday_close", pId, pDeleterSid);
+        }
+
+        /// <summary>
+        /// Список годов для сотрудника для сохранения и просмотра графика отпусков + текущий и будущий если там нет записей)
+        /// </summary>
+        /// <param name="employeeSid"></param>
+        /// <param name="topRows">Ограничение по количеству выводимых годов</param>
+        /// <param name="year">Годя для которого нужно получить количество оставшихся свободных дней отпуска</param>
+        /// <returns>Год и остатоу дней отпуска в году</returns>
+        public static IEnumerable<KeyValuePair<int, int>> GetYears4Employee(string employeeSid = null, int? topRows = null, int? year = null)
+        {
+            SqlParameter pEmployeeSid = new SqlParameter() { ParameterName = "employee_sid", SqlValue = employeeSid, SqlDbType = SqlDbType.VarChar };
+            SqlParameter pTopRows = new SqlParameter() { ParameterName = "top_rows", SqlValue = topRows, SqlDbType = SqlDbType.Int };
+            SqlParameter pYear = new SqlParameter() { ParameterName = "year", SqlValue = year, SqlDbType = SqlDbType.Int };
+            var dt = Db.Stuff.ExecuteQueryStoredProcedure("rest_holiday_years_list", pEmployeeSid, pTopRows);
+
+            int restHolidaysMaxCount;
+            int.TryParse(ConfigurationManager.AppSettings["restHolidaysMaxCount"], out restHolidaysMaxCount);
+
+            var lst = new List<KeyValuePair<int, int>>();
+
+            foreach (DataRow row in dt.Rows)
+            {
+                int daysCount = Db.DbHelper.GetValueIntOrDefault(row, "days_count");
+                var model = new KeyValuePair<int, int>(Db.DbHelper.GetValueIntOrDefault(row, "year"), restHolidaysMaxCount- daysCount);
+                lst.Add(model);
+            }
+
+            return lst;
         }
     }
 }

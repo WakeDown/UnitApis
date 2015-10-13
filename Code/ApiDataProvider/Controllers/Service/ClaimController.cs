@@ -45,10 +45,10 @@ namespace DataProvider.Controllers.Service
         }
 
         [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin, AdGroup.ServiceTech, AdGroup.ServiceControler, AdGroup.ServiceAdmin, AdGroup.ServiceManager })]
-        public IEnumerable<Claim2ClaimState> GetStateHistory(int? id)
+        public IEnumerable<Claim2ClaimState> GetStateHistory(int? id, int? topRows)
         {
-            if (!id.HasValue) return new[] { new Claim2ClaimState() };
-            return Claim2ClaimState.GetList(id.Value);
+           if (!id.HasValue) return new[] { new Claim2ClaimState() };
+            return Claim2ClaimState.GetList(id.Value, topRows);
         }
 
         //[AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin })]
@@ -184,11 +184,21 @@ namespace DataProvider.Controllers.Service
             return Claim.GetWorkTypeSpecialistSelectionList(idWorkType);
         }
 
+        public IEnumerable<ZipClaim> GetClaimZipClaimList(int idClaim)
+        {
+            return Claim.GetClaimZipClaimList(idClaim);
+        }
+
         public ServiceSheet GetLastServiceSheet(int idClaim)
         {
             return Claim.GetLastServiceSheet(idClaim);
         }
-        
+
+        public IEnumerable<ServiceSheet> GetClaimServiceSheetList(int idClaim)
+        {
+            return Claim.GetClaimServiceSheetList(idClaim);
+        }
+
         [System.Web.Http.AllowAnonymous]
         [System.Web.Http.HttpGet]
         public IHttpActionResult RemoteStateChange(int? idClaim, string stateSysName, string creatorSid, string descr = null, int? idZipClaim = null)

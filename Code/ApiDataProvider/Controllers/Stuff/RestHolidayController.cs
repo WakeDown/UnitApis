@@ -118,5 +118,22 @@ namespace DataProvider.Controllers.Stuff
             }
             return response;
         }
+
+        /// <summary>
+        /// Возвращают пару год число оставшихся в году дней по сиду
+        /// </summary>
+        /// <param name="sid"></param>
+        /// <param name="full">Ограничение по количеству выводимых годов</param>
+        /// <returns></returns>
+        public IEnumerable<KeyValuePair<int, int>> GetYears4Employee(string sid, bool full =false)
+        {
+            int? topRows = null;
+            if (!full)
+            {
+                topRows=  3;
+            }
+            return RestHoliday.GetYears4Employee(sid, topRows);
+        }
+
     }
 }
