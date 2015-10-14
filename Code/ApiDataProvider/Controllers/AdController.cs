@@ -31,6 +31,12 @@ namespace DataProvider.Controllers
             string curSid = GetCurUser().Sid;
             return curSid;
         }
+        [HttpGet]
+        public bool UserInGroup(string groupSid)
+        {
+            var grp = AdUserGroup.GetAdGroupBySid(groupSid);
+            return AdHelper.UserInGroup(GetCurUser().User, grp);
+        }
 
         [HttpGet]
         [AuthorizeAd(Groups = new[] { AdGroup.PersonalManager })]

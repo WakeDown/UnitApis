@@ -711,12 +711,21 @@ namespace DataProvider.Models.Service
                     else if ((!ServiceSheet4Save.ProcessEnabled || !ServiceSheet4Save.DeviceEnabled) && ServiceSheet4Save.ZipClaim.HasValue &&
                              ServiceSheet4Save.ZipClaim.Value)
                     {
-                        nextState = new ClaimState("ZIPORDER");
+                        nextState = new ClaimState("ZIPISSUE");
                     }
                     else if ((!ServiceSheet4Save.ProcessEnabled || !ServiceSheet4Save.DeviceEnabled) && (!ServiceSheet4Save.ZipClaim.HasValue || !ServiceSheet4Save.ZipClaim.Value))
                     {
-                        nextState = new ClaimState("ZIPORDER");
+                        nextState = new ClaimState("ZIPISSUE");
                     }
+
+                    
+                    break;
+                case "ZIPISSUE":
+                    goNext = true;
+                    saveClaim = true;
+                    CurTechSid = CurUserAdSid;
+                    SpecialistSid = CurUserAdSid;
+                    nextState = new ClaimState("ZIPORDER");
 
                     if (nextState.SysName.Equals("ZIPORDER"))
                     {
@@ -725,7 +734,6 @@ namespace DataProvider.Models.Service
                         noteText = $@"Необходимо заказать ЗИП по заявке №%ID% %LINK%";
                         noteSubject = $"Необходимо заказать ЗИП по заявке №%ID%";
                     }
-
                     break;
                 case "ZIPORDER"://В настоящий момент по этому статусу происходит заказ ЗИП специалистом Тех поддержки
                     if (!GetClaimCurrentState(Id).SysName.Equals("ZIPCLINWORK"))//На всякий случай проверяем еще раз

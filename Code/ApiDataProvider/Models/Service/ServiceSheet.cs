@@ -49,6 +49,7 @@ namespace DataProvider.Models.Service
 
         public ServiceSheet(int id)
         {
+            if (id <= 0) throw new ArgumentException("Не указан номер Сервисного листа");
             SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = id, SqlDbType = SqlDbType.Int };
             var dt = Db.Service.ExecuteQueryStoredProcedure("get_service_sheet", pId);
             if (dt.Rows.Count > 0)
