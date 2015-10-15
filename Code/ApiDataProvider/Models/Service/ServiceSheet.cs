@@ -163,6 +163,11 @@ namespace DataProvider.Models.Service
             return lst;
         }
 
+        public IEnumerable<ServiceSheetZipItem> GetZipItemList()
+        {
+            return ServiceSheetZipItem.GetList(Id);
+        }
+
         //public static IEnumerable<ServiceSheet> GetClaimServiceSheetList(int idClaim)
         //{
         //    SqlParameter pIdClaim = new SqlParameter() { ParameterName = "id_claim", SqlValue = idClaim, SqlDbType = SqlDbType.Int };

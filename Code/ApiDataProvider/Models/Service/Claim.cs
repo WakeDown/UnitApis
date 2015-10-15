@@ -721,9 +721,11 @@ namespace DataProvider.Models.Service
                     
                     break;
                 case "ZIPISSUE":
+
+                    if (!GetLastServiceSheet().GetZipItemList().Any()) throw new Exception("Необходимо заполнить список ЗИП. Сервисный лист не был передан.");
                     goNext = true;
                     saveClaim = true;
-                    CurTechSid = CurUserAdSid;
+                    
                     SpecialistSid = CurUserAdSid;
                     nextState = new ClaimState("ZIPORDER");
 
@@ -1159,6 +1161,11 @@ namespace DataProvider.Models.Service
         public static Claim2ClaimState GetLastState(int id, string sysName)
         {
             return Claim2ClaimState.GetLastState(id, sysName);
+        }
+
+        public ServiceSheet GetLastServiceSheet()
+        {
+            return GetLastServiceSheet(Id);
         }
 
         public static ServiceSheet GetLastServiceSheet(int idClaim)

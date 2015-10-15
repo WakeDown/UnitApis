@@ -62,7 +62,7 @@ namespace DataProvider.Models.Service
             //SqlParameter pZipClaimUnitId = new SqlParameter() { ParameterName = "id_zip_claim_unit", SqlValue = ZipClaimUnitId, SqlDbType = SqlDbType.Int };
             SqlParameter pCreatorAdSid = new SqlParameter() { ParameterName = "creator_sid", SqlValue = CurUserAdSid, SqlDbType = SqlDbType.VarChar };
 
-            var dt = Db.Service.ExecuteQueryStoredProcedure("service_sheet_zip_item_save", pId, pName, pPartNum, pCount, pCreatorAdSid);
+            var dt = Db.Service.ExecuteQueryStoredProcedure("service_sheet_zip_item_save", pId, pServiceSheetId,pName, pPartNum, pCount, pCreatorAdSid);
             int id = 0;
             if (dt.Rows.Count > 0)
             {
