@@ -183,6 +183,7 @@
     <Compile Include="Controllers\Service\ServiceIssuePlanController.cs" />
     <Compile Include="Controllers\Service\ServiceIssueResultController.cs" />
     <Compile Include="Controllers\Service\ServiceMobileController.cs" />
+    <Compile Include="Controllers\Service\ServiceSheetZipItemController.cs" />
     <Compile Include="Controllers\Stuff\BudgetController.cs" />
     <Compile Include="Controllers\Stuff\RestHolidayController.cs" />
     <Compile Include="Helpers\DateTimeHelper.cs" />
@@ -206,6 +207,7 @@
     <Compile Include="Models\Service\ServiceIssuePlaningItem.cs" />
     <Compile Include="Models\Service\ServiceIssuePlaningResult.cs" />
     <Compile Include="Models\Service\ServiceSheet.cs" />
+    <Compile Include="Models\Service\ServiceSheetZipItem.cs" />
     <Compile Include="Models\Service\WorkType.cs" />
     <Compile Include="Models\Service\ZipClaim.cs" />
     <Compile Include="Models\Stuff\Budget.cs" />

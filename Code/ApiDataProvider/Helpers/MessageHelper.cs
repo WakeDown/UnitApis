@@ -20,7 +20,7 @@ namespace DataProvider.Helpers
             var frame = st.GetFrame(0);
             var line = frame.GetFileLineNumber();
 
-            return String.Format("{{\"errorMessage\":\"{0} {2}: {1}\"}}", ex.Source, ex.Message.Replace("\"", ""), line);
+            return String.Format("{{\"errorMessage\":\"{0}\"}}", ex.Message.Replace("\"", ""));
         }
 
         public static void SendMailSmtp(string subject, string body, bool isBodyHtml, string mailTo, string hiddenMailTo = null,

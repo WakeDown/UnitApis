@@ -173,7 +173,7 @@ namespace DataProvider.Models.Stuff
             foreach (DataRow row in dt.Rows)
             {
                 int daysCount = Db.DbHelper.GetValueIntOrDefault(row, "days_count");
-                var model = new KeyValuePair<int, int>(Db.DbHelper.GetValueIntOrDefault(row, "year"), restHolidaysMaxCount- daysCount);
+                var model = new KeyValuePair<int, int>(Db.DbHelper.GetValueIntOrDefault(row, "year"), restHolidaysMaxCount - daysCount);
                 lst.Add(model);
             }
 

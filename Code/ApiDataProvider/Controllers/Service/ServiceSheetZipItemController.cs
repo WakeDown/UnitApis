@@ -3,29 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Web;
+using System.Web.Http;
 using DataProvider.Helpers;
-using DataProvider.Models.Stuff;
+using DataProvider.Models.Service;
 using DataProvider.Objects;
 using Objects;
 
-namespace DataProvider._TMPLTS
+namespace DataProvider.Controllers.Service
 {
-    public class Controller : BaseApiController
+    public class ServiceSheetZipItemController : BaseApiController
     {
-        public IEnumerable<Model> GetList()
+        public IEnumerable<ServiceSheetZipItem> GetList(int serviceSheetId)
         {
-            return Model.GetList();
+            return ServiceSheetZipItem.GetList(serviceSheetId);
         }
 
-        public Model Get(int id)
+        public ServiceSheetZipItem Get(int id)
         {
-            var model = new Model(id);
+            var model = new ServiceSheetZipItem(id);
             return model;
         }
 
         [AuthorizeAd()]
-        public HttpResponseMessage Save(Model model)
+        public HttpResponseMessage Save(ServiceSheetZipItem model)
         {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
 
@@ -51,7 +51,7 @@ namespace DataProvider._TMPLTS
 
             try
             {
-                Model.Close(id,GetCurUser().Sid);
+                ServiceSheetZipItem.Close(id, GetCurUser().Sid);
             }
             catch (Exception ex)
             {
