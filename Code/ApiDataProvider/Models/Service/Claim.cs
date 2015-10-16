@@ -640,7 +640,9 @@ namespace DataProvider.Models.Service
                     ServiceIssue4Save.CurUserAdSid = CurUserAdSid;
                     int serviceIssueId = ServiceIssue4Save.Save();
                     CurServiceIssueId = serviceIssueId;//Устанавливает текущий заявку на выезд
-                    descr = $"Назначен специалист {AdHelper.GetUserBySid(SpecialistSid).FullName}\r\nДата выезда {ServiceIssue4Save.DatePlan:dd.MM.yyyy}\r\n{Descr}";
+                    WorkType wt = new WorkType();
+                    if (IdWorkType.HasValue)wt = new WorkType(IdWorkType.Value);
+                    descr = $"Установлен тип работ {wt.Name}\r\nНазначен специалист {AdHelper.GetUserBySid(SpecialistSid).FullName}\r\nДата выезда {ServiceIssue4Save.DatePlan:dd.MM.yyyy}\r\n{Descr}";
                     nextState = new ClaimState("SRVENGSET");
                     CurEngeneerSid = SpecialistSid;
                     sendNote = true;
