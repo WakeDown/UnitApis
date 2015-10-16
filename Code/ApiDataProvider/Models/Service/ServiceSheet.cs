@@ -118,8 +118,13 @@ namespace DataProvider.Models.Service
                 }
             }
 
+            //Получаем ткущий тип работ по заявке
+            int? wtId = new Claim(IdClaim).IdWorkType;
+            if (wtId.HasValue) WorkTypeId = wtId.Value;
+            
             SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = Id, SqlDbType = SqlDbType.Int };
             SqlParameter pIdClaim = new SqlParameter() { ParameterName = "id_claim", SqlValue = IdClaim, SqlDbType = SqlDbType.Int };
+            SqlParameter pWorkTypeId = new SqlParameter() { ParameterName = "id_work_type", SqlValue = WorkTypeId, SqlDbType = SqlDbType.Int };
             SqlParameter pIdServiceIssue = new SqlParameter() { ParameterName = "id_service_issue", SqlValue = IdServiceIssue, SqlDbType = SqlDbType.Int };
             SqlParameter pProcessEnabled = new SqlParameter() { ParameterName = "process_enabled", SqlValue = ProcessEnabled, SqlDbType = SqlDbType.Bit };
             SqlParameter pDeviceEnabled = new SqlParameter() { ParameterName = "device_enabled", SqlValue = DeviceEnabled, SqlDbType = SqlDbType.Bit };
@@ -137,7 +142,7 @@ namespace DataProvider.Models.Service
             SqlParameter pAdminSid = new SqlParameter() { ParameterName = "admin_sid", SqlValue = AdminSid, SqlDbType = SqlDbType.VarChar };
             SqlParameter pTimeOnWorkMinutes = new SqlParameter() { ParameterName = "time_on_work_minutes", SqlValue = TimeOnWorkMinutes, SqlDbType = SqlDbType.Int };
 
-            var dt = Db.Service.ExecuteQueryStoredProcedure("save_service_sheet", pId, pProcessEnabled, pDeviceEnabled, pZipClaim, pZipClaimNumber, pCounterMono, pCounterColor, pCounterTotal, pNoCounter, pCounterUnavailable, pDescr, pCreatorAdSid, pCounterDescr, pEngeneerSid, pAdminSid, pIdServiceIssue, pIdClaim, pTimeOnWorkMinutes);
+            var dt = Db.Service.ExecuteQueryStoredProcedure("save_service_sheet", pId, pProcessEnabled, pDeviceEnabled, pZipClaim, pZipClaimNumber, pCounterMono, pCounterColor, pCounterTotal, pNoCounter, pCounterUnavailable, pDescr, pCreatorAdSid, pCounterDescr, pEngeneerSid, pAdminSid, pIdServiceIssue, pIdClaim, pTimeOnWorkMinutes, pWorkTypeId);
             int id = 0;
             if (dt.Rows.Count > 0)
             {

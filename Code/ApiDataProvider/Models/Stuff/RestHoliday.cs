@@ -72,8 +72,6 @@ namespace DataProvider.Models.Stuff
         {
             if (String.IsNullOrEmpty(EmployeeSid))EmployeeSid = CurUserAdSid;
             if (Year <= 0)Year = StartDate.Year;
-
-            
             
             //Дней отпуска осталось
             int daysExists = GetYears4Employee(EmployeeSid, year: Year).FirstOrDefault().Value;
@@ -146,7 +144,7 @@ namespace DataProvider.Models.Stuff
             SqlParameter pConfirmed = new SqlParameter() { ParameterName = "@confirmed", SqlValue = confirmed, SqlDbType = SqlDbType.Bit };
             SqlParameter pCreatorAdSid = new SqlParameter() { ParameterName = "creator_sid", SqlValue = creatorSid, SqlDbType = SqlDbType.VarChar };
 
-            var dt = Db.Stuff.ExecuteQueryStoredProcedure("rest_holiday_list_confirm", pEmployeeSid, pYear, pCanEdit, pConfirmed, pCreatorAdSid);
+            var dt = Db.Stuff.ExecuteQueryStoredProcedure("rest_holiday_employee_year_confirm", pEmployeeSid, pYear, pCanEdit, pConfirmed, pCreatorAdSid);
         }
 
         /// <summary>

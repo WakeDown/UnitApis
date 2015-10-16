@@ -16,6 +16,8 @@ namespace DataProvider.Models.Service
         public int IdParent { get; set; }
         public string Name { get; set; }
         public string SysName { get; set; }
+        public bool ZipInstall { get; set; }//Установка ЗИП
+        public bool ZipOrder { get; set; }//Заказ ЗИП
 
         public WorkType() { }
 
@@ -52,6 +54,8 @@ namespace DataProvider.Models.Service
             IdParent = Db.DbHelper.GetValueIntOrDefault(row, "id_parent");
             Name = Db.DbHelper.GetValueString(row, "name");
             SysName = Db.DbHelper.GetValueString(row, "sys_name");
+            ZipInstall = Db.DbHelper.GetValueBool(row, "zip_install");
+            ZipOrder = Db.DbHelper.GetValueBool(row, "zip_order");
         }
 
         public static IEnumerable<WorkType> GetList()
