@@ -888,7 +888,7 @@ namespace DataProvider.Models.Service
                     else
                     {
                         message =
-                            $"Сообщение для Сервисного Администратора не может быть доставлено, поэтому в рассылку включен контролер процесса.\r\n{message}";
+                            $"<p style='color: red; font-size: 14pt'>Сообщение для Сервисного Администратора не может быть доставлено, поэтому в рассылку включен контролер процесса.</p>{message}";
                         recipients.AddRange(AdHelper.GetRecipientsFromAdGroup(AdGroup.ServiceControler));
                     }
                 }

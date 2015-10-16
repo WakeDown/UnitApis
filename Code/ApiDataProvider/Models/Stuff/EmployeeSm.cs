@@ -17,6 +17,7 @@ namespace DataProvider.Models.Stuff
         public string FullName { get; set; }
         public string Email { get; set; }
         public string DepartmentName { get; set; }
+        public string PositionName { get; set; }
 
         public EmployeeSm()
         {
@@ -58,6 +59,7 @@ namespace DataProvider.Models.Stuff
             FullName = Db.DbHelper.GetValueString(row, "full_name");
             Email = Db.DbHelper.GetValueString(row, "email");
             DepartmentName = Db.DbHelper.GetValueString(row, "dep_name");
+            PositionName = Db.DbHelper.GetValueString(row, "pos_name");
         }
 
         private void FillSelf(EmployeeSm user)

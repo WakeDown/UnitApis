@@ -103,7 +103,6 @@ namespace DataProvider.Controllers.Stuff
             {
                 response = new HttpResponseMessage(HttpStatusCode.OK);
                 response.Content = new StringContent(MessageHelper.ConfigureExceptionMessage(ex));
-
             }
             return response;
         }
