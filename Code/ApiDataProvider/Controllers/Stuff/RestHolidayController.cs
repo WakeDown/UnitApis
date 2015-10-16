@@ -127,6 +127,25 @@ namespace DataProvider.Controllers.Stuff
             return response;
         }
 
+        [AuthorizeAd(AdGroup.RestHolidayConfirm)]
+        public HttpResponseMessage Confirm(string employeeSid, int year)
+        {
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
+
+            try
+            {
+                RestHoliday.Confirm(GetCurUser().Sid, employeeSid, year, confirmed: true);
+                //response.Content = new StringContent(String.Format("{{\"id\":{0}}}", model.Id));
+            }
+            catch (Exception ex)
+            {
+                response = new HttpResponseMessage(HttpStatusCode.OK);
+                response.Content = new StringContent(MessageHelper.ConfigureExceptionMessage(ex));
+
+            }
+            return response;
+        }
+
         [AuthorizeAd()]
         public HttpResponseMessage Close(int id)
         {
