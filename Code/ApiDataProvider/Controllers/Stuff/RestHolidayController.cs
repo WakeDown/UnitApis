@@ -82,6 +82,32 @@ namespace DataProvider.Controllers.Stuff
             return response;
         }
 
+        /// <summary>
+        /// Закрытие/открытие возможности редактировани периода автору
+        /// </summary>
+        /// <param name="employeeSid"></param>
+        /// /// <param name="year"></param>
+        /// <param name="canEdit"></param>
+        /// <returns></returns>
+        [AuthorizeAd(AdGroup.RestHolidayConfirm)]
+        public HttpResponseMessage CanEdit(string employeeSid, int year, bool canEdit = false)
+        {
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
+
+            try
+            {
+                RestHoliday.Confirm(GetCurUser().Sid, employeeSid, year, canEdit);
+                //response.Content = new StringContent(String.Format("{{\"id\":{0}}}", model.Id));
+            }
+            catch (Exception ex)
+            {
+                response = new HttpResponseMessage(HttpStatusCode.OK);
+                response.Content = new StringContent(MessageHelper.ConfigureExceptionMessage(ex));
+
+            }
+            return response;
+        }
+
         [AuthorizeAd(AdGroup.RestHolidayConfirm)]
         public HttpResponseMessage Confirm(int[] idArray)
         {
@@ -133,6 +159,16 @@ namespace DataProvider.Controllers.Stuff
                 topRows=  3;
             }
             return RestHoliday.GetYears4Employee(sid, topRows);
+        }
+
+        /// <summary>
+        /// Получает cписок всех EmployeeRestHolidays в указанном году
+        /// </summary>
+        /// <param name="year"></param>
+        /// <returns></returns>
+        public IEnumerable<EmployeeRestHoliday> GetEmployeeList(int year)
+        {
+            return RestHoliday.GetEmployeeList(year);
         }
 
     }

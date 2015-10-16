@@ -211,6 +211,7 @@
     <Compile Include="Models\Service\WorkType.cs" />
     <Compile Include="Models\Service\ZipClaim.cs" />
     <Compile Include="Models\Stuff\Budget.cs" />
+    <Compile Include="Models\Stuff\EmployeeRestHoliday.cs" />
     <Compile Include="Models\Stuff\ItBudgetReportItemPeople.cs" />
     <Compile Include="Controllers\Stuff\StuffReportController.cs" />
     <Compile Include="Helpers\MathHelper.cs" />

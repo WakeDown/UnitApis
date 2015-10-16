@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
+using System.Web.UI;
 using DataProvider.Helpers;
 using DataProvider.Objects;
 using DataProvider._TMPLTS;
@@ -22,8 +23,17 @@ namespace DataProvider.Models.Stuff
         public int Duration { get; set; }
         public bool CanEdit { get; set; }
         public  bool Confirmed { get; set; }
-        
 
+        public static int RestHolidaysMaxCount
+        {
+            get
+            {
+                int restHolidaysMaxCount;
+                int.TryParse(ConfigurationManager.AppSettings["restHolidaysMaxCount"], out restHolidaysMaxCount);
+                if (restHolidaysMaxCount == 0)restHolidaysMaxCount = 28;
+                return restHolidaysMaxCount;
+            }
+        }
 
         public RestHoliday() { }
 
@@ -63,15 +73,14 @@ namespace DataProvider.Models.Stuff
             if (String.IsNullOrEmpty(EmployeeSid))EmployeeSid = CurUserAdSid;
             if (Year <= 0)Year = StartDate.Year;
 
-            int restHolidaysMaxCount;
-            int.TryParse(ConfigurationManager.AppSettings["restHolidaysMaxCount"], out restHolidaysMaxCount);
+            
             
             //Дней отпуска осталось
             int daysExists = GetYears4Employee(EmployeeSid, year: Year).FirstOrDefault().Value;
 
             if (daysExists <= 0 || daysExists - Duration < 0)
             {
-                throw new ArgumentException($"Количество дней отпуска в {Year} году превышает {restHolidaysMaxCount} дней. Период не был сохранен.");
+                throw new ArgumentException($"Количество дней отпуска в {Year} году превышает {RestHolidaysMaxCount} дней. Период не был сохранен.");
             }
 
             //Должен быть один период создаржащий указанное количество дней
@@ -122,6 +131,25 @@ namespace DataProvider.Models.Stuff
             var dt = Db.Stuff.ExecuteQueryStoredProcedure("rest_holiday_list_confirm", pIdArray, pCanEdit, pConfirmed, pCreatorAdSid);
         }
         /// <summary>
+        /// Подтверждениеи обратная ему операция для списка периодов отпусков
+        /// </summary>
+        /// <param name="creatorSid"></param>
+        /// <param name="employeeSid"></param>
+        /// <param name="year"></param>
+        /// <param name="canEdit"></param>
+        /// <param name="confirmed"></param>
+        public static void Confirm(string creatorSid, string employeeSid, int? year, bool? canEdit = null, bool? confirmed = null)
+        {
+            SqlParameter pEmployeeSid = new SqlParameter() { ParameterName = "employee_sid", SqlValue = employeeSid, SqlDbType = SqlDbType.VarChar };
+            SqlParameter pYear = new SqlParameter() { ParameterName = "year", SqlValue = year, SqlDbType = SqlDbType.Int };
+            SqlParameter pCanEdit = new SqlParameter() { ParameterName = "can_edit", SqlValue = canEdit, SqlDbType = SqlDbType.Bit };
+            SqlParameter pConfirmed = new SqlParameter() { ParameterName = "@confirmed", SqlValue = confirmed, SqlDbType = SqlDbType.Bit };
+            SqlParameter pCreatorAdSid = new SqlParameter() { ParameterName = "creator_sid", SqlValue = creatorSid, SqlDbType = SqlDbType.VarChar };
+
+            var dt = Db.Stuff.ExecuteQueryStoredProcedure("rest_holiday_list_confirm", pEmployeeSid, pYear, pCanEdit, pConfirmed, pCreatorAdSid);
+        }
+
+        /// <summary>
         /// Список периодов отпусков
         /// </summary>
         /// <param name="employeeSid">Фильтр по конкретному сотруднику</param>
@@ -138,6 +166,23 @@ namespace DataProvider.Models.Stuff
             foreach (DataRow row in dt.Rows)
             {
                 var model = new RestHoliday(row);
+                lst.Add(model);
+            }
+
+            return lst;
+        }
+
+        public static IEnumerable<EmployeeRestHoliday> GetEmployeeList(int? year = null)
+        {
+            SqlParameter pYear = new SqlParameter() { ParameterName = "year", SqlValue = year, SqlDbType = SqlDbType.Int };
+            var dt = Db.Stuff.ExecuteQueryStoredProcedure("rest_holiday_employee_list", pYear);
+
+            var lst = new List<EmployeeRestHoliday>();
+
+            foreach (DataRow row in dt.Rows)
+            {
+                var model = new EmployeeRestHoliday(row);
+                model.Residue = RestHolidaysMaxCount - model.DurationSum;
                 lst.Add(model);
             }
 

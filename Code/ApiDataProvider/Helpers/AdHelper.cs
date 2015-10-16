@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Security.Principal;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.SessionState;
 using DataProvider.Models.Stuff;
@@ -45,7 +46,7 @@ namespace DataProvider.Helpers
                 return list.ToArray();
             }
         }
-
+        
         public static IEnumerable<KeyValuePair<string, string>> GetUserListByAdGroup(AdGroup grp)
         {
             var list = new Dictionary<string, string>();
@@ -70,8 +71,6 @@ namespace DataProvider.Helpers
                         }
                     }
                 }
-
-
             }
 
             return list.OrderBy(x => x.Value);
