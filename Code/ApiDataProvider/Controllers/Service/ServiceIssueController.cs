@@ -16,6 +16,8 @@ namespace DataProvider.Controllers.Service
     {
         public IEnumerable<KeyValuePair<string, string>> GetEngeneerList()
         {
+
+
             return AdHelper.GetUserListByAdGroup(AdGroup.ServiceEngeneer).ToList();
         }
 
@@ -48,7 +50,7 @@ namespace DataProvider.Controllers.Service
 
             var planList = PlanServiceIssue.GetClaimList(month.Value, idCity, address, serviceAdminSid: serviceAdminSid, serviceEngeneerSid: serviceEngeneerSid);
             var clientList = planList.GroupBy(x => x.IdClient)
-                .Select(x => new ServiceIssuePlaningItem(x.Key, x.First().ClientName, x.Count()))
+                .Select(x => new ServiceIssuePlaningItem(x.Key, x.First().ClientName, x.Count(), issuesIdList: String.Join(",", x.Select(z => z.IdServiceClaim))))
                 .OrderBy(x => x.Name)
                 .ToArray();
 
@@ -66,7 +68,7 @@ namespace DataProvider.Controllers.Service
 
             var planList = PlanServiceIssue.GetClaimList(month.Value, idCity, serviceAdminSid: serviceAdminSid, serviceEngeneerSid: serviceEngeneerSid);
             var addressList = planList.GroupBy(x => x.Address)
-                .Select(x => new ServiceIssuePlaningItem(0, x.Key, x.Count()))
+                .Select(x => new ServiceIssuePlaningItem(0, x.Key, x.Count(), issuesIdList: String.Join(",", x.Select(z => z.IdServiceClaim))))
                 .OrderBy(x => x.Name)
                 .ToArray();
 
@@ -83,7 +85,7 @@ namespace DataProvider.Controllers.Service
 
             var planList = PlanServiceIssue.GetClaimList(month.Value, serviceAdminSid: serviceAdminSid, serviceEngeneerSid: serviceEngeneerSid);
             var citiesList = planList.GroupBy(x => x.IdCity)
-                .Select(x => new ServiceIssuePlaningItem(x.Key, x.First().CityName, x.Count(), x.First().CityShortName)).OrderBy(x => x.ShortName).ToArray();
+                .Select(x => new ServiceIssuePlaningItem(x.Key, x.First().CityName, x.Count(), x.First().CityShortName, String.Join(",", x.Select(z=>z.IdServiceClaim)))).OrderBy(x => x.ShortName).ToArray();
 
             return citiesList;
 
