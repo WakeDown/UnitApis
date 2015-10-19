@@ -85,6 +85,51 @@ namespace DataProvider.Models.Service
             }
         }
 
+        public static string SaveList(string curUserSid, IEnumerable<ServiceIssuePlan> list)
+        {
+            int errCount = 0;
+            var idList = new List<int>();
+
+            foreach (ServiceIssuePlan item in list)
+            {
+                item.CurUserAdSid = curUserSid;
+                try
+                {
+                    item.Save();
+                    idList.Add(item.Id);
+                }
+                catch (ItemExistsException ex)
+                {
+                    errCount++;
+                }
+            }
+
+            return String.Join(",", idList);
+
+            //if (errCount > 0) throw new ItemExistsException($"Некоторые заявки ({errCount} шт.) не были добавлены, так как уже существуют в плане");
+
+            //SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = Id, SqlDbType = SqlDbType.Int };
+            //SqlParameter pIdServiceIssue = new SqlParameter() { ParameterName = "id_service_issue", SqlValue = IdServiceIssue, SqlDbType = SqlDbType.Int };
+            //SqlParameter pIdServiceIssueType = new SqlParameter() { ParameterName = "id_service_issue_type", SqlValue = IdServiceIssueType, SqlDbType = SqlDbType.Int };
+            //SqlParameter pPeriodStart = new SqlParameter() { ParameterName = "period_start", SqlValue = PeriodStart, SqlDbType = SqlDbType.Date };
+            //SqlParameter pPeriodEnd = new SqlParameter() { ParameterName = "period_end", SqlValue = PeriodEnd, SqlDbType = SqlDbType.Date };
+            //SqlParameter pCreatorAdSid = new SqlParameter() { ParameterName = "creator_sid", SqlValue = curUserSid, SqlDbType = SqlDbType.VarChar };
+
+            //var dt = Db.Service.ExecuteQueryStoredProcedure("save_service_issue_plan", pId, pIdServiceIssue, pIdServiceIssueType, pPeriodStart, pPeriodEnd, pCreatorAdSid);
+            //int id = 0;
+            //if (dt.Rows.Count > 0)
+            //{
+            //    Int32.TryParse(dt.Rows[0]["id"].ToString(), out id);
+            //    Id = id;
+
+            //    if (Db.DbHelper.GetValueBool(dt.Rows[0], "exists"))//Если запись существует
+            //    {
+            //        FillSelf(dt.Rows[0]);
+            //        throw new ItemExistsException($"Заявка №{IdServiceIssue} уже влючена в план на период {PeriodStart:dd.MM.yy} - {PeriodEnd:dd.MM.yy} пользователем {AdHelper.GetUserBySid(CreatorSid).DisplayName}");
+            //    }
+            //}
+        }
+
         public static IEnumerable<ServiceIssuePlan> GetList(DateTime periodStart, DateTime periodEnd)
         {
             SqlParameter pPeriodStart = new SqlParameter() { ParameterName = "period_start", SqlValue = periodStart, SqlDbType = SqlDbType.Date };

@@ -53,7 +53,23 @@ namespace DataProvider.Controllers.Service
             return response;
         }
 
-        
+        public HttpResponseMessage SaveList(IEnumerable<ServiceIssuePlan> list)
+        {
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
+
+            try
+            {
+                string idList = ServiceIssuePlan.SaveList(GetCurUser().Sid, list);
+                response.Content = new StringContent($"{{\"idArr\":\"{idList}\"}}");
+            }
+            catch (Exception ex)
+            {
+                response = new HttpResponseMessage(HttpStatusCode.OK);
+                response.Content = new StringContent(MessageHelper.ConfigureExceptionMessage(ex));
+
+            }
+            return response;
+        }
 
         public IEnumerable<ServiceIssuePeriodItem> GetPeriodMonthList(int? year, int? month)
         {
