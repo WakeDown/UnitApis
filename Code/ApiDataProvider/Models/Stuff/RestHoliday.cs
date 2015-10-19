@@ -121,9 +121,9 @@ namespace DataProvider.Models.Stuff
         /// <param name="confirmed">Утверждение, после этого никакой редактирование невозможно и даже если canEdit = true</param>
         public static void Confirm(string creatorSid, int[] idArray, bool? canEdit = null, bool? confirmed = null)
         {
-            SqlParameter pIdArray = new SqlParameter() { ParameterName = "@id_array", SqlValue = String.Join(",", idArray), SqlDbType = SqlDbType.NVarChar };
+            SqlParameter pIdArray = new SqlParameter() { ParameterName = "id_array", SqlValue = String.Join(",", idArray), SqlDbType = SqlDbType.NVarChar };
             SqlParameter pCanEdit = new SqlParameter() { ParameterName = "can_edit", SqlValue = canEdit, SqlDbType = SqlDbType.Bit };
-            SqlParameter pConfirmed = new SqlParameter() { ParameterName = "@confirmed", SqlValue = confirmed, SqlDbType = SqlDbType.Bit };
+            SqlParameter pConfirmed = new SqlParameter() { ParameterName = "confirmed", SqlValue = confirmed, SqlDbType = SqlDbType.Bit };
             SqlParameter pCreatorAdSid = new SqlParameter() { ParameterName = "creator_sid", SqlValue = creatorSid, SqlDbType = SqlDbType.VarChar };
 
             var dt = Db.Stuff.ExecuteQueryStoredProcedure("rest_holiday_list_confirm", pIdArray, pCanEdit, pConfirmed, pCreatorAdSid);

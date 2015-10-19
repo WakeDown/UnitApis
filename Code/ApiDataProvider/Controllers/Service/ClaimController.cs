@@ -223,5 +223,10 @@ namespace DataProvider.Controllers.Service
             int id = Claim.SaveFromServicePlan4ZipClaim(idServiceCame.Value);
             return Ok();
         }
+
+        public IEnumerable<ServiceSheetZipItem> GetIssuedZipItemList(int claimId, int? notInserviceSheetId = null)
+        {
+            return Claim.GetIssuedZipItemList(claimId, notInserviceSheetId);
+        }
     }
 }

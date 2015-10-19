@@ -18,6 +18,11 @@ namespace DataProvider.Controllers.Service
             return ServiceSheetZipItem.GetList(serviceSheetId);
         }
 
+        public IEnumerable<ServiceSheetZipItem> GetInstalledList(int serviceSheetId)
+        {
+            return ServiceSheetZipItem.GetInstalledList(serviceSheetId, true);
+        }
+
         public ServiceSheetZipItem Get(int id)
         {
             var model = new ServiceSheetZipItem(id);
@@ -52,6 +57,24 @@ namespace DataProvider.Controllers.Service
             try
             {
                 ServiceSheetZipItem.Close(id, GetCurUser().Sid);
+            }
+            catch (Exception ex)
+            {
+                response = new HttpResponseMessage(HttpStatusCode.OK);
+                response.Content = new StringContent(MessageHelper.ConfigureExceptionMessage(ex));
+
+            }
+            return response;
+        }
+
+        [AuthorizeAd()]
+        public HttpResponseMessage SetInstalled(int id, int idServiceSheet, bool? installed = true)
+        {
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
+
+            try
+            {
+                ServiceSheetZipItem.SetInstalled(id, idServiceSheet, GetCurUser().Sid, installed);
             }
             catch (Exception ex)
             {

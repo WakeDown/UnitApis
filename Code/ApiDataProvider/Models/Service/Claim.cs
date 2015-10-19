@@ -1221,5 +1221,22 @@ namespace DataProvider.Models.Service
 
             //return (from DataRow row in dt.Rows select new ZipClaim(row)).ToList();
         }
+
+        public static IEnumerable<ServiceSheetZipItem> GetIssuedZipItemList(int claimId, int? notInserviceSheetId = null)
+        {
+            SqlParameter pClaimId = new SqlParameter() { ParameterName = "claim_id", SqlValue = claimId, SqlDbType = SqlDbType.Int };
+            SqlParameter pNotInserviceSheetId = new SqlParameter() { ParameterName = "not_in_id_service_sheet", SqlValue = notInserviceSheetId, SqlDbType = SqlDbType.Int };
+            var dt = Db.Service.ExecuteQueryStoredProcedure("claim_issued_zip_item_list_get", pClaimId, pNotInserviceSheetId);
+
+            var lst = new List<ServiceSheetZipItem>();
+
+            foreach (DataRow row in dt.Rows)
+            {
+                var model = new ServiceSheetZipItem(row);
+                lst.Add(model);
+            }
+
+            return lst;
+        }
     }
 }
