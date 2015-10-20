@@ -130,11 +130,30 @@ namespace DataProvider.Models.Service
             //}
         }
 
-        public static IEnumerable<ServiceIssuePlan> GetList(DateTime periodStart, DateTime periodEnd)
+        public static IEnumerable<ServiceIssuePlan> GetListUnitProg(DateTime periodStart, DateTime periodEnd, string engeneerSid = null)
         {
             SqlParameter pPeriodStart = new SqlParameter() { ParameterName = "period_start", SqlValue = periodStart, SqlDbType = SqlDbType.Date };
             SqlParameter pPeriodEnd = new SqlParameter() { ParameterName = "period_end", SqlValue = periodEnd, SqlDbType = SqlDbType.Date };
-            var dt = Db.Service.ExecuteQueryStoredProcedure("get_service_issue_plan_list", pPeriodStart, pPeriodEnd);
+            SqlParameter pEngeneerSid = new SqlParameter() { ParameterName = "engeneer_sid", SqlValue = engeneerSid, SqlDbType = SqlDbType.VarChar };
+            var dt = Db.Service.ExecuteQueryStoredProcedure("service_issue_plan_get_list_unit_prog", pPeriodStart, pPeriodEnd, pEngeneerSid);
+
+            var lst = new List<ServiceIssuePlan>();
+
+            foreach (DataRow row in dt.Rows)
+            {
+                var model = new ServiceIssuePlan(row);
+                lst.Add(model);
+            }
+
+            return lst;
+        }
+
+        public static IEnumerable<ServiceIssuePlan> GetList(DateTime periodStart, DateTime periodEnd, string engeneerSid = null)
+        {
+            SqlParameter pPeriodStart = new SqlParameter() { ParameterName = "period_start", SqlValue = periodStart, SqlDbType = SqlDbType.Date };
+            SqlParameter pPeriodEnd = new SqlParameter() { ParameterName = "period_end", SqlValue = periodEnd, SqlDbType = SqlDbType.Date };
+            SqlParameter pEngeneerSid = new SqlParameter() { ParameterName = "engeneer_sid", SqlValue = engeneerSid, SqlDbType = SqlDbType.VarChar };
+            var dt = Db.Service.ExecuteQueryStoredProcedure("service_issue_plan_get_list", pPeriodStart, pPeriodEnd, pEngeneerSid);
 
             var lst = new List<ServiceIssuePlan>();
 

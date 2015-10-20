@@ -14,6 +14,8 @@ namespace DataProvider.Models.Stuff
         public string EmployeeSid { get; set; }
         public int DurationSum { get; set; }
         public int Residue { get; set; }
+        public bool HasBlockedPeriods { get; set; }
+        public int PeriodCount { get; set; }
 
         public EmployeeRestHoliday(DataRow row)
         {
@@ -26,6 +28,8 @@ namespace DataProvider.Models.Stuff
             EmployeeSid = Db.DbHelper.GetValueString(row, "employee_sid");
             EmployeeName = Db.DbHelper.GetValueString(row, "emlpoyee_name");
             Residue = Db.DbHelper.GetValueIntOrDefault(row, "residue");
+            HasBlockedPeriods = Db.DbHelper.GetValueBool(row, "has_blocked_periods");
+            PeriodCount = Db.DbHelper.GetValueIntOrDefault(row, "period_count");
         }
     }
 }

@@ -26,12 +26,12 @@ namespace DataProvider.Controllers.Service
             return Ok(new ServiceIssuePlan(idServiceIssue.Value, IdServiceType.Value));
         }
 
-        public IEnumerable<ServiceIssuePlan> GetList(DateTime? periodStart, DateTime? periodEnd)
+        public IEnumerable<ServiceIssuePlan> GetList(DateTime? periodStart, DateTime? periodEnd, string engeneerSid = null)
         {
             if (!periodStart.HasValue) periodStart = DateTime.Now;
             if (!periodEnd.HasValue) periodEnd = DateTime.Now;
-
-            return ServiceIssuePlan.GetList(periodStart.Value, periodEnd.Value);
+            return ServiceIssuePlan.GetListUnitProg(periodStart.Value, periodEnd.Value, engeneerSid);
+            //return ServiceIssuePlan.GetList(periodStart.Value, periodEnd.Value);
         }
 
         public HttpResponseMessage Save(ServiceIssuePlan model)

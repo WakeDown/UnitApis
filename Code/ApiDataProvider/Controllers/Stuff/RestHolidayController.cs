@@ -25,7 +25,6 @@ namespace DataProvider.Controllers.Stuff
             if (!curUser.HasAccess(AdGroup.RestHolidayViewAllEmpList))
             {
                 employeeSid = curUser.Sid;
-                
             }
             
             return RestHoliday.GetList(employeeSid, year ?? DateTime.Now.Year);

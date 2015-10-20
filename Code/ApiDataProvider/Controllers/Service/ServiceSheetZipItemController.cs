@@ -20,7 +20,7 @@ namespace DataProvider.Controllers.Service
 
         public IEnumerable<ServiceSheetZipItem> GetInstalledList(int serviceSheetId)
         {
-            return ServiceSheetZipItem.GetInstalledList(serviceSheetId, true);
+            return ServiceSheetZipItem.GetInstalledList(serviceSheetId);
         }
 
         public ServiceSheetZipItem Get(int id)

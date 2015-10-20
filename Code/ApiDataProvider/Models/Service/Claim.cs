@@ -707,7 +707,14 @@ namespace DataProvider.Models.Service
 
                     if (ServiceSheet4Save.ProcessEnabled && ServiceSheet4Save.DeviceEnabled)
                     {
-                        nextState = new ClaimState("DONE");
+                        if (GetIssuedZipItemList(Id, ServiceSheet4Save.Id).Any(x => !x.Installed))//Если есть хоть один не установленный ЗИП 
+                        {
+                            nextState = new ClaimState("ZIPISSUE");
+                        }
+                        else
+                        {
+                            nextState = new ClaimState("DONE");
+                        }
 
                     }
                     else if ((!ServiceSheet4Save.ProcessEnabled || !ServiceSheet4Save.DeviceEnabled) && ServiceSheet4Save.ZipClaim.HasValue &&
@@ -723,8 +730,8 @@ namespace DataProvider.Models.Service
                     
                     break;
                 case "ZIPISSUE":
-
-                    if (!GetLastServiceSheet().GetZipItemList().Any()) throw new Exception("Необходимо заполнить список ЗИП. Сервисный лист не был передан.");
+                    var lastServiceSheet = GetLastServiceSheet();
+                    if (lastServiceSheet.ZipClaim.HasValue && lastServiceSheet.ZipClaim.Value && !lastServiceSheet.GetZipItemList().Any()) throw new Exception("Необходимо заполнить список ЗИП. Сервисный лист не был передан.");
                     goNext = true;
                     saveClaim = true;
                     
