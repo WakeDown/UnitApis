@@ -62,9 +62,11 @@ namespace DataProvider.Controllers.Stuff
         /// <param name="idArray"></param>
         /// <param name="canEdit"></param>
         /// <returns></returns>
-        [AuthorizeAd(AdGroup.RestHolidayConfirm)]
+        //[AuthorizeAd(AdGroup.RestHolidayConfirm)]
         public HttpResponseMessage CanEdit(int[] idArray, bool canEdit = false)
         {
+            if (canEdit && !GetCurUser().HasAccess(AdGroup.RestHolidayConfirm)) return new HttpResponseMessage(HttpStatusCode.Unauthorized);
+
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
 
             try
@@ -88,9 +90,10 @@ namespace DataProvider.Controllers.Stuff
         /// /// <param name="year"></param>
         /// <param name="canEdit"></param>
         /// <returns></returns>
-        [AuthorizeAd(AdGroup.RestHolidayConfirm)]
+        //[AuthorizeAd(AdGroup.RestHolidayConfirm)]
         public HttpResponseMessage CanEdit(string employeeSid, int year, bool canEdit = false)
         {
+            if (canEdit && !GetCurUser().HasAccess(AdGroup.RestHolidayConfirm)) return new HttpResponseMessage(HttpStatusCode.Unauthorized);
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
 
             try

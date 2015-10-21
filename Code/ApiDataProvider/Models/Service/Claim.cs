@@ -28,8 +28,6 @@ namespace DataProvider.Models.Service
         public string ContractorName { get; set; }
         public string ContractName { get; set; }
         public string DeviceName { get; set; }
-        //public EmployeeSm Admin { get; set; }
-        //public EmployeeSm Engeneer { get; set; }
         public int IdState { get; set; }
         public ClaimState State { get; set; }
         public DateTime DateStateChange { get; set; }
@@ -47,12 +45,17 @@ namespace DataProvider.Models.Service
         public string CurAdminSid { get; set; }
         public string CurTechSid { get; set; }
         public string CurManagerSid { get; set; }
+        public EmployeeSm Admin { get; set; }
+        public EmployeeSm Engeneer { get; set; }
+        public EmployeeSm Manager { get; set; }
+        public EmployeeSm Tech { get; set; }
+        public EmployeeSm Changer { get; set; }
         public int? CurServiceIssueId { get; set; }
         public int? IdServiceCame { get; set; }
 
         public Claim() { }
 
-        public Claim(int id, bool getNames = false, bool loadObject = true)
+        public Claim(int id, bool loadObject = true, bool getNames = true)
         {
             SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = id, SqlDbType = SqlDbType.Int };
             var dt = Db.Service.ExecuteQueryStoredProcedure("get_claim", pId);
@@ -60,7 +63,7 @@ namespace DataProvider.Models.Service
             {
                 var row = dt.Rows[0];
                 FillSelf(row, loadObject);
-                if (getNames) GetNames();
+                //if (getNames) GetNames();
             }
 
             //if (!UserCanViewClaimNow(user))
@@ -69,7 +72,7 @@ namespace DataProvider.Models.Service
             //}
         }
 
-        public Claim(int id, AdUser user, bool getNames = false, bool loadObject = true) : this(id, getNames, loadObject)
+        public Claim(int id, AdUser user, bool loadObject = true) : this(id, loadObject)
         {
 
             bool access = false;
@@ -132,19 +135,19 @@ namespace DataProvider.Models.Service
             return result;
         }
 
-        public Claim(DataRow row, bool getNames = false)
+        public Claim(DataRow row, bool loadObj = false)
             : this()
         {
-            FillSelf(row);
-            if (getNames) GetNames();
+            FillSelf(row, loadObj);
+            //if (getNames) GetNames();
         }
 
-        private void GetNames()
-        {
-            Contractor = new Contractor(Contractor.Id);
-            Contract = new Contract(Contract.Id);
-            Device = new Device(Device.Id);
-        }
+        //private void GetNames()
+        //{
+        //    Contractor = new Contractor(Contractor.Id);
+        //    Contract = new Contract(Contract.Id);
+        //    Device = new Device(Device.Id);
+        //}
 
         private void FillSelf(DataRow row, bool loadObj = true)
         {
@@ -156,9 +159,6 @@ namespace DataProvider.Models.Service
             ContractorName = Db.DbHelper.GetValueString(row, "contractor_name");
             ContractName = Db.DbHelper.GetValueString(row, "contract_name");
             DeviceName = Db.DbHelper.GetValueString(row, "device_name");
-            //Admin = new EmployeeSm(Db.DbHelper.GetValueIntOrDefault(row, "id_admin"));
-            //Engeneer = new EmployeeSm(Db.DbHelper.GetValueIntOrDefault(row, "id_engeneer"));
-
             IdWorkType = Db.DbHelper.GetValueIntOrNull(row, "id_work_type");
             SpecialistSid = Db.DbHelper.GetValueString(row, "specialist_sid");
             DateCreate = Db.DbHelper.GetValueDateTimeOrDefault(row, "date_create");
@@ -172,14 +172,23 @@ namespace DataProvider.Models.Service
             CurServiceIssueId = Db.DbHelper.GetValueIntOrNull(row, "cur_service_issue_id");
             IdServiceCame = Db.DbHelper.GetValueIntOrNull(row, "id_service_came");
 
+            Contractor = new Contractor() { Id = Db.DbHelper.GetValueIntOrDefault(row, "id_contractor") };
+            Contract = new Contract() { Id = Db.DbHelper.GetValueIntOrDefault(row, "id_contract") };
+            Device = new Device() { Id = Db.DbHelper.GetValueIntOrDefault(row, "id_device") };
+            
             if (loadObj)
             {
-                if (IdWorkType.HasValue && IdWorkType.Value > 0) WorkType = new WorkType(IdWorkType.Value);
+                Manager = new EmployeeSm(CurManagerSid);
+                Admin = new EmployeeSm(CurAdminSid);
+                Tech = new EmployeeSm(CurTechSid);
+                Engeneer = new EmployeeSm(CurEngeneerSid);
                 Specialist = new EmployeeSm(SpecialistSid);
+                Changer = new EmployeeSm(ChangerSid);
+                Contractor = new Contractor(Contractor.Id);
+                Contract = new Contract(Contract.Id);
+                Device = new Device(Device.Id);
+                if (IdWorkType.HasValue && IdWorkType.Value > 0) WorkType = new WorkType(IdWorkType.Value);
                 State = new ClaimState(Db.DbHelper.GetValueIntOrDefault(row, "id_claim_state"));
-                Contractor = new Contractor() { Id = Db.DbHelper.GetValueIntOrDefault(row, "id_contractor") };
-                Contract = new Contract() { Id = Db.DbHelper.GetValueIntOrDefault(row, "id_contract") };
-                Device = new Device() { Id = Db.DbHelper.GetValueIntOrDefault(row, "id_device") };
             }
         }
 
@@ -560,25 +569,33 @@ namespace DataProvider.Models.Service
                         ServiceSheet4Save.Save("TECHWORK");
                         if (ServiceSheet4Save.ProcessEnabled && ServiceSheet4Save.DeviceEnabled)
                         {
-                            nextState = new ClaimState("TECHDONE");
-                            //Сначала сохраняем промежуточный статус
-                            SaveStateStep(nextState.Id);
-                            saveStateInfo = false;
-                            nextState = new ClaimState("DONE");
+                            if (GetIssuedZipItemList(Id, ServiceSheet4Save.Id).Any(x => !x.Installed))//Если есть хоть один не установленный ЗИП 
+                            {
+                                nextState = new ClaimState("ZIPISSUE");
+                            }
+                            else
+                            {
+                                //nextState = new ClaimState("TECHDONE");
+                                ////Сначала сохраняем промежуточный статус
+                                //SaveStateStep(nextState.Id);
+                                saveStateInfo = false;
+                                nextState = new ClaimState("DONE");
+                            }
+                            
                         }
                         else if ((!ServiceSheet4Save.ProcessEnabled || !ServiceSheet4Save.DeviceEnabled) && ServiceSheet4Save.ZipClaim.HasValue && ServiceSheet4Save.ZipClaim.Value)
                         {
-                            nextState = new ClaimState("TECHPROCESSED");
-                            //Сначала сохраняем промежуточный статус
-                            SaveStateStep(nextState.Id);
+                            //nextState = new ClaimState("TECHDONE");
+                            ////Сначала сохраняем промежуточный статус
+                            //SaveStateStep(nextState.Id);
                             saveStateInfo = false;
-                            nextState = new ClaimState("ZIPORDER");
-
+                            //nextState = new ClaimState("ZIPORDER");
+                            nextState = new ClaimState("ZIPISSUE");
                         }
                         else if ((!ServiceSheet4Save.ProcessEnabled || !ServiceSheet4Save.DeviceEnabled) && (!ServiceSheet4Save.ZipClaim.HasValue || !ServiceSheet4Save.ZipClaim.Value))
                         {
 
-                            nextState = new ClaimState("TECHNODONE");
+                            nextState = new ClaimState("TECHPROCESSED");
                             //Сначала сохраняем промежуточный статус
                             SaveStateStep(nextState.Id);
                             saveStateInfo = false;
@@ -996,15 +1013,12 @@ namespace DataProvider.Models.Service
         
         public static IEnumerable<Claim> GetList(AdUser user, out int cnt, string adminSid = null, string engeneerSid = null, DateTime? dateStart = null, DateTime? dateEnd = null, int? topRows = null, string managerSid = null, string techSid = null, string serialNum=null, int? idDevice = null, bool? activeClaimsOnly = false, int? idClaimState = null, int? clientId = null, string clientSdNum = null)
         {
-            if (user.Is(AdGroup.ServiceAdmin))
-            {
-                adminSid = user.Sid;
-            }
+            if (user.Is(AdGroup.ServiceAdmin)){adminSid = user.Sid;}
             if (user.Is(AdGroup.ServiceEngeneer)) engeneerSid = user.Sid;
             if (user.Is(AdGroup.ServiceManager)) managerSid = user.Sid;
             if (user.Is(AdGroup.ServiceTech)) techSid = user.Sid;
             
-            //!!!!ЕСЛИ МЕНЯЕШЬ ЭТУ ФУНКЦИЮ ПОМИ ЧТО НАДО ПОПРАВИТЬ ФУНКЦИЮ ЧУТЬ НИЖЕ 
+            //!!!!ЕСЛИ МЕНЯЕШЬ ЭТУ ФУНКЦИЮ ПОМИ ЧТО ЕЩЕ НАДО ПОПРАВИТЬ ФУНКЦИЮ ЧУТЬ НИЖЕ 
             if (!topRows.HasValue) topRows = 30;
 
             SqlParameter pServAdminSid = new SqlParameter() { ParameterName = "admin_sid", SqlValue = adminSid, SqlDbType = SqlDbType.VarChar };

@@ -17,8 +17,10 @@ namespace DataProvider.Models.Service
         public DateTime PeriodStart { get; set; }
         public DateTime PeriodEnd { get; set; }
         public string CreatorSid { get; set; }
-
-
+        public int ClientId { get; set; }
+        public int CityId { get; set; }
+        public int ContractId { get; set; }
+    
 
         public ServiceIssuePlan() { }
 
@@ -59,6 +61,9 @@ namespace DataProvider.Models.Service
             PeriodStart = Db.DbHelper.GetValueDateTimeOrDefault(row, "period_start");
             PeriodEnd = Db.DbHelper.GetValueDateTimeOrDefault(row, "period_end");
             CreatorSid = Db.DbHelper.GetValueString(row, "creator_sid");
+            ClientId = Db.DbHelper.GetValueIntOrDefault(row, "id_contractor");
+            CityId = Db.DbHelper.GetValueIntOrDefault(row, "id_dity");
+            ContractId = Db.DbHelper.GetValueIntOrDefault(row, "id_contract");
         }
 
         public void Save()

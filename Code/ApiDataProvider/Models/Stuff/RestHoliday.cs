@@ -87,6 +87,8 @@ namespace DataProvider.Models.Stuff
             //Проверка есть ли хотябы один период не менее 14 дней
             if (!GetList(EmployeeSid, Year).Any(x => x.Duration >= oneMinPeriodDays) && daysExists - Duration  < oneMinPeriodDays && Duration < oneMinPeriodDays) throw new ArgumentException("Необходимо указать хотябы один период не менее 14 дней. Период не был сохранен.");
 
+            EndDate = StartDate.AddDays(Duration - 1);
+
             SqlParameter pEmployeeSid = new SqlParameter() { ParameterName = "employee_sid", SqlValue = EmployeeSid, SqlDbType = SqlDbType.VarChar };
             SqlParameter pStartDate = new SqlParameter() { ParameterName = "start_date", SqlValue = StartDate, SqlDbType = SqlDbType.Date };
             SqlParameter pEndDate = new SqlParameter() { ParameterName = "end_date", SqlValue = EndDate, SqlDbType = SqlDbType.Date };
