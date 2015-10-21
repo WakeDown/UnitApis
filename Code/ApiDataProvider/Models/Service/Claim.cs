@@ -569,19 +569,17 @@ namespace DataProvider.Models.Service
                         ServiceSheet4Save.Save("TECHWORK");
                         if (ServiceSheet4Save.ProcessEnabled && ServiceSheet4Save.DeviceEnabled)
                         {
-                            if (GetIssuedZipItemList(Id, ServiceSheet4Save.Id).Any(x => !x.Installed))//Если есть хоть один не установленный ЗИП 
-                            {
-                                nextState = new ClaimState("ZIPISSUE");
-                            }
-                            else
-                            {
                                 //nextState = new ClaimState("TECHDONE");
                                 ////Сначала сохраняем промежуточный статус
                                 //SaveStateStep(nextState.Id);
                                 saveStateInfo = false;
                                 nextState = new ClaimState("DONE");
+
+                            //Если есть хоть один не установленный ЗИП 
+                            if (GetOrderedZipItemList(Id, ServiceSheet4Save.Id).Any(x => !x.Installed))
+                            {
+                                nextState = new ClaimState("SERVADMSETWAIT");
                             }
-                            
                         }
                         else if ((!ServiceSheet4Save.ProcessEnabled || !ServiceSheet4Save.DeviceEnabled) && ServiceSheet4Save.ZipClaim.HasValue && ServiceSheet4Save.ZipClaim.Value)
                         {
@@ -601,6 +599,8 @@ namespace DataProvider.Models.Service
                             saveStateInfo = false;
                             nextState = new ClaimState("SERVADMSETWAIT");
                         }
+
+
                     }
                     else
                     {
@@ -722,17 +722,23 @@ namespace DataProvider.Models.Service
                     ServiceSheet4Save.IdServiceIssue = cl.CurServiceIssueId ?? -1;
                     ServiceSheet4Save.Save("SRVENGWORK");
 
+                    
+
+
                     if (ServiceSheet4Save.ProcessEnabled && ServiceSheet4Save.DeviceEnabled)
                     {
-                        if (GetIssuedZipItemList(Id, ServiceSheet4Save.Id).Any(x => !x.Installed))//Если есть хоть один не установленный ЗИП 
-                        {
-                            nextState = new ClaimState("ZIPISSUE");
-                        }
-                        else
-                        {
-                            nextState = new ClaimState("DONE");
-                        }
+                        nextState = new ClaimState("DONE");
 
+                        //Если есть хоть один не установленный ЗИП 
+                        if (GetOrderedZipItemList(Id, ServiceSheet4Save.Id).Any(x => !x.Installed))
+                        {
+                            nextState = new ClaimState("SERVADMSET");
+                            SpecialistSid = CurAdminSid;
+                            sendNote = true;
+                            noteTo = new[] { ServiceRole.CurAdmin };
+                            noteText = $@"Остался неустановленный ЗИП в заявке №%ID% %LINK%";
+                            noteSubject = $"Остался неустановленный ЗИП в заявке №%ID%";
+                        }
                     }
                     else if ((!ServiceSheet4Save.ProcessEnabled || !ServiceSheet4Save.DeviceEnabled) && ServiceSheet4Save.ZipClaim.HasValue &&
                              ServiceSheet4Save.ZipClaim.Value)
@@ -741,19 +747,29 @@ namespace DataProvider.Models.Service
                     }
                     else if ((!ServiceSheet4Save.ProcessEnabled || !ServiceSheet4Save.DeviceEnabled) && (!ServiceSheet4Save.ZipClaim.HasValue || !ServiceSheet4Save.ZipClaim.Value))
                     {
-                        nextState = new ClaimState("ZIPISSUE");
+                        nextState = new ClaimState("SERVADMSET");
+                        SpecialistSid = CurAdminSid;
+                        sendNote = true;
+                        noteTo = new[] { ServiceRole.CurAdmin };
+                        noteText = $@"Инженер на восстановил работу аппарата по заявке №%ID% %LINK%.\r\Комментарий:{ServiceSheet4Save.Descr}";
+                        noteSubject = $"Вам назначена заявка №%ID%";
                     }
-
                     
                     break;
                 case "ZIPISSUE":
                     var lastServiceSheet = GetLastServiceSheet();
-                    if (lastServiceSheet.ZipClaim.HasValue && lastServiceSheet.ZipClaim.Value && !lastServiceSheet.GetZipItemList().Any()) throw new Exception("Необходимо заполнить список ЗИП. Сервисный лист не был передан.");
+                    if (lastServiceSheet.ZipClaim.HasValue && lastServiceSheet.ZipClaim.Value &&
+                        !lastServiceSheet.GetIssuedZipItemList().Any())
+                    {
+                        throw new Exception("Необходимо заполнить список ЗИП. Сервисный лист не был передан.");
+                    }
+                    ServiceSheetZipItem.SaveOrderedZipItemsCopyFromIssued(lastServiceSheet.Id, CurUserAdSid);
                     goNext = true;
                     saveClaim = true;
                     
                     SpecialistSid = CurUserAdSid;
                     nextState = new ClaimState("ZIPORDER");
+                    
 
                     if (nextState.SysName.Equals("ZIPORDER"))
                     {
@@ -1243,11 +1259,11 @@ namespace DataProvider.Models.Service
             //return (from DataRow row in dt.Rows select new ZipClaim(row)).ToList();
         }
 
-        public static IEnumerable<ServiceSheetZipItem> GetIssuedZipItemList(int claimId, int? notInserviceSheetId = null)
+        public static IEnumerable<ServiceSheetZipItem> GetOrderedZipItemList(int claimId, int? serviceSheetId = null)
         {
             SqlParameter pClaimId = new SqlParameter() { ParameterName = "claim_id", SqlValue = claimId, SqlDbType = SqlDbType.Int };
-            SqlParameter pNotInserviceSheetId = new SqlParameter() { ParameterName = "not_in_id_service_sheet", SqlValue = notInserviceSheetId, SqlDbType = SqlDbType.Int };
-            var dt = Db.Service.ExecuteQueryStoredProcedure("claim_issued_zip_item_list_get", pClaimId, pNotInserviceSheetId);
+            SqlParameter pServiceSheetId = new SqlParameter() { ParameterName = "id_service_sheet", SqlValue = serviceSheetId, SqlDbType = SqlDbType.Int };
+            var dt = Db.Service.ExecuteQueryStoredProcedure("claim_ordered_zip_item_list_get", pClaimId, pServiceSheetId);
 
             var lst = new List<ServiceSheetZipItem>();
 

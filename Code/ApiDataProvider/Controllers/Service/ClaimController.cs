@@ -224,9 +224,9 @@ namespace DataProvider.Controllers.Service
             return Ok();
         }
 
-        public IEnumerable<ServiceSheetZipItem> GetIssuedZipItemList(int claimId, int? notInserviceSheetId = null)
+        public IEnumerable<ServiceSheetZipItem> GetOrderedZipItemList(int claimId, int? notInserviceSheetId = null)
         {
-            return Claim.GetIssuedZipItemList(claimId, notInserviceSheetId);
+            return Claim.GetOrderedZipItemList(claimId, notInserviceSheetId);
         }
     }
 }

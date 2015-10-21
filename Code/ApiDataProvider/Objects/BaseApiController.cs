@@ -46,7 +46,9 @@ namespace Objects
             if (wi.User != null)
             {
                 var domain = new PrincipalContext(ContextType.Domain);
-                curUser.Sid = wi.User.Value;
+                sid = wi.User.Value;
+                //sid = "S-1-5-21-1970802976-3466419101-4042325969-1585";
+                curUser.Sid = sid;
             }
             return curUser;
         }

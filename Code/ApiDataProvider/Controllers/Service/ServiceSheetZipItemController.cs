@@ -13,14 +13,24 @@ namespace DataProvider.Controllers.Service
 {
     public class ServiceSheetZipItemController : BaseApiController
     {
-        public IEnumerable<ServiceSheetZipItem> GetList(int serviceSheetId)
+        public IEnumerable<ServiceSheetZipItem> GetIssuedList(int serviceSheetId)
         {
-            return ServiceSheetZipItem.GetList(serviceSheetId);
+            return ServiceSheetZipItem.GetIssuedList(serviceSheetId);
+        }
+
+        public IEnumerable<ServiceSheetZipItem> GetOrderedList(int serviceSheetId)
+        {
+            return ServiceSheetZipItem.GetOrderedList(serviceSheetId);
         }
 
         public IEnumerable<ServiceSheetZipItem> GetInstalledList(int serviceSheetId)
         {
             return ServiceSheetZipItem.GetInstalledList(serviceSheetId);
+        }
+
+        public IEnumerable<ServiceSheetZipItem> GetNotInstalledList(int serviceSheetId)
+        {
+            return ServiceSheetZipItem.GetNotInstalledList(serviceSheetId);
         }
 
         public ServiceSheetZipItem Get(int id)
@@ -29,15 +39,53 @@ namespace DataProvider.Controllers.Service
             return model;
         }
 
+       
+
         [AuthorizeAd()]
-        public HttpResponseMessage Save(ServiceSheetZipItem model)
+        public HttpResponseMessage NotInstalledSaveList(int[] idOrderedZipItem, int serviceSheetId)
+        {
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
+
+            try
+            {
+                ServiceSheetZipItem.NotInstalledSaveList(idOrderedZipItem, serviceSheetId, GetCurUser().Sid);
+            }
+            catch (Exception ex)
+            {
+                response = new HttpResponseMessage(HttpStatusCode.OK);
+                response.Content = new StringContent(MessageHelper.ConfigureExceptionMessage(ex));
+
+            }
+            return response;
+        }
+
+        [AuthorizeAd()]
+        public HttpResponseMessage IssuedClose(int id)
+        {
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
+
+            try
+            {
+                ServiceSheetZipItem.IssuedClose(id, GetCurUser().Sid);
+            }
+            catch (Exception ex)
+            {
+                response = new HttpResponseMessage(HttpStatusCode.OK);
+                response.Content = new StringContent(MessageHelper.ConfigureExceptionMessage(ex));
+
+            }
+            return response;
+        }
+
+        [AuthorizeAd()]
+        public HttpResponseMessage IssuedSave(ServiceSheetZipItem model)
         {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
 
             try
             {
                 model.CurUserAdSid = GetCurUser().Sid;
-                model.Save();
+                model.IssuedSave();
                 response.Content = new StringContent($"{{\"id\":{model.Id}}}");
             }
             catch (Exception ex)
@@ -50,13 +98,33 @@ namespace DataProvider.Controllers.Service
         }
 
         [AuthorizeAd()]
-        public HttpResponseMessage Close(int id)
+        public HttpResponseMessage OrderedClose(int id)
         {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
 
             try
             {
-                ServiceSheetZipItem.Close(id, GetCurUser().Sid);
+                ServiceSheetZipItem.OrderedClose(id, GetCurUser().Sid);
+            }
+            catch (Exception ex)
+            {
+                response = new HttpResponseMessage(HttpStatusCode.OK);
+                response.Content = new StringContent(MessageHelper.ConfigureExceptionMessage(ex));
+
+            }
+            return response;
+        }
+
+        [AuthorizeAd()]
+        public HttpResponseMessage OrderedSave(ServiceSheetZipItem model)
+        {
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
+
+            try
+            {
+                model.CurUserAdSid = GetCurUser().Sid;
+                model.OrderedSave();
+                response.Content = new StringContent($"{{\"id\":{model.Id}}}");
             }
             catch (Exception ex)
             {

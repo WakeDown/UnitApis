@@ -44,6 +44,7 @@ namespace DataProvider.Models.Service
         public int? TimeOnWorkMinutes { get; set; }
         public string ClientSdNum { get; set; }
         public DateTime DateCreate { get; set; }
+        public string NotInstalledComment { get; set; }
 
         public ServiceSheet() { }
 
@@ -89,6 +90,7 @@ namespace DataProvider.Models.Service
             TimeOnWorkMinutes = Db.DbHelper.GetValueIntOrNull(row, "time_on_work_minutes");
             ClientSdNum = Db.DbHelper.GetValueString(row, "client_sd_num");
             DateCreate = Db.DbHelper.GetValueDateTimeOrDefault(row, "date_create");
+            NotInstalledComment = Db.DbHelper.GetValueString(row, "not_installed_comment");
 
             if (fillNames)
             {
@@ -168,9 +170,16 @@ namespace DataProvider.Models.Service
             return lst;
         }
 
-        public IEnumerable<ServiceSheetZipItem> GetZipItemList()
+        public IEnumerable<ServiceSheetZipItem> GetIssuedZipItemList()
         {
-            return ServiceSheetZipItem.GetList(Id);
+            return ServiceSheetZipItem.GetIssuedList(Id);
+        }
+
+        public void SaveNotInstalledComment()
+        {
+            SqlParameter pNotInstalledComment = new SqlParameter() { ParameterName = "not_installed_comment", SqlValue = NotInstalledComment, SqlDbType = SqlDbType.Int };
+            SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = Id, SqlDbType = SqlDbType.Int };
+            var dt = Db.Service.ExecuteQueryStoredProcedure("service_sheet_update", pNotInstalledComment, pId);
         }
 
         //public static IEnumerable<ServiceSheet> GetClaimServiceSheetList(int idClaim)

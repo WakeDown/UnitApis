@@ -26,6 +26,25 @@ namespace DataProvider.Controllers.Service
             return model;
         }
 
+        [AuthorizeAd(AdGroup.ServiceControler, AdGroup.ServiceEngeneer, AdGroup.ServiceAdmin, AdGroup.ServiceTech)]
+        public HttpResponseMessage SaveNotInstalledComment(ServiceSheet model)
+        {
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
+
+            try
+            {
+                model.CurUserAdSid = GetCurUser().Sid;
+                model.SaveNotInstalledComment();
+            }
+            catch (Exception ex)
+            {
+                response = new HttpResponseMessage(HttpStatusCode.OK);
+                response.Content = new StringContent(String.Format("{{\"errorMessage\":\"{0}\"}}", ex.Message));
+
+            }
+            return response;
+        }
+
         //[AuthorizeAd(AdGroup.ServiceControler, AdGroup.ServiceEngeneer, AdGroup.ServiceAdmin, AdGroup.ServiceTech)]
         //public HttpResponseMessage Save(ServiceSheet model)
         //{

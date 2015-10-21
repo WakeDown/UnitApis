@@ -22,10 +22,10 @@ namespace DataProvider.Controllers.Stuff
         public IEnumerable<RestHoliday> GetList(string employeeSid = null, int? year = null)
         {
             var curUser = GetCurUser();
-            if (!curUser.HasAccess(AdGroup.RestHolidayViewAllEmpList))
-            {
-                employeeSid = curUser.Sid;
-            }
+            //if (!curUser.HasAccess(AdGroup.RestHolidayViewAllEmpList))
+            //{
+            //    employeeSid = curUser.Sid;
+            //}
             
             return RestHoliday.GetList(employeeSid, year ?? DateTime.Now.Year);
         }
