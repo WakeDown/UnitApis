@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.DirectoryServices;
 using System.DirectoryServices.AccountManagement;
 using System.Linq;
@@ -382,9 +383,16 @@ namespace DataProvider.Helpers
                 = new WindowsImpersonationContextFacade(
                     nc))
             {
+                string fakseLogin = null;
+
+                if (ConfigurationManager.AppSettings["UserProxy"] == "True")
+                {
+                    fakseLogin = ConfigurationManager.AppSettings["UserProxyLogin"];
+                }
+
                 var context = new PrincipalContext(ContextType.Domain);
                 var userPrincipal = UserPrincipal.FindByIdentity(context, IdentityType.SamAccountName,
-                    user.Identity.Name);
+                  fakseLogin??user.Identity.Name);
 
                 if (userPrincipal == null) return false;
                 if (userPrincipal.IsMemberOf(context, IdentityType.Sid, AdUserGroup.GetSidByAdGroup(AdGroup.SuperAdmin))) { return true; }//Если юзер Суперадмин
@@ -409,8 +417,7 @@ namespace DataProvider.Helpers
                     nc))
             {
                 var context = new PrincipalContext(ContextType.Domain);
-                var userPrincipal = UserPrincipal.FindByIdentity(context, IdentityType.SamAccountName,
-                    user.Identity.Name);
+                var userPrincipal = UserPrincipal.FindByIdentity(context, IdentityType.SamAccountName, user.Identity.Name);
 
                 if (userPrincipal == null) return false;
                 //if (userPrincipal.IsMemberOf(context, IdentityType.Sid, AdUserGroup.GetSidByAdGroup(AdGroup.SuperAdmin))) { return true; }//Если юзер Суперадмин

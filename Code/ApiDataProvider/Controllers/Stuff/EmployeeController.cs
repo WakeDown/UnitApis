@@ -52,17 +52,17 @@ namespace DataProvider.Controllers.Stuff
             return Employee.GetStNewbieList(idDepartment, userCanViewHiddenEmps);
         }
 
-        public Employee Get(int id)
+        public Employee Get(int id, bool showHidden = false)
         {
-            bool userCanViewHiddenEmps = AdHelper.UserInGroup(GetCurUser().User, AdGroup.PersonalManager, AdGroup.SuperAdmin);
+            bool userCanViewHiddenEmps = showHidden || AdHelper.UserInGroup(GetCurUser().User, AdGroup.PersonalManager, AdGroup.SuperAdmin);
             var emp = new Employee(id);
             if (emp.IsHidden && !userCanViewHiddenEmps) return new Employee();
             return emp;
         }
 
-        public Employee Get(string adSid)
+        public Employee Get(string adSid, bool showHidden = false)
         {
-            bool userCanViewHiddenEmps = AdHelper.UserInGroup(GetCurUser().User, AdGroup.PersonalManager, AdGroup.SuperAdmin);
+            bool userCanViewHiddenEmps = showHidden || AdHelper.UserInGroup(GetCurUser().User, AdGroup.PersonalManager, AdGroup.SuperAdmin);
             var emp = new Employee(adSid);
             if (emp.IsHidden && !userCanViewHiddenEmps) return new Employee();
             return emp;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.DirectoryServices.AccountManagement;
 using System.Linq;
 using System.Security.Principal;
@@ -41,13 +42,19 @@ namespace Objects
             AdUser curUser = new AdUser();
             curUser.User =  base.RequestContext.Principal;
             
+
             string sid = null;
             var wi = (WindowsIdentity)RequestContext.Principal.Identity;
             if (wi.User != null)
             {
                 var domain = new PrincipalContext(ContextType.Domain);
                 sid = wi.User.Value;
-                //sid = "S-1-5-21-1970802976-3466419101-4042325969-1585";
+
+                if (ConfigurationManager.AppSettings["UserProxy"] == "True")
+                {
+                    sid = ConfigurationManager.AppSettings["UserProxySid"];
+                }
+                
                 curUser.Sid = sid;
             }
             return curUser;
