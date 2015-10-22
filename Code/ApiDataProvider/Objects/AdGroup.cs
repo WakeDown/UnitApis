@@ -39,6 +39,7 @@ namespace DataProvider.Objects
         ServiceClaimContractorAccess,
         ZipClaimAddressChange,
         ServiceMobileUser,
+        ServiceZipClaimConfirm,
         //---доступы
         ServiceClaimClassifier,
         ServiceClaimClientAccess

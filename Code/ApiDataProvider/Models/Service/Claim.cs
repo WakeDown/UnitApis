@@ -530,7 +530,7 @@ namespace DataProvider.Models.Service
                     sendNote = true;
                     noteTo = new[] {ServiceRole.CurSpecialist};
                     noteText = $@"Вам назначена заявка №%ID% %LINK%";
-                    noteSubject = $"Назначена заявка №%ID%";
+                    noteSubject = $"[Заявка №%ID%] Вам назначена заявка";
 
                 }
             else if (currState.SysName.ToUpper().Equals("TECHSET"))
@@ -551,7 +551,7 @@ namespace DataProvider.Models.Service
                     sendNote = true;
                     noteTo = new[] {ServiceRole.CurAdmin};
                     noteText = $@"Отклонено назначение заявки №%ID% %LINK%";
-                    noteSubject = $"Отклонено назначение заявки №%ID%";
+                    noteSubject = $"[Заявка №%ID%] Отклонено назначение СТП";
                 }
             }
             else if (currState.SysName.ToUpper().Equals("TECHWORK"))
@@ -635,7 +635,7 @@ namespace DataProvider.Models.Service
                 sendNote = true;
                 noteTo = new[] {ServiceRole.CurSpecialist};
                 noteText = $@"Вам назначена заявка №%ID% %LINK%";
-                noteSubject = $"Назначена заявка №%ID%";
+                noteSubject = $"[Заявка №%ID%] Вам назначена заявка";
             }
             else if (currState.SysName.ToUpper().Equals("SERVADMSET"))
             {
@@ -654,7 +654,7 @@ namespace DataProvider.Models.Service
                     sendNote = true;
                     noteTo = new[] {ServiceRole.CurManager};
                     noteText = $@"Отклонено назначение заявки №%ID% %LINK%";
-                    noteSubject = $"Отклонено назначение заявки №%ID%";
+                    noteSubject = $"[Заявка №%ID%] Отклонено назначение СА";
                 }
             }
             else if (currState.SysName.ToUpper().Equals("SRVADMWORK"))
@@ -676,7 +676,7 @@ namespace DataProvider.Models.Service
                 sendNote = true;
                 noteTo = new[] {ServiceRole.CurSpecialist};
                 noteText = $@"Вам назначена заявка №%ID% %LINK%";
-                noteSubject = $"Назначена заявка №%ID%";
+                noteSubject = $"[Заявка №%ID%] Вам назначена заявка";
             }
             else if (currState.SysName.ToUpper().Equals("SERVENGSETWAIT"))
             {
@@ -708,7 +708,7 @@ namespace DataProvider.Models.Service
                     sendNote = true;
                     noteTo = new[] {ServiceRole.CurAdmin};
                     noteText = $@"Отклонено назначение заявки №%ID% %LINK%";
-                    noteSubject = $"Отклонено назначение заявки №%ID%";
+                    noteSubject = $"[Заявка №%ID%] Отклонено назначение СИ";
                 }
             }
             else if (currState.SysName.ToUpper().Equals("SERVENGOUTWAIT"))
@@ -755,7 +755,7 @@ namespace DataProvider.Models.Service
                         sendNote = true;
                         noteTo = new[] {ServiceRole.CurAdmin};
                         noteText = $@"Остался неустановленный ЗИП в заявке №%ID% %LINK%";
-                        noteSubject = $"Остался неустановленный ЗИП в заявке №%ID%";
+                        noteSubject = $"[Заявка №%ID%] Остался неустановленный ЗИП";
                     }
                 }
                 else if ((!ServiceSheet4Save.ProcessEnabled || !ServiceSheet4Save.DeviceEnabled) &&
@@ -774,7 +774,7 @@ namespace DataProvider.Models.Service
                     noteText =
                         $@"Инженер на восстановил работу аппарата по заявке №%ID% %LINK%.\r\Комментарий:{
                             ServiceSheet4Save.Descr}";
-                    noteSubject = $"Вам назначена заявка №%ID%";
+                    noteSubject = $"[Заявка №%ID%] Вам назначена заявка";
                 }
 
             }
@@ -792,14 +792,13 @@ namespace DataProvider.Models.Service
 
                 SpecialistSid = CurUserAdSid;
                 nextState = new ClaimState("ZIPCHECK");
-
-
+                
                 if (nextState.SysName.Equals("ZIPCHECK"))
                 {
                     sendNote = true;
                     noteTo = new[] {ServiceRole.AllTech};
                     noteText = $@"Необходимо заказать ЗИП по заявке №%ID% %LINK%";
-                    noteSubject = $"Необходимо заказать ЗИП по заявке №%ID%";
+                    noteSubject = $"[Заявка №%ID%] Необходимо заказать ЗИП";
                 }
             }
             else if (currState.SysName.ToUpper().Equals("ZIPCHECK"))
@@ -832,19 +831,41 @@ namespace DataProvider.Models.Service
                     (curCl.Device.HasGuarantee.HasValue && curCl.Device.HasGuarantee.Value))
                 {
                     nextState = new ClaimState("ZIPCONFIRM");
+
                 }
                 else
                 {
                     ZipClaim.CreateClaimUnitWork(Id);
                     nextState = new ClaimState("ZIPORDERED");
+                    
+                        sendNote = true;
+                    noteTo = new[] { ServiceRole.ZipConfirm };
+                    noteText = $@"Необходимо утвердить список ЗИП в заявке №%ID% %LINK%";
+                    noteSubject = $"[Заявка №%ID%] Утверждение список ЗИП";
                 }
             }
             else if (currState.SysName.ToUpper().Equals("ZIPCONFIRM"))
             {
                 goNext = true;
                 saveClaim = true;
-                ZipClaim.CreateClaimUnitWork(Id);
-                nextState = new ClaimState("ZIPORDERED");
+                if (confirm)
+                {
+                    ZipClaim.CreateClaimUnitWork(Id);
+                    nextState = new ClaimState("ZIPORDERED");
+                }
+                else
+                {
+                    descr = $"Отклонено\r\n{Descr}";
+                    nextState = new ClaimState("ZIPCONFIRMCANCEL");
+                    //Сначала сохраняем промежуточный статус
+                    SaveStateStep(nextState.Id, descr);
+                    saveStateInfo = false;
+                    nextState = new ClaimState("ZIPCHECKINWORK");
+                    sendNote = true;
+                    noteTo = new[] { ServiceRole.CurTech };
+                    noteText = $@"Отклонен список ЗИП в заявке №%ID% %LINK%";
+                    noteSubject = $"[Заявка №%ID%] Отклонен список ЗИП";
+                }
             }
             else if (currState.SysName.ToUpper().Equals("ZIPORDERED"))
             {
@@ -871,7 +892,7 @@ namespace DataProvider.Models.Service
                 sendNote = true;
                 noteTo = new[] {ServiceRole.CurManager};
                 noteText = $@"Заявка №%ID% закрыта  %LINK%";
-                noteSubject = $"Заявка №%ID% закрыта";
+                noteSubject = $"[Заявка №%ID%] Заявка закрыта";
             }
             else if (currState.SysName.ToUpper().Equals("ZIPCL-CANCELED"))
             {
@@ -890,7 +911,7 @@ namespace DataProvider.Models.Service
                 sendNote = true;
                 noteTo = new[] {ServiceRole.CurAdmin};
                 noteText = $@"Вам назначена заявка №%ID% %LINK%";
-                noteSubject = $"Назначена заявка №%ID%";
+                noteSubject = $"[Заявка №%ID%] Вам назначена заявка";
             }
             else if (currState.SysName.ToUpper().Equals("ZIPCL-DELIV"))
             {
@@ -901,7 +922,7 @@ namespace DataProvider.Models.Service
                 sendNote = true;
                 noteTo = new[] {ServiceRole.CurAdmin};
                 noteText = $@"Вам назначена заявка №%ID% %LINK%";
-                noteSubject = $"Назначена заявка №%ID%";
+                noteSubject = $"[Заявка №%ID%] Вам назначена заявка";
             }
             else
             {
@@ -945,7 +966,8 @@ namespace DataProvider.Models.Service
             CurTech,
             CurManager,
             CurSpecialist,
-            AllTech
+            AllTech,
+            ZipConfirm
         }
 
         public void SendMailTo(string message, string subject, params ServiceRole[] mailTo)
@@ -1055,6 +1077,23 @@ namespace DataProvider.Models.Service
                         }
                     }
                     //email = emailList.ToArray();
+                }
+                else if (mt == ServiceRole.ZipConfirm)
+                {
+                    foreach (var item in AdHelper.GetUserListByAdGroup(AdGroup.ServiceZipClaimConfirm))
+                    {
+                        string email = Employee.GetEmailBySid(item.Key);
+                        if (!String.IsNullOrEmpty(email))
+                        {
+                            recipients.Add(new MailAddress(email));
+                        }
+                        else
+                        {
+                            message =
+                            $"Сообщение для Утврерждающего список ЗИП не может быть доставлено поэтому в рассылку включен контролер процесса.\r\n{message}";
+                            recipients.AddRange(AdHelper.GetRecipientsFromAdGroup(AdGroup.ServiceControler));
+                        }
+                    }
                 }
                 else
                 {
