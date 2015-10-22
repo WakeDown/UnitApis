@@ -31,12 +31,12 @@ namespace DataProvider.Controllers.Service
             string serviceAdminSid = null;
             if (curUser.Is(AdGroup.ServiceAdmin)) serviceAdminSid = curUser.Sid;
             var planList = PlanServiceIssue.GetClaimList(month.Value, idCity, address, idClient, serviceAdminSid: serviceAdminSid, serviceEngeneerSid: serviceEngeneerSid);
-            var clientList = planList.Where(x => x.IdCity == idCity && x.Address == address).GroupBy(x => x.IdDevice)
+            var deviceIssueList = planList.Where(x => x.IdCity == idCity && x.Address == address).GroupBy(x => x.IdDevice)
                 .Select(x => new ServiceIssuePlaningItem(x.First().IdServiceClaim, x.First().DeviceName, x.Count()))
                 .OrderBy(x => x.Name)
                 .ToArray();
 
-            return clientList;
+            return deviceIssueList;
         }
 
         public IEnumerable<ServiceIssuePlaningItem> GetPlaningClientList(DateTime? month, int? idCity, string address, string serviceEngeneerSid = null)

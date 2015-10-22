@@ -22,7 +22,7 @@ namespace DataProvider.Models.Service
             Name = name;
             IssuesCount = issuesCount;
             ShortName = shortName;
-                IssuesIdList = issuesIdList;
+            IssuesIdList = issuesIdList;
         }
     }
 }
