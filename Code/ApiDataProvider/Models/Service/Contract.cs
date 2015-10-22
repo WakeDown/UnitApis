@@ -16,6 +16,10 @@ namespace DataProvider.Models.Service
         public string Name { get; set; }
         public string Number { get; set; }
         public bool? ClientSdNumRequired { get; set; }
+        public string ContractZipTypeSysName { get; set; }
+        public string ManagerSid { get; set; }
+        public int? ManagerIdUnitProg { get; set; }
+        public string TypeName { get; set; }
 
         public Contract()
         {
@@ -43,6 +47,10 @@ namespace DataProvider.Models.Service
             Name = Db.DbHelper.GetValueString(row, "name");
             Number = Db.DbHelper.GetValueString(row, "number");
             ClientSdNumRequired = Db.DbHelper.GetValueBoolOrNull(row, "client_sd_num_required");
+            ContractZipTypeSysName = Db.DbHelper.GetValueString(row, "zip_state_sys_name");
+            ManagerSid = Db.DbHelper.GetValueString(row, "manager_sid");
+            ManagerIdUnitProg = Db.DbHelper.GetValueIntOrNull(row, "id_manager");
+            TypeName = Db.DbHelper.GetValueString(row, "contract_type_name"); 
         }
 
         public static IEnumerable<Contract> GetList(int? idContractor = null, string contractorName = null, int? idContract = null, string contractNumber = null, int? idDevice = null, string deviceName = null)

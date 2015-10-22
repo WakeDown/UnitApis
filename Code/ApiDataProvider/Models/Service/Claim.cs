@@ -25,6 +25,7 @@ namespace DataProvider.Models.Service
         public Contract Contract { get; set; }
         public int IdDevice { get; set; }
         public Device Device { get; set; }
+        public string SerialNum { get; set; }
         public string ContractorName { get; set; }
         public string ContractName { get; set; }
         public string DeviceName { get; set; }
@@ -52,6 +53,7 @@ namespace DataProvider.Models.Service
         public EmployeeSm Changer { get; set; }
         public int? CurServiceIssueId { get; set; }
         public int? IdServiceCame { get; set; }
+
 
         public Claim() { }
 
@@ -483,26 +485,26 @@ namespace DataProvider.Models.Service
             bool goNext = false;
             bool saveClaim = false;//Метод вызывается из удаленных программ и поэтому не всегда нухно схранять статус
 
-            switch (currState.SysName.ToUpper())//Текущий статус
-            {
-                //case "NEW":
-                //    nextState = new ClaimState("NEWADD");
-                //    break;
-                case "NEW":
+            
+                if (currState.SysName.ToUpper().Equals("NEW"))
+                {
                     goNext = true;
                     saveClaim = true;
                     int? wtId = null;
                     if (!IdWorkType.HasValue)
                     {
                         wtId = new Claim(Id).IdWorkType;
-                        if (!wtId.HasValue) throw new ArgumentException("Невозможно определить следующий статус. Тип работ заявки не указан.");
+                        if (!wtId.HasValue)
+                            throw new ArgumentException(
+                                "Невозможно определить следующий статус. Тип работ заявки не указан.");
                     }
                     else
                     {
                         wtId = IdWorkType;
                     }
                     var wtSysName = new WorkType(wtId.Value).SysName;
-                    descr = $"{Descr}\r\nУстановлен тип работ {wtSysName}\r\nНазначен специалист {AdHelper.GetUserBySid(SpecialistSid).FullName}";
+                    descr =
+                        $"{Descr}\r\nУстановлен тип работ {wtSysName}\r\nНазначен специалист {AdHelper.GetUserBySid(SpecialistSid).FullName}";
 
                     switch (wtSysName)
                     {
@@ -526,349 +528,386 @@ namespace DataProvider.Models.Service
                             break;
                     }
                     sendNote = true;
-                    noteTo = new[] { ServiceRole.CurSpecialist };
+                    noteTo = new[] {ServiceRole.CurSpecialist};
                     noteText = $@"Вам назначена заявка №%ID% %LINK%";
                     noteSubject = $"Назначена заявка №%ID%";
-                    
-                    break;
-                case "TECHSET":
-                    goNext = true;
-                    saveClaim = true;
-                    if (confirm)
-                    {
-                        nextState = new ClaimState("TECHWORK");
-                    }
-                    else
-                    {
-                        descr = $"Отклонено\r\n{Descr}";
-                        nextState = new ClaimState("NEW");
-                        //Очищаем выбранного специалиста так как статус заявки поменялся
-                        Clear(specialist: true, workType: true, tech: true);
-                        sendNote = true;
-                        noteTo = new[] { ServiceRole.CurAdmin };
-                        noteText = $@"Отклонено назначение заявки №%ID% %LINK%";
-                        noteSubject = $"Отклонено назначение заявки №%ID%";
-                    }
-                    break;
-                case "TECHWORK":
-                    goNext = true;
-                    saveClaim = true;
-                    if (confirm)
-                    {
-                        ServiceSheet4Save.IdClaim = Id;
-                        if (ServiceSheet4Save == null || ServiceSheet4Save.IdClaim == 0)
-                        {
-                            throw new ArgumentException("Сервисный лист отсутствует. Операция не завершена!");
-                        }
 
-                        ////if (!ServiceSheet4Save.NoTechWork)
-                        ////{
-                        ServiceSheet4Save.CurUserAdSid = CurUserAdSid;
-                        ServiceSheet4Save.EngeneerSid = CurUserAdSid;
-                        ServiceSheet4Save.IdServiceIssue = -999;
-                        ServiceSheet4Save.Save("TECHWORK");
-                        if (ServiceSheet4Save.ProcessEnabled && ServiceSheet4Save.DeviceEnabled)
-                        {
-                                //nextState = new ClaimState("TECHDONE");
-                                ////Сначала сохраняем промежуточный статус
-                                //SaveStateStep(nextState.Id);
-                                saveStateInfo = false;
-                                nextState = new ClaimState("DONE");
+                }
+            else if (currState.SysName.ToUpper().Equals("TECHSET"))
+            {
 
-                            //Если есть хоть один не установленный ЗИП 
-                            if (GetOrderedZipItemList(Id, ServiceSheet4Save.Id).Any(x => !x.Installed))
-                            {
-                                nextState = new ClaimState("SERVADMSETWAIT");
-                            }
-                        }
-                        else if ((!ServiceSheet4Save.ProcessEnabled || !ServiceSheet4Save.DeviceEnabled) && ServiceSheet4Save.ZipClaim.HasValue && ServiceSheet4Save.ZipClaim.Value)
-                        {
-                            //nextState = new ClaimState("TECHDONE");
-                            ////Сначала сохраняем промежуточный статус
-                            //SaveStateStep(nextState.Id);
-                            saveStateInfo = false;
-                            //nextState = new ClaimState("ZIPORDER");
-                            nextState = new ClaimState("ZIPISSUE");
-                        }
-                        else if ((!ServiceSheet4Save.ProcessEnabled || !ServiceSheet4Save.DeviceEnabled) && (!ServiceSheet4Save.ZipClaim.HasValue || !ServiceSheet4Save.ZipClaim.Value))
-                        {
-
-                            nextState = new ClaimState("TECHPROCESSED");
-                            //Сначала сохраняем промежуточный статус
-                            SaveStateStep(nextState.Id);
-                            saveStateInfo = false;
-                            nextState = new ClaimState("SERVADMSETWAIT");
-                        }
-
-
-                    }
-                    else
-                    {
-                        descr = $"{Descr}";
-                        nextState = new ClaimState("TECHNOCONTACT");
-                        //Сначала сохраняем промежуточный статус
-                        SaveStateStep(nextState.Id, descr);
-                        saveStateInfo = false;
-                        nextState = new ClaimState("SERVADMSETWAIT");
-                        Clear(specialist: true);
-                    }
-                    ////}
-                    ////else if (ServiceSheet4Save.NoTechWork)
-                    ////{
-                    ////    nextState = new ClaimState("NEW");
-                    ////    //Очищаем выбранного специалиста так как статус заявки поменялся
-                    ////    Clear(specialist: true);
-                    ////}
-                    break;
-                case "SERVADMSETWAIT":
-                    goNext = true;
-                    saveClaim = true;
-                    nextState = new ClaimState("SERVADMSET");
+                goNext = true;
+                saveClaim = true;
+                if (confirm)
+                {
+                    nextState = new ClaimState("TECHWORK");
+                }
+                else
+                {
+                    descr = $"Отклонено\r\n{Descr}";
+                    nextState = new ClaimState("NEW");
+                    //Очищаем выбранного специалиста так как статус заявки поменялся
+                    Clear(specialist: true, workType: true, tech: true);
                     sendNote = true;
-                    noteTo = new[] { ServiceRole.CurSpecialist };
-                    noteText = $@"Вам назначена заявка №%ID% %LINK%";
-                    noteSubject = $"Назначена заявка №%ID%";
-                    break;
-                case "SERVADMSET":
-                    goNext = true;
-                    if (confirm)
-                    {
-                        nextState = new ClaimState("SRVADMWORK");
-                        CurAdminSid = SpecialistSid;
-                    }
-                    else
-                    {
-                        descr = $"Отклонено\r\n{Descr}";
-                        nextState = new ClaimState("NEW");
-                        //Очищаем выбранного специалиста так как статус заявки поменялся
-                        Clear(specialist: true, admin: true);
-                        sendNote = true;
-                        noteTo = new[] { ServiceRole.CurManager };
-                        noteText = $@"Отклонено назначение заявки №%ID% %LINK%";
-                        noteSubject = $"Отклонено назначение заявки №%ID%";
-                    }
-                    break;
-                case "SRVADMWORK":
-                    goNext = true;
-                    saveClaim = true;
-                    ServiceIssue4Save.IdClaim = Id;
-                    ServiceIssue4Save.Descr = Descr;
-                    ServiceIssue4Save.SpecialistSid = SpecialistSid;
-                    ServiceIssue4Save.CurUserAdSid = CurUserAdSid;
-                    int serviceIssueId = ServiceIssue4Save.Save();
-                    CurServiceIssueId = serviceIssueId;//Устанавливает текущий заявку на выезд
-                    WorkType wt = new WorkType();
-                    if (IdWorkType.HasValue)wt = new WorkType(IdWorkType.Value);
-                    descr = $"Установлен тип работ {wt.Name}\r\nНазначен специалист {AdHelper.GetUserBySid(SpecialistSid).FullName}\r\nДата выезда {ServiceIssue4Save.DatePlan:dd.MM.yyyy}\r\n{Descr}";
-                    nextState = new ClaimState("SRVENGSET");
-                    CurEngeneerSid = SpecialistSid;
-                    sendNote = true;
-                    noteTo = new[] { ServiceRole.CurSpecialist };
-                    noteText = $@"Вам назначена заявка №%ID% %LINK%";
-                    noteSubject = $"Назначена заявка №%ID%";
-                    break;
-                case "SERVENGSETWAIT":
-                    goNext = true;
-                    saveClaim = true;
-                    nextState = new ClaimState("SRVENGSET");
-                    break;
-                case "SRVENGSET":
-                    goNext = true;
-                    saveClaim = true;
-                    if (confirm)
-                    {
-                        nextState = new ClaimState("SRVENGGET");
-                        //Сначала сохраняем промежуточный статус
-                        SaveStateStep(nextState.Id);
-                        saveStateInfo = false;
-                        nextState = new ClaimState("SERVENGOUTWAIT");
-                    }
-                    else
-                    {
-                        descr = $"Отклонено\r\n{Descr}";
-                        nextState = new ClaimState("SRVENGCANCEL");
-                        //Сначала сохраняем промежуточный статус
-                        SaveStateStep(nextState.Id, descr);
-                        saveStateInfo = false;
-                        nextState = new ClaimState("SRVADMWORK");
-                        Clear(specialist: true, engeneer: true);
-                        sendNote = true;
-                        noteTo = new[] { ServiceRole.CurAdmin };
-                        noteText = $@"Отклонено назначение заявки №%ID% %LINK%";
-                        noteSubject = $"Отклонено назначение заявки №%ID%";
-                    }
-                    break;
-                case "SERVENGOUTWAIT":
-                    goNext = true;
-                    saveClaim = true;
-                    nextState = new ClaimState("SRVENGWENT");
-                    break;
-                case "SRVENGWENT":
-                    goNext = true;
-                    saveClaim = true;
-                    nextState = new ClaimState("SRVENGWORK");
-                    break;
-                case "SRVENGWORK":
-                    goNext = true;
-                    saveClaim = true;
+                    noteTo = new[] {ServiceRole.CurAdmin};
+                    noteText = $@"Отклонено назначение заявки №%ID% %LINK%";
+                    noteSubject = $"Отклонено назначение заявки №%ID%";
+                }
+            }
+            else if (currState.SysName.ToUpper().Equals("TECHWORK"))
+            {
+                goNext = true;
+                saveClaim = true;
+                if (confirm)
+                {
                     ServiceSheet4Save.IdClaim = Id;
                     if (ServiceSheet4Save == null || ServiceSheet4Save.IdClaim == 0)
-                    { throw new ArgumentException("Сервисный лист отсутствует. Операция не завершена!"); }
+                    {
+                        throw new ArgumentException("Сервисный лист отсутствует. Операция не завершена!");
+                    }
 
-                    var cl = new Claim(Id);
-
-                    if (IsNullOrEmpty(ServiceSheet4Save.CurUserAdSid)) ServiceSheet4Save.CurUserAdSid = CurUserAdSid;
-                    if (IsNullOrEmpty(ServiceSheet4Save.EngeneerSid))ServiceSheet4Save.EngeneerSid = CurUserAdSid;
-                    ServiceSheet4Save.IdServiceIssue = cl.CurServiceIssueId ?? -1;
-                    ServiceSheet4Save.Save("SRVENGWORK");
-
-                    
-
-
+                    ////if (!ServiceSheet4Save.NoTechWork)
+                    ////{
+                    ServiceSheet4Save.CurUserAdSid = CurUserAdSid;
+                    ServiceSheet4Save.EngeneerSid = CurUserAdSid;
+                    ServiceSheet4Save.IdServiceIssue = -999;
+                    ServiceSheet4Save.Save("TECHWORK");
                     if (ServiceSheet4Save.ProcessEnabled && ServiceSheet4Save.DeviceEnabled)
                     {
+                        //nextState = new ClaimState("TECHDONE");
+                        ////Сначала сохраняем промежуточный статус
+                        //SaveStateStep(nextState.Id);
+                        saveStateInfo = false;
                         nextState = new ClaimState("DONE");
 
                         //Если есть хоть один не установленный ЗИП 
                         if (GetOrderedZipItemList(Id, ServiceSheet4Save.Id).Any(x => !x.Installed))
                         {
-                            nextState = new ClaimState("SERVADMSET");
-                            SpecialistSid = CurAdminSid;
-                            sendNote = true;
-                            noteTo = new[] { ServiceRole.CurAdmin };
-                            noteText = $@"Остался неустановленный ЗИП в заявке №%ID% %LINK%";
-                            noteSubject = $"Остался неустановленный ЗИП в заявке №%ID%";
+                            nextState = new ClaimState("SERVADMSETWAIT");
                         }
                     }
-                    else if ((!ServiceSheet4Save.ProcessEnabled || !ServiceSheet4Save.DeviceEnabled) && ServiceSheet4Save.ZipClaim.HasValue &&
-                             ServiceSheet4Save.ZipClaim.Value)
+                    else if ((!ServiceSheet4Save.ProcessEnabled || !ServiceSheet4Save.DeviceEnabled) &&
+                             ServiceSheet4Save.ZipClaim.HasValue && ServiceSheet4Save.ZipClaim.Value)
                     {
+                        //nextState = new ClaimState("TECHDONE");
+                        ////Сначала сохраняем промежуточный статус
+                        //SaveStateStep(nextState.Id);
+                        saveStateInfo = false;
+                        //nextState = new ClaimState("ZIPORDER");
                         nextState = new ClaimState("ZIPISSUE");
                     }
-                    else if ((!ServiceSheet4Save.ProcessEnabled || !ServiceSheet4Save.DeviceEnabled) && (!ServiceSheet4Save.ZipClaim.HasValue || !ServiceSheet4Save.ZipClaim.Value))
+                    else if ((!ServiceSheet4Save.ProcessEnabled || !ServiceSheet4Save.DeviceEnabled) &&
+                             (!ServiceSheet4Save.ZipClaim.HasValue || !ServiceSheet4Save.ZipClaim.Value))
+                    {
+
+                        nextState = new ClaimState("TECHPROCESSED");
+                        //Сначала сохраняем промежуточный статус
+                        SaveStateStep(nextState.Id);
+                        saveStateInfo = false;
+                        nextState = new ClaimState("SERVADMSETWAIT");
+                    }
+
+
+                }
+                else
+                {
+                    descr = $"{Descr}";
+                    nextState = new ClaimState("TECHNOCONTACT");
+                    //Сначала сохраняем промежуточный статус
+                    SaveStateStep(nextState.Id, descr);
+                    saveStateInfo = false;
+                    nextState = new ClaimState("SERVADMSETWAIT");
+                    Clear(specialist: true);
+                }
+                ////}
+                ////else if (ServiceSheet4Save.NoTechWork)
+                ////{
+                ////    nextState = new ClaimState("NEW");
+                ////    //Очищаем выбранного специалиста так как статус заявки поменялся
+                ////    Clear(specialist: true);
+                ////}
+            }
+            else if (currState.SysName.ToUpper().Equals("SERVADMSETWAIT"))
+            {
+                goNext = true;
+                saveClaim = true;
+                nextState = new ClaimState("SERVADMSET");
+                sendNote = true;
+                noteTo = new[] {ServiceRole.CurSpecialist};
+                noteText = $@"Вам назначена заявка №%ID% %LINK%";
+                noteSubject = $"Назначена заявка №%ID%";
+            }
+            else if (currState.SysName.ToUpper().Equals("SERVADMSET"))
+            {
+                goNext = true;
+                if (confirm)
+                {
+                    nextState = new ClaimState("SRVADMWORK");
+                    CurAdminSid = SpecialistSid;
+                }
+                else
+                {
+                    descr = $"Отклонено\r\n{Descr}";
+                    nextState = new ClaimState("NEW");
+                    //Очищаем выбранного специалиста так как статус заявки поменялся
+                    Clear(specialist: true, admin: true);
+                    sendNote = true;
+                    noteTo = new[] {ServiceRole.CurManager};
+                    noteText = $@"Отклонено назначение заявки №%ID% %LINK%";
+                    noteSubject = $"Отклонено назначение заявки №%ID%";
+                }
+            }
+            else if (currState.SysName.ToUpper().Equals("SRVADMWORK"))
+            {
+                goNext = true;
+                saveClaim = true;
+                ServiceIssue4Save.IdClaim = Id;
+                ServiceIssue4Save.Descr = Descr;
+                ServiceIssue4Save.SpecialistSid = SpecialistSid;
+                ServiceIssue4Save.CurUserAdSid = CurUserAdSid;
+                int serviceIssueId = ServiceIssue4Save.Save();
+                CurServiceIssueId = serviceIssueId; //Устанавливает текущий заявку на выезд
+                WorkType wt = new WorkType();
+                if (IdWorkType.HasValue) wt = new WorkType(IdWorkType.Value);
+                descr =
+                    $"Установлен тип работ {wt.Name}\r\nНазначен специалист {AdHelper.GetUserBySid(SpecialistSid).FullName}\r\nДата выезда {ServiceIssue4Save.DatePlan:dd.MM.yyyy}\r\n{Descr}";
+                nextState = new ClaimState("SRVENGSET");
+                CurEngeneerSid = SpecialistSid;
+                sendNote = true;
+                noteTo = new[] {ServiceRole.CurSpecialist};
+                noteText = $@"Вам назначена заявка №%ID% %LINK%";
+                noteSubject = $"Назначена заявка №%ID%";
+            }
+            else if (currState.SysName.ToUpper().Equals("SERVENGSETWAIT"))
+            {
+                goNext = true;
+                saveClaim = true;
+                nextState = new ClaimState("SRVENGSET");
+            }
+            else if (currState.SysName.ToUpper().Equals("SRVENGSET"))
+            {
+                goNext = true;
+                saveClaim = true;
+                if (confirm)
+                {
+                    nextState = new ClaimState("SRVENGGET");
+                    //Сначала сохраняем промежуточный статус
+                    SaveStateStep(nextState.Id);
+                    saveStateInfo = false;
+                    nextState = new ClaimState("SERVENGOUTWAIT");
+                }
+                else
+                {
+                    descr = $"Отклонено\r\n{Descr}";
+                    nextState = new ClaimState("SRVENGCANCEL");
+                    //Сначала сохраняем промежуточный статус
+                    SaveStateStep(nextState.Id, descr);
+                    saveStateInfo = false;
+                    nextState = new ClaimState("SRVADMWORK");
+                    Clear(specialist: true, engeneer: true);
+                    sendNote = true;
+                    noteTo = new[] {ServiceRole.CurAdmin};
+                    noteText = $@"Отклонено назначение заявки №%ID% %LINK%";
+                    noteSubject = $"Отклонено назначение заявки №%ID%";
+                }
+            }
+            else if (currState.SysName.ToUpper().Equals("SERVENGOUTWAIT"))
+            {
+                goNext = true;
+                saveClaim = true;
+                nextState = new ClaimState("SRVENGWENT");
+            }
+            else if (currState.SysName.ToUpper().Equals("SRVENGWENT"))
+            {
+                goNext = true;
+                saveClaim = true;
+                nextState = new ClaimState("SRVENGWORK");
+            }
+            else if (currState.SysName.ToUpper().Equals("SRVENGWORK"))
+            {
+                goNext = true;
+                saveClaim = true;
+                ServiceSheet4Save.IdClaim = Id;
+                if (ServiceSheet4Save == null || ServiceSheet4Save.IdClaim == 0)
+                {
+                    throw new ArgumentException("Сервисный лист отсутствует. Операция не завершена!");
+                }
+
+                var cl = new Claim(Id);
+
+                if (IsNullOrEmpty(ServiceSheet4Save.CurUserAdSid)) ServiceSheet4Save.CurUserAdSid = CurUserAdSid;
+                if (IsNullOrEmpty(ServiceSheet4Save.EngeneerSid)) ServiceSheet4Save.EngeneerSid = CurUserAdSid;
+                ServiceSheet4Save.IdServiceIssue = cl.CurServiceIssueId ?? -1;
+                ServiceSheet4Save.Save("SRVENGWORK");
+
+
+
+
+                if (ServiceSheet4Save.ProcessEnabled && ServiceSheet4Save.DeviceEnabled)
+                {
+                    nextState = new ClaimState("DONE");
+
+                    //Если есть хоть один не установленный ЗИП 
+                    if (GetOrderedZipItemList(Id, ServiceSheet4Save.Id).Any(x => !x.Installed))
                     {
                         nextState = new ClaimState("SERVADMSET");
                         SpecialistSid = CurAdminSid;
                         sendNote = true;
-                        noteTo = new[] { ServiceRole.CurAdmin };
-                        noteText = $@"Инженер на восстановил работу аппарата по заявке №%ID% %LINK%.\r\Комментарий:{ServiceSheet4Save.Descr}";
-                        noteSubject = $"Вам назначена заявка №%ID%";
+                        noteTo = new[] {ServiceRole.CurAdmin};
+                        noteText = $@"Остался неустановленный ЗИП в заявке №%ID% %LINK%";
+                        noteSubject = $"Остался неустановленный ЗИП в заявке №%ID%";
                     }
-                    
-                    break;
-                case "ZIPISSUE":
-                    var lastServiceSheet = GetLastServiceSheet();
-                    if (lastServiceSheet.ZipClaim.HasValue && lastServiceSheet.ZipClaim.Value &&
-                        !lastServiceSheet.GetIssuedZipItemList().Any())
-                    {
-                        throw new Exception("Необходимо заполнить список ЗИП. Сервисный лист не был передан.");
-                    }
-                    ServiceSheetZipItem.SaveOrderedZipItemsCopyFromIssued(lastServiceSheet.Id, CurUserAdSid);
-                    goNext = true;
-                    saveClaim = true;
-                    
-                    SpecialistSid = CurUserAdSid;
-                    nextState = new ClaimState("ZIPORDER");
-                    
+                }
+                else if ((!ServiceSheet4Save.ProcessEnabled || !ServiceSheet4Save.DeviceEnabled) &&
+                         ServiceSheet4Save.ZipClaim.HasValue &&
+                         ServiceSheet4Save.ZipClaim.Value)
+                {
+                    nextState = new ClaimState("ZIPISSUE");
+                }
+                else if ((!ServiceSheet4Save.ProcessEnabled || !ServiceSheet4Save.DeviceEnabled) &&
+                         (!ServiceSheet4Save.ZipClaim.HasValue || !ServiceSheet4Save.ZipClaim.Value))
+                {
+                    nextState = new ClaimState("SERVADMSET");
+                    SpecialistSid = CurAdminSid;
+                    sendNote = true;
+                    noteTo = new[] {ServiceRole.CurAdmin};
+                    noteText =
+                        $@"Инженер на восстановил работу аппарата по заявке №%ID% %LINK%.\r\Комментарий:{
+                            ServiceSheet4Save.Descr}";
+                    noteSubject = $"Вам назначена заявка №%ID%";
+                }
 
-                    if (nextState.SysName.Equals("ZIPORDER"))
-                    {
-                        sendNote = true;
-                        noteTo = new[] { ServiceRole.AllTech };
-                        noteText = $@"Необходимо заказать ЗИП по заявке №%ID% %LINK%";
-                        noteSubject = $"Необходимо заказать ЗИП по заявке №%ID%";
-                    }
-                    break;
-                case "ZIPORDER"://В настоящий момент по этому статусу происходит заказ ЗИП специалистом Тех поддержки
-                    if (!GetClaimCurrentState(Id).SysName.Equals("ZIPCLINWORK"))//На всякий случай проверяем еще раз
-                    {
-                        goNext = true;
-                        saveClaim = true;
-                        CurTechSid = CurUserAdSid;
-                        SpecialistSid = CurUserAdSid;
-                        nextState = new ClaimState("ZIPCLINWORK");
-                    }
-                    else
-                    {
-                        throw new ArgumentException("Заказ уже в работе.");
-                    }
-                    break;
-                case "ZIPCLINWORK":
-                    var curCl = new Claim(Id);
-                    if (curCl.SpecialistSid != CurUserAdSid && curCl.CurTechSid != CurUserAdSid) throw new ArgumentException("Заказ уже в работе.");
-                    break;
-                case "ZIPCHECK":
-                    goNext = true;
-                    saveClaim = true;
-                    nextState = new ClaimState("ZIPCHECKED");
-                    break;
-                case "ZIPCHECKED":
-                    goNext = true;
-                    saveClaim = true;
-                    nextState = new ClaimState("ZIPCONFIRMED");
-                    break;
-                case "ZIPCONFIRMED":
-                    goNext = true;
-                    saveClaim = true;
-                    nextState = new ClaimState("ZIPORDERED");
-                    break;
-                case "ZIPORDERED":
-                    goNext = true;
-                    saveClaim = true;
-                    if (!confirm)
-                    {
-                        nextState = new ClaimState("ZIPBUYCANCEL");
-                        break;
-                    }
-                    else
-                    {
-                        nextState = new ClaimState("ZIPINSTWAIT");
-                        //Сначала сохраняем промежуточный статус
-                        SaveStateStep(nextState.Id);
-                        saveStateInfo = false;
-                        nextState = new ClaimState("SERVENGSETWAIT");
-                        break;
-                    }
-                case "DONE":
-                    goNext = true;
-                    saveClaim = true;
-                    nextState = new ClaimState("END");
-                    sendNote = true;
-                    noteTo = new[] { ServiceRole.CurManager };
-                    noteText = $@"Заявка №%ID% закрыта  %LINK%";
-                    noteSubject = $"Заявка №%ID% закрыта";
-                    break;
-                case "ZIPCL-CANCELED":
-                    goNext = true;
-                    saveClaim = true;
-                    descr = Descr;
-                    nextState = new ClaimState("ZIPBUYCANCEL");
-                    break;
-                case "ZIPCL-ETPREP-GET":
-                case "ZIPCL-ETSHIP-GET":
-                    goNext = true;
-                    saveClaim = true;
-                    nextState = new ClaimState("SERVADMSET");
-                    SpecialistSid = CurAdminSid;
-                    sendNote = true;
-                    noteTo = new[] { ServiceRole.CurAdmin };
-                    noteText = $@"Вам назначена заявка №%ID% %LINK%";
-                    noteSubject = $"Назначена заявка №%ID%";
-                    break;
-                case "ZIPCL-DELIV":
-                    goNext = true;
-                    saveClaim = true;
-                    nextState = new ClaimState("SERVADMSET");
-                    SpecialistSid = CurAdminSid;
-                    sendNote = true;
-                    noteTo = new[] { ServiceRole.CurAdmin };
-                    noteText = $@"Вам назначена заявка №%ID% %LINK%";
-                    noteSubject = $"Назначена заявка №%ID%";
-                    break;
-                default:
-                    nextState = currState;
-                    break;
             }
+            else if (currState.SysName.ToUpper().Equals("ZIPISSUE"))
+            {
+                var lastServiceSheet = GetLastServiceSheet();
+                if (lastServiceSheet.ZipClaim.HasValue && lastServiceSheet.ZipClaim.Value &&
+                    !lastServiceSheet.GetIssuedZipItemList().Any())
+                {
+                    throw new Exception("Необходимо заполнить список ЗИП. Сервисный лист не был передан.");
+                }
+                ServiceSheetZipItem.SaveOrderedZipItemsCopyFromIssued(lastServiceSheet.Id, CurUserAdSid);
+                goNext = true;
+                saveClaim = true;
+
+                SpecialistSid = CurUserAdSid;
+                nextState = new ClaimState("ZIPCHECK");
+
+
+                if (nextState.SysName.Equals("ZIPCHECK"))
+                {
+                    sendNote = true;
+                    noteTo = new[] {ServiceRole.AllTech};
+                    noteText = $@"Необходимо заказать ЗИП по заявке №%ID% %LINK%";
+                    noteSubject = $"Необходимо заказать ЗИП по заявке №%ID%";
+                }
+            }
+            else if (currState.SysName.ToUpper().Equals("ZIPCHECK"))
+            {
+                //В настоящий момент по этому статусу происходит заказ ЗИП специалистом Тех поддержки
+                if (!GetClaimCurrentState(Id).SysName.Equals("ZIPCHECKINWORK")) //На всякий случай проверяем еще раз
+                {
+                    goNext = true;
+                    saveClaim = true;
+                    CurTechSid = CurUserAdSid;
+                    SpecialistSid = CurUserAdSid;
+                    nextState = new ClaimState("ZIPCHECKINWORK");
+                }
+                else
+                {
+                    throw new ArgumentException("Проверка ЗИП уже в работе.");
+                }
+            }
+
+            else if (currState.SysName.ToUpper().Equals("ZIPCHECKINWORK"))
+            {
+                var curCl = new Claim(Id);
+                if (curCl.SpecialistSid != CurUserAdSid && curCl.CurTechSid != CurUserAdSid)
+                    throw new ArgumentException("Проверка ЗИП уже в работе.");
+                goNext = true;
+                saveClaim = true;
+
+                //Если красная линия или Гарантийный аппарат то на утверждение
+                if (curCl.Contract.ContractZipTypeSysName == "LESSZIP" ||
+                    (curCl.Device.HasGuarantee.HasValue && curCl.Device.HasGuarantee.Value))
+                {
+                    nextState = new ClaimState("ZIPCONFIRM");
+                }
+                else
+                {
+                    ZipClaim.CreateClaimUnitWork(Id);
+                    nextState = new ClaimState("ZIPORDERED");
+                }
+            }
+            else if (currState.SysName.ToUpper().Equals("ZIPCONFIRM"))
+            {
+                goNext = true;
+                saveClaim = true;
+                ZipClaim.CreateClaimUnitWork(Id);
+                nextState = new ClaimState("ZIPORDERED");
+            }
+            else if (currState.SysName.ToUpper().Equals("ZIPORDERED"))
+            {
+                goNext = true;
+                saveClaim = true;
+                if (!confirm)
+                {
+                    nextState = new ClaimState("ZIPBUYCANCEL");
+                }
+                else
+                {
+                    nextState = new ClaimState("ZIPINSTWAIT");
+                    //Сначала сохраняем промежуточный статус
+                    SaveStateStep(nextState.Id);
+                    saveStateInfo = false;
+                    nextState = new ClaimState("SERVENGSETWAIT");
+                }
+            }
+            else if (currState.SysName.ToUpper().Equals("DONE"))
+            {
+                goNext = true;
+                saveClaim = true;
+                nextState = new ClaimState("END");
+                sendNote = true;
+                noteTo = new[] {ServiceRole.CurManager};
+                noteText = $@"Заявка №%ID% закрыта  %LINK%";
+                noteSubject = $"Заявка №%ID% закрыта";
+            }
+            else if (currState.SysName.ToUpper().Equals("ZIPCL-CANCELED"))
+            {
+                goNext = true;
+                saveClaim = true;
+                descr = Descr;
+                nextState = new ClaimState("ZIPBUYCANCEL");
+            }
+            else if (currState.SysName.ToUpper().Equals("ZIPCL-ETPREP-GET") ||
+                     currState.SysName.ToUpper().Equals("ZIPCL-ETSHIP-GET"))
+            {
+                goNext = true;
+                saveClaim = true;
+                nextState = new ClaimState("SERVADMSET");
+                SpecialistSid = CurAdminSid;
+                sendNote = true;
+                noteTo = new[] {ServiceRole.CurAdmin};
+                noteText = $@"Вам назначена заявка №%ID% %LINK%";
+                noteSubject = $"Назначена заявка №%ID%";
+            }
+            else if (currState.SysName.ToUpper().Equals("ZIPCL-DELIV"))
+            {
+                goNext = true;
+                saveClaim = true;
+                nextState = new ClaimState("SERVADMSET");
+                SpecialistSid = CurAdminSid;
+                sendNote = true;
+                noteTo = new[] {ServiceRole.CurAdmin};
+                noteText = $@"Вам назначена заявка №%ID% %LINK%";
+                noteSubject = $"Назначена заявка №%ID%";
+            }
+            else
+            {
+                nextState = currState;
+            }
+        
             if (saveClaim) Save();
             if (goNext)SaveStateStep(nextState.Id, descr, saveStateInfo);
             //SaveStateStep(nextState.Id);

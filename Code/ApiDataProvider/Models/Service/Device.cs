@@ -24,6 +24,21 @@ namespace DataProvider.Models.Service
         public string FullName { get; set; }
         public string ExtendedName { get; set; }
         public int ClassifierCategoryId { get; set; }
+        public int? IdCity { get; set; }
+        public string CityName { get; set; }
+
+        private int? _age;
+        public int? Age
+        {
+            get { return _age; }
+            set
+            {
+                _age = value;
+                HasGuarantee = _age <= 1;
+            }
+        }
+
+        public bool? HasGuarantee { get; set; }
 
 
         public Device()
@@ -104,7 +119,9 @@ namespace DataProvider.Models.Service
             FullName = $"{Vendor} {ModelName} №{SerialNum}";
             ExtendedName = $"{FullName} {Address} {ObjectName}";
             ClassifierCategoryId = Db.DbHelper.GetValueIntOrDefault(row, "id_classifier_category");
-
+            Age = Db.DbHelper.GetValueIntOrNull(row, "age");
+            IdCity = Db.DbHelper.GetValueIntOrNull(row, "id_city");
+            CityName = Db.DbHelper.GetValueString(row, "city_name");
         }
 
         public static string GetCurServiceAdminSid(int idDevice, int idContract)

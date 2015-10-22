@@ -214,6 +214,11 @@ namespace DataProvider.Controllers.Service
             return Ok();
         }
 
+        /// <summary>
+        /// Для создания заявки на ЗИП из планирования
+        /// </summary>
+        /// <param name="idServiceCame"></param>
+        /// <returns></returns>
         //[AuthorizeAd(AdGroup.ServiceAdmin, AdGroup.ServiceControler)]
         [System.Web.Http.AllowAnonymous]
         [System.Web.Http.HttpGet]

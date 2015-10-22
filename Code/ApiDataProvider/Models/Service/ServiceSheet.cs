@@ -45,6 +45,7 @@ namespace DataProvider.Models.Service
         public string ClientSdNum { get; set; }
         public DateTime DateCreate { get; set; }
         public string NotInstalledComment { get; set; }
+        public int? UnitProgZipClaimId { get; set; }
 
         public ServiceSheet() { }
 
@@ -91,6 +92,7 @@ namespace DataProvider.Models.Service
             ClientSdNum = Db.DbHelper.GetValueString(row, "client_sd_num");
             DateCreate = Db.DbHelper.GetValueDateTimeOrDefault(row, "date_create");
             NotInstalledComment = Db.DbHelper.GetValueString(row, "not_installed_comment");
+            UnitProgZipClaimId = Db.DbHelper.GetValueIntOrNull(row, "unit_prog_zip_claim_id");
 
             if (fillNames)
             {
@@ -178,6 +180,13 @@ namespace DataProvider.Models.Service
         public void SaveNotInstalledComment()
         {
             SqlParameter pNotInstalledComment = new SqlParameter() { ParameterName = "not_installed_comment", SqlValue = NotInstalledComment, SqlDbType = SqlDbType.Int };
+            SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = Id, SqlDbType = SqlDbType.Int };
+            var dt = Db.Service.ExecuteQueryStoredProcedure("service_sheet_update", pNotInstalledComment, pId);
+        }
+
+        public void SaveUnitProgZipClaimId()
+        {
+            SqlParameter pNotInstalledComment = new SqlParameter() { ParameterName = "unit_prog_zip_claim_id", SqlValue = NotInstalledComment, SqlDbType = SqlDbType.Int };
             SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = Id, SqlDbType = SqlDbType.Int };
             var dt = Db.Service.ExecuteQueryStoredProcedure("service_sheet_update", pNotInstalledComment, pId);
         }

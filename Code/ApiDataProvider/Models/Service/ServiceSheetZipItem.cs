@@ -61,6 +61,11 @@ namespace DataProvider.Models.Service
             DateInstalled = Db.DbHelper.GetValueDateTimeOrNull(row, "date_install");
         }
 
+        public void SaveUnitProg()
+        {
+            
+        }
+
         public void IssuedSave()
         {
             SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = Id, SqlDbType = SqlDbType.Int };

@@ -208,6 +208,7 @@
     <Compile Include="Models\Service\ServiceIssuePlaningResult.cs" />
     <Compile Include="Models\Service\ServiceSheet.cs" />
     <Compile Include="Models\Service\ServiceSheetZipItem.cs" />
+    <Compile Include="Models\Service\UserUnitProg.cs" />
     <Compile Include="Models\Service\WorkType.cs" />
     <Compile Include="Models\Service\ZipClaim.cs" />
     <Compile Include="Models\Stuff\Budget.cs" />
