@@ -26,6 +26,8 @@ namespace DataProvider.Models.Service
         public string ClientName { get; set; }
         public int DeviceId { get; set; }
         public string DeviceName { get; set; }
+        public string EngeneerSid { get; set; }
+        public string EngeneerName { get; set; }
 
 
         public ServiceIssuePlan() { }
@@ -76,6 +78,8 @@ namespace DataProvider.Models.Service
             ClientName = Db.DbHelper.GetValueString(row, "client_name");
             DeviceId = Db.DbHelper.GetValueIntOrDefault(row, "id_device");
             DeviceName = Db.DbHelper.GetValueString(row, "device_name");
+            EngeneerSid = Db.DbHelper.GetValueString(row, "engeneer_sid");
+            EngeneerName = Db.DbHelper.GetValueString(row, "engeneer_name");
         }
 
         public void Save()

@@ -74,6 +74,20 @@ namespace DataProvider.Controllers.Service
             //return ServiceIssuePlan.GetList(periodStart.Value, periodEnd.Value);
         }
 
+        public IEnumerable<ServiceIssuePlaningItem> GetEngeneerList(DateTime? periodStart, DateTime? periodEnd, string engeneerSid = null)
+        {
+            if (!periodStart.HasValue) periodStart = DateTime.Now;
+            if (!periodEnd.HasValue) periodEnd = DateTime.Now;
+            var planList = ServiceIssuePlan.GetListUnitProg(periodStart.Value, periodEnd.Value, engeneerSid: engeneerSid);
+            var clientList = planList.GroupBy(x => x.EngeneerSid)
+                .Select(x => new ServiceIssuePlaningItem(x.Key, x.First().EngeneerName, x.Count(), issuesIdList: String.Join(",", x.Select(z => z.IdServiceIssue))))
+                .OrderBy(x => x.Name)
+                .ToArray();
+
+            return clientList;
+            //return ServiceIssuePlan.GetList(periodStart.Value, periodEnd.Value);
+        }
+
         public IEnumerable<ServiceIssuePlaningItem> GetDeviceIssueList(DateTime? periodStart, DateTime? periodEnd, int? idCity=null, string address=null, int? idClient=null, string engeneerSid = null)
         {
             if (!periodStart.HasValue) periodStart = DateTime.Now;
