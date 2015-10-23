@@ -397,7 +397,22 @@ namespace DataProvider.Helpers
                 if (userPrincipal == null) return false;
                 if (userPrincipal.IsMemberOf(context, IdentityType.Sid, AdUserGroup.GetSidByAdGroup(AdGroup.SuperAdmin))) { return true; }//Если юзер Суперадмин
 
-                return groups.Select(grp => GroupPrincipal.FindByIdentity(context, IdentityType.Sid, AdUserGroup.GetSidByAdGroup(grp))).Where(g => g != null).Any(g => g.GetMembers(true).Cast<UserPrincipal>().Any(usr => usr.SamAccountName == login));
+                //using (PrincipalContext context = new PrincipalContext(ContextType.Domain))
+                //using (UserPrincipal user = UserPrincipal.FindByIdentity(context, userName))
+                //using (PrincipalSearchResult<Principal> groups = user.GetAuthorizationGroups())
+                //{
+                //    return groups.OfType<GroupPrincipal>().Any(g => g.Name.Equals(groupName, StringComparison.OrdinalIgnoreCase));
+                //}
+
+                foreach (var grp in groups)
+                {
+                    if (userPrincipal.IsMemberOf(context, IdentityType.Sid, AdUserGroup.GetSidByAdGroup(grp)))
+                    {
+                        return true;
+                    }
+                }
+                return false;
+                //return groups.Select(grp => GroupPrincipal.FindByIdentity(context, IdentityType.Sid, AdUserGroup.GetSidByAdGroup(grp))).Where(g => g != null).Any(g => g.GetMembers(true).Cast<UserPrincipal>().Any(usr => usr.SamAccountName == login));
             }
         }
 
@@ -589,7 +604,7 @@ namespace DataProvider.Helpers
                     //SetProp(ref user, ref resultUser, "mobile", mobilNum);
                     SetProp(ref user, ref resultUser, "l", description);
                     SetProp(ref user, ref resultUser, "company", name);
-                    SetProp(ref user, ref resultUser, "department", "1");
+                    SetProp(ref user, ref resultUser, "department", "-");
                     //SetProp(ref user, ref resultUser, "manager", "");
                     //user.Properties["jpegPhoto"].Clear();
                     //SetProp(ref user, ref resultUser, "jpegPhoto", photo);
@@ -630,10 +645,8 @@ namespace DataProvider.Helpers
                     SearchResult resultGroup = search.FindOne();
                     groupIsExist = resultGroup != null && resultGroup.Properties.Contains("sAMAccountName");
 
-
                     if (!groupIsExist)
                     {
-
                         DirectoryEntry ou = directoryEntry.Children.Find(adPath);
                         DirectoryEntry group = ou.Children.Add($"CN={name}", "group");
                         group.Properties["samAccountName"].Value = name;

@@ -151,6 +151,17 @@ namespace DataProvider.Models.Service
         //    Device = new Device(Device.Id);
         //}
 
+        private void ReFillSelf(bool loadObj = true)
+        {
+            SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = Id, SqlDbType = SqlDbType.Int };
+            var dt = Db.Service.ExecuteQueryStoredProcedure("get_claim", pId);
+            if (dt.Rows.Count > 0)
+            {
+                var row = dt.Rows[0];
+                FillSelf(row, loadObj);
+            }
+        }
+
         private void FillSelf(DataRow row, bool loadObj = true)
         {
             Sid = Db.DbHelper.GetValueString(row, "sid");
@@ -486,7 +497,7 @@ namespace DataProvider.Models.Service
             string noteSubject = Empty;
             bool goNext = false;
             bool saveClaim = false;//Метод вызывается из удаленных программ и поэтому не всегда нухно схранять статус
-
+            //ReFillSelf(true);
 
             if (currState.SysName.ToUpper().Equals("NEW"))
             {
@@ -549,13 +560,13 @@ namespace DataProvider.Models.Service
                 else
                 {
                     descr = $"Отклонено\r\n{Descr}";
-                    nextState = new ClaimState("NEW");
+                    nextState = new ClaimState("SERVADMSETWAIT");
                     //Очищаем выбранного специалиста так как статус заявки поменялся
-                    Clear(specialist: true, workType: true, tech: true);
-                    sendNote = true;
-                    noteTo = new[] { ServiceRole.CurAdmin };
-                    noteText = $@"Отклонено назначение заявки №%ID% %LINK%";
-                    noteSubject = $"[Заявка №%ID%] Отклонено назначение СТП";
+                    Clear(specialist: true, tech: true);
+                    //sendNote = true;
+                    //noteTo = new[] { ServiceRole.CurAdmin };
+                    //noteText = $@"Отклонено назначение заявки №%ID% %LINK%";
+                    //noteSubject = $"[Заявка №%ID%] Отклонено назначение СТП";
                 }
             }
             else if (currState.SysName.ToUpper().Equals("TECHWORK"))
@@ -653,7 +664,7 @@ namespace DataProvider.Models.Service
                 else
                 {
                     descr = $"Отклонено\r\n{Descr}";
-                    nextState = new ClaimState("NEW");
+                    nextState = new ClaimState("SERVADMSETWAIT");
                     //Очищаем выбранного специалиста так как статус заявки поменялся
                     Clear(specialist: true, admin: true);
                     sendNote = true;
@@ -783,24 +794,21 @@ namespace DataProvider.Models.Service
             else if (currState.SysName.ToUpper().Equals("ZIPISSUE"))
             {
                 var lastServiceSheet = GetLastServiceSheet();
+                var curCl = new Claim(Id);
+                goNext = true;
+                saveClaim = true;
 
-               
-
-                
-                if (!lastServiceSheet.GetIssuedZipItemList().Any())
+                //Если есть заказаный ЗИП то значит заявку надо продолжить
+                if (lastServiceSheet.ZipClaim.HasValue && lastServiceSheet.ZipClaim.Value)
                 {
-                    if (lastServiceSheet.ZipClaim.HasValue && lastServiceSheet.ZipClaim.Value)
+                    if (!lastServiceSheet.GetIssuedZipItemList().Any())
                     {
                         throw new Exception("Необходимо заполнить список ЗИП. Сервисный лист не был передан.");
                     }
-                }
-                else
-                {
-                    if (lastServiceSheet.ZipClaim.HasValue && lastServiceSheet.ZipClaim.Value)
+                    else
                     {
                         ServiceSheetZipItem.SaveOrderedZipItemsCopyFromIssued(lastServiceSheet.Id, CurUserAdSid);
-                        goNext = true;
-                        saveClaim = true;
+                        
 
                         SpecialistSid = CurUserAdSid;
                         nextState = new ClaimState("ZIPCHECK");
@@ -813,17 +821,28 @@ namespace DataProvider.Models.Service
                             noteSubject = $"[Заявка №%ID%] Необходимо заказать ЗИП";
                         }
                     }
+                }
+                else
+                {
+                    if (GetOrderedZipItemList(Id, lastServiceSheet.Id).Any(x => !x.Installed))
+                    //Если есть не установленный ЗИП
+                    {
+                        nextState = new ClaimState("SERVADMSET");
+                        SpecialistSid = curCl.CurAdminSid;
+                        sendNote = true;
+                        noteTo = new[] { ServiceRole.CurAdmin };
+                        noteText = $@"Не весь ЗИП установлен №%ID% %LINK%";
+                        noteSubject = $"[Заявка №%ID%] Не весь ЗИП установлен";
+                    }
                     else
                     {
-                        if (GetOrderedZipItemList(Id, lastServiceSheet.Id).Any(x => !x.Installed))
-                        //Если есть не установленный ЗИП
-                        {
-
-                        }
+                        nextState = new ClaimState("DONE");
+                        sendNote = true;
+                        noteTo = new[] { ServiceRole.CurAdmin };
+                        noteText = $@"ЗИП Установлен по заявке №%ID% %LINK%";
+                        noteSubject = $"[Заявка №%ID%] ЗИП установлен";
                     }
                 }
-
-
             }
             else if (currState.SysName.ToUpper().Equals("ZIPCHECK"))
             {
@@ -1343,9 +1362,10 @@ namespace DataProvider.Models.Service
 
             foreach (DataRow row in dt.Rows)
             {
-                //int idServiceSheet;
-                //int.TryParse(row["id_service_sheet"].ToString(), out idServiceSheet);
-                list.Add(new ServiceSheet(row));
+                int idServiceSheet;
+                int.TryParse(row["id"].ToString(), out idServiceSheet);
+                list.Add(new ServiceSheet(idServiceSheet));
+                //list.Add(new ServiceSheet(row, true));
             }
             return list;
             //return (from DataRow row in dt.Rows select new ServiceSheet(row)).ToList();

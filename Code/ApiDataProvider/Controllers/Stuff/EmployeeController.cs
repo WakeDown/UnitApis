@@ -30,31 +30,31 @@ namespace DataProvider.Controllers.Stuff
         }
         public IEnumerable<Employee> GetList(int? idDepartment = null, int? idCity = null, bool showHidden = true)
         {
-            bool userCanViewHiddenEmps = AdHelper.UserInGroup(GetCurUser().User, AdGroup.PersonalManager, AdGroup.SuperAdmin);
+            bool userCanViewHiddenEmps = GetCurUser().HasAccess(AdGroup.PersonalManager, AdGroup.SuperAdmin);
             return Employee.GetList(idDepartment, false, idCity, null, userCanViewHiddenEmps, showHidden);
         }
 
         public IEnumerable<Employee> GetFiredList(int? idDepartment = null)
         {
-            bool userCanViewHiddenDeps = AdHelper.UserInGroup(GetCurUser().User, AdGroup.PersonalManager, AdGroup.SuperAdmin);
+            bool userCanViewHiddenDeps = GetCurUser().HasAccess(AdGroup.PersonalManager, AdGroup.SuperAdmin);
             return Employee.GetFiredList(idDepartment, userCanViewHiddenDeps);
         }
 
         public IEnumerable<Employee> GetDecreeList(int? idDepartment = null)
         {
-            bool userCanViewHiddenEmps = AdHelper.UserInGroup(GetCurUser().User, AdGroup.PersonalManager, AdGroup.SuperAdmin);
+            bool userCanViewHiddenEmps = GetCurUser().HasAccess(AdGroup.PersonalManager, AdGroup.SuperAdmin);
             return Employee.GetDecreeList(idDepartment, userCanViewHiddenEmps);
         }
 
         public IEnumerable<Employee> GetStNewbieList(int? idDepartment = null)
         {
-            bool userCanViewHiddenEmps = AdHelper.UserInGroup(GetCurUser().User, AdGroup.PersonalManager, AdGroup.SuperAdmin);
+            bool userCanViewHiddenEmps = GetCurUser().HasAccess(AdGroup.PersonalManager, AdGroup.SuperAdmin);
             return Employee.GetStNewbieList(idDepartment, userCanViewHiddenEmps);
         }
 
         public Employee Get(int id, bool showHidden = false)
         {
-            bool userCanViewHiddenEmps = showHidden || AdHelper.UserInGroup(GetCurUser().User, AdGroup.PersonalManager, AdGroup.SuperAdmin);
+            bool userCanViewHiddenEmps = showHidden || GetCurUser().HasAccess(AdGroup.PersonalManager, AdGroup.SuperAdmin);
             var emp = new Employee(id);
             if (emp.IsHidden && !userCanViewHiddenEmps) return new Employee();
             return emp;
@@ -62,7 +62,7 @@ namespace DataProvider.Controllers.Stuff
 
         public Employee Get(string adSid, bool showHidden = false)
         {
-            bool userCanViewHiddenEmps = showHidden || AdHelper.UserInGroup(GetCurUser().User, AdGroup.PersonalManager, AdGroup.SuperAdmin);
+            bool userCanViewHiddenEmps = showHidden || GetCurUser().HasAccess(AdGroup.PersonalManager, AdGroup.SuperAdmin);
             var emp = new Employee(adSid);
             if (emp.IsHidden && !userCanViewHiddenEmps) return new Employee();
             return emp;

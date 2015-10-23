@@ -61,7 +61,7 @@ namespace DataProvider.Models.Service
             }
         }
 
-        public ServiceSheet(DataRow row)
+        public ServiceSheet(DataRow row, bool fillObj = false)
             : this()
         {
             FillSelf(row);
