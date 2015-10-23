@@ -177,6 +177,11 @@ namespace DataProvider.Models.Service
             return ServiceSheetZipItem.GetIssuedList(Id);
         }
 
+        public IEnumerable<ServiceSheetZipItem> GetOrderedZipItemList()
+        {
+            return ServiceSheetZipItem.GetOrderedList(Id);
+        }
+
         public void SaveNotInstalledComment()
         {
             SqlParameter pNotInstalledComment = new SqlParameter() { ParameterName = "not_installed_comment", SqlValue = NotInstalledComment, SqlDbType = SqlDbType.Int };
@@ -186,7 +191,7 @@ namespace DataProvider.Models.Service
 
         public void SaveUnitProgZipClaimId()
         {
-            SqlParameter pNotInstalledComment = new SqlParameter() { ParameterName = "unit_prog_zip_claim_id", SqlValue = NotInstalledComment, SqlDbType = SqlDbType.Int };
+            SqlParameter pNotInstalledComment = new SqlParameter() { ParameterName = "unit_prog_zip_claim_id", SqlValue = UnitProgZipClaimId, SqlDbType = SqlDbType.Int };
             SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = Id, SqlDbType = SqlDbType.Int };
             var dt = Db.Service.ExecuteQueryStoredProcedure("service_sheet_update", pNotInstalledComment, pId);
         }

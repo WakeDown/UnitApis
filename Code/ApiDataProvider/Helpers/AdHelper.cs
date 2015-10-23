@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Security.Principal;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.SessionState;
@@ -389,25 +390,92 @@ namespace DataProvider.Helpers
                 {
                     fakseLogin = ConfigurationManager.AppSettings["UserProxyLogin"];
                 }
-
+                string login = fakseLogin ?? user.Identity.Name;
                 var context = new PrincipalContext(ContextType.Domain);
-                var userPrincipal = UserPrincipal.FindByIdentity(context, IdentityType.SamAccountName,
-                  fakseLogin??user.Identity.Name);
+                var userPrincipal = UserPrincipal.FindByIdentity(context, IdentityType.SamAccountName, login);
 
                 if (userPrincipal == null) return false;
                 if (userPrincipal.IsMemberOf(context, IdentityType.Sid, AdUserGroup.GetSidByAdGroup(AdGroup.SuperAdmin))) { return true; }//Если юзер Суперадмин
 
-                foreach (var grp in groups)
-                {
-                    if (userPrincipal.IsMemberOf(context, IdentityType.Sid, AdUserGroup.GetSidByAdGroup(grp)))
-                    {
-                        return true;
-                    }
-                }
-
-
-                return false;
+                return groups.Select(grp => GroupPrincipal.FindByIdentity(context, IdentityType.Sid, AdUserGroup.GetSidByAdGroup(grp))).Where(g => g != null).Any(g => g.GetMembers(true).Cast<UserPrincipal>().Any(usr => usr.SamAccountName == login));
             }
+        }
+
+        private static List<GroupObj> _groups = new List<GroupObj>();
+
+        public static List<string> GetMembershipWithPath(string groupSid)
+        {
+            List<string> retVal = new List<string>();
+
+            PrincipalContext ctx = new PrincipalContext(ContextType.Domain);
+            GroupPrincipal grp = GroupPrincipal.FindByIdentity(ctx, IdentityType.Sid, groupSid);
+            if (grp != null)
+            {
+                BuildHList(grp, 0, null);
+                foreach (UserPrincipal usr in grp.GetMembers(true))
+                    retVal.Add(GetMbrPath(usr));
+            }
+
+            return retVal;
+        }
+
+        private static void BuildHList(GroupPrincipal node, int level, GroupPrincipal parent)
+        {
+            PrincipalSearchResult<Principal> rslts = node.GetMembers();
+            _groups.Add(new GroupObj() { Group = node, Level = level, Parent = parent });
+            foreach (GroupPrincipal grp in rslts.Where(g => g is GroupPrincipal))
+                BuildHList(grp, level + 1, node);
+        }
+
+        private static string GetMbrPath(UserPrincipal usr)
+        {
+            Stack<string> output = new Stack<string>();
+            StringBuilder retVal = new StringBuilder();
+            GroupObj fg = null, tg = null;
+            output.Push(usr.Name);
+            foreach (GroupObj go in _groups)
+            {
+                if (usr.IsMemberOf(go.Group))
+                {
+                    output.Push(go.Group.Name);
+                    fg = go;
+                    while (fg.Parent != null)
+                    {
+                        output.Push(fg.Parent.Name);
+                        tg = (from g in _groups where g.Group == fg.Parent select g).FirstOrDefault();
+                        fg = tg;
+                    }
+                    break;
+                }
+            }
+            while (output.Count > 1)
+                retVal.AppendFormat("{0} ->", output.Pop());
+            retVal.Append(output.Pop());
+
+            return retVal.ToString();
+        }
+
+        public class GroupObj
+        {
+            public GroupPrincipal Group { get; set; }
+            public int Level { get; set; }
+            public GroupPrincipal Parent { get; set; }
+        }
+
+        /// <summary>  
+        /// Gets the Container Name (CN) of the input user.  
+        /// </summary>  
+        public static string GetUserContainerName(string userName)
+        {
+            DirectoryEntry entry = new DirectoryEntry(DomainPath);
+            // Create a DirectorySearcher object.  
+            DirectorySearcher mySearcher = new DirectorySearcher(entry);
+            mySearcher.Filter = string.Format("(&(sAMAccountName={0}))", userName);
+            mySearcher.SearchScope = SearchScope.Subtree; //Search from base down to ALL children.   
+            SearchResultCollection result = mySearcher.FindAll();
+            if (result.Count == 0)
+                throw new ApplicationException(string.Format("User '{0}' Not Found in Active Directory.", userName));
+            return result[0].GetDirectoryEntry().Name.Replace("CN=", string.Empty);
         }
 
         public static bool UserIs(IPrincipal user, params AdGroup[] groups)

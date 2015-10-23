@@ -77,7 +77,7 @@ namespace DataProvider.Models.Service
             DateCreate = Db.DbHelper.GetValueDateTimeOrDefault(row, "date_create");
         }
 
-        public static void CreateClaimUnitWork(int idClaim)
+        public static void CreateClaimUnitWork(int idClaim, string creatorSid)
         {
             var claim = new Claim(idClaim, true, true);
             var device = new Device(claim.IdDevice, claim.IdContract);
@@ -106,10 +106,37 @@ namespace DataProvider.Models.Service
             zipClaim.ServiceIdServSheet = lastServiceSheet.Id.ToString();
             zipClaim.ServiceIdClaim = claim.Id.ToString();
 
+            zipClaim.CurUserAdSid = creatorSid;
             zipClaim.SaveUnitProg();
+
+            var zipItemList = lastServiceSheet.GetOrderedZipItemList();
+
+            if (zipItemList != null && zipItemList.Any())
+            {
+                foreach (var item in zipItemList)
+                {
+                    item.ClaimId = zipClaim.Id;
+                    item.CurUserAdSid = creatorSid;
+                    item.SaveUnitProg();
+                }
+            }
+
+            zipClaim.SetSendStateUnitProg();
 
             lastServiceSheet.UnitProgZipClaimId = zipClaim.Id;
             lastServiceSheet.SaveUnitProgZipClaimId();
+
+
+            
+        }
+
+        public void SetSendStateUnitProg()
+        {
+            SqlParameter pAction = new SqlParameter() { ParameterName = "action", Value = "setClaimSendState", SqlDbType = SqlDbType.NVarChar };
+            SqlParameter pId = new SqlParameter() { ParameterName = "id_claim", Value = Id, DbType = DbType.Int32 };
+            SqlParameter pIdCreator = new SqlParameter() { ParameterName = "id_creator", Value = UserUnitProg.GetUserId(CurUserAdSid), DbType = DbType.Int32 };
+
+            DataTable dt = Db.UnitProg.ExecuteQueryStoredProcedure("ui_zip_claims", pAction, pId, pIdCreator);
         }
 
         public void SaveUnitProg()
@@ -133,7 +160,7 @@ namespace DataProvider.Models.Service
             SqlParameter pIdServiceAdmin = new SqlParameter() { ParameterName = "id_service_admin", Value = IdServiceAdmin, DbType = DbType.Int32 };
             SqlParameter pIdContractor = new SqlParameter() { ParameterName = "id_contractor", Value = IdContractor, DbType = DbType.Int32 };
             SqlParameter pIdCity = new SqlParameter() { ParameterName = "id_city", Value = IdCity, DbType = DbType.Int32 };
-            SqlParameter pIdCreator = new SqlParameter() { ParameterName = "id_creator", Value = IdCreator, DbType = DbType.Int32 };
+            SqlParameter pIdCreator = new SqlParameter() { ParameterName = "id_creator", Value = UserUnitProg.GetUserId(CurUserAdSid), DbType = DbType.Int32 };
             SqlParameter pServiceDeskNum = new SqlParameter() { ParameterName = "service_desk_num", Value = ServiceDeskNum, DbType = DbType.AnsiString };
             SqlParameter pCounterColour = new SqlParameter() { ParameterName = "counter_colour", Value = CounterColour, DbType = DbType.Int32 };
             SqlParameter pCancelComment = new SqlParameter() { ParameterName = "cancel_comment", Value = CancelComment, DbType = DbType.AnsiString };
@@ -153,13 +180,6 @@ namespace DataProvider.Models.Service
                 Id = (int)dt.Rows[0]["id_claim"];
             }
 
-            if (ZipItemList != null && ZipItemList.Any())
-            {
-                foreach (var item in ZipItemList)
-                {
-                    item.SaveUnitProg();
-                }
-            }
         }
     }
 }

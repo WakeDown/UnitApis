@@ -26,6 +26,15 @@ namespace DataProvider.Models.Service
         public int InstalledServiceSheetId { get; set; }
         DateTime? DateInstalled { get; set; }
 
+        public int ClaimId {get;set;}
+        public string NomenclatureNum { get; set; }
+        public string PriceIn { get; set; }
+        public string PriceOut { get; set; }
+        public string DeliveryTime { get; set; }
+        public string NomenclatureClaimNum { get; set; }
+        public bool NoNomenclatureNum { get; set; }
+        public int? IdSupplyMan { get; set; }
+
         public ServiceSheetZipItem() { }
 
         public ServiceSheetZipItem(int id)
@@ -61,9 +70,31 @@ namespace DataProvider.Models.Service
             DateInstalled = Db.DbHelper.GetValueDateTimeOrNull(row, "date_install");
         }
 
-        public void SaveUnitProg()
+        public void SaveUnitProg(bool fromTop =false)
         {
-            
+            SqlParameter pAction = new SqlParameter() { ParameterName = "action", Value = "saveClaimUnit", SqlDbType = SqlDbType.NVarChar };
+            SqlParameter pId = new SqlParameter() { ParameterName = "id_claim_unit", Value = Id, DbType = DbType.Int32 };
+            SqlParameter pIdClaim = new SqlParameter() { ParameterName = "id_claim", Value = ClaimId, DbType = DbType.Int32 };
+            SqlParameter pCatalogNum = new SqlParameter() { ParameterName = "catalog_num", Value = PartNum, DbType = DbType.AnsiString };
+            SqlParameter pName = new SqlParameter() { ParameterName = "name", Value = Name, DbType = DbType.AnsiString };
+            SqlParameter pCount = new SqlParameter() { ParameterName = "count", Value = Count, DbType = DbType.Int32 };
+            SqlParameter pNomenclatureNum = new SqlParameter() { ParameterName = "nomenclature_num", Value = NomenclatureNum, DbType = DbType.AnsiString };
+            SqlParameter pPriceIn = new SqlParameter() { ParameterName = "price_in", Value = PriceIn, DbType = DbType.AnsiString };
+            SqlParameter pPriceOut = new SqlParameter() { ParameterName = "price_out", Value = PriceOut, DbType = DbType.AnsiString };
+            SqlParameter pIdCreator = new SqlParameter() { ParameterName = "id_creator", Value = UserUnitProg.GetUserId(CurUserAdSid), DbType = DbType.Int32 };
+            SqlParameter pDeliveryTime = new SqlParameter() { ParameterName = "delivery_time", Value = DeliveryTime, DbType = DbType.AnsiString };
+            SqlParameter pFromTop = new SqlParameter() { ParameterName = "from_top", Value = fromTop, DbType = DbType.Boolean };
+            SqlParameter pNomenclatureClaimNum = new SqlParameter() { ParameterName = "nomenclature_claim_num", Value = NomenclatureClaimNum, DbType = DbType.AnsiString };
+            SqlParameter pIdSupplyMan = new SqlParameter() { ParameterName = "id_supply_man", Value = IdSupplyMan, DbType = DbType.Int32 };
+            SqlParameter pNoNomenclatureNum = new SqlParameter() { ParameterName = "no_nomenclature_num", Value = NoNomenclatureNum, DbType = DbType.Boolean };
+
+            DataTable dt = Db.UnitProg.ExecuteQueryStoredProcedure("ui_zip_claims", pAction, pId, pIdClaim, pCatalogNum, pName, pCount, pNomenclatureNum, pPriceIn, pPriceOut, pIdCreator, pDeliveryTime, pFromTop, pNomenclatureClaimNum, pIdSupplyMan, pNoNomenclatureNum);
+
+
+            if (dt.Rows.Count > 0)
+            {
+                Id = (int)dt.Rows[0]["id_claim_unit"];
+            }
         }
 
         public void IssuedSave()
