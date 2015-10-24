@@ -78,6 +78,35 @@ namespace DataProvider.Helpers
             return list.OrderBy(x => x.Value);
         }
 
+        public static IEnumerable<KeyValuePair<string, string>> GetUserListByAdGroup(string grpSid)
+        {
+            var list = new Dictionary<string, string>();
+
+            using (WindowsImpersonationContextFacade impersonationContext
+                = new WindowsImpersonationContextFacade(
+                    nc))
+            {
+                var domain = new PrincipalContext(ContextType.Domain);
+                var group = GroupPrincipal.FindByIdentity(domain, IdentityType.Sid, grpSid);
+                if (group != null)
+                {
+                    var members = group.GetMembers(true);
+                    foreach (var principal in members)
+                    {
+                        var userPrincipal = UserPrincipal.FindByIdentity(domain, principal.SamAccountName);
+                        if (userPrincipal != null)
+                        {
+                            var name = Employee.ShortName(userPrincipal.DisplayName);
+                            var sid = userPrincipal.Sid.Value;
+                            list.Add(sid, name);
+                        }
+                    }
+                }
+            }
+
+            return list.OrderBy(x => x.Value);
+        }
+
         public static IEnumerable<KeyValuePair<string, string>> GetGroupListByAdOrg(AdOrg org)
         {
             var list = new Dictionary<string, string>();

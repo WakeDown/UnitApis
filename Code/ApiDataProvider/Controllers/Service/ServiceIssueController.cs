@@ -14,11 +14,17 @@ namespace DataProvider.Controllers.Service
 {
     public class ServiceIssueController : BaseApiController
     {
-        public IEnumerable<KeyValuePair<string, string>> GetEngeneerList()
+        public IEnumerable<KeyValuePair<string, string>> GetEngeneerList(string orgSid = null)
         {
 
-
-            return AdHelper.GetUserListByAdGroup(AdGroup.ServiceEngeneer).ToList();
+            if (orgSid == null)
+            {
+                return AdHelper.GetUserListByAdGroup(AdGroup.ServiceEngeneer).ToList();
+            }
+            else
+            {
+                return AdHelper.GetUserListByAdGroup(orgSid).ToList();
+            }
         }
 
         public IEnumerable<ServiceIssuePlaningItem> GetPlaningDeviceIssueList(DateTime? month, int? idCity, string address, int? idClient, string serviceEngeneerSid = null)
@@ -39,18 +45,36 @@ namespace DataProvider.Controllers.Service
             return deviceIssueList;
         }
 
-        public IEnumerable<ServiceIssuePlaningItem> GetPlaningClientList(DateTime? month, int? idCity, string address, string serviceEngeneerSid = null)
+        public IEnumerable<ServiceIssuePlaningItem> GetPlaningClientList(DateTime? month, int? idCity = null, string address = null, string serviceEngeneerSid = null, bool? planed = null)
         {
-            if (!idCity.HasValue) throw new ArgumentException("Не указан город");
+            //if (!idCity.HasValue) throw new ArgumentException("Не указан город");
             if (!month.HasValue) month = DateTime.Now;
 
             var curUser = GetCurUser();
             string serviceAdminSid = null;
             if (curUser.Is(AdGroup.ServiceAdmin)) serviceAdminSid = curUser.Sid;
 
-            var planList = PlanServiceIssue.GetClaimList(month.Value, idCity, address, serviceAdminSid: serviceAdminSid, serviceEngeneerSid: serviceEngeneerSid);
+            var planList = PlanServiceIssue.GetClaimList(month.Value, idCity, address, serviceAdminSid: serviceAdminSid, serviceEngeneerSid: serviceEngeneerSid, planed: planed);
             var clientList = planList.GroupBy(x => x.IdClient)
                 .Select(x => new ServiceIssuePlaningItem(x.Key, x.First().ClientName, x.Count(), issuesIdList: String.Join(",", x.Select(z => z.IdServiceClaim))))
+                .OrderBy(x => x.Name)
+                .ToArray();
+
+            return clientList;
+        }
+
+        public IEnumerable<ServiceIssuePlaningItem> GetPlaningEngeneerList(DateTime? month, string serviceEngeneerSid = null, bool? planed = null)
+        {
+            //if (!idCity.HasValue) throw new ArgumentException("Не указан город");
+            if (!month.HasValue) month = DateTime.Now;
+
+            var curUser = GetCurUser();
+            string serviceAdminSid = null;
+            if (curUser.Is(AdGroup.ServiceAdmin)) serviceAdminSid = curUser.Sid;
+
+            var planList = PlanServiceIssue.GetClaimList(month.Value, serviceAdminSid: serviceAdminSid, serviceEngeneerSid: serviceEngeneerSid, planed: planed);
+            var clientList = planList.GroupBy(x => x.SpecialistSid)
+                .Select(x => new ServiceIssuePlaningItem(x.Key, x.First().SpecialistName, x.Count(), issuesIdList: String.Join(",", x.Select(z => z.IdServiceClaim))))
                 .OrderBy(x => x.Name)
                 .ToArray();
 

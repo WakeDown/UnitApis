@@ -32,6 +32,7 @@ namespace DataProvider.Models.Service
         public string CounterMono { get; set; }
         public string CounterColor { get; set; }
         public string SpecialistSid { get; set; }
+        public string SpecialistName { get; set; }
         public DateTime DateCreate { get; set; }
 
         public PlanServiceIssue() { }
@@ -70,6 +71,8 @@ namespace DataProvider.Models.Service
             ContractNumber = Db.DbHelper.GetValueString(row, "contract_number");
             DeviceName = Db.DbHelper.GetValueString(row, "device");
             ObjectName = Db.DbHelper.GetValueString(row, "object_name");
+            SpecialistSid = Db.DbHelper.GetValueString(row, "engeneer_sid");
+            SpecialistName = Db.DbHelper.GetValueString(row, "engeneer_name");
         }
 
         public int MobileSave()
@@ -104,7 +107,7 @@ namespace DataProvider.Models.Service
             SqlParameter pAddress = new SqlParameter() { ParameterName = "address", SqlValue = address, SqlDbType = SqlDbType.NVarChar };
             SqlParameter pIdClient = new SqlParameter() { ParameterName = "id_contractor", SqlValue = idClient, SqlDbType = SqlDbType.Int };
             SqlParameter pServiceAdminSid = new SqlParameter() { ParameterName = "service_admin_sid", SqlValue = serviceAdminSid, SqlDbType = SqlDbType.VarChar };
-            SqlParameter pServiceEngeneerSid = new SqlParameter() { ParameterName = "service_engeneer_sid", SqlValue = serviceEngeneerSid, SqlDbType = SqlDbType.VarChar };
+            SqlParameter pServiceEngeneerSid = new SqlParameter() { ParameterName = "service_engeneer_sid_list", SqlValue = serviceEngeneerSid, SqlDbType = SqlDbType.NVarChar };
             SqlParameter pPlaned = new SqlParameter() { ParameterName = "planed", SqlValue = planed, SqlDbType = SqlDbType.Bit };
             var dt = Db.UnitProg.ExecuteQueryStoredProcedure("get_service_claim_list", pMonth, pIdCity, pAddress, pIdClient, pServiceAdminSid, pServiceEngeneerSid, pPlaned);
 

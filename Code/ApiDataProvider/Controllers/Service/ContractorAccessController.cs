@@ -66,7 +66,9 @@ namespace DataProvider.Controllers.Service
 
         public IEnumerable<KeyValuePair<string, string>> GetOrgList()
         {
-            return AdHelper.GetGroupListByAdOrg(AdOrg.EngeneerGroups);
+            var list =  AdHelper.GetGroupListByAdOrg(AdOrg.EngeneerGroups);
+            list = list.OrderBy(x => x.Value);
+            return list;
         }
     }
 }
