@@ -25,6 +25,10 @@ namespace DataProvider.Models.Service
         public string InstalledCancelSid { get; set; }
         public int InstalledServiceSheetId { get; set; }
         DateTime? DateInstalled { get; set; }
+        /// <summary>
+        /// Предоставлено клиентом
+        /// </summary>
+        public bool ClientGiven { get; set; }
 
         public int ClaimId {get;set;}
         public string NomenclatureNum { get; set; }
@@ -34,6 +38,7 @@ namespace DataProvider.Models.Service
         public string NomenclatureClaimNum { get; set; }
         public bool NoNomenclatureNum { get; set; }
         public int? IdSupplyMan { get; set; }
+
 
         public ServiceSheetZipItem() { }
 
@@ -68,6 +73,7 @@ namespace DataProvider.Models.Service
             InstalledSid = Db.DbHelper.GetValueString(row, "installed_sid");
             InstalledServiceSheetId = Db.DbHelper.GetValueIntOrDefault(row, "installed_id_service_sheet");
             DateInstalled = Db.DbHelper.GetValueDateTimeOrNull(row, "date_install");
+            ClientGiven = Db.DbHelper.GetValueBool(row, "client_given");
         }
 
         public void SaveUnitProg(bool fromTop =false)
@@ -106,8 +112,9 @@ namespace DataProvider.Models.Service
             SqlParameter pCount = new SqlParameter() { ParameterName = "count", SqlValue = Count, SqlDbType = SqlDbType.Int };
             //SqlParameter pZipClaimUnitId = new SqlParameter() { ParameterName = "id_zip_claim_unit", SqlValue = ZipClaimUnitId, SqlDbType = SqlDbType.Int };
             SqlParameter pCreatorAdSid = new SqlParameter() { ParameterName = "creator_sid", SqlValue = CurUserAdSid, SqlDbType = SqlDbType.VarChar };
+            SqlParameter pCLientGiven = new SqlParameter() { ParameterName = "@client_given", SqlValue = ClientGiven, SqlDbType = SqlDbType.Bit };
 
-            var dt = Db.Service.ExecuteQueryStoredProcedure("service_sheet_issued_zip_item_save", pId, pServiceSheetId,pName, pPartNum, pCount, pCreatorAdSid);
+            var dt = Db.Service.ExecuteQueryStoredProcedure("service_sheet_issued_zip_item_save", pId, pServiceSheetId,pName, pPartNum, pCount, pCreatorAdSid, pCLientGiven);
             int id = 0;
             if (dt.Rows.Count > 0)
             {

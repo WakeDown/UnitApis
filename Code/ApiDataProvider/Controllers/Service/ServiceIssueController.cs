@@ -30,7 +30,7 @@ namespace DataProvider.Controllers.Service
         public IEnumerable<ServiceIssuePlaningItem> GetPlaningDeviceIssueList(DateTime? month, int? idCity, string address, int? idClient, string serviceEngeneerSid = null)
         {
             if (!idCity.HasValue) throw new ArgumentException("Не указан город");
-            if (!idClient.HasValue) throw new ArgumentException("Не указан клиент");
+            //if (!idClient.HasValue) throw new ArgumentException("Не указан клиент");
             if (!month.HasValue) month = DateTime.Now;
 
             var curUser = GetCurUser();
@@ -81,7 +81,7 @@ namespace DataProvider.Controllers.Service
             return clientList;
         }
 
-        public IEnumerable<ServiceIssuePlaningItem> GetPlaningAddressList(DateTime? month, int? idCity, string serviceEngeneerSid = null)
+        public IEnumerable<ServiceIssuePlaningItem> GetPlaningAddressList(DateTime? month, int? idCity, string serviceEngeneerSid = null, int? clientId = null)
         {
             if (!idCity.HasValue) throw new ArgumentException("Не указан город");
             if (!month.HasValue) month = DateTime.Now;
@@ -90,7 +90,7 @@ namespace DataProvider.Controllers.Service
             string serviceAdminSid = null;
             if (curUser.Is(AdGroup.ServiceAdmin)) serviceAdminSid = curUser.Sid;
 
-            var planList = PlanServiceIssue.GetClaimList(month.Value, idCity, serviceAdminSid: serviceAdminSid, serviceEngeneerSid: serviceEngeneerSid);
+            var planList = PlanServiceIssue.GetClaimList(month.Value, idCity, serviceAdminSid: serviceAdminSid, serviceEngeneerSid: serviceEngeneerSid, idClient: clientId);
             var addressList = planList.GroupBy(x => x.Address)
                 .Select(x => new ServiceIssuePlaningItem(0, x.Key, x.Count(), issuesIdList: String.Join(",", x.Select(z => z.IdServiceClaim))))
                 .OrderBy(x => x.Name)
