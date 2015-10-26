@@ -99,7 +99,7 @@ namespace DataProvider.Controllers.Service
             return addressList;
         }
 
-        public IEnumerable<ServiceIssuePlaningItem> GetPlaningCityList(DateTime? month, string serviceEngeneerSid = null, bool? planed = null)
+        public IEnumerable<ServiceIssuePlaningItem> GetPlaningCityList(DateTime? month, string serviceEngeneerSid = null, bool? planed = null, int? clientId = null)
         {
             if (!month.HasValue) month = DateTime.Now;
 
@@ -107,7 +107,7 @@ namespace DataProvider.Controllers.Service
             string serviceAdminSid = null;
             if (curUser.Is(AdGroup.ServiceAdmin)) serviceAdminSid = curUser.Sid;
 
-            var planList = PlanServiceIssue.GetClaimList(month.Value, serviceAdminSid: serviceAdminSid, serviceEngeneerSid: serviceEngeneerSid, planed:planed);
+            var planList = PlanServiceIssue.GetClaimList(month.Value, serviceAdminSid: serviceAdminSid, serviceEngeneerSid: serviceEngeneerSid, planed:planed, idClient: clientId);
             var citiesList = planList.GroupBy(x => x.IdCity)
                 .Select(x => new ServiceIssuePlaningItem(x.Key, x.First().CityName, x.Count(), x.First().CityShortName, String.Join(",", x.Select(z=>z.IdServiceClaim)))).OrderBy(x => x.ShortName).ToArray();
 
