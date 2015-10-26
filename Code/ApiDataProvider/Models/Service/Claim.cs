@@ -548,7 +548,6 @@ namespace DataProvider.Models.Service
             }
             else if (currState.SysName.ToUpper().Equals("TECHSET"))
             {
-
                 goNext = true;
                 saveClaim = true;
                 if (confirm)
@@ -621,8 +620,6 @@ namespace DataProvider.Models.Service
                         saveStateInfo = false;
                         nextState = new ClaimState("SERVADMSETWAIT");
                     }
-
-
                 }
                 else
                 {
@@ -759,10 +756,12 @@ namespace DataProvider.Models.Service
                 ServiceSheet4Save.IdServiceIssue = cl.CurServiceIssueId ?? -1;
                 ServiceSheet4Save.Save("SRVENGWORK");
 
+                bool hasNotInstalled = GetOrderedZipItemList(Id, ServiceSheet4Save.Id).Any(x => !x.Installed);
+
                 if (ServiceSheet4Save.ProcessEnabled && ServiceSheet4Save.DeviceEnabled)
                 {
                     //Если есть хоть один не установленный ЗИП 
-                    if (GetOrderedZipItemList(Id, ServiceSheet4Save.Id).Any(x => !x.Installed))
+                    if (hasNotInstalled)
                     {
                         nextState = new ClaimState("ZIPISSUE");
                     }
@@ -780,16 +779,24 @@ namespace DataProvider.Models.Service
                 else if ((!ServiceSheet4Save.ProcessEnabled || !ServiceSheet4Save.DeviceEnabled) &&
                          (!ServiceSheet4Save.ZipClaim.HasValue || !ServiceSheet4Save.ZipClaim.Value))
                 {
-                    nextState = new ClaimState("SERVADMSET");
-                    SpecialistSid = CurAdminSid;
-                    sendNote = true;
-                    noteTo = new[] { ServiceRole.CurAdmin };
-                    noteText =
-                        $@"Инженер на восстановил работу аппарата по заявке №%ID% %LINK%.\r\Комментарий:{
-                            ServiceSheet4Save.Descr}";
-                    noteSubject = $"[Заявка №%ID%] Вам назначена заявка";
-                }
 
+                    //Если есть хоть один не установленный ЗИП 
+                    if (hasNotInstalled)
+                    {
+                        nextState = new ClaimState("ZIPISSUE");
+                    }
+                    else
+                    {
+                        nextState = new ClaimState("SERVADMSET");
+                        SpecialistSid = CurAdminSid;
+                        sendNote = true;
+                        noteTo = new[] { ServiceRole.CurAdmin };
+                        noteText =
+                            $@"Инженер не восстановил работу аппарата по заявке №%ID% %LINK%.\r\Комментарий:{
+                                ServiceSheet4Save.Descr}";
+                        noteSubject = $"[Заявка №%ID%] Работа не восстановлена";
+                    }
+                }
             }
             else if (currState.SysName.ToUpper().Equals("ZIPISSUE"))
             {
@@ -797,6 +804,7 @@ namespace DataProvider.Models.Service
                 var curCl = new Claim(Id);
                 goNext = true;
                 saveClaim = true;
+                var notInstalledList = GetOrderedZipItemList(Id, lastServiceSheet.Id).Where(x => !x.Installed);
 
                 //Если есть заказаный ЗИП то значит заявку надо продолжить
                 if (lastServiceSheet.ZipClaim.HasValue && lastServiceSheet.ZipClaim.Value)
@@ -808,7 +816,13 @@ namespace DataProvider.Models.Service
                     else
                     {
                         ServiceSheetZipItem.SaveOrderedZipItemsCopyFromIssued(lastServiceSheet.Id, CurUserAdSid);
-                        
+
+                        if (notInstalledList.Any())
+                            //Если есть не установленный ЗИП то сохраняем его
+                        {
+                            ServiceSheetZipItem.NotInstalledSaveList(notInstalledList.Select(x => x.Id).ToArray(),
+                                lastServiceSheet.Id, CurUserAdSid);
+                        }
 
                         SpecialistSid = CurUserAdSid;
                         nextState = new ClaimState("ZIPCHECK");
@@ -824,10 +838,20 @@ namespace DataProvider.Models.Service
                 }
                 else
                 {
-                    if (GetOrderedZipItemList(Id, lastServiceSheet.Id).Any(x => !x.Installed))
+                    if (notInstalledList.Any())
                     //Если есть не установленный ЗИП
                     {
-                        nextState = new ClaimState("SERVADMSET");
+                        ServiceSheetZipItem.NotInstalledSaveList(notInstalledList.Select(x=>x.Id).ToArray(), lastServiceSheet.Id, CurUserAdSid);
+                        Descr = $"Не весь ЗИП установлен";
+                        if (lastServiceSheet.ProcessEnabled && lastServiceSheet.DeviceEnabled)
+                        {
+                            nextState = new ClaimState("DONE");
+                        }
+                        else
+                        {
+                            nextState = new ClaimState("SERVADMSET");
+                        }
+                        
                         SpecialistSid = curCl.CurAdminSid;
                         sendNote = true;
                         noteTo = new[] { ServiceRole.CurAdmin };

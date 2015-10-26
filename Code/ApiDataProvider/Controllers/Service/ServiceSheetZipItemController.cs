@@ -18,9 +18,9 @@ namespace DataProvider.Controllers.Service
             return ServiceSheetZipItem.GetIssuedList(serviceSheetId);
         }
 
-        public IEnumerable<ServiceSheetZipItem> GetOrderedList(int serviceSheetId)
+        public IEnumerable<ServiceSheetZipItem> GetOrderedList(int serviceSheetId, bool? realyOrdered = null)
         {
-            return ServiceSheetZipItem.GetOrderedList(serviceSheetId);
+            return ServiceSheetZipItem.GetOrderedList(serviceSheetId, realyOrdered);
         }
 
         public IEnumerable<ServiceSheetZipItem> GetInstalledList(int serviceSheetId)

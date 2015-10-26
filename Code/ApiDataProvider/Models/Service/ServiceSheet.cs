@@ -177,9 +177,14 @@ namespace DataProvider.Models.Service
             return ServiceSheetZipItem.GetIssuedList(Id);
         }
 
-        public IEnumerable<ServiceSheetZipItem> GetOrderedZipItemList()
+        public IEnumerable<ServiceSheetZipItem> GetOrderedZipItemList(bool? realyOrdered = null)
         {
-            return ServiceSheetZipItem.GetOrderedList(Id);
+            return ServiceSheetZipItem.GetOrderedList(Id, realyOrdered);
+        }
+
+        public void SetOrderedZipItemListRealyOrdered()
+        {
+            ServiceSheetZipItem.SetOrderedListRealyOrdered(Id);
         }
 
         public void SaveNotInstalledComment()

@@ -93,7 +93,7 @@ namespace DataProvider.Models.Service
 
             if (dt.Rows.Count > 0)
             {
-                Id = (int)dt.Rows[0]["id_claim_unit"];
+                ZipClaimUnitId = (int)dt.Rows[0]["id_claim_unit"];
             }
         }
 
@@ -118,11 +118,12 @@ namespace DataProvider.Models.Service
 
         public static void NotInstalledSaveList(int[] idOrderedZipItem, int serviceSheetId, string creatorSid)
         {
-            SqlParameter pId = new SqlParameter() { ParameterName = "id_ordered_zip_item", SqlValue = String.Join(",", idOrderedZipItem), SqlDbType = SqlDbType.Int };
-            SqlParameter pServiceSheetId = new SqlParameter() { ParameterName = "id_service_sheet", SqlValue = serviceSheetId, SqlDbType = SqlDbType.Int };
-            SqlParameter pCreatorAdSid = new SqlParameter() { ParameterName = "creator_sid", SqlValue = creatorSid, SqlDbType = SqlDbType.VarChar };
+            
+                SqlParameter pId = new SqlParameter() { ParameterName = "id_ordered_zip_item_list", SqlValue = String.Join(",", idOrderedZipItem), SqlDbType = SqlDbType.Int };
+                SqlParameter pServiceSheetId = new SqlParameter() { ParameterName = "id_service_sheet", SqlValue = serviceSheetId, SqlDbType = SqlDbType.Int };
+                SqlParameter pCreatorAdSid = new SqlParameter() { ParameterName = "creator_sid", SqlValue = creatorSid, SqlDbType = SqlDbType.VarChar };
 
-            var dt = Db.Service.ExecuteQueryStoredProcedure("service_sheet_issued_zip_item_save", pId, pServiceSheetId,  pCreatorAdSid);
+                var dt = Db.Service.ExecuteQueryStoredProcedure("service_sheet_not_installed_zip_item_save_list", pId, pServiceSheetId, pCreatorAdSid);
         }
 
         public static IEnumerable<ServiceSheetZipItem> GetIssuedList(int serviceSheetId)
@@ -141,10 +142,17 @@ namespace DataProvider.Models.Service
             return lst;
         }
 
-        public static IEnumerable<ServiceSheetZipItem> GetOrderedList(int serviceSheetId)
+        /// <summary>
+        /// Возвращает заказанный для сервисного листа ЗИП
+        /// </summary>
+        /// <param name="serviceSheetId"></param>
+        /// <param name="realyOrdered">Был ли оформлен заказ ЗИП СТП или еще в промежуточной стадии</param>
+        /// <returns></returns>
+        public static IEnumerable<ServiceSheetZipItem> GetOrderedList(int serviceSheetId, bool? realyOrdered = null)
         {
             SqlParameter pServiceSheetId = new SqlParameter() { ParameterName = "id_service_sheet", SqlValue = serviceSheetId, SqlDbType = SqlDbType.Int };
-            var dt = Db.Service.ExecuteQueryStoredProcedure("service_sheet_ordered_zip_item_get_list", pServiceSheetId);
+            SqlParameter pRealyOrdered = new SqlParameter() { ParameterName = "ordered", SqlValue = realyOrdered, SqlDbType = SqlDbType.Bit };
+            var dt = Db.Service.ExecuteQueryStoredProcedure("service_sheet_ordered_zip_item_get_list", pServiceSheetId, pRealyOrdered);
 
             var lst = new List<ServiceSheetZipItem>();
 
@@ -155,6 +163,15 @@ namespace DataProvider.Models.Service
             }
 
             return lst;
+        }
+        /// <summary>
+        /// Устанавливает что ЗИП был заказан
+        /// </summary>
+        /// <param name="serviceSheetId"></param>
+        public static void SetOrderedListRealyOrdered(int serviceSheetId)
+        {
+            SqlParameter pServiceSheetId = new SqlParameter() { ParameterName = "id_service_sheet", SqlValue = serviceSheetId, SqlDbType = SqlDbType.Int };
+            var dt = Db.Service.ExecuteQueryStoredProcedure("service_sheet_ordered_zip_item_set_ordered", pServiceSheetId);
         }
 
         public static IEnumerable<ServiceSheetZipItem> GetNotInstalledList(int serviceSheetId)

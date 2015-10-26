@@ -109,7 +109,7 @@ namespace DataProvider.Models.Service
             zipClaim.CurUserAdSid = creatorSid;
             zipClaim.SaveUnitProg();
 
-            var zipItemList = lastServiceSheet.GetOrderedZipItemList();
+            var zipItemList = lastServiceSheet.GetOrderedZipItemList(null);
 
             if (zipItemList != null && zipItemList.Any())
             {
@@ -126,8 +126,8 @@ namespace DataProvider.Models.Service
             lastServiceSheet.UnitProgZipClaimId = zipClaim.Id;
             lastServiceSheet.SaveUnitProgZipClaimId();
 
+            lastServiceSheet.SetOrderedZipItemListRealyOrdered();
 
-            
         }
 
         public void SetSendStateUnitProg()
