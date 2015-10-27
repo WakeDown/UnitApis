@@ -46,6 +46,16 @@ namespace DataProvider.Models.Service
         public DateTime DateCreate { get; set; }
         public string NotInstalledComment { get; set; }
         public int? UnitProgZipClaimId { get; set; }
+        /// <summary>
+        /// установлен ЗИП предоставленый клиентом
+        /// </summary>
+        public bool ZipClientGivenInstall { get; set; }
+        /// <summary>
+        /// Оплачен или нет
+        /// </summary>
+        public bool? IsPayed { get; set; }
+        public string NotPayedComment { get; set; }
+        public string IsPayedCreatorSid { get; set; }
 
         public ServiceSheet() { }
 
@@ -93,6 +103,10 @@ namespace DataProvider.Models.Service
             DateCreate = Db.DbHelper.GetValueDateTimeOrDefault(row, "date_create");
             NotInstalledComment = Db.DbHelper.GetValueString(row, "not_installed_comment");
             UnitProgZipClaimId = Db.DbHelper.GetValueIntOrNull(row, "unit_prog_zip_claim_id");
+            ZipClientGivenInstall = Db.DbHelper.GetValueBool(row, "zip_client_given_install");
+            IsPayed = Db.DbHelper.GetValueBool(row, "is_payed");
+            NotPayedComment = Db.DbHelper.GetValueString(row, "not_payed_comment");
+            IsPayedCreatorSid = Db.DbHelper.GetValueString(row, "is_payed_creator_sid");
 
             if (fillNames)
             {
@@ -145,8 +159,9 @@ namespace DataProvider.Models.Service
             SqlParameter pEngeneerSid = new SqlParameter() { ParameterName = "engeneer_sid", SqlValue = EngeneerSid, SqlDbType = SqlDbType.VarChar };
             SqlParameter pAdminSid = new SqlParameter() { ParameterName = "admin_sid", SqlValue = AdminSid, SqlDbType = SqlDbType.VarChar };
             SqlParameter pTimeOnWorkMinutes = new SqlParameter() { ParameterName = "time_on_work_minutes", SqlValue = TimeOnWorkMinutes, SqlDbType = SqlDbType.Int };
+            SqlParameter pZipClientGivenInstall = new SqlParameter() { ParameterName = "zip_client_given_install", SqlValue = ZipClientGivenInstall, SqlDbType = SqlDbType.Bit };
 
-            var dt = Db.Service.ExecuteQueryStoredProcedure("save_service_sheet", pId, pProcessEnabled, pDeviceEnabled, pZipClaim, pZipClaimNumber, pCounterMono, pCounterColor, pCounterTotal, pNoCounter, pCounterUnavailable, pDescr, pCreatorAdSid, pCounterDescr, pEngeneerSid, pAdminSid, pIdServiceIssue, pIdClaim, pTimeOnWorkMinutes, pWorkTypeId);
+            var dt = Db.Service.ExecuteQueryStoredProcedure("save_service_sheet", pId, pProcessEnabled, pDeviceEnabled, pZipClaim, pZipClaimNumber, pCounterMono, pCounterColor, pCounterTotal, pNoCounter, pCounterUnavailable, pDescr, pCreatorAdSid, pCounterDescr, pEngeneerSid, pAdminSid, pIdServiceIssue, pIdClaim, pTimeOnWorkMinutes, pWorkTypeId, pZipClientGivenInstall);
             int id = 0;
             if (dt.Rows.Count > 0)
             {
@@ -184,7 +199,7 @@ namespace DataProvider.Models.Service
 
         public void SetOrderedZipItemListRealyOrdered()
         {
-            ServiceSheetZipItem.SetOrderedListRealyOrdered(Id);
+            ServiceSheetZipItem.SetOrderedListRealyOrdered(Id, CurUserAdSid);
         }
 
         public void SaveNotInstalledComment()
@@ -199,6 +214,15 @@ namespace DataProvider.Models.Service
             SqlParameter pNotInstalledComment = new SqlParameter() { ParameterName = "unit_prog_zip_claim_id", SqlValue = UnitProgZipClaimId, SqlDbType = SqlDbType.Int };
             SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = Id, SqlDbType = SqlDbType.Int };
             var dt = Db.Service.ExecuteQueryStoredProcedure("service_sheet_update", pNotInstalledComment, pId);
+        }
+
+        public void SavePayed()
+        {
+            SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = Id, SqlDbType = SqlDbType.Int };
+            SqlParameter pIsPayed = new SqlParameter() { ParameterName = "is_payed", SqlValue = IsPayed, SqlDbType = SqlDbType.Bit };
+            SqlParameter pNotPayedComment = new SqlParameter() { ParameterName = "not_payed_comment", SqlValue = NotPayedComment, SqlDbType = SqlDbType.NVarChar };
+            SqlParameter pIsPayedCreatorSid = new SqlParameter() { ParameterName = "is_payed_creator_sid", SqlValue = CurUserAdSid, SqlDbType = SqlDbType.VarChar };
+            var dt = Db.Service.ExecuteQueryStoredProcedure("service_sheet_update", pId, pIsPayed, pNotPayedComment, pIsPayedCreatorSid);
         }
 
         //public static IEnumerable<ServiceSheet> GetClaimServiceSheetList(int idClaim)

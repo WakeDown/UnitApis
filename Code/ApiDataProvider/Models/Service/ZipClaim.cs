@@ -125,7 +125,7 @@ namespace DataProvider.Models.Service
 
             lastServiceSheet.UnitProgZipClaimId = zipClaim.Id;
             lastServiceSheet.SaveUnitProgZipClaimId();
-
+            lastServiceSheet.CurUserAdSid = creatorSid;
             lastServiceSheet.SetOrderedZipItemListRealyOrdered();
 
         }

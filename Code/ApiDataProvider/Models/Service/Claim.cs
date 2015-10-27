@@ -705,9 +705,9 @@ namespace DataProvider.Models.Service
                 {
                     nextState = new ClaimState("SRVENGGET");
                     //Сначала сохраняем промежуточный статус
-                    SaveStateStep(nextState.Id);
+                    //SaveStateStep(nextState.Id);
                     saveStateInfo = false;
-                    nextState = new ClaimState("SERVENGOUTWAIT");
+                    //nextState = new ClaimState("SERVENGOUTWAIT");
                     CurEngeneerSid = CurUserAdSid;
                     SpecialistSid = CurUserAdSid;
                 }
@@ -726,7 +726,7 @@ namespace DataProvider.Models.Service
                     noteSubject = $"[Заявка №%ID%] Отклонено назначение СИ";
                 }
             }
-            else if (currState.SysName.ToUpper().Equals("SERVENGOUTWAIT"))
+            else if (currState.SysName.ToUpper().Equals("SRVENGGET"))
             {
                 goNext = true;
                 saveClaim = true;
@@ -1375,12 +1375,13 @@ namespace DataProvider.Models.Service
             return sheet;
         }
 
-        public static IEnumerable<ServiceSheet> GetClaimServiceSheetList(int idClaim)
+        public static IEnumerable<ServiceSheet> GetClaimServiceSheetList(int idClaim, bool? payedWrap = null)
         {
             //return ServiceSheet.GetClaimServiceSheetList(idClaim);
 
             SqlParameter pIdClaim = new SqlParameter() { ParameterName = "id_claim", SqlValue = idClaim, SqlDbType = SqlDbType.Int };
-            var dt = Db.Service.ExecuteQueryStoredProcedure("get_claim_service_sheet_list", pIdClaim);
+            SqlParameter pIsPayed = new SqlParameter() { ParameterName = "payed_wrap", SqlValue = payedWrap, SqlDbType = SqlDbType.Bit };
+            var dt = Db.Service.ExecuteQueryStoredProcedure("get_claim_service_sheet_list", pIdClaim, pIsPayed);
 
             var list = new List<ServiceSheet>();
 

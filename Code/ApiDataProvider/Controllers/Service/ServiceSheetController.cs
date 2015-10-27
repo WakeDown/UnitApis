@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using DataProvider.Helpers;
 using DataProvider.Models.Service;
 using DataProvider.Objects;
 using DataProvider._TMPLTS;
@@ -39,12 +40,31 @@ namespace DataProvider.Controllers.Service
             catch (Exception ex)
             {
                 response = new HttpResponseMessage(HttpStatusCode.OK);
-                response.Content = new StringContent(String.Format("{{\"errorMessage\":\"{0}\"}}", ex.Message));
+                response.Content = new StringContent(MessageHelper.ConfigureExceptionMessage(ex));
 
             }
             return response;
         }
 
+        [AuthorizeAd(AdGroup.ServiceControler, AdGroup.ServiceAdmin)]
+        public HttpResponseMessage SavePayed(ServiceSheet model)
+        {
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
+
+            try
+            {
+                model.CurUserAdSid = GetCurUser().Sid;
+                model.SavePayed();
+            }
+            catch (Exception ex)
+            {
+                response = new HttpResponseMessage(HttpStatusCode.OK);
+                response.Content = new StringContent(MessageHelper.ConfigureExceptionMessage(ex));
+
+            }
+            return response;
+        }
+        
         //[AuthorizeAd(AdGroup.ServiceControler, AdGroup.ServiceEngeneer, AdGroup.ServiceAdmin, AdGroup.ServiceTech)]
         //public HttpResponseMessage Save(ServiceSheet model)
         //{

@@ -194,9 +194,9 @@ namespace DataProvider.Controllers.Service
             return Claim.GetLastServiceSheet(idClaim);
         }
 
-        public IEnumerable<ServiceSheet> GetClaimServiceSheetList(int idClaim)
+        public IEnumerable<ServiceSheet> GetClaimServiceSheetList(int idClaim, bool? payedWrap = null)
         {
-            return Claim.GetClaimServiceSheetList(idClaim);
+            return Claim.GetClaimServiceSheetList(idClaim, payedWrap);
         }
 
         [System.Web.Http.AllowAnonymous]

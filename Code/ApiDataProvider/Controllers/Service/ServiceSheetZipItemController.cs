@@ -18,6 +18,11 @@ namespace DataProvider.Controllers.Service
             return ServiceSheetZipItem.GetIssuedList(serviceSheetId);
         }
 
+        public IEnumerable<ServiceSheetZipItem> GetClientGivenInstalledZipItemList(int serviceSheetId)
+        {
+            return ServiceSheetZipItem.GetClientGivenInstalledZipItemList(serviceSheetId);
+        }
+
         public IEnumerable<ServiceSheetZipItem> GetOrderedList(int serviceSheetId, bool? realyOrdered = null)
         {
             return ServiceSheetZipItem.GetOrderedList(serviceSheetId, realyOrdered);
@@ -78,6 +83,24 @@ namespace DataProvider.Controllers.Service
         }
 
         [AuthorizeAd()]
+        public HttpResponseMessage ClientGivenInstalledClose(int id)
+        {
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
+
+            try
+            {
+                ServiceSheetZipItem.ClientGivenInstalledClose(id, GetCurUser().Sid);
+            }
+            catch (Exception ex)
+            {
+                response = new HttpResponseMessage(HttpStatusCode.OK);
+                response.Content = new StringContent(MessageHelper.ConfigureExceptionMessage(ex));
+
+            }
+            return response;
+        }
+
+        [AuthorizeAd()]
         public HttpResponseMessage IssuedSave(ServiceSheetZipItem model)
         {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
@@ -86,6 +109,26 @@ namespace DataProvider.Controllers.Service
             {
                 model.CurUserAdSid = GetCurUser().Sid;
                 model.IssuedSave();
+                response.Content = new StringContent($"{{\"id\":{model.Id}}}");
+            }
+            catch (Exception ex)
+            {
+                response = new HttpResponseMessage(HttpStatusCode.OK);
+                response.Content = new StringContent(MessageHelper.ConfigureExceptionMessage(ex));
+
+            }
+            return response;
+        }
+
+        [AuthorizeAd()]
+        public HttpResponseMessage ClientGivenInstalledSave(ServiceSheetZipItem model)
+        {
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
+
+            try
+            {
+                model.CurUserAdSid = GetCurUser().Sid;
+                model.ClientGivenInstalledSave();
                 response.Content = new StringContent($"{{\"id\":{model.Id}}}");
             }
             catch (Exception ex)
