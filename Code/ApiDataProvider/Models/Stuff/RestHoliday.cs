@@ -87,7 +87,7 @@ namespace DataProvider.Models.Stuff
             //Проверка есть ли хотябы один период не менее 14 дней
             if (!GetList(EmployeeSid, Year).Any(x => x.Duration >= oneMinPeriodDays) && daysExists - Duration  < oneMinPeriodDays && Duration < oneMinPeriodDays) throw new ArgumentException("Необходимо указать хотябы один период не менее 14 дней. Период не был сохранен.");
 
-            EndDate = StartDate.AddDays(Duration - 1);
+            EndDate = RestHoliday.GetEndDate(StartDate,Duration);//StartDate.AddDays(Duration - 1);
 
             SqlParameter pEmployeeSid = new SqlParameter() { ParameterName = "employee_sid", SqlValue = EmployeeSid, SqlDbType = SqlDbType.VarChar };
             SqlParameter pStartDate = new SqlParameter() { ParameterName = "start_date", SqlValue = StartDate, SqlDbType = SqlDbType.Date };
@@ -223,6 +223,29 @@ namespace DataProvider.Models.Stuff
             }
 
             return lst;
+        }
+
+        /// <summary>
+        /// Получение конечной даты отпуска с учетом всех смещений (приздники и т.д.)
+        /// </summary>
+        public static DateTime GetEndDate(DateTime dateStart, int duration)
+        {
+            if (duration <= 0) throw new ArgumentException("Продолжительность одлжна быть больше 0");
+            DateTime dateEnd = dateStart.AddDays(duration - 1);
+            
+            int holidayCount = WorkDay.GetHolidaysCountInPeriod(dateStart, dateEnd);
+            if (holidayCount > 0)
+            {
+                while (holidayCount != 0)
+                {
+                    var preDateEnd = dateEnd;
+                    dateEnd = dateEnd.AddDays(holidayCount);
+                    holidayCount = WorkDay.GetHolidaysCountInPeriod(preDateEnd.AddDays(1), dateEnd);
+                }
+            }
+
+
+            return dateEnd;
         }
     }
 }

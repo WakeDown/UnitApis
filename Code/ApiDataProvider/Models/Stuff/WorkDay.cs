@@ -46,5 +46,23 @@ namespace DataProvider.Models.Stuff
 
             return result;
         }
+        /// <summary>
+        /// Считает количество ПРАЗДНИЧНЫХ дней в периоде НЕ ВЫХОДНЫХ
+        /// </summary>
+        /// <param name="dateStart"></param>
+        /// <param name="dateEnd"></param>
+        /// <returns></returns>
+        public static int GetHolidaysCountInPeriod(DateTime dateStart, DateTime dateEnd)
+        {
+            SqlParameter pDateStart = new SqlParameter() { ParameterName = "@date_start", SqlValue = dateStart, SqlDbType = SqlDbType.Date };
+            SqlParameter pDateEnd = new SqlParameter() { ParameterName = "@date_end", SqlValue = dateEnd, SqlDbType = SqlDbType.Date };
+            var dt = Db.Stuff.ExecuteQueryStoredProcedure("hilodays_count_in_period", pDateStart, pDateEnd);
+
+            int count = dt.Rows.Count;
+
+            return count;
+        }
+
+
     }
 }

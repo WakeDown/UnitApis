@@ -36,6 +36,11 @@ namespace DataProvider.Controllers.Stuff
             return model;
         }
 
+        public DateTime GetEndDate(DateTime dateStart, int duration)
+        {
+           return RestHoliday.GetEndDate(dateStart, duration);
+        }
+
         [AuthorizeAd()]
         public HttpResponseMessage Save(RestHoliday model)
         {
