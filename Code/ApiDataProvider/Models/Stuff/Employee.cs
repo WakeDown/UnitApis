@@ -162,6 +162,7 @@ namespace DataProvider.Models.Stuff
 
     public static string GetEmailBySid(string sid)
     {
+        if (String.IsNullOrEmpty(sid)) return String.Empty;
         SqlParameter pSid = new SqlParameter() { ParameterName = "sid", SqlValue = sid, SqlDbType = SqlDbType.VarChar };
         var dt = Db.Stuff.ExecuteQueryStoredProcedure("get_email", pSid);
         string email = String.Empty;

@@ -104,7 +104,7 @@ namespace DataProvider.Models.Service
             NotInstalledComment = Db.DbHelper.GetValueString(row, "not_installed_comment");
             UnitProgZipClaimId = Db.DbHelper.GetValueIntOrNull(row, "unit_prog_zip_claim_id");
             ZipClientGivenInstall = Db.DbHelper.GetValueBool(row, "zip_client_given_install");
-            IsPayed = Db.DbHelper.GetValueBool(row, "is_payed");
+            IsPayed = Db.DbHelper.GetValueBoolOrNull(row, "is_payed");
             NotPayedComment = Db.DbHelper.GetValueString(row, "not_payed_comment");
             IsPayedCreatorSid = Db.DbHelper.GetValueString(row, "is_payed_creator_sid");
 
@@ -223,6 +223,9 @@ namespace DataProvider.Models.Service
             SqlParameter pNotPayedComment = new SqlParameter() { ParameterName = "not_payed_comment", SqlValue = NotPayedComment, SqlDbType = SqlDbType.NVarChar };
             SqlParameter pIsPayedCreatorSid = new SqlParameter() { ParameterName = "is_payed_creator_sid", SqlValue = CurUserAdSid, SqlDbType = SqlDbType.VarChar };
             var dt = Db.Service.ExecuteQueryStoredProcedure("service_sheet_update", pId, pIsPayed, pNotPayedComment, pIsPayedCreatorSid);
+
+            //Отправка уведомления инженеру
+            Claim.ServiceSheetIsPayWraped(Id, CurUserAdSid);
         }
 
         //public static IEnumerable<ServiceSheet> GetClaimServiceSheetList(int idClaim)

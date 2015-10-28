@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Net.Mail;
 using System.Runtime.Remoting.Channels;
+using System.Threading.Tasks;
 using System.Web;
 using DataProvider.Helpers;
 using DataProvider.Models.Stuff;
@@ -64,7 +65,7 @@ namespace DataProvider.Models.Service
             if (dt.Rows.Count > 0)
             {
                 var row = dt.Rows[0];
-                FillSelf(row, loadObject);
+                FillSelf(row, loadObject, getNames);
                 //if (getNames) GetNames();
             }
 
@@ -137,10 +138,10 @@ namespace DataProvider.Models.Service
             return result;
         }
 
-        public Claim(DataRow row, bool loadObj = false)
+        public Claim(DataRow row, bool loadObj = false, bool loadNames = true)
             : this()
         {
-            FillSelf(row, loadObj);
+            FillSelf(row, loadObj, loadNames);
             //if (getNames) GetNames();
         }
 
@@ -162,7 +163,7 @@ namespace DataProvider.Models.Service
             }
         }
 
-        private void FillSelf(DataRow row, bool loadObj = true)
+        private void FillSelf(DataRow row, bool loadObj = true, bool loadNames = false)
         {
             Sid = Db.DbHelper.GetValueString(row, "sid");
             Id = Db.DbHelper.GetValueIntOrDefault(row, "id");
@@ -189,7 +190,23 @@ namespace DataProvider.Models.Service
             Contract = new Contract() { Id = Db.DbHelper.GetValueIntOrDefault(row, "id_contract") };
             Device = new Device() { Id = Db.DbHelper.GetValueIntOrDefault(row, "id_device") };
 
+            Manager = new EmployeeSm() { AdSid = CurManagerSid , DisplayName = Db.DbHelper.GetValueString(row, "manager_name") };
+            Admin = new EmployeeSm() { AdSid = CurAdminSid, DisplayName = Db.DbHelper.GetValueString(row, "admin_name") };
+            Tech = new EmployeeSm() { AdSid = CurTechSid, DisplayName = Db.DbHelper.GetValueString(row, "tech_name") };
+            Engeneer = new EmployeeSm() { AdSid = CurEngeneerSid, DisplayName = Db.DbHelper.GetValueString(row, "engeneer_name") };
+            Specialist = new EmployeeSm() { AdSid = SpecialistSid, DisplayName = Db.DbHelper.GetValueString(row, "specialist_name") };
+            Changer = new EmployeeSm() { AdSid = ChangerSid, DisplayName = Db.DbHelper.GetValueString(row, "specialist_name") };
+
             if (loadObj)
+            {
+                Contractor = new Contractor(Contractor.Id);
+                Contract = new Contract(Contract.Id);
+                Device = new Device(Device.Id);
+                if (IdWorkType.HasValue && IdWorkType.Value > 0) WorkType = new WorkType(IdWorkType.Value);
+                State = new ClaimState(Db.DbHelper.GetValueIntOrDefault(row, "id_claim_state"));
+            }
+
+            if (loadNames)
             {
                 Manager = new EmployeeSm(CurManagerSid);
                 Admin = new EmployeeSm(CurAdminSid);
@@ -197,11 +214,6 @@ namespace DataProvider.Models.Service
                 Engeneer = new EmployeeSm(CurEngeneerSid);
                 Specialist = new EmployeeSm(SpecialistSid);
                 Changer = new EmployeeSm(ChangerSid);
-                Contractor = new Contractor(Contractor.Id);
-                Contract = new Contract(Contract.Id);
-                Device = new Device(Device.Id);
-                if (IdWorkType.HasValue && IdWorkType.Value > 0) WorkType = new WorkType(IdWorkType.Value);
-                State = new ClaimState(Db.DbHelper.GetValueIntOrDefault(row, "id_claim_state"));
             }
         }
 
@@ -960,13 +972,17 @@ namespace DataProvider.Models.Service
             }
             else if (currState.SysName.ToUpper().Equals("DONE"))
             {
-                goNext = true;
-                saveClaim = true;
-                nextState = new ClaimState("END");
-                sendNote = true;
-                noteTo = new[] { ServiceRole.CurManager };
-                noteText = $@"Заявка №%ID% закрыта  %LINK%";
-                noteSubject = $"[Заявка №%ID%] Заявка закрыта";
+                //Если есть незакрытые СЛ то заявку не закрываем
+                if (!GetClaimServiceSheetList(Id, false).Any())
+                {
+                    goNext = true;
+                    saveClaim = true;
+                    nextState = new ClaimState("END");
+                    sendNote = true;
+                    noteTo = new[] {ServiceRole.CurManager};
+                    noteText = $@"Заявка №%ID% закрыта  %LINK%";
+                    noteSubject = $"[Заявка №%ID%] Заявка закрыта";
+                }
             }
             else if (currState.SysName.ToUpper().Equals("ZIPCL-CANCELED"))
             {
@@ -1009,7 +1025,7 @@ namespace DataProvider.Models.Service
             //SaveStateStep(nextState.Id);
             if (sendNote)
             {
-                SendNote(noteSubject, noteText, noteTo);
+                SendNote(noteSubject, noteText, null, noteTo);
 
                 ////Замена по маске
                 //noteSubject = noteSubject.Replace("%ID%", Id.ToString());
@@ -1022,7 +1038,33 @@ namespace DataProvider.Models.Service
             }
         }
 
-        public void SendNote(string subject, string text, ServiceRole[] to)
+        public static void ServiceSheetIsPayWraped(int serviceSheetId, string creatorSid)
+        {
+            var ss = new ServiceSheet(serviceSheetId);
+            if (ss.IsPayed.HasValue)
+            {
+                string text;
+                string subject;
+
+                if (ss.IsPayed.Value)
+                {
+                    text = $"Принят сервисный лист №{serviceSheetId} по заявке №%ID% %LINK%";
+                    subject = $"[Заявка №%ID%] Принят сервисный лист №{serviceSheetId}";
+                    
+                }
+                else
+                {
+                    text = $"Не принят сервисный лист №{serviceSheetId} по заявке №%ID%<br />Причина: {ss.NotPayedComment} %LINK%";
+                    subject = $"[Заявка №%ID%] Не принят сервисный лист №{serviceSheetId}";
+                }
+                var cl = new Claim(ss.IdClaim);
+                cl.CurUserAdSid = creatorSid;
+                cl.SendNote(subject, text, serviceSheetId, ServiceRole.ServiceSheetEngeneer);
+                cl.Go();
+            }
+        }
+        
+        public void SendNote(string subject, string text, int? serviceSheetId = null, params ServiceRole[] to)
         {
             //Замена по маске
             subject = subject.Replace("%ID%", Id.ToString());
@@ -1031,9 +1073,9 @@ namespace DataProvider.Models.Service
             string link = $"{ConfigurationManager.AppSettings["ServiceUrl"]}/Claim/Index/{Id}";
             text = text.Replace("%LINK%", $@"<p><a href=""{link}"">{link}</a></p>");
 
-            SendMailTo(text, subject, to);
+            SendMailTo(text, subject, serviceSheetId, to);
         }
-
+        
         public enum ServiceRole
         {
             CurEngeneer,
@@ -1042,10 +1084,11 @@ namespace DataProvider.Models.Service
             CurManager,
             CurSpecialist,
             AllTech,
-            ZipConfirm
+            ZipConfirm,
+            ServiceSheetEngeneer
         }
 
-        public void SendMailTo(string message, string subject, params ServiceRole[] mailTo)
+        public void SendMailTo(string message, string subject, int? serviceSheetId = null, params ServiceRole[] mailTo)
         {
             var cl = new Claim(Id, loadObject: false);
 
@@ -1170,6 +1213,25 @@ namespace DataProvider.Models.Service
                         }
                     }
                 }
+                else if (mt == ServiceRole.ServiceSheetEngeneer)
+                {
+                    string sid = null;
+                    if (serviceSheetId.HasValue)
+                    {
+                        sid = new ServiceSheet(serviceSheetId.Value).EngeneerSid;
+                    }
+                    string email = Employee.GetEmailBySid(sid);
+                    if (!String.IsNullOrEmpty(email))
+                    {
+                        recipients.Add(new MailAddress(email));
+                    }
+                    else
+                    {
+                        message =
+                            $"Сообщение для Инженера сервисного листа №{serviceSheetId} не может быть доставлено, поэтому в рассылку включен контролер процесса.\r\n{message}";
+                        recipients.AddRange(AdHelper.GetRecipientsFromAdGroup(AdGroup.ServiceControler));
+                    }
+                }
                 else
                 {
                     throw new ArgumentException("Указанный получатель не обрабатывается");
@@ -1180,7 +1242,7 @@ namespace DataProvider.Models.Service
             }
         }
 
-        public static IEnumerable<Claim> GetList(AdUser user, out int cnt, string adminSid = null, string engeneerSid = null, DateTime? dateStart = null, DateTime? dateEnd = null, int? topRows = null, string managerSid = null, string techSid = null, string serialNum = null, int? idDevice = null, bool? activeClaimsOnly = false, int? idClaimState = null, int? clientId = null, string clientSdNum = null)
+        public static async Task<ListResult<Claim>> GetListAsync(AdUser user, string adminSid = null, string engeneerSid = null, DateTime? dateStart = null, DateTime? dateEnd = null, int? topRows = null, string managerSid = null, string techSid = null, string serialNum = null, int? idDevice = null, bool? activeClaimsOnly = false, int? idClaimState = null, int? clientId = null, string clientSdNum = null)
         {
             if (user.Is(AdGroup.ServiceAdmin)) { adminSid = user.Sid; }
             if (user.Is(AdGroup.ServiceEngeneer)) engeneerSid = user.Sid;
@@ -1209,18 +1271,20 @@ namespace DataProvider.Models.Service
 
             foreach (DataRow row in dt.Rows)
             {
-                var model = new Claim(row, true);
+                var model = new Claim(row, true, false);
                 lst.Add(model);
             }
 
             //Общее количество
             var dtCnt = Db.Service.ExecuteQueryStoredProcedure("get_claim_list_count", pServAdminSid, pServEngeneerSid, pDateStart, pDateEnd, pManagerSid, pTechSid, pSerialNum, pIdDevice, pActiveClaimsOnly, pIdClaimState, pClientId);
-            cnt = 0;
+           int cnt = 0;
             if (dtCnt.Rows.Count > 0)
             {
                 cnt = Db.DbHelper.GetValueIntOrDefault(dtCnt.Rows[0], "cnt");
             }
-            return lst;
+
+            var result = new ListResult<Claim>(lst, cnt);
+            return result;
         }
 
         public static void Close(string sid, string deleterSid)
@@ -1374,7 +1438,12 @@ namespace DataProvider.Models.Service
             }
             return sheet;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="idClaim"></param>
+        /// <param name="payedWrap">Была ли обработана (отметка оплачено или нет)</param>
+        /// <returns></returns>
         public static IEnumerable<ServiceSheet> GetClaimServiceSheetList(int idClaim, bool? payedWrap = null)
         {
             //return ServiceSheet.GetClaimServiceSheetList(idClaim);
