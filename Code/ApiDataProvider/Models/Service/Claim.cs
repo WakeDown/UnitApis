@@ -185,10 +185,11 @@ namespace DataProvider.Models.Service
             CurManagerSid = Db.DbHelper.GetValueString(row, "cur_manager_sid");
             CurServiceIssueId = Db.DbHelper.GetValueIntOrNull(row, "cur_service_issue_id");
             IdServiceCame = Db.DbHelper.GetValueIntOrNull(row, "id_service_came");
+            IdState = Db.DbHelper.GetValueIntOrDefault(row, "id_claim_state");
 
-            Contractor = new Contractor() { Id = Db.DbHelper.GetValueIntOrDefault(row, "id_contractor") };
-            Contract = new Contract() { Id = Db.DbHelper.GetValueIntOrDefault(row, "id_contract") };
-            Device = new Device() { Id = Db.DbHelper.GetValueIntOrDefault(row, "id_device") };
+            Contractor = new Contractor() { Id = Db.DbHelper.GetValueIntOrDefault(row, "id_contractor"), Name = Db.DbHelper.GetValueString(row, "contractor_name"), FullName = Db.DbHelper.GetValueString(row, "contractor_full_name") };
+            Contract = new Contract() { Id = Db.DbHelper.GetValueIntOrDefault(row, "id_contract"), Number = Db.DbHelper.GetValueString(row, "contract_num") };
+            Device = new Device() { Id = Db.DbHelper.GetValueIntOrDefault(row, "id_device"), FullName = Db.DbHelper.GetValueString(row, "device_name"), SerialNum = Db.DbHelper.GetValueString(row, "device_serial_num") };
 
             Manager = new EmployeeSm() { AdSid = CurManagerSid , DisplayName = Db.DbHelper.GetValueString(row, "manager_name") };
             Admin = new EmployeeSm() { AdSid = CurAdminSid, DisplayName = Db.DbHelper.GetValueString(row, "admin_name") };
@@ -196,6 +197,11 @@ namespace DataProvider.Models.Service
             Engeneer = new EmployeeSm() { AdSid = CurEngeneerSid, DisplayName = Db.DbHelper.GetValueString(row, "engeneer_name") };
             Specialist = new EmployeeSm() { AdSid = SpecialistSid, DisplayName = Db.DbHelper.GetValueString(row, "specialist_name") };
             Changer = new EmployeeSm() { AdSid = ChangerSid, DisplayName = Db.DbHelper.GetValueString(row, "specialist_name") };
+
+            if (IdWorkType.HasValue && IdWorkType.Value > 0)
+                WorkType = new WorkType() {Id= IdWorkType.Value, Name = Db.DbHelper.GetValueString(row, "work_type_name"), SysName = Db.DbHelper.GetValueString(row, "work_type_sys_name"), ZipInstall = Db.DbHelper.GetValueBool(row, "work_type_zip_install"), ZipOrder = Db.DbHelper.GetValueBool(row, "work_type_zip_order") };
+
+            State = new ClaimState() {Id=IdState, Name = Db.DbHelper.GetValueString(row, "claim_state_name"), SysName = Db.DbHelper.GetValueString(row, "claim_state_sys_name"), BackgroundColor = Db.DbHelper.GetValueString(row, "claim_state_background_color"), ForegroundColor = Db.DbHelper.GetValueString(row, "claim_state_foreground_color") };
 
             if (loadObj)
             {
@@ -1242,7 +1248,7 @@ namespace DataProvider.Models.Service
             }
         }
 
-        public static async Task<ListResult<Claim>> GetListAsync(AdUser user, string adminSid = null, string engeneerSid = null, DateTime? dateStart = null, DateTime? dateEnd = null, int? topRows = null, string managerSid = null, string techSid = null, string serialNum = null, int? idDevice = null, bool? activeClaimsOnly = false, int? idClaimState = null, int? clientId = null, string clientSdNum = null)
+        public static async Task<ListResult<Claim>> GetListAsync(AdUser user, string adminSid = null, string engeneerSid = null, DateTime? dateStart = null, DateTime? dateEnd = null, int? topRows = null, string managerSid = null, string techSid = null, string serialNum = null, int? idDevice = null, bool? activeClaimsOnly = false, int? idClaimState = null, int? clientId = null, string clientSdNum = null, int? claimId = null, string deviceName = null, int? pageNum = null)
         {
             if (user.Is(AdGroup.ServiceAdmin)) { adminSid = user.Sid; }
             if (user.Is(AdGroup.ServiceEngeneer)) engeneerSid = user.Sid;
@@ -1251,8 +1257,9 @@ namespace DataProvider.Models.Service
 
             //!!!!ЕСЛИ МЕНЯЕШЬ ЭТУ ФУНКЦИЮ ПОМИ ЧТО ЕЩЕ НАДО ПОПРАВИТЬ ФУНКЦИЮ ЧУТЬ НИЖЕ 
             if (!topRows.HasValue) topRows = 30;
+            if (!pageNum.HasValue)pageNum = 1;
 
-            SqlParameter pServAdminSid = new SqlParameter() { ParameterName = "admin_sid", SqlValue = adminSid, SqlDbType = SqlDbType.VarChar };
+SqlParameter pServAdminSid = new SqlParameter() { ParameterName = "admin_sid", SqlValue = adminSid, SqlDbType = SqlDbType.VarChar };
             SqlParameter pServEngeneerSid = new SqlParameter() { ParameterName = "engeneer_sid", SqlValue = engeneerSid, SqlDbType = SqlDbType.VarChar };
             SqlParameter pDateStart = new SqlParameter() { ParameterName = "date_start", SqlValue = dateStart, SqlDbType = SqlDbType.Date };
             SqlParameter pDateEnd = new SqlParameter() { ParameterName = "date_end", SqlValue = dateEnd, SqlDbType = SqlDbType.Date };
@@ -1265,23 +1272,31 @@ namespace DataProvider.Models.Service
             SqlParameter pIdClaimState = new SqlParameter() { ParameterName = "id_claim_state", SqlValue = idClaimState, SqlDbType = SqlDbType.Int };
             SqlParameter pClientId = new SqlParameter() { ParameterName = "id_client", SqlValue = clientId, SqlDbType = SqlDbType.Int };
             SqlParameter pClientSdNum = new SqlParameter() { ParameterName = "client_sd_num", SqlValue = clientSdNum, SqlDbType = SqlDbType.Int };
-            var dt = Db.Service.ExecuteQueryStoredProcedure("get_claim_list", pServAdminSid, pServEngeneerSid, pDateStart, pDateEnd, pTopRows, pManagerSid, pTechSid, pSerialNum, pIdDevice, pActiveClaimsOnly, pIdClaimState, pClientId, pClientSdNum);
+            SqlParameter pclaimId = new SqlParameter() { ParameterName = "claim_id", SqlValue = claimId, SqlDbType = SqlDbType.Int };
+            SqlParameter pDeviceName = new SqlParameter() { ParameterName = "device_name", SqlValue = deviceName, SqlDbType = SqlDbType.NVarChar };
+            SqlParameter pPageNum = new SqlParameter() { ParameterName = "page_num", SqlValue = pageNum, SqlDbType = SqlDbType.Int };
+            var dt = Db.Service.ExecuteQueryStoredProcedure("get_claim_list", pServAdminSid, pServEngeneerSid, pDateStart, pDateEnd, pTopRows, pManagerSid, pTechSid, pSerialNum, pIdDevice, pActiveClaimsOnly, pIdClaimState, pClientId, pClientSdNum, pclaimId, pDeviceName, pPageNum);
 
+            int cnt = 0;
             var lst = new List<Claim>();
 
-            foreach (DataRow row in dt.Rows)
+            if (dt.Rows.Count > 0)
             {
-                var model = new Claim(row, true, false);
-                lst.Add(model);
+                foreach (DataRow row in dt.Rows)
+                {
+                    var model = new Claim(row, false, false);
+                    lst.Add(model);
+                }
+                cnt = Db.DbHelper.GetValueIntOrDefault(dt.Rows[0], "total_count");
             }
 
-            //Общее количество
-            var dtCnt = Db.Service.ExecuteQueryStoredProcedure("get_claim_list_count", pServAdminSid, pServEngeneerSid, pDateStart, pDateEnd, pManagerSid, pTechSid, pSerialNum, pIdDevice, pActiveClaimsOnly, pIdClaimState, pClientId);
-           int cnt = 0;
-            if (dtCnt.Rows.Count > 0)
-            {
-                cnt = Db.DbHelper.GetValueIntOrDefault(dtCnt.Rows[0], "cnt");
-            }
+            // Общее количество
+            // var dtCnt = Db.Service.ExecuteQueryStoredProcedure("get_claim_list_count", pServAdminSid, pServEngeneerSid, pDateStart, pDateEnd, pManagerSid, pTechSid, pSerialNum, pIdDevice, pActiveClaimsOnly, pIdClaimState, pClientId);
+            //int cnt = 0;
+            // if (dtCnt.Rows.Count > 0)
+            // {
+            //     cnt = Db.DbHelper.GetValueIntOrDefault(dtCnt.Rows[0], "cnt");
+            // }
 
             var result = new ListResult<Claim>(lst, cnt);
             return result;

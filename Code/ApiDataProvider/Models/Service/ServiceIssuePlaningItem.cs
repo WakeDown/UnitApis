@@ -16,23 +16,29 @@ namespace DataProvider.Models.Service
         /// Вохдящие в группировку идентификаторы заявок
         /// </summary>
         public string IssuesIdList { get; set; }
+        /// <summary>
+        /// Вохдящие в группировку идентификаторы плана
+        /// </summary>
+        public string PlanIdList { get; set; }
 
-        public ServiceIssuePlaningItem(int id, string name, int issuesCount, string shortName=null, string issuesIdList = null)
+        public ServiceIssuePlaningItem(int id, string name, int issuesCount, string shortName=null, string issuesIdList = null, string planIdList = null)
         {
             Id = id;
             Name = name;
             IssuesCount = issuesCount;
             ShortName = shortName;
             IssuesIdList = issuesIdList;
+            PlanIdList = planIdList;
         }
 
-        public ServiceIssuePlaningItem(string sid, string name, int issuesCount, string shortName = null, string issuesIdList = null)
+        public ServiceIssuePlaningItem(string sid, string name, int issuesCount, string shortName = null, string issuesIdList = null, string planIdList = null)
         {
             Sid = sid;
             Name = name;
             IssuesCount = issuesCount;
             ShortName = shortName;
             IssuesIdList = issuesIdList;
+            PlanIdList = planIdList;
         }
     }
 }

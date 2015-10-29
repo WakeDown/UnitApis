@@ -40,7 +40,7 @@ namespace DataProvider.Controllers.Service
             if (!periodEnd.HasValue) periodEnd = DateTime.Now;
             var planList = ServiceIssuePlan.GetListUnitProg(periodStart.Value, periodEnd.Value, engeneerSid:engeneerSid);
             var citiesList = planList.GroupBy(x => x.CityId)
-                .Select(x => new ServiceIssuePlaningItem(x.Key, x.First().CityName, x.Count(), x.First().CityShortName, String.Join(",", x.Select(z => z.IdServiceIssue)))).OrderBy(x => x.ShortName).ToArray();
+                .Select(x => new ServiceIssuePlaningItem(x.Key, x.First().CityName, x.Count(), x.First().CityShortName, String.Join(",", x.Select(z => z.IdServiceIssue)), planIdList: String.Join(",", x.Select(z => z.Id)))).OrderBy(x => x.ShortName).ToArray();
 
             return citiesList;
             //return ServiceIssuePlan.GetList(periodStart.Value, periodEnd.Value);
@@ -52,7 +52,7 @@ namespace DataProvider.Controllers.Service
             if (!periodEnd.HasValue) periodEnd = DateTime.Now;
             var planList = ServiceIssuePlan.GetListUnitProg(periodStart.Value, periodEnd.Value, idCity: idCity, engeneerSid: engeneerSid);
             var addressList = planList.GroupBy(x => x.Address)
-                .Select(x => new ServiceIssuePlaningItem(0, x.Key, x.Count(), issuesIdList: String.Join(",", x.Select(z => z.IdServiceIssue))))
+                .Select(x => new ServiceIssuePlaningItem(0, x.Key, x.Count(), issuesIdList: String.Join(",", x.Select(z => z.IdServiceIssue)), planIdList: String.Join(",", x.Select(z => z.Id))))
                 .OrderBy(x => x.Name)
                 .ToArray();
 
@@ -66,7 +66,7 @@ namespace DataProvider.Controllers.Service
             if (!periodEnd.HasValue) periodEnd = DateTime.Now;
             var planList = ServiceIssuePlan.GetListUnitProg(periodStart.Value, periodEnd.Value, idCity: idCity, address: address, engeneerSid:engeneerSid);
             var clientList = planList.GroupBy(x => x.ClientId)
-                .Select(x => new ServiceIssuePlaningItem(x.Key, x.First().ClientName, x.Count(), issuesIdList: String.Join(",", x.Select(z => z.IdServiceIssue))))
+                .Select(x => new ServiceIssuePlaningItem(x.Key, x.First().ClientName, x.Count(), issuesIdList: String.Join(",", x.Select(z => z.IdServiceIssue)), planIdList: String.Join(",", x.Select(z => z.Id))))
                 .OrderBy(x => x.Name)
                 .ToArray();
 
@@ -80,7 +80,7 @@ namespace DataProvider.Controllers.Service
             if (!periodEnd.HasValue) periodEnd = DateTime.Now;
             var planList = ServiceIssuePlan.GetListUnitProg(periodStart.Value, periodEnd.Value, engeneerSid: engeneerSid);
             var clientList = planList.GroupBy(x => x.EngeneerSid)
-                .Select(x => new ServiceIssuePlaningItem(x.Key, x.First().EngeneerName, x.Count(), issuesIdList: String.Join(",", x.Select(z => z.IdServiceIssue))))
+                .Select(x => new ServiceIssuePlaningItem(x.Key, x.First().EngeneerName, x.Count(), issuesIdList: String.Join(",", x.Select(z => z.IdServiceIssue)), planIdList: String.Join(",", x.Select(z => z.Id))))
                 .OrderBy(x => x.Name)
                 .ToArray();
 

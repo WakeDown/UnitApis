@@ -25,10 +25,9 @@ namespace DataProvider.Controllers.Service
         //    return new ListResult<Claim>(list, cnt);
         //}
 
-        public async Task<ListResult<Claim>> GetListAsync(string servAdminSid = null, string servEngeneerSid = null, DateTime? dateStart = null, DateTime? dateEnd = null, int? topRows = null, string managerSid = null, string techSid = null, string serialNum = null, int? idDevice = null, bool? activeClaimsOnly = false, int? idClaimState = null, int? clientId = null, string clientSdNum = null)
+        public async Task<ListResult<Claim>> GetListAsync(string servAdminSid = null, string servEngeneerSid = null, DateTime? dateStart = null, DateTime? dateEnd = null, int? topRows = null, string managerSid = null, string techSid = null, string serialNum = null, int? idDevice = null, bool? activeClaimsOnly = false, int? idClaimState = null, int? clientId = null, string clientSdNum = null, int? claimId = null, string deviceName = null, int? pageNum = null)
         {
-            int cnt;
-            var result = await Claim.GetListAsync(GetCurUser(), servAdminSid, servEngeneerSid, dateStart, dateEnd, topRows, managerSid, techSid, serialNum, idDevice, activeClaimsOnly, idClaimState, clientId, clientSdNum);
+            var result = await Claim.GetListAsync(GetCurUser(), servAdminSid, servEngeneerSid, dateStart, dateEnd, topRows, managerSid, techSid, serialNum, idDevice, activeClaimsOnly, idClaimState, clientId, clientSdNum, claimId:claimId, deviceName: deviceName, pageNum: pageNum);
             return result;
         }
 
