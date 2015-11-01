@@ -20,8 +20,16 @@ namespace DataProvider.Models.Service
         /// Вохдящие в группировку идентификаторы плана
         /// </summary>
         public string PlanIdList { get; set; }
+        /// <summary>
+        /// Количество закрытых актом выездов
+        /// </summary>
+        public int? CamesCount { get; set; }
+        /// <summary>
+        /// Количество не закрытых актом выездов
+        /// </summary>
+        public int? NoCamesCount { get; set; }
 
-        public ServiceIssuePlaningItem(int id, string name, int issuesCount, string shortName=null, string issuesIdList = null, string planIdList = null)
+        public ServiceIssuePlaningItem(int id, string name, int issuesCount, string shortName=null, string issuesIdList = null, string planIdList = null, int? camesCount = null, int? noCamesCount = null)
         {
             Id = id;
             Name = name;
@@ -29,9 +37,11 @@ namespace DataProvider.Models.Service
             ShortName = shortName;
             IssuesIdList = issuesIdList;
             PlanIdList = planIdList;
+            CamesCount = camesCount;
+            NoCamesCount = noCamesCount;
         }
 
-        public ServiceIssuePlaningItem(string sid, string name, int issuesCount, string shortName = null, string issuesIdList = null, string planIdList = null)
+        public ServiceIssuePlaningItem(string sid, string name, int issuesCount, string shortName = null, string issuesIdList = null, string planIdList = null, int? camesCount = null, int? noCamesCount = null)
         {
             Sid = sid;
             Name = name;
@@ -39,6 +49,8 @@ namespace DataProvider.Models.Service
             ShortName = shortName;
             IssuesIdList = issuesIdList;
             PlanIdList = planIdList;
+            CamesCount = camesCount;
+            NoCamesCount = noCamesCount;
         }
     }
 }

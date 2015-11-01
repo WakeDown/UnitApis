@@ -26,6 +26,20 @@ namespace DataProvider.Controllers.Service
             return Ok(new ServiceIssuePlan(idServiceIssue.Value, IdServiceType.Value));
         }
 
+        public ServiceIssueTotal GetTotal(DateTime? periodStart, DateTime? periodEnd, string engeneerSid = null)
+        {
+            if (!periodStart.HasValue) periodStart = DateTime.Now;
+            if (!periodEnd.HasValue) periodEnd = DateTime.Now;
+            var list = ServiceIssuePlan.GetListUnitProg(periodStart.Value, periodEnd.Value, engeneerSid: engeneerSid);
+            int totalCount = list.Count();
+            int doneCount = list.Count(x => x.DateCame.HasValue);
+            int undoneCount = list.Count(x => !x.DateCame.HasValue);
+
+            var total = new ServiceIssueTotal() {TotalCount = totalCount, DoneCount = doneCount, UndoneCount = undoneCount};
+
+            return total;
+        }
+
         public IEnumerable<ServiceIssuePlan> GetList(DateTime? periodStart, DateTime? periodEnd, string engeneerSid = null)
         {
             if (!periodStart.HasValue) periodStart = DateTime.Now;
@@ -34,25 +48,25 @@ namespace DataProvider.Controllers.Service
             //return ServiceIssuePlan.GetList(periodStart.Value, periodEnd.Value);
         }
 
-        public IEnumerable<ServiceIssuePlaningItem> GetCitiesList(DateTime? periodStart, DateTime? periodEnd, string engeneerSid = null)
+        public IEnumerable<ServiceIssuePlaningItem> GetCitiesList(DateTime? periodStart, DateTime? periodEnd, string engeneerSid = null, int? clientId = null, bool? done = null)
         {
             if (!periodStart.HasValue) periodStart = DateTime.Now;
             if (!periodEnd.HasValue) periodEnd = DateTime.Now;
-            var planList = ServiceIssuePlan.GetListUnitProg(periodStart.Value, periodEnd.Value, engeneerSid:engeneerSid);
+            var planList = ServiceIssuePlan.GetListUnitProg(periodStart.Value, periodEnd.Value, engeneerSid:engeneerSid, idClient: clientId, done: done);
             var citiesList = planList.GroupBy(x => x.CityId)
-                .Select(x => new ServiceIssuePlaningItem(x.Key, x.First().CityName, x.Count(), x.First().CityShortName, String.Join(",", x.Select(z => z.IdServiceIssue)), planIdList: String.Join(",", x.Select(z => z.Id)))).OrderBy(x => x.ShortName).ToArray();
+                .Select(x => new ServiceIssuePlaningItem(x.Key, x.First().CityName, x.Count(), x.First().CityShortName, String.Join(",", x.Select(z => z.IdServiceIssue)), planIdList: String.Join(",", x.Select(z => z.Id)), camesCount: x.Count(z=>z.DateCame.HasValue), noCamesCount: x.Count(z=>!z.DateCame.HasValue))).OrderBy(x => x.ShortName).ToArray();
 
             return citiesList;
             //return ServiceIssuePlan.GetList(periodStart.Value, periodEnd.Value);
         }
 
-        public IEnumerable<ServiceIssuePlaningItem> GetAddressList(DateTime? periodStart, DateTime? periodEnd, int? idCity = null, string engeneerSid = null)
+        public IEnumerable<ServiceIssuePlaningItem> GetAddressList(DateTime? periodStart, DateTime? periodEnd, int? idCity = null, string engeneerSid = null, bool? done = null)
         {
             if (!periodStart.HasValue) periodStart = DateTime.Now;
             if (!periodEnd.HasValue) periodEnd = DateTime.Now;
-            var planList = ServiceIssuePlan.GetListUnitProg(periodStart.Value, periodEnd.Value, idCity: idCity, engeneerSid: engeneerSid);
+            var planList = ServiceIssuePlan.GetListUnitProg(periodStart.Value, periodEnd.Value, idCity: idCity, engeneerSid: engeneerSid, done: done);
             var addressList = planList.GroupBy(x => x.Address)
-                .Select(x => new ServiceIssuePlaningItem(0, x.Key, x.Count(), issuesIdList: String.Join(",", x.Select(z => z.IdServiceIssue)), planIdList: String.Join(",", x.Select(z => z.Id))))
+                .Select(x => new ServiceIssuePlaningItem(0, x.Key, x.Count(), issuesIdList: String.Join(",", x.Select(z => z.IdServiceIssue)), planIdList: String.Join(",", x.Select(z => z.Id)), camesCount: x.Count(z => z.DateCame.HasValue), noCamesCount: x.Count(z => !z.DateCame.HasValue)))
                 .OrderBy(x => x.Name)
                 .ToArray();
 
@@ -60,13 +74,13 @@ namespace DataProvider.Controllers.Service
             //return ServiceIssuePlan.GetList(periodStart.Value, periodEnd.Value);
         }
 
-        public IEnumerable<ServiceIssuePlaningItem> GetClientList(DateTime? periodStart, DateTime? periodEnd, int? idCity=null, string address=null, string engeneerSid = null)
+        public IEnumerable<ServiceIssuePlaningItem> GetClientList(DateTime? periodStart, DateTime? periodEnd, int? idCity=null, string address=null, string engeneerSid = null, bool? done = null)
         {
             if (!periodStart.HasValue) periodStart = DateTime.Now;
             if (!periodEnd.HasValue) periodEnd = DateTime.Now;
-            var planList = ServiceIssuePlan.GetListUnitProg(periodStart.Value, periodEnd.Value, idCity: idCity, address: address, engeneerSid:engeneerSid);
+            var planList = ServiceIssuePlan.GetListUnitProg(periodStart.Value, periodEnd.Value, idCity: idCity, address: address, engeneerSid:engeneerSid, done: done);
             var clientList = planList.GroupBy(x => x.ClientId)
-                .Select(x => new ServiceIssuePlaningItem(x.Key, x.First().ClientName, x.Count(), issuesIdList: String.Join(",", x.Select(z => z.IdServiceIssue)), planIdList: String.Join(",", x.Select(z => z.Id))))
+                .Select(x => new ServiceIssuePlaningItem(x.Key, x.First().ClientName, x.Count(), issuesIdList: String.Join(",", x.Select(z => z.IdServiceIssue)), planIdList: String.Join(",", x.Select(z => z.Id)), camesCount: x.Count(z => z.DateCame.HasValue), noCamesCount: x.Count(z => !z.DateCame.HasValue)))
                 .OrderBy(x => x.Name)
                 .ToArray();
 
@@ -74,13 +88,13 @@ namespace DataProvider.Controllers.Service
             //return ServiceIssuePlan.GetList(periodStart.Value, periodEnd.Value);
         }
 
-        public IEnumerable<ServiceIssuePlaningItem> GetEngeneerList(DateTime? periodStart, DateTime? periodEnd, string engeneerSid = null)
+        public IEnumerable<ServiceIssuePlaningItem> GetEngeneerList(DateTime? periodStart, DateTime? periodEnd, string engeneerSid = null, bool? done = null)
         {
             if (!periodStart.HasValue) periodStart = DateTime.Now;
             if (!periodEnd.HasValue) periodEnd = DateTime.Now;
-            var planList = ServiceIssuePlan.GetListUnitProg(periodStart.Value, periodEnd.Value, engeneerSid: engeneerSid);
+            var planList = ServiceIssuePlan.GetListUnitProg(periodStart.Value, periodEnd.Value, engeneerSid: engeneerSid, done: done);
             var clientList = planList.GroupBy(x => x.EngeneerSid)
-                .Select(x => new ServiceIssuePlaningItem(x.Key, x.First().EngeneerName, x.Count(), issuesIdList: String.Join(",", x.Select(z => z.IdServiceIssue)), planIdList: String.Join(",", x.Select(z => z.Id))))
+                .Select(x => new ServiceIssuePlaningItem(x.Key, x.First().EngeneerName, x.Count(), issuesIdList: String.Join(",", x.Select(z => z.IdServiceIssue)), planIdList: String.Join(",", x.Select(z => z.Id)), camesCount: x.Count(z => z.DateCame.HasValue), noCamesCount: x.Count(z => !z.DateCame.HasValue)))
                 .OrderBy(x => x.Name)
                 .ToArray();
 
@@ -88,13 +102,13 @@ namespace DataProvider.Controllers.Service
             //return ServiceIssuePlan.GetList(periodStart.Value, periodEnd.Value);
         }
 
-        public IEnumerable<ServiceIssuePlaningItem> GetDeviceIssueList(DateTime? periodStart, DateTime? periodEnd, int? idCity=null, string address=null, int? idClient=null, string engeneerSid = null)
+        public IEnumerable<ServiceIssuePlaningItem> GetDeviceIssueList(DateTime? periodStart, DateTime? periodEnd, int? idCity=null, string address=null, int? idClient=null, string engeneerSid = null, bool? done = null)
         {
             if (!periodStart.HasValue) periodStart = DateTime.Now;
             if (!periodEnd.HasValue) periodEnd = DateTime.Now;
-            var planList = ServiceIssuePlan.GetListUnitProg(periodStart.Value, periodEnd.Value, idCity:idCity, address: address, idClient: idClient, engeneerSid:engeneerSid);
+            var planList = ServiceIssuePlan.GetListUnitProg(periodStart.Value, periodEnd.Value, idCity:idCity, address: address, idClient: idClient, engeneerSid:engeneerSid, done: done);
             var deviceIssueList = planList.Where(x => x.CityId == idCity && x.Address == address).GroupBy(x => x.DeviceId)
-                .Select(x => new ServiceIssuePlaningItem(x.First().IdServiceIssue, x.First().DeviceName, x.Count()))
+                .Select(x => new ServiceIssuePlaningItem(x.Key, x.First().DeviceName, x.Count(), issuesIdList: String.Join(",", x.Select(z => z.IdServiceIssue)), planIdList: String.Join(",", x.Select(z => z.Id)), camesCount: x.Count(z => z.DateCame.HasValue), noCamesCount: x.Count(z => !z.DateCame.HasValue)))
                 .OrderBy(x => x.Name)
                 .ToArray();
 
@@ -153,6 +167,24 @@ namespace DataProvider.Controllers.Service
             if (!month.HasValue) month = DateTime.Now.Month;
 
             return ServiceIssuePlan.GetPeriodMonthCurPrevNextList(year.Value, month.Value);
+        }
+
+        [HttpPost]
+        public HttpResponseMessage DeleteIssueItem(int[] planIdList)
+        {
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
+
+            try
+            {
+                ServiceIssuePlan.DeleteIssueItem(planIdList, GetCurUser().Sid);
+            }
+            catch (Exception ex)
+            {
+                response = new HttpResponseMessage(HttpStatusCode.OK);
+                response.Content = new StringContent(MessageHelper.ConfigureExceptionMessage(ex));
+
+            }
+            return response;
         }
         
     }

@@ -192,6 +192,7 @@
     <Compile Include="Controllers\Stuff\VendorStateController.cs" />
     <Compile Include="Helpers\StringHelper.cs" />
     <Compile Include="Models\MobileUser.cs" />
+    <Compile Include="Models\Service\ClaimStateGroup.cs" />
     <Compile Include="Models\Service\PlanServiceCame.cs" />
     <Compile Include="Models\Service\PlanServiceIssue.cs" />
     <Compile Include="Controllers\Service\ServiceIssueController.cs" />
@@ -206,6 +207,7 @@
     <Compile Include="Models\Service\ServiceIssuePlan.cs" />
     <Compile Include="Models\Service\ServiceIssuePlaningItem.cs" />
     <Compile Include="Models\Service\ServiceIssuePlaningResult.cs" />
+    <Compile Include="Models\Service\ServiceIssueTotal.cs" />
     <Compile Include="Models\Service\ServiceSheet.cs" />
     <Compile Include="Models\Service\ServiceSheetZipItem.cs" />
     <Compile Include="Models\Service\UserUnitProg.cs" />

@@ -34,6 +34,8 @@ namespace DataProvider.Models.Service
         public string SpecialistSid { get; set; }
         public string SpecialistName { get; set; }
         public DateTime DateCreate { get; set; }
+        public bool Seted { get; set; }
+        public bool Planed { get; set; }
 
         public PlanServiceIssue() { }
 
@@ -73,6 +75,8 @@ namespace DataProvider.Models.Service
             ObjectName = Db.DbHelper.GetValueString(row, "object_name");
             SpecialistSid = Db.DbHelper.GetValueString(row, "engeneer_sid");
             SpecialistName = Db.DbHelper.GetValueString(row, "engeneer_name");
+            Seted = Db.DbHelper.GetValueBool(row, "seted");
+            Planed = Db.DbHelper.GetValueBool(row, "planed");
         }
 
         public int MobileSave()
@@ -100,7 +104,7 @@ namespace DataProvider.Models.Service
             return id;
         }
 
-        public static IEnumerable<PlanServiceIssue> GetClaimList(DateTime month, int? idCity = null, string address=null, int? idClient = null, string serviceAdminSid = null, string serviceEngeneerSid = null, bool? planed = null)
+        public static IEnumerable<PlanServiceIssue> GetClaimList(DateTime month, int? idCity = null, string address=null, int? idClient = null, string serviceAdminSid = null, string serviceEngeneerSid = null, bool? planed = null, bool? seted = null)
         {
             SqlParameter pMonth = new SqlParameter() { ParameterName = "date_month", SqlValue = month, SqlDbType = SqlDbType.Date };
             SqlParameter pIdCity = new SqlParameter() { ParameterName = "id_city", SqlValue = idCity, SqlDbType = SqlDbType.Int };
@@ -109,7 +113,8 @@ namespace DataProvider.Models.Service
             SqlParameter pServiceAdminSid = new SqlParameter() { ParameterName = "service_admin_sid", SqlValue = serviceAdminSid, SqlDbType = SqlDbType.VarChar };
             SqlParameter pServiceEngeneerSid = new SqlParameter() { ParameterName = "service_engeneer_sid_list", SqlValue = serviceEngeneerSid, SqlDbType = SqlDbType.NVarChar };
             SqlParameter pPlaned = new SqlParameter() { ParameterName = "planed", SqlValue = planed, SqlDbType = SqlDbType.Bit };
-            var dt = Db.UnitProg.ExecuteQueryStoredProcedure("get_service_claim_list", pMonth, pIdCity, pAddress, pIdClient, pServiceAdminSid, pServiceEngeneerSid, pPlaned);
+            SqlParameter pSeted = new SqlParameter() { ParameterName = "seted", SqlValue = seted, SqlDbType = SqlDbType.Bit };
+            var dt = Db.UnitProg.ExecuteQueryStoredProcedure("get_service_claim_list", pMonth, pIdCity, pAddress, pIdClient, pServiceAdminSid, pServiceEngeneerSid, pPlaned, pSeted);
 
             var lst = new List<PlanServiceIssue>();
 

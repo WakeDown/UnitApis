@@ -28,6 +28,7 @@ namespace DataProvider.Models.Service
         public string DeviceName { get; set; }
         public string EngeneerSid { get; set; }
         public string EngeneerName { get; set; }
+        public DateTime? DateCame { get; set; }
 
 
         public ServiceIssuePlan() { }
@@ -80,6 +81,7 @@ namespace DataProvider.Models.Service
             DeviceName = Db.DbHelper.GetValueString(row, "device_name");
             EngeneerSid = Db.DbHelper.GetValueString(row, "engeneer_sid");
             EngeneerName = Db.DbHelper.GetValueString(row, "engeneer_name");
+            DateCame = Db.DbHelper.GetValueDateTimeOrNull(row, "date_came");
         }
 
         public void Save()
@@ -151,7 +153,7 @@ namespace DataProvider.Models.Service
             //}
         }
 
-        public static IEnumerable<ServiceIssuePlan> GetListUnitProg(DateTime periodStart, DateTime periodEnd, int? idCity = null, int? idClient = null, int? idContract =null, string address = null, string engeneerSid = null)
+        public static IEnumerable<ServiceIssuePlan> GetListUnitProg(DateTime periodStart, DateTime periodEnd, int? idCity = null, int? idClient = null, int? idContract =null, string address = null, string engeneerSid = null, bool? done = null)
         {
             SqlParameter pPeriodStart = new SqlParameter() { ParameterName = "period_start", SqlValue = periodStart, SqlDbType = SqlDbType.Date };
             SqlParameter pPeriodEnd = new SqlParameter() { ParameterName = "period_end", SqlValue = periodEnd, SqlDbType = SqlDbType.Date };
@@ -160,7 +162,8 @@ namespace DataProvider.Models.Service
             SqlParameter pIdCity = new SqlParameter() { ParameterName = "id_city", SqlValue = idCity, SqlDbType = SqlDbType.Int };
             SqlParameter pIdClient = new SqlParameter() { ParameterName = "id_client", SqlValue = idClient, SqlDbType = SqlDbType.Int };
             SqlParameter pIdContract = new SqlParameter() { ParameterName = "id_contract", SqlValue = idContract, SqlDbType = SqlDbType.Int };
-            var dt = Db.Service.ExecuteQueryStoredProcedure("service_issue_plan_get_list_unit_prog", pPeriodStart, pPeriodEnd, pEngeneerSid, pIdCity, pIdClient, pIdContract, pAddress);
+                SqlParameter pDone = new SqlParameter() { ParameterName = "done", SqlValue = done, SqlDbType = SqlDbType.Bit };
+            var dt = Db.Service.ExecuteQueryStoredProcedure("service_issue_plan_get_list_unit_prog", pPeriodStart, pPeriodEnd, pEngeneerSid, pIdCity, pIdClient, pIdContract, pAddress, pDone);
 
             var lst = new List<ServiceIssuePlan>();
 
@@ -244,5 +247,11 @@ namespace DataProvider.Models.Service
             return list;
         }
 
+        public static void DeleteIssueItem(int[] planIdList, string curUserSid)
+        {
+            SqlParameter pIdList = new SqlParameter() { ParameterName = "id_list", SqlValue = String.Join(",",planIdList), SqlDbType = SqlDbType.NVarChar };
+            SqlParameter pDeleterSid = new SqlParameter() { ParameterName = "deleter_sid", SqlValue = curUserSid, SqlDbType = SqlDbType.VarChar };
+            var dt = Db.Service.ExecuteQueryStoredProcedure("service_issue_plan_close", pDeleterSid, pIdList);
+        }
     }
 }

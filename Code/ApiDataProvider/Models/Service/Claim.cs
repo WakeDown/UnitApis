@@ -1248,7 +1248,7 @@ namespace DataProvider.Models.Service
             }
         }
 
-        public static async Task<ListResult<Claim>> GetListAsync(AdUser user, string adminSid = null, string engeneerSid = null, DateTime? dateStart = null, DateTime? dateEnd = null, int? topRows = null, string managerSid = null, string techSid = null, string serialNum = null, int? idDevice = null, bool? activeClaimsOnly = false, int? idClaimState = null, int? clientId = null, string clientSdNum = null, int? claimId = null, string deviceName = null, int? pageNum = null)
+        public static async Task<ListResult<Claim>> GetListAsync(AdUser user, string adminSid = null, string engeneerSid = null, DateTime? dateStart = null, DateTime? dateEnd = null, int? topRows = null, string managerSid = null, string techSid = null, string serialNum = null, int? idDevice = null, bool? activeClaimsOnly = false, int? idClaimState = null, int? clientId = null, string clientSdNum = null, int? claimId = null, string deviceName = null, int? pageNum = null, string groupStates = null)
         {
             if (user.Is(AdGroup.ServiceAdmin)) { adminSid = user.Sid; }
             if (user.Is(AdGroup.ServiceEngeneer)) engeneerSid = user.Sid;
@@ -1275,7 +1275,8 @@ SqlParameter pServAdminSid = new SqlParameter() { ParameterName = "admin_sid", S
             SqlParameter pclaimId = new SqlParameter() { ParameterName = "claim_id", SqlValue = claimId, SqlDbType = SqlDbType.Int };
             SqlParameter pDeviceName = new SqlParameter() { ParameterName = "device_name", SqlValue = deviceName, SqlDbType = SqlDbType.NVarChar };
             SqlParameter pPageNum = new SqlParameter() { ParameterName = "page_num", SqlValue = pageNum, SqlDbType = SqlDbType.Int };
-            var dt = Db.Service.ExecuteQueryStoredProcedure("get_claim_list", pServAdminSid, pServEngeneerSid, pDateStart, pDateEnd, pTopRows, pManagerSid, pTechSid, pSerialNum, pIdDevice, pActiveClaimsOnly, pIdClaimState, pClientId, pClientSdNum, pclaimId, pDeviceName, pPageNum);
+            SqlParameter pGroupStates = new SqlParameter() { ParameterName = "group_state_list", SqlValue = groupStates, SqlDbType = SqlDbType.NVarChar };
+            var dt = Db.Service.ExecuteQueryStoredProcedure("get_claim_list", pServAdminSid, pServEngeneerSid, pDateStart, pDateEnd, pTopRows, pManagerSid, pTechSid, pSerialNum, pIdDevice, pActiveClaimsOnly, pIdClaimState, pClientId, pClientSdNum, pclaimId, pDeviceName, pPageNum, pGroupStates);
 
             int cnt = 0;
             var lst = new List<Claim>();

@@ -15,5 +15,10 @@ namespace DataProvider.Controllers.Service
         {
             return ClaimState.GetFilterList();
         }
+
+        public IEnumerable<ClaimStateGroup> GetGroupFilterList()
+        {
+            return ClaimStateGroup.GetFilterList();
+        }
     }
 }
