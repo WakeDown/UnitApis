@@ -189,7 +189,7 @@ namespace DataProvider.Models.Service
 
             Contractor = new Contractor() { Id = Db.DbHelper.GetValueIntOrDefault(row, "id_contractor"), Name = Db.DbHelper.GetValueString(row, "contractor_name"), FullName = Db.DbHelper.GetValueString(row, "contractor_full_name") };
             Contract = new Contract() { Id = Db.DbHelper.GetValueIntOrDefault(row, "id_contract"), Number = Db.DbHelper.GetValueString(row, "contract_num") };
-            Device = new Device() { Id = Db.DbHelper.GetValueIntOrDefault(row, "id_device"), FullName = Db.DbHelper.GetValueString(row, "device_name"), SerialNum = Db.DbHelper.GetValueString(row, "device_serial_num") };
+            Device = new Device() { Id = Db.DbHelper.GetValueIntOrDefault(row, "id_device"), FullName = Db.DbHelper.GetValueString(row, "device_name"), SerialNum = Db.DbHelper.GetValueString(row, "device_serial_num"), ObjectName = Db.DbHelper.GetValueString(row, "object_name"), Address = Db.DbHelper.GetValueString(row, "address"), ContactName = Db.DbHelper.GetValueString(row, "contact_name"), Descr = Db.DbHelper.GetValueString(row, "c2d_comment"), CityName = Db.DbHelper.GetValueString(row, "city_name") };
 
             Manager = new EmployeeSm() { AdSid = CurManagerSid , DisplayName = Db.DbHelper.GetValueString(row, "manager_name") };
             Admin = new EmployeeSm() { AdSid = CurAdminSid, DisplayName = Db.DbHelper.GetValueString(row, "admin_name") };
@@ -207,7 +207,7 @@ namespace DataProvider.Models.Service
             {
                 Contractor = new Contractor(Contractor.Id);
                 Contract = new Contract(Contract.Id);
-                Device = new Device(Device.Id);
+                Device = new Device(Device.Id, Contract.Id);
                 if (IdWorkType.HasValue && IdWorkType.Value > 0) WorkType = new WorkType(IdWorkType.Value);
                 State = new ClaimState(Db.DbHelper.GetValueIntOrDefault(row, "id_claim_state"));
             }
@@ -606,9 +606,9 @@ namespace DataProvider.Models.Service
                     ServiceSheet4Save.Save("TECHWORK");
                     if (ServiceSheet4Save.ProcessEnabled && ServiceSheet4Save.DeviceEnabled)
                     {
-                        //nextState = new ClaimState("TECHDONE");
-                        ////Сначала сохраняем промежуточный статус
-                        //SaveStateStep(nextState.Id);
+                        nextState = new ClaimState("TECHDONE");
+                        //Сначала сохраняем промежуточный статус
+                        SaveStateStep(nextState.Id);
                         saveStateInfo = false;
                         nextState = new ClaimState("DONE");
 
@@ -1248,7 +1248,7 @@ namespace DataProvider.Models.Service
             }
         }
 
-        public static async Task<ListResult<Claim>> GetListAsync(AdUser user, string adminSid = null, string engeneerSid = null, DateTime? dateStart = null, DateTime? dateEnd = null, int? topRows = null, string managerSid = null, string techSid = null, string serialNum = null, int? idDevice = null, bool? activeClaimsOnly = false, int? idClaimState = null, int? clientId = null, string clientSdNum = null, int? claimId = null, string deviceName = null, int? pageNum = null, string groupStates = null)
+        public static async Task<ListResult<Claim>> GetListAsync(AdUser user, string adminSid = null, string engeneerSid = null, DateTime? dateStart = null, DateTime? dateEnd = null, int? topRows = null, string managerSid = null, string techSid = null, string serialNum = null, int? idDevice = null, bool? activeClaimsOnly = false, int? idClaimState = null, int? clientId = null, string clientSdNum = null, int? claimId = null, string deviceName = null, int? pageNum = null, string groupStates = null, string address = null)
         {
             if (user.Is(AdGroup.ServiceAdmin)) { adminSid = user.Sid; }
             if (user.Is(AdGroup.ServiceEngeneer)) engeneerSid = user.Sid;
@@ -1276,7 +1276,8 @@ SqlParameter pServAdminSid = new SqlParameter() { ParameterName = "admin_sid", S
             SqlParameter pDeviceName = new SqlParameter() { ParameterName = "device_name", SqlValue = deviceName, SqlDbType = SqlDbType.NVarChar };
             SqlParameter pPageNum = new SqlParameter() { ParameterName = "page_num", SqlValue = pageNum, SqlDbType = SqlDbType.Int };
             SqlParameter pGroupStates = new SqlParameter() { ParameterName = "group_state_list", SqlValue = groupStates, SqlDbType = SqlDbType.NVarChar };
-            var dt = Db.Service.ExecuteQueryStoredProcedure("get_claim_list", pServAdminSid, pServEngeneerSid, pDateStart, pDateEnd, pTopRows, pManagerSid, pTechSid, pSerialNum, pIdDevice, pActiveClaimsOnly, pIdClaimState, pClientId, pClientSdNum, pclaimId, pDeviceName, pPageNum, pGroupStates);
+            SqlParameter pAddress = new SqlParameter() { ParameterName = "address", SqlValue = address, SqlDbType = SqlDbType.NVarChar };
+            var dt = Db.Service.ExecuteQueryStoredProcedure("get_claim_list", pServAdminSid, pServEngeneerSid, pDateStart, pDateEnd, pTopRows, pManagerSid, pTechSid, pSerialNum, pIdDevice, pActiveClaimsOnly, pIdClaimState, pClientId, pClientSdNum, pclaimId, pDeviceName, pPageNum, pGroupStates, pAddress);
 
             int cnt = 0;
             var lst = new List<Claim>();
