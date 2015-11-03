@@ -82,51 +82,56 @@ namespace DataProvider.Models.Service
             var claim = new Claim(idClaim, true, true);
             var device = new Device(claim.IdDevice, claim.IdContract);
             var lastServiceSheet = claim.GetLastServiceSheet();
-            var zipClaim = new ZipClaim();
-            zipClaim.IdDevice = claim.IdDevice;
-            zipClaim.SerialNum = claim.Device.SerialNum;
-            zipClaim.DeviceModel = claim.Device.ModelName;
-            zipClaim.Contractor = claim.ContractorName;
-            zipClaim.IdCity = device.IdCity;
-            zipClaim.City = device.CityName;
-            zipClaim.Address = device.Address;
-            zipClaim.Descr = "Заявка создана автоматически из системы Сервис";
-            zipClaim.Counter = lastServiceSheet.CounterMono;
-            zipClaim.CounterColour = lastServiceSheet.CounterColor;
-            zipClaim.IdContractor = claim.IdContractor;
-            zipClaim.IdServiceEngeneer = UserUnitProg.GetUserId(lastServiceSheet.EngeneerSid);
-            zipClaim.IdEngeneerConclusion = lastServiceSheet.DeviceEnabled? 1 : 2;
-            zipClaim.IdManager = claim.Contract.ManagerIdUnitProg;
-            zipClaim.IdServiceAdmin = UserUnitProg.GetUserId(lastServiceSheet.AdminSid);
-            zipClaim.ServiceDeskNum = claim.Id.ToString();
-            zipClaim.ObjectName = device.ObjectName;
-            zipClaim.ContractNum = claim.Contract.Number;
-            zipClaim.ContractType = claim.Contract.TypeName;
-            zipClaim.ContractorSdNum = claim.ClientSdNum;
-            zipClaim.ServiceIdServSheet = lastServiceSheet.Id.ToString();
-            zipClaim.ServiceIdClaim = claim.Id.ToString();
-
-            zipClaim.CurUserAdSid = creatorSid;
-            zipClaim.SaveUnitProg();
-
             var zipItemList = lastServiceSheet.GetOrderedZipItemList(null);
 
-            if (zipItemList != null && zipItemList.Any())
+            if (zipItemList.Any())//Если ЗИПа нет то заявка не создается
             {
-                foreach (var item in zipItemList)
+                var zipClaim = new ZipClaim();
+                zipClaim.IdDevice = claim.IdDevice;
+                zipClaim.SerialNum = claim.Device.SerialNum;
+                zipClaim.DeviceModel = claim.Device.ModelName;
+                zipClaim.Contractor = claim.ContractorName;
+                zipClaim.IdCity = device.IdCity;
+                zipClaim.City = device.CityName;
+                zipClaim.Address = device.Address;
+                zipClaim.Descr = "Заявка создана автоматически из системы Сервис";
+                zipClaim.Counter = lastServiceSheet.CounterMono;
+                zipClaim.CounterColour = lastServiceSheet.CounterColor;
+                zipClaim.IdContractor = claim.IdContractor;
+                zipClaim.IdServiceEngeneer = UserUnitProg.GetUserId(lastServiceSheet.EngeneerSid);
+                zipClaim.IdEngeneerConclusion = lastServiceSheet.DeviceEnabled ? 1 : 2;
+                zipClaim.IdManager = claim.Contract.ManagerIdUnitProg;
+                zipClaim.IdServiceAdmin = UserUnitProg.GetUserId(lastServiceSheet.AdminSid);
+                zipClaim.ServiceDeskNum = claim.Id.ToString();
+                zipClaim.ObjectName = device.ObjectName;
+                zipClaim.ContractNum = claim.Contract.Number;
+                zipClaim.ContractType = claim.Contract.TypeName;
+                zipClaim.ContractorSdNum = claim.ClientSdNum;
+                zipClaim.ServiceIdServSheet = lastServiceSheet.Id.ToString();
+                zipClaim.ServiceIdClaim = claim.Id.ToString();
+
+                zipClaim.CurUserAdSid = creatorSid;
+                zipClaim.SaveUnitProg();
+
+
+
+                if (zipItemList != null && zipItemList.Any())
                 {
-                    item.ClaimId = zipClaim.Id;
-                    item.CurUserAdSid = creatorSid;
-                    item.SaveUnitProg();
+                    foreach (var item in zipItemList)
+                    {
+                        item.ClaimId = zipClaim.Id;
+                        item.CurUserAdSid = creatorSid;
+                        item.SaveUnitProg();
+                    }
                 }
+
+                zipClaim.SetSendStateUnitProg();
+
+                lastServiceSheet.UnitProgZipClaimId = zipClaim.Id;
+                lastServiceSheet.SaveUnitProgZipClaimId();
+                lastServiceSheet.CurUserAdSid = creatorSid;
+                lastServiceSheet.SetOrderedZipItemListRealyOrdered();
             }
-
-            zipClaim.SetSendStateUnitProg();
-
-            lastServiceSheet.UnitProgZipClaimId = zipClaim.Id;
-            lastServiceSheet.SaveUnitProgZipClaimId();
-            lastServiceSheet.CurUserAdSid = creatorSid;
-            lastServiceSheet.SetOrderedZipItemListRealyOrdered();
 
         }
 
