@@ -39,7 +39,7 @@ namespace DataProvider.Models.Stuff
             Id = Db.DbHelper.GetValueInt(row["id"]);
             Name = row["name"].ToString();
             ParentDepartment = new Department() { Id = Db.DbHelper.GetValueInt(row["id_parent"]), Name = row["parent"].ToString() };
-            Chief = new Employee() { Id = Db.DbHelper.GetValueInt(row["id_chief"]), DisplayName = row["chief"].ToString() };
+            Chief = new Employee() { Id = Db.DbHelper.GetValueInt(row["id_chief"]), DisplayName = row["chief"].ToString(), AdSid = Db.DbHelper.GetValueString(row, "chief_sid") };
             EmployeeCount = Db.DbHelper.GetValueIntOrDefault(row["emp_count"]);
             Hidden = row.Table.Columns.Contains("hidden") && Db.DbHelper.GetValueBool(row["hidden"]);
         }
