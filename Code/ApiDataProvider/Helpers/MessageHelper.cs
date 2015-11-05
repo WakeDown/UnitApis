@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Mail;
 using System.Web;
 using DataProvider.Models.SpeCalc;
@@ -64,13 +66,14 @@ namespace DataProvider.Helpers
 
             MailMessage mail = new MailMessage();
 
-            SmtpClient client = new SmtpClient();
-            client.Port = 25;
+            SmtpClient client = new SmtpClient("smtp.office365.com",587);
             client.DeliveryMethod = SmtpDeliveryMethod.Network;
+            client.EnableSsl = true;
+            client.Credentials = new NetworkCredential("delivery@unitgroup.ru", "pRgvD7TL");
 
-            mail.From = mailFrom;
+            mail.From = new MailAddress("delivery@unitgroup.ru", String.Empty, System.Text.Encoding.UTF8);
 
-            client.EnableSsl = false;
+            //client.EnableSsl = false;
 
             if (ConfigurationManager.AppSettings["Environment"].Equals("Production") && !isTest)
             {
@@ -121,8 +124,8 @@ namespace DataProvider.Helpers
             mail.Subject = subject;
             mail.Body = body;
             mail.IsBodyHtml = isBodyHtml;
-
-            client.Host = "ums-1";
+            client.SendCompleted += new SendCompletedEventHandler(SendCompletedCallback);
+            
 
             if (file != null && file.Data.Length > 0)
             {
@@ -133,13 +136,38 @@ namespace DataProvider.Helpers
 
             try
             {
-                client.Send(mail);
+                client.SendAsync(mail, mail);
             }
             catch (Exception ex)
             {
                 
                 throw new Exception(String.Format("Сообщение не было отправлено. Текст ошибки - {0}", ex.Message));
             }
+        }
+
+        private static void SendCompletedCallback(object sender, AsyncCompletedEventArgs e)
+        {
+            // Get the message we sent
+            MailMessage msg = (MailMessage)e.UserState;
+
+            if (e.Cancelled)
+            {
+                // prompt user with "send cancelled" message 
+            }
+            if (e.Error != null)
+            {
+                // prompt user with error message 
+            }
+            else
+            {
+                // prompt user with message sent!
+                // as we have the message object we can also display who the message
+                // was sent to etc 
+            }
+
+            // finally dispose of the message
+            if (msg != null)
+                msg.Dispose();
         }
     }
 }

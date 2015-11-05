@@ -121,11 +121,12 @@ namespace DataProvider.Models.Stuff
             }
         }
 
-        public static IEnumerable<Department> GetList(bool getEmpCount = false, bool userCanViewHiddenDeps = false, bool? hasAdAccount = null)
+        public static IEnumerable<Department> GetList(bool getEmpCount = false, bool userCanViewHiddenDeps = false, bool? hasAdAccount = null, string employeeSid = null)
         {
             SqlParameter pGetEmpCount = new SqlParameter() { ParameterName = "get_emp_count", SqlValue = getEmpCount, SqlDbType = SqlDbType.Bit };
             SqlParameter pHasAdAccount = new SqlParameter() { ParameterName = "has_ad_account", SqlValue = hasAdAccount, SqlDbType = SqlDbType.Bit };
-            var dt = Db.Stuff.ExecuteQueryStoredProcedure("get_department", pGetEmpCount, pHasAdAccount);
+            SqlParameter pEmployeeSid = new SqlParameter() { ParameterName = "employee_sid", SqlValue = employeeSid, SqlDbType = SqlDbType.VarChar };
+            var dt = Db.Stuff.ExecuteQueryStoredProcedure("get_department", pGetEmpCount, pHasAdAccount, pEmployeeSid);
 
             var lst = new List<Department>();
 

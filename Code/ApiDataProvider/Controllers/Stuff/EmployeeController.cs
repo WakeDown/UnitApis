@@ -279,6 +279,13 @@ namespace DataProvider.Controllers.Stuff
             var list = Employee.GetSubordinatesSimple(sid).ToList();
 
             return list;
-        } 
+        }
+
+        public IEnumerable<Department> GetWorkingDepartmentList(string sid)
+        {
+            var list = Department.GetList(employeeSid:sid);
+
+            return list;
+        }
     }
 }

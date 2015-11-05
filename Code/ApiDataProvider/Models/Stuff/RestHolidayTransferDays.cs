@@ -100,7 +100,7 @@ namespace DataProvider.Models.Stuff
             if (!yearTo.HasValue)yearTo = DateTime.Now.Year;
 
             SqlParameter pYearFrom = new SqlParameter() { ParameterName = "year_from", SqlValue = yearFrom, SqlDbType = SqlDbType.Int };
-            SqlParameter pYearTo = new SqlParameter() { ParameterName = "year_from", SqlValue = yearTo, SqlDbType = SqlDbType.Int };
+            SqlParameter pYearTo = new SqlParameter() { ParameterName = "year_to", SqlValue = yearTo, SqlDbType = SqlDbType.Int };
             SqlParameter pCreatorAdSid = new SqlParameter() { ParameterName = "creator_sid", SqlValue = creatorSid, SqlDbType = SqlDbType.VarChar };
 
             var dt = Db.Stuff.ExecuteQueryStoredProcedure("clone_rest_holiday_transfer_days", pYearFrom, pYearTo, pCreatorAdSid);
