@@ -51,7 +51,8 @@ namespace DataProvider.Objects
             list.Add(new AdUserGroup(AdGroup.ServiceClaimContractorAccess, "S-1-5-21-1970802976-3466419101-4042325969-4092", "ServiceClaimContractorAccess"));
             list.Add(new AdUserGroup(AdGroup.ZipClaimAddressChange, "S-1-5-21-1970802976-3466419101-4042325969-3633", "zipclaim-address-change"));
             list.Add(new AdUserGroup(AdGroup.ServiceMobileUser, "S-1-5-21-1970802976-3466419101-4042325969-6605", "ServiceMobileUser"));
-            list.Add(new AdUserGroup(AdGroup.ServiceZipClaimConfirm, "S-1-5-21-1970802976-3466419101-4042325969-6625", "ServiceZipClaimConfirm")); 
+            list.Add(new AdUserGroup(AdGroup.ServiceZipClaimConfirm, "S-1-5-21-1970802976-3466419101-4042325969-6625", "ServiceZipClaimConfirm"));
+            list.Add(new AdUserGroup(AdGroup.AddNewClaim, "S-1-5-21-1970802976-3466419101-4042325969-6645", "AddNewClaim"));
             //---
             list.Add(new AdUserGroup(AdGroup.ServiceClaimClassifier, "S-1-5-21-1970802976-3466419101-4042325969-4081", "ServiceClaimClassifier"));
             list.Add(new AdUserGroup(AdGroup.ServiceClaimClientAccess, "S-1-5-21-1970802976-3466419101-4042325969-4082", "ServiceClaimClientAccess"));

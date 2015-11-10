@@ -194,6 +194,7 @@
     <Compile Include="Helpers\StringHelper.cs" />
     <Compile Include="Models\MobileUser.cs" />
     <Compile Include="Models\Service\ClaimStateGroup.cs" />
+    <Compile Include="Models\Service\EngeneerNotSeted.cs" />
     <Compile Include="Models\Service\PlanServiceCame.cs" />
     <Compile Include="Models\Service\PlanServiceIssue.cs" />
     <Compile Include="Controllers\Service\ServiceIssueController.cs" />

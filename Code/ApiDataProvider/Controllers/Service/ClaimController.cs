@@ -51,7 +51,7 @@ namespace DataProvider.Controllers.Service
             return model;
         }
 
-        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin, AdGroup.ServiceTech, AdGroup.ServiceControler, AdGroup.ServiceAdmin, AdGroup.ServiceManager })]
+        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin, AdGroup.ServiceTech, AdGroup.ServiceControler, AdGroup.ServiceAdmin, AdGroup.ServiceManager, AdGroup.ServiceEngeneer })]
         public IEnumerable<Claim2ClaimState> GetStateHistory(int? id, int? topRows)
         {
            if (!id.HasValue) return new[] { new Claim2ClaimState() };
@@ -79,7 +79,7 @@ namespace DataProvider.Controllers.Service
         //    return response;
         //}
 
-        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin, AdGroup.ServiceControler, AdGroup.ServiceTech, AdGroup.ServiceAdmin, AdGroup.ServiceManager })]
+        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin, AdGroup.ServiceControler, AdGroup.ServiceTech, AdGroup.ServiceAdmin, AdGroup.ServiceManager, AdGroup.ServiceEngeneer })]
         public HttpResponseMessage GoBack(Claim model)
         {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
@@ -123,7 +123,7 @@ namespace DataProvider.Controllers.Service
         //    return response;
         //}
 
-        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin, AdGroup.ServiceControler, AdGroup.ServiceTech, AdGroup.ServiceAdmin, AdGroup.ServiceManager })]
+        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin, AdGroup.ServiceControler, AdGroup.ServiceTech, AdGroup.ServiceAdmin, AdGroup.ServiceManager, AdGroup.ServiceEngeneer })]
         public HttpResponseMessage Go(Claim model)
         {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
@@ -143,7 +143,7 @@ namespace DataProvider.Controllers.Service
             return response;
         }
 
-        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin, AdGroup.ServiceControler, AdGroup.ServiceTech, AdGroup.ServiceAdmin, AdGroup.ServiceManager })]
+        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin, AdGroup.ServiceControler, AdGroup.ServiceTech, AdGroup.ServiceAdmin, AdGroup.ServiceManager, AdGroup.ServiceEngeneer })]
         public HttpResponseMessage Save(Claim model)
         {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);

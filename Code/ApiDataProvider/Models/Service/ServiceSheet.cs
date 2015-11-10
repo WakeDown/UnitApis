@@ -56,6 +56,14 @@ namespace DataProvider.Models.Service
         public bool? IsPayed { get; set; }
         public string NotPayedComment { get; set; }
         public string IsPayedCreatorSid { get; set; }
+        /// <summary>
+        /// Для сохранения серийного номера аппарата если он без номера (БН)
+        /// </summary>
+        public string RealSerialNum { get; set; }
+        /// <summary>
+        /// Признак чтобы привязвать оборудвание без номра (БН) к существующему3 ели такой уже есть
+        /// </summary>
+        public bool? ForceSaveRealSerialNum { get; set; }
 
         public ServiceSheet() { }
 
@@ -107,6 +115,8 @@ namespace DataProvider.Models.Service
             IsPayed = Db.DbHelper.GetValueBoolOrNull(row, "is_payed");
             NotPayedComment = Db.DbHelper.GetValueString(row, "not_payed_comment");
             IsPayedCreatorSid = Db.DbHelper.GetValueString(row, "is_payed_creator_sid");
+            RealSerialNum = Db.DbHelper.GetValueString(row, "real_serial_num");
+            ForceSaveRealSerialNum = Db.DbHelper.GetValueBoolOrNull(row, "force_save_real_serial_num");
 
             if (fillNames)
             {
@@ -160,8 +170,10 @@ namespace DataProvider.Models.Service
             SqlParameter pAdminSid = new SqlParameter() { ParameterName = "admin_sid", SqlValue = AdminSid, SqlDbType = SqlDbType.VarChar };
             SqlParameter pTimeOnWorkMinutes = new SqlParameter() { ParameterName = "time_on_work_minutes", SqlValue = TimeOnWorkMinutes, SqlDbType = SqlDbType.Int };
             SqlParameter pZipClientGivenInstall = new SqlParameter() { ParameterName = "zip_client_given_install", SqlValue = ZipClientGivenInstall, SqlDbType = SqlDbType.Bit };
+            SqlParameter pRealSerialNum = new SqlParameter() { ParameterName = "real_serial_num", SqlValue = RealSerialNum, SqlDbType = SqlDbType.NVarChar };
+            SqlParameter pForceSaveRealSerialNum = new SqlParameter() { ParameterName = "force_save_real_serial_num", SqlValue = ForceSaveRealSerialNum, SqlDbType = SqlDbType.Bit };
 
-            var dt = Db.Service.ExecuteQueryStoredProcedure("save_service_sheet", pId, pProcessEnabled, pDeviceEnabled, pZipClaim, pZipClaimNumber, pCounterMono, pCounterColor, pCounterTotal, pNoCounter, pCounterUnavailable, pDescr, pCreatorAdSid, pCounterDescr, pEngeneerSid, pAdminSid, pIdServiceIssue, pIdClaim, pTimeOnWorkMinutes, pWorkTypeId, pZipClientGivenInstall);
+            var dt = Db.Service.ExecuteQueryStoredProcedure("save_service_sheet", pId, pProcessEnabled, pDeviceEnabled, pZipClaim, pZipClaimNumber, pCounterMono, pCounterColor, pCounterTotal, pNoCounter, pCounterUnavailable, pDescr, pCreatorAdSid, pCounterDescr, pEngeneerSid, pAdminSid, pIdServiceIssue, pIdClaim, pTimeOnWorkMinutes, pWorkTypeId, pZipClientGivenInstall, pRealSerialNum, pForceSaveRealSerialNum);
             int id = 0;
             if (dt.Rows.Count > 0)
             {

@@ -91,7 +91,7 @@ namespace DataProvider.Models.Service
             {
                 access = true;
             }
-            else if (user.Is(AdGroup.ServiceManager) && (CurManagerSid == user.Sid || SpecialistSid == user.Sid))
+            else if (user.Is(AdGroup.ServiceManager, AdGroup.AddNewClaim) && (CurManagerSid == user.Sid || SpecialistSid == user.Sid))
             {
                 access = true;
             }
@@ -196,7 +196,7 @@ namespace DataProvider.Models.Service
             Tech = new EmployeeSm() { AdSid = CurTechSid, DisplayName = Db.DbHelper.GetValueString(row, "tech_name") };
             Engeneer = new EmployeeSm() { AdSid = CurEngeneerSid, DisplayName = Db.DbHelper.GetValueString(row, "engeneer_name") };
             Specialist = new EmployeeSm() { AdSid = SpecialistSid, DisplayName = Db.DbHelper.GetValueString(row, "specialist_name") };
-            Changer = new EmployeeSm() { AdSid = ChangerSid, DisplayName = Db.DbHelper.GetValueString(row, "specialist_name") };
+            Changer = new EmployeeSm() { AdSid = ChangerSid, DisplayName = Db.DbHelper.GetValueString(row, "changer_name") };
 
             if (IdWorkType.HasValue && IdWorkType.Value > 0)
                 WorkType = new WorkType() {Id= IdWorkType.Value, Name = Db.DbHelper.GetValueString(row, "work_type_name"), SysName = Db.DbHelper.GetValueString(row, "work_type_sys_name"), ZipInstall = Db.DbHelper.GetValueBool(row, "work_type_zip_install"), ZipOrder = Db.DbHelper.GetValueBool(row, "work_type_zip_order") };
@@ -267,6 +267,22 @@ namespace DataProvider.Models.Service
             return id;
         }
         /// <summary>
+        /// Проверка существует ли активная заявка для данного аппарата
+        /// </summary>
+        /// <returns></returns>
+        public bool ExistsActive()
+        {
+            SqlParameter pId = new SqlParameter() { ParameterName = "id_device", SqlValue = IdDevice, SqlDbType = SqlDbType.Int };
+            var dt = Db.Service.ExecuteQueryStoredProcedure("check_active_claims", pId);
+            bool exists = false;
+            if (dt.Rows.Count > 0)
+            {
+                exists = Db.DbHelper.GetValueBool(dt.Rows[0], "exists");
+            }
+            return exists;
+        }
+
+        /// <summary>
         /// Сохранение заявки
         /// </summary>
         /// <param name="firstState">Передается если нужно чтобы заявка сохранилась с другим первым статусом</param>
@@ -277,6 +293,15 @@ namespace DataProvider.Models.Service
             //if (State == null) State = ClaimState.GetFirstState();
             //if (Admin == null) Admin = new EmployeeSm();
             //if (Engeneer == null) Engeneer = new EmployeeSm();
+
+            if (Device == null) { Device = new Device(); }
+            else if (Device.Id > 0)
+            {
+                IdDevice = Device.Id;
+            }
+
+            if (isNew && ExistsActive()) throw new Exception("Для данного аппарата существует незавершенная заявка. Сохранение заявки не было завершено!");
+
             if (Contract == null) { Contract = new Contract(); }
             else if (Contract.Id > 0)
             {
@@ -290,11 +315,7 @@ namespace DataProvider.Models.Service
             {
                 IdContractor = Contractor.Id;
             }
-            if (Device == null) { Device = new Device(); }
-            else if (Device.Id > 0)
-            {
-                IdDevice = Device.Id;
-            }
+            
             if (isNew && IdContractor > 0 && IsNullOrEmpty(ContractorName))//Загрузка названия контрагента из Эталон
             {
                 Contractor = new Contractor(IdContractor);
@@ -385,6 +406,13 @@ namespace DataProvider.Models.Service
             return Id;
         }
 
+        public static void ChangeDeviceId(int claimId, int deviceid)
+        {
+            SqlParameter pIdClaim = new SqlParameter() { ParameterName = "id_claim", SqlValue = claimId, SqlDbType = SqlDbType.Int };
+            SqlParameter pIdDevice = new SqlParameter() { ParameterName = "id_device", SqlValue = deviceid, SqlDbType = SqlDbType.Int };
+            Db.Service.ExecuteQueryStoredProcedure("claim_change_device_id", pIdClaim, pIdDevice);
+        }
+
         public static void RemoteStateChange(int idClaim, string stateSysName, string creatorSid, string descr = null, int? idZipClaim = null)
         {
             var claim = new Claim(idClaim);
@@ -392,7 +420,8 @@ namespace DataProvider.Models.Service
             if (claim.Id > 0)
             {
                 var state = new ClaimState(stateSysName);
-                claim.SaveStateStep(state.Id, descr, idZipClaim: idZipClaim);
+                bool saveClaimCurrentState = !stateSysName.Equals("ZIPCL-CLOSED");
+                claim.SaveStateStep(state.Id, descr, idZipClaim: idZipClaim, saveClaimCurrentState: saveClaimCurrentState);
                 //if (stateSysName.ToUpper().Equals("ZIPCL-FAIL"))
                 //{
                 //    var nextState = new ClaimState("ZIPBUYCANCEL");
@@ -401,7 +430,7 @@ namespace DataProvider.Models.Service
             }
         }
 
-        public void SaveStateStep(int stateId, string descr = null, bool saveStateInfo = true, int? idZipClaim = null)
+        public void SaveStateStep(int stateId, string descr = null, bool saveStateInfo = true, int? idZipClaim = null, bool saveClaimCurrentState = true)
         {
             if (stateId == 0) throw new ArgumentException("Не указан статус для сохранения в лестнице статусов.");
             var c2Cs = new Claim2ClaimState();
@@ -424,7 +453,7 @@ namespace DataProvider.Models.Service
                     c2Cs.IdServiceSheet = ServiceSheet4Save.Id;
                 }
             }
-            c2Cs.Save();
+            c2Cs.Save(saveClaimCurrentState);
         }
 
         public void Clear(bool specialist = false, bool workType = false, bool engeneer = false, bool admin = false, bool tech = false, bool manager = false)
@@ -764,6 +793,26 @@ namespace DataProvider.Models.Service
                 if (ServiceSheet4Save == null || ServiceSheet4Save.IdClaim == 0)
                 {
                     throw new ArgumentException("Сервисный лист отсутствует. Операция не завершена!");
+                }
+                int? existsDeviceId;
+                if (Device.SerialNumIsExists(ServiceSheet4Save.RealSerialNum, out existsDeviceId))
+                {
+                    if (!ServiceSheet4Save.ForceSaveRealSerialNum.HasValue || !ServiceSheet4Save.ForceSaveRealSerialNum.Value)
+                    {
+                        throw new ItemExistsException(
+                            "Оборудование с таким серийным номером уже существует в списке оборудования. Сервисный лист не был сохранен!");
+                    }
+                    else
+                    {
+                        if (existsDeviceId.HasValue)
+                        {
+                            ChangeDeviceId(Id, existsDeviceId.Value);
+                        }
+                        else
+                        {
+                            throw new Exception("Указанный аппарат не имеет идентификатора. Сервисный лист не был сохранен!");
+                        }
+                    }
                 }
 
                 var cl = new Claim(Id);

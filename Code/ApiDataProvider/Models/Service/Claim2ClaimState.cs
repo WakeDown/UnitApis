@@ -64,7 +64,7 @@ namespace DataProvider.Models.Service
             //}
         }
 
-        public void Save()
+        public void Save(bool saveClaimCurrentState = true)
         {
             SqlParameter pIdClaim = new SqlParameter() { ParameterName = "id_claim", SqlValue = IdClaim, SqlDbType = SqlDbType.Int };
             SqlParameter pIdClaimState = new SqlParameter() { ParameterName = "id_claim_state", SqlValue = IdClaimState, SqlDbType = SqlDbType.Int };
@@ -92,7 +92,7 @@ namespace DataProvider.Models.Service
                             //SqlParameter pIdClaim2 = new SqlParameter() { ParameterName = "id_claim", SqlValue = IdClaim, SqlDbType = SqlDbType.Int };
                             //SqlParameter pIdClaimState2 = new SqlParameter() { ParameterName = "id_claim_state", SqlValue = IdClaimState, SqlDbType = SqlDbType.Int };
                             //SqlParameter pCreatorAdSid2 = new SqlParameter() { ParameterName = "creator_sid", SqlValue = CurUserAdSid, SqlDbType = SqlDbType.VarChar };
-                            Db.Stuff.ExecuteQueryStoredProcedure("set_claim_current_state", conn, tran, pIdClaim, pIdClaimState, pCreatorAdSid);
+                            if (saveClaimCurrentState)Db.Stuff.ExecuteQueryStoredProcedure("set_claim_current_state", conn, tran, pIdClaim, pIdClaimState, pCreatorAdSid);
                         }
                         tran.Commit();
                     }

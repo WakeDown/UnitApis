@@ -71,5 +71,13 @@ namespace DataProvider.Controllers.Service
             var list = Device.GetInfoList();
             return MathHelper.GetChecksum(list);
         }
+
+        [System.Web.Http.HttpGet]
+        public bool CheckSerialNumIsExists(string serialNum, int idClaim)
+        {
+            int? idDevice;
+            bool exists = Device.SerialNumIsExists(serialNum, out idDevice);
+            return exists;
+        }
     }
 }

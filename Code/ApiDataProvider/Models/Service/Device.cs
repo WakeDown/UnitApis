@@ -40,6 +40,20 @@ namespace DataProvider.Models.Service
 
         public bool? HasGuarantee { get; set; }
 
+        public bool? FakeSerialNum
+        {
+            get {
+                if (String.IsNullOrEmpty(SerialNum))
+                {
+                    return null;
+                }
+                else
+                {
+                  return SerialNum.StartsWith("БН");
+                }
+            }
+            
+        }
 
         public Device()
         {
@@ -161,6 +175,19 @@ namespace DataProvider.Models.Service
             }
 
             return lst;
+        }
+
+        public static bool SerialNumIsExists(string serialNum,out int? idDevice)
+        {
+            SqlParameter pSerialNum = new SqlParameter() { ParameterName = "serial_num", SqlValue = serialNum, SqlDbType = SqlDbType.NVarChar };
+            var dt = Db.Service.ExecuteQueryStoredProcedure("check_device_serial_num_is_exists", pSerialNum);
+            idDevice = null;
+            if (dt.Rows.Count > 0)
+            {
+                idDevice = Db.DbHelper.GetValueIntOrNull(dt.Rows[0], "id_device");
+            }
+
+            return idDevice != null;
         }
     }
 }

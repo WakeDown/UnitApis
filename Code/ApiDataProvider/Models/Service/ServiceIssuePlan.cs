@@ -105,12 +105,17 @@ namespace DataProvider.Models.Service
                     FillSelf(dt.Rows[0]);
                     throw new ItemExistsException($"Заявка №{IdServiceIssue} уже влючена в план на период {PeriodStart:dd.MM.yy} - {PeriodEnd:dd.MM.yy} пользователем {AdHelper.GetUserBySid(CreatorSid).DisplayName}");
                 }
+                if (Db.DbHelper.GetValueBool(dt.Rows[0], "engeneer_not_seted")) //Если не назначен инженер
+                {
+                    throw new EngeneerNotSeted("Не указан инженер");
+                }
             }
         }
 
         public static string SaveList(string curUserSid, IEnumerable<ServiceIssuePlan> list)
         {
-            int errCount = 0;
+            int existsCount = 0;
+            int engNotSet = 0;
             var idList = new List<int>();
 
             foreach (ServiceIssuePlan item in list)
@@ -123,7 +128,11 @@ namespace DataProvider.Models.Service
                 }
                 catch (ItemExistsException ex)
                 {
-                    errCount++;
+                    existsCount++;
+                }
+                catch (EngeneerNotSeted ex)
+                {
+                    engNotSet++;
                 }
             }
 

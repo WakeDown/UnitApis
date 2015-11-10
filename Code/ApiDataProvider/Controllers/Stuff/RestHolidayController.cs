@@ -114,7 +114,7 @@ namespace DataProvider.Controllers.Stuff
             return response;
         }
 
-        [AuthorizeAd(AdGroup.RestHolidayConfirm)]
+        //[AuthorizeAd(AdGroup.RestHolidayConfirm)]
         public HttpResponseMessage Confirm(int[] idArray)
         {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
@@ -133,7 +133,7 @@ namespace DataProvider.Controllers.Stuff
             return response;
         }
 
-        [AuthorizeAd(AdGroup.RestHolidayConfirm)]
+        //[AuthorizeAd(AdGroup.RestHolidayConfirm)]
         public HttpResponseMessage Confirm(string employeeSid, int year)
         {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
