@@ -79,5 +79,12 @@ namespace DataProvider.Controllers.Service
             bool exists = Device.SerialNumIsExists(serialNum, out idDevice);
             return exists;
         }
+
+        [System.Web.Http.HttpGet]
+        public IEnumerable<KeyValuePair<int, string>> GetModelSelectionList(string model)
+        {
+            var list = Device.GetModelSelectionList(model);
+            return list;
+        }
     }
 }

@@ -189,5 +189,18 @@ namespace DataProvider.Models.Service
 
             return idDevice != null;
         }
+
+        public static IEnumerable<KeyValuePair<int, string>> GetModelSelectionList(string model)
+        {
+            SqlParameter pModel = new SqlParameter() { ParameterName = "model_name", SqlValue = model, SqlDbType = SqlDbType.NVarChar };
+            var dt = Db.Service.ExecuteQueryStoredProcedure("device_model_get_list", pModel);
+            var list = new List<KeyValuePair<int, string>>();
+            if (dt.Rows.Count > 0)
+            {
+                list.AddRange(from DataRow row in dt.Rows select new KeyValuePair<int, string>(Db.DbHelper.GetValueIntOrDefault(row, "id_device_model"), Db.DbHelper.GetValueString(row, "model_name")));
+            }
+
+            return list;
+        }
     }
 }

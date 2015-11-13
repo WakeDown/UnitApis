@@ -54,6 +54,8 @@ namespace DataProvider.Models.Service
         public EmployeeSm Changer { get; set; }
         public int? CurServiceIssueId { get; set; }
         public int? IdServiceCame { get; set; }
+        public bool ContractUnknown { get; set; }
+        public bool DeviceUnknown { get; set; }
 
 
         public Claim() { }
@@ -186,10 +188,56 @@ namespace DataProvider.Models.Service
             CurServiceIssueId = Db.DbHelper.GetValueIntOrNull(row, "cur_service_issue_id");
             IdServiceCame = Db.DbHelper.GetValueIntOrNull(row, "id_service_came");
             IdState = Db.DbHelper.GetValueIntOrDefault(row, "id_claim_state");
+            ContractUnknown = Db.DbHelper.GetValueBool(row, "contract_unknown");
+            DeviceUnknown = Db.DbHelper.GetValueBool(row, "device_unknown");
+            Descr = Db.DbHelper.GetValueString(row, "descr");
 
             Contractor = new Contractor() { Id = Db.DbHelper.GetValueIntOrDefault(row, "id_contractor"), Name = Db.DbHelper.GetValueString(row, "contractor_name"), FullName = Db.DbHelper.GetValueString(row, "contractor_full_name") };
-            Contract = new Contract() { Id = Db.DbHelper.GetValueIntOrDefault(row, "id_contract"), Number = Db.DbHelper.GetValueString(row, "contract_num") };
-            Device = new Device() { Id = Db.DbHelper.GetValueIntOrDefault(row, "id_device"), FullName = Db.DbHelper.GetValueString(row, "device_name"), SerialNum = Db.DbHelper.GetValueString(row, "device_serial_num"), ObjectName = Db.DbHelper.GetValueString(row, "object_name"), Address = Db.DbHelper.GetValueString(row, "address"), ContactName = Db.DbHelper.GetValueString(row, "contact_name"), Descr = Db.DbHelper.GetValueString(row, "c2d_comment"), CityName = Db.DbHelper.GetValueString(row, "city_name") };
+            if (!ContractUnknown)
+            {
+                Contract = new Contract()
+                {
+                    Id = Db.DbHelper.GetValueIntOrDefault(row, "id_contract"),
+                    Number = Db.DbHelper.GetValueString(row, "contract_num")
+                };
+            }
+            else
+            {
+                Contract = new Contract()
+                {
+                    Id = 0,
+                    Number = "неизвестно"
+                };
+            }
+
+            if (!DeviceUnknown)
+            {
+                Device = new Device()
+                {
+                    Id = Db.DbHelper.GetValueIntOrDefault(row, "id_device"),
+                    FullName = Db.DbHelper.GetValueString(row, "device_name"),
+                    SerialNum = Db.DbHelper.GetValueString(row, "device_serial_num"),
+                    ObjectName = Db.DbHelper.GetValueString(row, "object_name"),
+                    Address = Db.DbHelper.GetValueString(row, "address"),
+                    ContactName = Db.DbHelper.GetValueString(row, "contact_name"),
+                    Descr = Db.DbHelper.GetValueString(row, "c2d_comment"),
+                    CityName = Db.DbHelper.GetValueString(row, "city_name")
+                };
+            }
+            else
+            {
+                Device = new Device()
+                {
+                    Id = 0,
+                    FullName = "неизвестно",
+                    SerialNum = "неизвестно",
+                    ObjectName = "неизвестно",
+                    Address = "неизвестно",
+                    ContactName = "неизвестно",
+                    Descr = "неизвестно",
+                    CityName = "неизвестно"
+                };
+            }
 
             Manager = new EmployeeSm() { AdSid = CurManagerSid , DisplayName = Db.DbHelper.GetValueString(row, "manager_name") };
             Admin = new EmployeeSm() { AdSid = CurAdminSid, DisplayName = Db.DbHelper.GetValueString(row, "admin_name") };
@@ -206,8 +254,8 @@ namespace DataProvider.Models.Service
             if (loadObj)
             {
                 Contractor = new Contractor(Contractor.Id);
-                Contract = new Contract(Contract.Id);
-                Device = new Device(Device.Id, Contract.Id);
+                if (!ContractUnknown)Contract = new Contract(Contract.Id);
+                if (!DeviceUnknown) Device = new Device(Device.Id, Contract.Id);
                 if (IdWorkType.HasValue && IdWorkType.Value > 0) WorkType = new WorkType(IdWorkType.Value);
                 State = new ClaimState(Db.DbHelper.GetValueIntOrDefault(row, "id_claim_state"));
             }
@@ -221,6 +269,7 @@ namespace DataProvider.Models.Service
                 Specialist = new EmployeeSm(SpecialistSid);
                 Changer = new EmployeeSm(ChangerSid);
             }
+
         }
 
         /// <summary>
@@ -360,6 +409,8 @@ namespace DataProvider.Models.Service
             SqlParameter pSerialNum = new SqlParameter() { ParameterName = "serial_num", SqlValue = Device.SerialNum, SqlDbType = SqlDbType.NVarChar };
             SqlParameter pCurServiceIssueId = new SqlParameter() { ParameterName = "cur_service_issue_id", SqlValue = CurServiceIssueId, SqlDbType = SqlDbType.Int };
             SqlParameter pIdServiceCame = new SqlParameter() { ParameterName = "id_service_came", SqlValue = IdServiceCame, SqlDbType = SqlDbType.Int };
+            SqlParameter pDeviceUnknown = new SqlParameter() { ParameterName = "device_unknown", SqlValue = DeviceUnknown, SqlDbType = SqlDbType.Bit };
+            SqlParameter pContractUnknown = new SqlParameter() { ParameterName = "contract_unknown", SqlValue = ContractUnknown, SqlDbType = SqlDbType.Bit };
             DataTable dt = new DataTable();
             //using (var conn = Db.Service.connection)
             //{
@@ -371,7 +422,7 @@ namespace DataProvider.Models.Service
 
             //Если заявка уже сохранена то основная информаци не будет перезаписана
             dt = Db.Service.ExecuteQueryStoredProcedure("save_claim", pId, pIdContractor, pIdContract, pIdDevice,
-                pContractorName, pContractName, pDeviceName, /*pIdAdmin, pIdEngeneer,*/ pCreatorAdSid, pIdWorkType, pSpecialistSid, pClientSdNum, pEngeneerSid, pAdminSid, pTechSid, pManagerSid, pSerialNum, pCurServiceIssueId, pIdServiceCame);
+                pContractorName, pContractName, pDeviceName, /*pIdAdmin, pIdEngeneer,*/ pCreatorAdSid, pIdWorkType, pSpecialistSid, pClientSdNum, pEngeneerSid, pAdminSid, pTechSid, pManagerSid, pSerialNum, pCurServiceIssueId, pIdServiceCame, pDeviceUnknown, pContractUnknown);
 
             int id = 0;
             if (dt.Rows.Count > 0)
