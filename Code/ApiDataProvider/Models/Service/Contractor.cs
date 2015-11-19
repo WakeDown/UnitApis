@@ -94,5 +94,17 @@ namespace DataProvider.Models.Service
 
             return lst;
         }
+
+        public static string GetCurrentClientManagerSid(int clientId)
+        {
+            SqlParameter pClientId = new SqlParameter() { ParameterName = "client_id", SqlValue = clientId, SqlDbType = SqlDbType.Int };
+            var dt = Db.Service.ExecuteQueryStoredProcedure("client_get_client_manager", pClientId);
+            string sid = String.Empty;
+            if (dt.Rows.Count > 0)
+            {
+                sid = Db.DbHelper.GetValueString(dt.Rows[0], "sid");
+            }
+            return sid;
+        }
     }
 }

@@ -193,15 +193,7 @@ namespace DataProvider.Models.Service
             Descr = Db.DbHelper.GetValueString(row, "descr");
 
             Contractor = new Contractor() { Id = Db.DbHelper.GetValueIntOrDefault(row, "id_contractor"), Name = Db.DbHelper.GetValueString(row, "contractor_name"), FullName = Db.DbHelper.GetValueString(row, "contractor_full_name") };
-            if (!ContractUnknown)
-            {
-                Contract = new Contract()
-                {
-                    Id = Db.DbHelper.GetValueIntOrDefault(row, "id_contract"),
-                    Number = Db.DbHelper.GetValueString(row, "contract_num")
-                };
-            }
-            else
+            if (ContractUnknown && IdContract <= 0)
             {
                 Contract = new Contract()
                 {
@@ -209,22 +201,17 @@ namespace DataProvider.Models.Service
                     Number = "неизвестно"
                 };
             }
-
-            if (!DeviceUnknown)
-            {
-                Device = new Device()
-                {
-                    Id = Db.DbHelper.GetValueIntOrDefault(row, "id_device"),
-                    FullName = Db.DbHelper.GetValueString(row, "device_name"),
-                    SerialNum = Db.DbHelper.GetValueString(row, "device_serial_num"),
-                    ObjectName = Db.DbHelper.GetValueString(row, "object_name"),
-                    Address = Db.DbHelper.GetValueString(row, "address"),
-                    ContactName = Db.DbHelper.GetValueString(row, "contact_name"),
-                    Descr = Db.DbHelper.GetValueString(row, "c2d_comment"),
-                    CityName = Db.DbHelper.GetValueString(row, "city_name")
-                };
-            }
             else
+            {
+                Contract = new Contract()
+                {
+                    Id = Db.DbHelper.GetValueIntOrDefault(row, "id_contract"),
+                    Number = Db.DbHelper.GetValueString(row, "contract_num")
+                };
+                
+            }
+
+            if (DeviceUnknown && IdDevice <= 0)
             {
                 Device = new Device()
                 {
@@ -236,6 +223,21 @@ namespace DataProvider.Models.Service
                     ContactName = "неизвестно",
                     Descr = "неизвестно",
                     CityName = "неизвестно"
+                };
+               
+            }
+            else
+            {
+                Device = new Device()
+                {
+                    Id = Db.DbHelper.GetValueIntOrDefault(row, "id_device"),
+                    FullName = Db.DbHelper.GetValueString(row, "device_name"),
+                    SerialNum = Db.DbHelper.GetValueString(row, "device_serial_num"),
+                    ObjectName = Db.DbHelper.GetValueString(row, "object_name"),
+                    Address = Db.DbHelper.GetValueString(row, "address"),
+                    ContactName = Db.DbHelper.GetValueString(row, "contact_name"),
+                    Descr = Db.DbHelper.GetValueString(row, "c2d_comment"),
+                    CityName = Db.DbHelper.GetValueString(row, "city_name")
                 };
             }
 
@@ -462,6 +464,13 @@ namespace DataProvider.Models.Service
             SqlParameter pIdClaim = new SqlParameter() { ParameterName = "id_claim", SqlValue = claimId, SqlDbType = SqlDbType.Int };
             SqlParameter pIdDevice = new SqlParameter() { ParameterName = "id_device", SqlValue = deviceid, SqlDbType = SqlDbType.Int };
             Db.Service.ExecuteQueryStoredProcedure("claim_change_device_id", pIdClaim, pIdDevice);
+        }
+
+        public static void ChangeContractId(int claimId, int contractId)
+        {
+            SqlParameter pIdClaim = new SqlParameter() { ParameterName = "id_claim", SqlValue = claimId, SqlDbType = SqlDbType.Int };
+            SqlParameter pIdContract = new SqlParameter() { ParameterName = "id_contract", SqlValue = contractId, SqlDbType = SqlDbType.Int };
+            Db.Service.ExecuteQueryStoredProcedure("claim_change_contract_id", pIdClaim, pIdContract);
         }
 
         public static void RemoteStateChange(int idClaim, string stateSysName, string creatorSid, string descr = null, int? idZipClaim = null)
@@ -848,7 +857,8 @@ namespace DataProvider.Models.Service
                 int? existsDeviceId;
                 if (Device.SerialNumIsExists(ServiceSheet4Save.RealSerialNum, out existsDeviceId))
                 {
-                    if (!ServiceSheet4Save.ForceSaveRealSerialNum.HasValue || !ServiceSheet4Save.ForceSaveRealSerialNum.Value)
+                    if (!ServiceSheet4Save.ForceSaveRealSerialNum.HasValue ||
+                        !ServiceSheet4Save.ForceSaveRealSerialNum.Value)
                     {
                         throw new ItemExistsException(
                             "Оборудование с таким серийным номером уже существует в списке оборудования. Сервисный лист не был сохранен!");
@@ -861,8 +871,30 @@ namespace DataProvider.Models.Service
                         }
                         else
                         {
-                            throw new Exception("Указанный аппарат не имеет идентификатора. Сервисный лист не был сохранен!");
+                            throw new Exception(
+                                "Указанный аппарат не имеет идентификатора. Сервисный лист не был сохранен!");
                         }
+                    }
+                }
+                else
+                {
+                    if (ServiceSheet4Save.RealDeviceModel.HasValue)
+                    {
+                        int deviceId = Device.Create(ServiceSheet4Save.RealDeviceModel.Value, ServiceSheet4Save.RealSerialNum,
+                            CurUserAdSid);
+                        if (deviceId > 0)
+                        {
+                            ChangeDeviceId(Id, deviceId);
+                        }
+                        else
+                        {
+                            throw new Exception(
+                                "Указанный аппарат не имеет идентификатора. Сервисный лист не был сохранен!");
+                        }
+                    }
+                    else
+                    {
+                        throw new ArgumentException("Не указана модель аппарата. Сервисный лист не бул сохранен");
                     }
                 }
 
@@ -875,7 +907,7 @@ namespace DataProvider.Models.Service
                 ServiceSheet4Save.Save("SRVENGWORK");
 
                 bool hasNotInstalled = GetOrderedZipItemList(Id, ServiceSheet4Save.Id).Any(x => !x.Installed);
-
+                 
                 if (ServiceSheet4Save.ProcessEnabled && ServiceSheet4Save.DeviceEnabled)
                 {
                     //Если есть хоть один не установленный ЗИП 
@@ -915,7 +947,49 @@ namespace DataProvider.Models.Service
                         noteSubject = $"[Заявка №%ID%] Работа не восстановлена";
                     }
                 }
+                
+                //Если статус завершения и номер договора неизвестен, то переход на установку договора
+                if (cl.ContractUnknown && nextState.SysName.Equals("DONE"))
+                {
+                    nextState = new ClaimState("CONTRACTSET");
+                    SpecialistSid = Contractor.GetCurrentClientManagerSid(cl.IdContractor);
+                    sendNote = true;
+                    noteTo = new[] { ServiceRole.CurSpecialist };
+                    noteText = $@"Необходимо указать номер договора по заявке №%ID% %LINK%";
+                    noteSubject = $"[Заявка №%ID%] Укажите номер договора";
+                }
             }
+            else if (currState.SysName.ToUpper().Equals("CONTRACTSET"))
+            {
+                goNext = true;
+                saveClaim = true;
+
+                ChangeContractId(Id, IdContract);
+
+                var lastServiceSheet = GetLastServiceSheet(Id);
+                //var notInstalledList = GetOrderedZipItemList(Id, lastServiceSheet.Id).Where(x => !x.Installed);
+
+                //Так как в статус изменения договора заявка может попасть только если онавыполнена либо надо заказывать ЗИП, то ограничиваем проверку сервисного листа
+                if (lastServiceSheet.ProcessEnabled && lastServiceSheet.DeviceEnabled)
+                {
+                    nextState = new ClaimState("DONE");
+                }
+
+                if (lastServiceSheet.ZipClaim.HasValue && lastServiceSheet.ZipClaim.Value)
+                {
+                    nextState = new ClaimState("ZIPCHECK");
+
+                    if (nextState.SysName.Equals("ZIPCHECK"))
+                    {
+                        sendNote = true;
+                        noteTo = new[] { ServiceRole.AllTech };
+                        noteText = $@"Необходимо заказать ЗИП по заявке №%ID% %LINK%";
+                        noteSubject = $"[Заявка №%ID%] Необходимо заказать ЗИП";
+                    }
+                }
+
+                //nextState = new ClaimState("SRVENGWORK");
+                }
             else if (currState.SysName.ToUpper().Equals("ZIPISSUE"))
             {
                 var lastServiceSheet = GetLastServiceSheet();
@@ -984,6 +1058,17 @@ namespace DataProvider.Models.Service
                         noteText = $@"ЗИП Установлен по заявке №%ID% %LINK%";
                         noteSubject = $"[Заявка №%ID%] ЗИП установлен";
                     }
+                }
+
+                //Если номер договора неизвестен, то переход на установку договора
+                if (curCl.ContractUnknown)
+                {
+                    nextState = new ClaimState("CONTRACTSET");
+                    SpecialistSid = Contractor.GetCurrentClientManagerSid(curCl.IdContractor);
+                    sendNote = true;
+                    noteTo = new[] { ServiceRole.CurSpecialist };
+                    noteText = $@"Необходимо указать номер договора по заявке №%ID% %LINK%";
+                    noteSubject = $"[Заявка №%ID%] Укажите номер договора";
                 }
             }
             else if (currState.SysName.ToUpper().Equals("ZIPCHECK"))
@@ -1121,6 +1206,17 @@ namespace DataProvider.Models.Service
                 noteText = $@"Вам назначена заявка №%ID% %LINK%";
                 noteSubject = $"[Заявка №%ID%] Вам назначена заявка";
             }
+            //else if (currState.SysName.ToUpper().Equals("CONTRACTSET"))
+            //{
+            //    goNext = true;
+            //    saveClaim = true;
+            //    nextState = new ClaimState("SERVADMSET");
+            //    SpecialistSid = CurAdminSid;
+            //    sendNote = true;
+            //    noteTo = new[] { ServiceRole.CurAdmin };
+            //    noteText = $@"Вам назначена заявка №%ID% %LINK%";
+            //    noteSubject = $"[Заявка №%ID%] Вам назначена заявка";
+            //}
             else
             {
                 nextState = currState;

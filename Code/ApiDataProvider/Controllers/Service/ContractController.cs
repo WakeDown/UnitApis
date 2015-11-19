@@ -15,5 +15,10 @@ namespace DataProvider.Controllers.Service
         {
             return Contract.GetList(idContractor, contractorName, idContract, contractNumber, idDevice, deviceName);
         }
+
+        public IEnumerable<KeyValuePair<int, string>> GetSelectionList(int? idContractor = null)
+        {
+            return Contract.GetSelectionList(idContractor);
+        }
     }
 }

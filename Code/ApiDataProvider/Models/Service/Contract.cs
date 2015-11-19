@@ -59,13 +59,13 @@ namespace DataProvider.Models.Service
             //if (idContract.HasValue) contractNumber = null;
             //if (idDevice.HasValue) deviceName = null;
 
-            SqlParameter pId = new SqlParameter() { ParameterName = "id_contractor", SqlValue = idContractor, SqlDbType = SqlDbType.Int };
+            SqlParameter pIdContractor = new SqlParameter() { ParameterName = "id_contractor", SqlValue = idContractor, SqlDbType = SqlDbType.Int };
             SqlParameter pName = new SqlParameter() { ParameterName = "contractor_name", SqlValue = contractorName, SqlDbType = SqlDbType.NVarChar };
             SqlParameter pIdContract = new SqlParameter() { ParameterName = "id_contract", SqlValue = idContract, SqlDbType = SqlDbType.Int };
             SqlParameter pContractNumber = new SqlParameter() { ParameterName = "contract_number", SqlValue = contractNumber, SqlDbType = SqlDbType.NVarChar };
             SqlParameter pIdDevice = new SqlParameter() { ParameterName = "id_device", SqlValue = idDevice, SqlDbType = SqlDbType.Int };
             SqlParameter pDeviceName = new SqlParameter() { ParameterName = "device_name", SqlValue = deviceName, SqlDbType = SqlDbType.NVarChar };
-            var dt = Db.UnitProg.ExecuteQueryStoredProcedure("get_contract_list", pId, pName, pIdContract, pContractNumber, pIdDevice, pDeviceName);
+            var dt = Db.UnitProg.ExecuteQueryStoredProcedure("get_contract_list", pIdContractor, pName, pIdContract, pContractNumber, pIdDevice, pDeviceName);
 
             var lst = new List<Contract>();
 
@@ -77,5 +77,21 @@ namespace DataProvider.Models.Service
 
             return lst;
         }
+
+        public static IEnumerable<KeyValuePair<int, string>> GetSelectionList(int? idContractor = null)
+        {
+            SqlParameter pIdContractor = new SqlParameter() { ParameterName = "id_contractor", SqlValue = idContractor, SqlDbType = SqlDbType.Int };
+            var dt = Db.UnitProg.ExecuteQueryStoredProcedure("get_contract_list", pIdContractor);
+
+            var lst = new List<KeyValuePair<int, string>>();
+
+            foreach (DataRow row in dt.Rows)
+            {
+                var model = new KeyValuePair<int, string>(Db.DbHelper.GetValueIntOrDefault(row, "id"), Db.DbHelper.GetValueString(row, "number"));
+                lst.Add(model);
+            }
+
+            return lst;
+        } 
     }
 }

@@ -37,6 +37,7 @@ namespace DataProvider.Models.Service
                 HasGuarantee = _age <= 1;
             }
         }
+        public int ModelId { get; set; }
 
         public bool? HasGuarantee { get; set; }
 
@@ -68,6 +69,22 @@ namespace DataProvider.Models.Service
             {
                 FillSelf(dt.Rows[0]);
             }
+        }
+
+        public static int Create(int modelId, string serialNum, string creatorSid)
+        {
+            SqlParameter pModelId = new SqlParameter() { ParameterName = "model_id", SqlValue = modelId, SqlDbType = SqlDbType.Int };
+            SqlParameter pSerialNum = new SqlParameter() { ParameterName = "serial_num", SqlValue = serialNum, SqlDbType = SqlDbType.NVarChar };
+            SqlParameter pCreatorAdSid = new SqlParameter() { ParameterName = "creator_sid", SqlValue = creatorSid, SqlDbType = SqlDbType.VarChar };
+
+            var dt = Db.Service.ExecuteQueryStoredProcedure("device_create", pModelId, pSerialNum, pCreatorAdSid);
+            int id = 0;
+            if (dt.Rows.Count > 0)
+            {
+                id = Db.DbHelper.GetValueIntOrDefault(dt.Rows[0], "id", "id_device");
+                //int.TryParse(dt.Rows[0]["id"].ToString(), out id);
+            }
+            return id;
         }
 
         public static DeviceInfoResult GetInfo(string serialNum)
@@ -197,7 +214,7 @@ namespace DataProvider.Models.Service
             var list = new List<KeyValuePair<int, string>>();
             if (dt.Rows.Count > 0)
             {
-                list.AddRange(from DataRow row in dt.Rows select new KeyValuePair<int, string>(Db.DbHelper.GetValueIntOrDefault(row, "id_device_model"), Db.DbHelper.GetValueString(row, "model_name")));
+                list.AddRange(from DataRow row in dt.Rows select new KeyValuePair<int, string>(Db.DbHelper.GetValueIntOrDefault(row, "id"), Db.DbHelper.GetValueString(row, "model_name")));
             }
 
             return list;
