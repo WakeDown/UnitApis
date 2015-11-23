@@ -528,8 +528,15 @@ namespace DataProvider.Helpers
                 = new WindowsImpersonationContextFacade(
                     nc))
             {
+                string fakseLogin = null;
+
+                if (ConfigurationManager.AppSettings["UserProxy"] == "True")
+                {
+                    fakseLogin = ConfigurationManager.AppSettings["UserProxyLogin"];
+                }
+                string login = fakseLogin ?? user.Identity.Name;
                 var context = new PrincipalContext(ContextType.Domain);
-                var userPrincipal = UserPrincipal.FindByIdentity(context, IdentityType.SamAccountName, user.Identity.Name);
+                var userPrincipal = UserPrincipal.FindByIdentity(context, IdentityType.SamAccountName, login);
 
                 if (userPrincipal == null) return false;
                 //if (userPrincipal.IsMemberOf(context, IdentityType.Sid, AdUserGroup.GetSidByAdGroup(AdGroup.SuperAdmin))) { return true; }//Если юзер Суперадмин

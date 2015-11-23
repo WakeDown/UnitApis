@@ -31,7 +31,7 @@ namespace DataProvider.Controllers.Service
             return result;
         }
 
-        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin, AdGroup.ServiceTech, AdGroup.ServiceControler, AdGroup.ServiceAdmin, AdGroup.ServiceManager, AdGroup.ServiceEngeneer })]
+        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin, AdGroup.ServiceTech, AdGroup.ServiceControler, AdGroup.ServiceAdmin, AdGroup.ServiceManager, AdGroup.ServiceEngeneer, AdGroup.ServiceClaimView })]
         public Claim Get(int id)
         {
             Claim model;
@@ -51,7 +51,7 @@ namespace DataProvider.Controllers.Service
             return model;
         }
 
-        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin, AdGroup.ServiceTech, AdGroup.ServiceControler, AdGroup.ServiceAdmin, AdGroup.ServiceManager, AdGroup.ServiceEngeneer })]
+        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin, AdGroup.ServiceTech, AdGroup.ServiceControler, AdGroup.ServiceAdmin, AdGroup.ServiceManager, AdGroup.ServiceEngeneer, AdGroup.ServiceClaimView })]
         public IEnumerable<Claim2ClaimState> GetStateHistory(int? id, int? topRows)
         {
            if (!id.HasValue) return new[] { new Claim2ClaimState() };

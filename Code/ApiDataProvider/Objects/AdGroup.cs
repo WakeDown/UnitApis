@@ -41,6 +41,7 @@ namespace DataProvider.Objects
         ServiceMobileUser,
         ServiceZipClaimConfirm,
         AddNewClaim,
+        ServiceClaimView,
         //---доступы
         ServiceClaimClassifier,
         ServiceClaimClientAccess

@@ -150,9 +150,11 @@ namespace DataProvider.Models.Service
             }
 
             //Получаем ткущий тип работ по заявке
-            int? wtId = new Claim(IdClaim).IdWorkType;
-            if (wtId.HasValue) WorkTypeId = wtId.Value;
-            
+            if (WorkTypeId <= 0)
+            {
+                int? wtId = new Claim(IdClaim).IdWorkType;
+                if (wtId.HasValue) WorkTypeId = wtId.Value;
+            }
             SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = Id, SqlDbType = SqlDbType.Int };
             SqlParameter pIdClaim = new SqlParameter() { ParameterName = "id_claim", SqlValue = IdClaim, SqlDbType = SqlDbType.Int };
             SqlParameter pWorkTypeId = new SqlParameter() { ParameterName = "id_work_type", SqlValue = WorkTypeId, SqlDbType = SqlDbType.Int };

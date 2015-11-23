@@ -79,32 +79,32 @@ namespace DataProvider.Models.Service
 
         public Claim(int id, AdUser user, bool loadObject = true) : this(id, loadObject)
         {
-
-            bool access = false;
-            if (user.Is(AdGroup.ServiceControler))
-            {
-                access = true;
-            }
-            else if (user.Is(AdGroup.SuperAdmin) || user.Is(AdGroup.ServiceManager))
-            {
-                access = true;
-            }
-            else if (user.Is(AdGroup.ServiceEngeneer) && (CurEngeneerSid == user.Sid || SpecialistSid == user.Sid))
-            {
-                access = true;
-            }
-            else if (user.Is(AdGroup.ServiceManager, AdGroup.AddNewClaim) && (CurManagerSid == user.Sid || SpecialistSid == user.Sid))
-            {
-                access = true;
-            }
-            else if (user.Is(AdGroup.ServiceAdmin) && (CurAdminSid == user.Sid || SpecialistSid == user.Sid))
-            {
-                access = true;
-            }
-            else if (user.Is(AdGroup.ServiceTech) && (CurTechSid == user.Sid || SpecialistSid == user.Sid))
-            {
-                access = true;
-            }
+            bool access = true;
+            //bool access = false;
+            //if (user.Is(AdGroup.ServiceControler))
+            //{
+            //    access = true;
+            //}
+            //else if (user.Is(AdGroup.SuperAdmin) || user.Is(AdGroup.ServiceManager))
+            //{
+            //    access = true;
+            //}
+            //else if (user.Is(AdGroup.ServiceEngeneer) && (CurEngeneerSid == user.Sid || SpecialistSid == user.Sid))
+            //{
+            //    access = true;
+            //}
+            //else if (user.Is(AdGroup.ServiceManager, AdGroup.AddNewClaim) && (CurManagerSid == user.Sid || SpecialistSid == user.Sid))
+            //{
+            //    access = true;
+            //}
+            //else if (user.Is(AdGroup.ServiceAdmin) && (CurAdminSid == user.Sid || SpecialistSid == user.Sid))
+            //{
+            //    access = true;
+            //}
+            //else if (user.Is(AdGroup.ServiceTech) && (CurTechSid == user.Sid || SpecialistSid == user.Sid))
+            //{
+            //    access = true;
+            //}
 
 
             if (!access) throw new AccessDenyException("У вас нет доступа к заявке №{id}");
@@ -1451,11 +1451,10 @@ namespace DataProvider.Models.Service
             if (user.Is(AdGroup.ServiceManager)) managerSid = user.Sid;
             if (user.Is(AdGroup.ServiceTech)) techSid = user.Sid;
 
-            //!!!!ЕСЛИ МЕНЯЕШЬ ЭТУ ФУНКЦИЮ ПОМИ ЧТО ЕЩЕ НАДО ПОПРАВИТЬ ФУНКЦИЮ ЧУТЬ НИЖЕ 
             if (!topRows.HasValue) topRows = 30;
             if (!pageNum.HasValue)pageNum = 1;
 
-SqlParameter pServAdminSid = new SqlParameter() { ParameterName = "admin_sid", SqlValue = adminSid, SqlDbType = SqlDbType.VarChar };
+            SqlParameter pServAdminSid = new SqlParameter() { ParameterName = "admin_sid", SqlValue = adminSid, SqlDbType = SqlDbType.VarChar };
             SqlParameter pServEngeneerSid = new SqlParameter() { ParameterName = "engeneer_sid", SqlValue = engeneerSid, SqlDbType = SqlDbType.VarChar };
             SqlParameter pDateStart = new SqlParameter() { ParameterName = "date_start", SqlValue = dateStart, SqlDbType = SqlDbType.Date };
             SqlParameter pDateEnd = new SqlParameter() { ParameterName = "date_end", SqlValue = dateEnd, SqlDbType = SqlDbType.Date };
