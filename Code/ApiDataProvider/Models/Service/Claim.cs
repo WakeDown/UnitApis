@@ -698,7 +698,7 @@ namespace DataProvider.Models.Service
                         nextState = new ClaimState("TECHDONE");
                         //Сначала сохраняем промежуточный статус
                         SaveStateStep(nextState.Id);
-                        saveStateInfo = false;
+                        //saveStateInfo = false;
                         nextState = new ClaimState("DONE");
 
                         //Если есть хоть один не установленный ЗИП 
@@ -713,7 +713,7 @@ namespace DataProvider.Models.Service
                         //nextState = new ClaimState("TECHDONE");
                         ////Сначала сохраняем промежуточный статус
                         //SaveStateStep(nextState.Id);
-                        saveStateInfo = false;
+                        //saveStateInfo = false;
                         //nextState = new ClaimState("ZIPORDER");
                         nextState = new ClaimState("ZIPISSUE");
                     }
@@ -724,7 +724,7 @@ namespace DataProvider.Models.Service
                         nextState = new ClaimState("TECHPROCESSED");
                         //Сначала сохраняем промежуточный статус
                         SaveStateStep(nextState.Id);
-                        saveStateInfo = false;
+                        //saveStateInfo = false;
                         nextState = new ClaimState("SERVADMSETWAIT");
                     }
                 }
@@ -854,51 +854,56 @@ namespace DataProvider.Models.Service
                 {
                     throw new ArgumentException("Сервисный лист отсутствует. Операция не завершена!");
                 }
-                int? existsDeviceId;
-                if (Device.SerialNumIsExists(ServiceSheet4Save.RealSerialNum, out existsDeviceId))
+                var cl = new Claim(Id);
+                //Если аппарат не бул указан и не указан до сих пор, то вычисляем его
+                if (cl.DeviceUnknown && IdDevice <= 0)
                 {
-                    if (!ServiceSheet4Save.ForceSaveRealSerialNum.HasValue ||
-                        !ServiceSheet4Save.ForceSaveRealSerialNum.Value)
+                    int? existsDeviceId;
+                    if (Device.SerialNumIsExists(ServiceSheet4Save.RealSerialNum, out existsDeviceId))
                     {
-                        throw new ItemExistsException(
-                            "Оборудование с таким серийным номером уже существует в списке оборудования. Сервисный лист не был сохранен!");
-                    }
-                    else
-                    {
-                        if (existsDeviceId.HasValue)
+                        if (!ServiceSheet4Save.ForceSaveRealSerialNum.HasValue ||
+                            !ServiceSheet4Save.ForceSaveRealSerialNum.Value)
                         {
-                            ChangeDeviceId(Id, existsDeviceId.Value);
+                            throw new ItemExistsException(
+                                "Оборудование с таким серийным номером уже существует в списке оборудования. Сервисный лист не был сохранен!");
                         }
                         else
                         {
-                            throw new Exception(
-                                "Указанный аппарат не имеет идентификатора. Сервисный лист не был сохранен!");
-                        }
-                    }
-                }
-                else
-                {
-                    if (ServiceSheet4Save.RealDeviceModel.HasValue)
-                    {
-                        int deviceId = Device.Create(ServiceSheet4Save.RealDeviceModel.Value, ServiceSheet4Save.RealSerialNum,
-                            CurUserAdSid);
-                        if (deviceId > 0)
-                        {
-                            ChangeDeviceId(Id, deviceId);
-                        }
-                        else
-                        {
-                            throw new Exception(
-                                "Указанный аппарат не имеет идентификатора. Сервисный лист не был сохранен!");
+                            if (existsDeviceId.HasValue)
+                            {
+                                ChangeDeviceId(Id, existsDeviceId.Value);
+                            }
+                            else
+                            {
+                                throw new Exception(
+                                    "Указанный аппарат не имеет идентификатора. Сервисный лист не был сохранен!");
+                            }
                         }
                     }
                     else
                     {
-                        throw new ArgumentException("Не указана модель аппарата. Сервисный лист не бул сохранен");
+                        if (ServiceSheet4Save.RealDeviceModel.HasValue)
+                        {
+                            int deviceId = Device.Create(ServiceSheet4Save.RealDeviceModel.Value,
+                                ServiceSheet4Save.RealSerialNum,
+                                CurUserAdSid);
+                            if (deviceId > 0)
+                            {
+                                ChangeDeviceId(Id, deviceId);
+                            }
+                            else
+                            {
+                                throw new Exception(
+                                    "Указанный аппарат не имеет идентификатора. Сервисный лист не был сохранен!");
+                            }
+                        }
+                        else
+                        {
+                            throw new ArgumentException("Не указана модель аппарата. Сервисный лист не бул сохранен");
+                        }
                     }
                 }
 
-                var cl = new Claim(Id);
 
                 if (IsNullOrEmpty(ServiceSheet4Save.CurUserAdSid)) ServiceSheet4Save.CurUserAdSid = CurUserAdSid;
                 if (IsNullOrEmpty(ServiceSheet4Save.EngeneerSid)) ServiceSheet4Save.EngeneerSid = CurUserAdSid;
