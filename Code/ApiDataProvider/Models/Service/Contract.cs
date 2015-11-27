@@ -52,12 +52,42 @@ namespace DataProvider.Models.Service
             ManagerIdUnitProg = Db.DbHelper.GetValueIntOrNull(row, "id_manager");
             TypeName = Db.DbHelper.GetValueString(row, "contract_type_name"); 
         }
-
-        public static IEnumerable<Contract> GetList(int? idContractor = null, string contractorName = null, int? idContract = null, string contractNumber = null, int? idDevice = null, string deviceName = null)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="idContractor"></param>
+        /// <param name="contractorName"></param>
+        /// <param name="idContract"></param>
+        /// <param name="contractNumber"></param>
+        /// <param name="idDevice"></param>
+        /// <param name="deviceName"></param>
+        /// <param name="addrStrId">Состоит из $"{CityId}[|]{AddressName}"</param>
+        /// <returns></returns>
+        public static IEnumerable<Contract> GetList(int? idContractor = null, string contractorName = null, int? idContract = null, string contractNumber = null, int? idDevice = null, string deviceName = null, string addrStrId = null)
         {
             //if (idContractor.HasValue) contractorName = null;
             //if (idContract.HasValue) contractNumber = null;
             //if (idDevice.HasValue) deviceName = null;
+            int? cityId = null;
+            string address = null;
+            if (!String.IsNullOrEmpty(addrStrId))
+            {
+                try
+                {
+                var arr = addrStrId.Split(new [] { "[|]"}, StringSplitOptions.RemoveEmptyEntries);
+                    cityId = Convert.ToInt32(arr[0]);
+                    if (arr.Length > 1)
+                    {
+                        address = arr[1];
+                    }
+                }
+                catch (Exception)
+                {
+                    cityId = null;
+                    address = null;
+                }
+            }
+            
 
             SqlParameter pIdContractor = new SqlParameter() { ParameterName = "id_contractor", SqlValue = idContractor, SqlDbType = SqlDbType.Int };
             SqlParameter pName = new SqlParameter() { ParameterName = "contractor_name", SqlValue = contractorName, SqlDbType = SqlDbType.NVarChar };
@@ -65,7 +95,9 @@ namespace DataProvider.Models.Service
             SqlParameter pContractNumber = new SqlParameter() { ParameterName = "contract_number", SqlValue = contractNumber, SqlDbType = SqlDbType.NVarChar };
             SqlParameter pIdDevice = new SqlParameter() { ParameterName = "id_device", SqlValue = idDevice, SqlDbType = SqlDbType.Int };
             SqlParameter pDeviceName = new SqlParameter() { ParameterName = "device_name", SqlValue = deviceName, SqlDbType = SqlDbType.NVarChar };
-            var dt = Db.UnitProg.ExecuteQueryStoredProcedure("get_contract_list", pIdContractor, pName, pIdContract, pContractNumber, pIdDevice, pDeviceName);
+            SqlParameter pCityId = new SqlParameter() { ParameterName = "id_city", SqlValue = cityId, SqlDbType = SqlDbType.Int };
+            SqlParameter pAddress = new SqlParameter() { ParameterName = "address", SqlValue = address, SqlDbType = SqlDbType.NVarChar };
+            var dt = Db.UnitProg.ExecuteQueryStoredProcedure("get_contract_list", pIdContractor, pName, pIdContract, pContractNumber, pIdDevice, pDeviceName, pCityId, pAddress);
 
             var lst = new List<Contract>();
 

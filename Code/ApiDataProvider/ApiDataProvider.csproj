@@ -172,6 +172,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\Service\AddressController.cs" />
     <Compile Include="Controllers\Service\ClaimStateController.cs" />
     <Compile Include="Controllers\Service\ClassifierController.cs" />
     <Compile Include="Controllers\Service\ClientAccessController.cs" />
@@ -194,7 +195,9 @@
     <Compile Include="Controllers\Stuff\VendorStateController.cs" />
     <Compile Include="Helpers\StringHelper.cs" />
     <Compile Include="Models\MobileUser.cs" />
+    <Compile Include="Models\Service\Address.cs" />
     <Compile Include="Models\Service\ClaimStateGroup.cs" />
+    <Compile Include="Models\Service\ClaimType.cs" />
     <Compile Include="Models\Service\EngeneerNotSeted.cs" />
     <Compile Include="Models\Service\PlanServiceCame.cs" />
     <Compile Include="Models\Service\PlanServiceIssue.cs" />

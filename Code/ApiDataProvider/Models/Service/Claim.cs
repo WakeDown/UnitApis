@@ -56,7 +56,21 @@ namespace DataProvider.Models.Service
         public int? IdServiceCame { get; set; }
         public bool ContractUnknown { get; set; }
         public bool DeviceUnknown { get; set; }
-
+        public string ClaimTypeSysName { get; set; }
+        public int IdClaimType { get; set; }
+        public int? IdCity { get; set; }
+        public string CityName { get; set; }
+        public string Address { get; set; }
+        public string ContactName { get; set; }
+        public string ContactPhone { get; set; }
+        /// <summary>
+        /// псевдо id состав - {CityId}[|]{AddressName}
+        /// </summary>
+        public string AddressStrId { get; set; }
+        /// <summary>
+        /// Массовая заявка
+        /// </summary>
+        public bool DeviceCollective { get; set; }
 
         public Claim() { }
 
@@ -191,6 +205,14 @@ namespace DataProvider.Models.Service
             ContractUnknown = Db.DbHelper.GetValueBool(row, "contract_unknown");
             DeviceUnknown = Db.DbHelper.GetValueBool(row, "device_unknown");
             Descr = Db.DbHelper.GetValueString(row, "descr");
+            IdClaimType = Db.DbHelper.GetValueIntOrDefault(row, "id_claim_type");
+            ClaimTypeSysName = Db.DbHelper.GetValueString(row, "claim_type_sys_name");
+            IdCity = Db.DbHelper.GetValueIntOrNull(row, "id_city");
+            Address = Db.DbHelper.GetValueString(row, "address");
+            ContactName = Db.DbHelper.GetValueString(row, "contact_name");
+            ContactPhone = Db.DbHelper.GetValueString(row, "contact_phone");
+            CityName = Db.DbHelper.GetValueString(row, "city_name");
+            DeviceCollective = Db.DbHelper.GetValueBool(row, "device_collective");
 
             Contractor = new Contractor() { Id = Db.DbHelper.GetValueIntOrDefault(row, "id_contractor"), Name = Db.DbHelper.GetValueString(row, "contractor_name"), FullName = Db.DbHelper.GetValueString(row, "contractor_full_name") };
             if (ContractUnknown && IdContract <= 0)
@@ -234,10 +256,10 @@ namespace DataProvider.Models.Service
                     FullName = Db.DbHelper.GetValueString(row, "device_name"),
                     SerialNum = Db.DbHelper.GetValueString(row, "device_serial_num"),
                     ObjectName = Db.DbHelper.GetValueString(row, "object_name"),
-                    Address = Db.DbHelper.GetValueString(row, "address"),
-                    ContactName = Db.DbHelper.GetValueString(row, "contact_name"),
+                    Address = Db.DbHelper.GetValueString(row, "device_address"),
+                    ContactName = Db.DbHelper.GetValueString(row, "device_contact_name"),
                     Descr = Db.DbHelper.GetValueString(row, "c2d_comment"),
-                    CityName = Db.DbHelper.GetValueString(row, "city_name")
+                    CityName = Db.DbHelper.GetValueString(row, "device_city_name")
                 };
             }
 
@@ -345,7 +367,17 @@ namespace DataProvider.Models.Service
             //if (Admin == null) Admin = new EmployeeSm();
             //if (Engeneer == null) Engeneer = new EmployeeSm();
 
-            if (Device == null) { Device = new Device(); }
+            if (!String.IsNullOrEmpty(ClaimTypeSysName))
+            {
+                IdClaimType = new ClaimType(ClaimTypeSysName).Id;
+
+                if (ClaimTypeSysName.Equals("COLLECTIVE"))
+                {
+                    DeviceUnknown = true;
+                }
+            }
+
+            if (DeviceUnknown || Device == null) { Device = new Device(); }
             else if (Device.Id > 0)
             {
                 IdDevice = Device.Id;
@@ -353,7 +385,7 @@ namespace DataProvider.Models.Service
 
             if (isNew && ExistsActive()) throw new Exception("Для данного аппарата существует незавершенная заявка. Сохранение заявки не было завершено!");
 
-            if (Contract == null) { Contract = new Contract(); }
+            if (ContractUnknown || Contract == null) { Contract = new Contract(); }
             else if (Contract.Id > 0)
             {
                 IdContract = Contract.Id;
@@ -383,10 +415,30 @@ namespace DataProvider.Models.Service
             //    var wt = new WorkType(IdWorkType);
             //    Descr = Descr.Replace(wtReplace, $"{wt.SysName} ({wt.Name})");
             //}
+           
             if (isNew)
             {
                 CurManagerSid = CurUserAdSid;
                 if (IdDevice > 0) Device = new Device(IdDevice);
+
+                
+                if (!String.IsNullOrEmpty(AddressStrId))
+                {
+                    try
+                    {
+                        var arr = AddressStrId.Split(new[] { "[|]" }, StringSplitOptions.RemoveEmptyEntries);
+                        IdCity = Convert.ToInt32(arr[0]);
+                        if (arr.Length > 1)
+                        {
+                            Address = arr[1];
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        IdCity = null;
+                        Address = null;
+                    }
+                }
             }
 
             SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = Id, SqlDbType = SqlDbType.Int };
@@ -413,6 +465,11 @@ namespace DataProvider.Models.Service
             SqlParameter pIdServiceCame = new SqlParameter() { ParameterName = "id_service_came", SqlValue = IdServiceCame, SqlDbType = SqlDbType.Int };
             SqlParameter pDeviceUnknown = new SqlParameter() { ParameterName = "device_unknown", SqlValue = DeviceUnknown, SqlDbType = SqlDbType.Bit };
             SqlParameter pContractUnknown = new SqlParameter() { ParameterName = "contract_unknown", SqlValue = ContractUnknown, SqlDbType = SqlDbType.Bit };
+            SqlParameter pIdCity = new SqlParameter() { ParameterName = "id_city", SqlValue = IdCity, SqlDbType = SqlDbType.Int };
+            SqlParameter pAddress = new SqlParameter() { ParameterName = "address", SqlValue = Address, SqlDbType = SqlDbType.NVarChar };
+            SqlParameter pContactName = new SqlParameter() { ParameterName = "contact_name", SqlValue = ContactName, SqlDbType = SqlDbType.NVarChar };
+            SqlParameter pContactPhone = new SqlParameter() { ParameterName = "contact_phone", SqlValue = ContactPhone, SqlDbType = SqlDbType.NVarChar };
+            SqlParameter pDeviceCollective = new SqlParameter() { ParameterName = "device_collective", SqlValue = DeviceCollective, SqlDbType = SqlDbType.Bit };
             DataTable dt = new DataTable();
             //using (var conn = Db.Service.connection)
             //{
@@ -424,7 +481,7 @@ namespace DataProvider.Models.Service
 
             //Если заявка уже сохранена то основная информаци не будет перезаписана
             dt = Db.Service.ExecuteQueryStoredProcedure("save_claim", pId, pIdContractor, pIdContract, pIdDevice,
-                pContractorName, pContractName, pDeviceName, /*pIdAdmin, pIdEngeneer,*/ pCreatorAdSid, pIdWorkType, pSpecialistSid, pClientSdNum, pEngeneerSid, pAdminSid, pTechSid, pManagerSid, pSerialNum, pCurServiceIssueId, pIdServiceCame, pDeviceUnknown, pContractUnknown);
+                pContractorName, pContractName, pDeviceName, /*pIdAdmin, pIdEngeneer,*/ pCreatorAdSid, pIdWorkType, pSpecialistSid, pClientSdNum, pEngeneerSid, pAdminSid, pTechSid, pManagerSid, pSerialNum, pCurServiceIssueId, pIdServiceCame, pDeviceUnknown, pContractUnknown, pIdCity, pAddress, pContactName, pContactPhone, pDeviceCollective);
 
             int id = 0;
             if (dt.Rows.Count > 0)
@@ -632,6 +689,7 @@ namespace DataProvider.Models.Service
                     case "НПР":
                     case "ТЭО":
                     case "УТЗ":
+                    case "Заказ":
                         nextState = new ClaimState("TECHSET");
                         CurTechSid = SpecialistSid;
                         break;
@@ -1555,6 +1613,7 @@ namespace DataProvider.Models.Service
                 case "НПР":
                 case "ТЭО":
                 case "УТЗ":
+                case "Заказ":
                     list = AdHelper.GetUserListByAdGroup(AdGroup.ServiceTech).ToList();
                     break;
                 case "РТО":

@@ -11,9 +11,9 @@ namespace DataProvider.Controllers.Service
 {
     public class ContractController : BaseApiController
     {
-        public IEnumerable<Contract> GetList(int? idContractor = null, string contractorName = null, int? idContract = null, string contractNumber = null, int? idDevice = null, string deviceName = null)
+        public IEnumerable<Contract> GetList(int? idContractor = null, string contractorName = null, int? idContract = null, string contractNumber = null, int? idDevice = null, string deviceName = null, string addrStrId = null)
         {
-            return Contract.GetList(idContractor, contractorName, idContract, contractNumber, idDevice, deviceName);
+            return Contract.GetList(idContractor, contractorName, idContract, contractNumber, idDevice, deviceName, addrStrId);
         }
 
         public IEnumerable<KeyValuePair<int, string>> GetSelectionList(int? idContractor = null)

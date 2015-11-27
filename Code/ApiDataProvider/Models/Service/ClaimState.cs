@@ -21,7 +21,6 @@ namespace DataProvider.Models.Service
         public string ForegroundColor { get; set; }
         public int ClaimCount { get; set; }
         
-
         public ClaimState() { }
 
         public ClaimState(int id)
