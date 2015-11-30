@@ -6,6 +6,7 @@ using System.Linq;
 using System.Security.Principal;
 using System.Web;
 using System.Web.Http;
+using DataProvider.Helpers;
 using DataProvider.Objects;
 
 namespace Objects
@@ -39,6 +40,26 @@ namespace Objects
 
         protected AdUser GetCurUser()
         {
+            var session = HttpContext.Current.Session;
+
+            if (session?["CurUser"] != null)
+            {
+                return (AdUser)session["CurUser"];
+            }
+
+            //object context;
+            //if (Request.Properties.TryGetValue("MS_HttpContext", out context))
+            //{
+            //    var httpContext = context as HttpContextBase;
+            //    if (httpContext != null && httpContext.Session != null)
+            //    {
+            //        if (httpContext.Session?["CurUser"] != null)
+            //        {
+            //            return (AdUser)httpContext.Session["CurUser"];
+            //        }
+            //    }
+            //}
+
             AdUser curUser = new AdUser();
             curUser.User =  base.RequestContext.Principal;
             
@@ -56,7 +77,23 @@ namespace Objects
                 }
                 
                 curUser.Sid = sid;
+
+                AdHelper.SetUserAdGroups(wi, ref curUser);
             }
+            if (session != null)
+            {
+                session["CurUser"] = curUser;
+            }
+
+            //if (Request.Properties.TryGetValue("MS_HttpContext", out context))
+            //{
+            //    var httpContext = context as HttpContextBase;
+            //    if (httpContext != null && httpContext.Session != null)
+            //    {
+            //        httpContext.Session["CurUser"] = curUser;
+            //    }
+            //}
+
             return curUser;
         }
 

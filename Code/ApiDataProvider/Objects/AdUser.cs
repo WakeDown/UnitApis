@@ -13,14 +13,20 @@ namespace DataProvider.Objects
         public IPrincipal User { get; set; }
         public string Sid { get; set; }
 
+        public List<AdGroup> AdGroups { get; set; }
+
         public bool Is(params AdGroup[] groups)
         {
-           return AdHelper.UserIs(User, groups);
+            return groups.Select(grp => AdGroups.Contains(grp)).Any(res => res);
+            //return AdHelper.UserIs(User, groups);
         }
 
         public bool HasAccess(params AdGroup[] groups)
         {
-            return AdHelper.UserInGroup(User, groups);
+            if (AdGroups == null || !AdGroups.Any()) return false;
+            if (AdGroups.Contains(AdGroup.SuperAdmin)) return true;
+            return groups.Select(grp => AdGroups.Contains(grp)).Any(res => res);
+            //return AdHelper.UserInGroup(User, groups);
         }
     }
 }
