@@ -36,6 +36,7 @@ namespace DataProvider.Controllers.Service
             {
                 model.CurUserAdSid = GetCurUser().Sid;
                 model.SaveNotInstalledComment();
+                response.Content = new StringContent($"{{\"id\":{model.Id}}}");
             }
             catch (Exception ex)
             {
@@ -46,6 +47,7 @@ namespace DataProvider.Controllers.Service
             return response;
         }
 
+        [HttpPost]
         [AuthorizeAd(AdGroup.ServiceControler, AdGroup.ServiceAdmin)]
         public HttpResponseMessage SavePayed(ServiceSheet model)
         {
@@ -54,7 +56,8 @@ namespace DataProvider.Controllers.Service
             try
             {
                 model.CurUserAdSid = GetCurUser().Sid;
-                model.SavePayed();
+                model.SavePayed(GetCurUser());
+                response.Content = new StringContent($"{{\"id\":{model.Id}}}");
             }
             catch (Exception ex)
             {

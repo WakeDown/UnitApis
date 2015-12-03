@@ -8,6 +8,7 @@ using DataProvider.Helpers;
 using DataProvider.Models.Stuff;
 using DataProvider.Objects;
 using DataProvider._TMPLTS;
+using DocumentFormat.OpenXml.Office2010.Excel;
 
 namespace DataProvider.Models.Service
 {
@@ -19,6 +20,7 @@ namespace DataProvider.Models.Service
         public int OrderNum { get; set; }
         public string BackgroundColor { get; set; }
         public string ForegroundColor { get; set; }
+        public string BorderColor { get; set; }
         public int ClaimCount { get; set; }
         
         public ClaimState() { }
@@ -59,6 +61,7 @@ namespace DataProvider.Models.Service
             OrderNum = Db.DbHelper.GetValueIntOrDefault(row, "order_num");
             BackgroundColor = Db.DbHelper.GetValueString(row, "background_color");
             ForegroundColor = Db.DbHelper.GetValueString(row, "foreground_color");
+            BorderColor = Db.DbHelper.GetValueString(row, "border_color");
             ClaimCount = Db.DbHelper.GetValueIntOrDefault(row, "cnt");
         }
 

@@ -25,13 +25,13 @@ namespace DataProvider.Controllers.Service
         //    return new ListResult<Claim>(list, cnt);
         //}
 
-        public async Task<ListResult<Claim>> GetListAsync(string servAdminSid = null, string servEngeneerSid = null, DateTime? dateStart = null, DateTime? dateEnd = null, int? topRows = null, string managerSid = null, string techSid = null, string serialNum = null, int? idDevice = null, bool? activeClaimsOnly = false, int? idClaimState = null, int? clientId = null, string clientSdNum = null, int? claimId = null, string deviceName = null, int? pageNum = null, string groupStates = null, string address = null)
+        public ListResult<Claim> GetListAsync(string servAdminSid = null,string servManagerSid = null, string servEngeneerSid = null, DateTime? dateStart = null, DateTime? dateEnd = null, int? topRows = null, string managerSid = null, string techSid = null, string serialNum = null, int? idDevice = null, bool? activeClaimsOnly = false, int? idClaimState = null, int? clientId = null, string clientSdNum = null, int? claimId = null, string deviceName = null, int? pageNum = null, string groupStates = null, string address = null)
         {
-            var result = await Claim.GetListAsync(GetCurUser(), servAdminSid, servEngeneerSid, dateStart, dateEnd, topRows, managerSid, techSid, serialNum, idDevice, activeClaimsOnly, idClaimState, clientId, clientSdNum, claimId:claimId, deviceName: deviceName, pageNum: pageNum, groupStates: groupStates, address: address);
+            var result = Claim.GetList(GetCurUser(), servAdminSid, servEngeneerSid, dateStart, dateEnd, topRows, managerSid, techSid, serialNum, idDevice, activeClaimsOnly, idClaimState, clientId, clientSdNum, claimId:claimId, deviceName: deviceName, pageNum: pageNum, groupStates: groupStates, address: address, servManagerSid: servManagerSid);
             return result;
         }
 
-        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin, AdGroup.ServiceTech, AdGroup.ServiceControler, AdGroup.ServiceAdmin, AdGroup.ServiceManager, AdGroup.ServiceEngeneer, AdGroup.ServiceClaimView })]
+        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin, AdGroup.ServiceTech, AdGroup.ServiceControler, AdGroup.ServiceAdmin, AdGroup.ServiceManager, AdGroup.ServiceEngeneer, AdGroup.ServiceClaimView, AdGroup.ServiceCenterManager })]
         public Claim Get(int id)
         {
             Claim model;
@@ -51,7 +51,7 @@ namespace DataProvider.Controllers.Service
             return model;
         }
 
-        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin, AdGroup.ServiceTech, AdGroup.ServiceControler, AdGroup.ServiceAdmin, AdGroup.ServiceManager, AdGroup.ServiceEngeneer, AdGroup.ServiceClaimView })]
+        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin, AdGroup.ServiceTech, AdGroup.ServiceControler, AdGroup.ServiceAdmin, AdGroup.ServiceManager, AdGroup.ServiceEngeneer, AdGroup.ServiceClaimView, AdGroup.ServiceCenterManager })]
         public IEnumerable<Claim2ClaimState> GetStateHistory(int? id, int? topRows)
         {
            if (!id.HasValue) return new[] { new Claim2ClaimState() };
@@ -88,7 +88,7 @@ namespace DataProvider.Controllers.Service
             {
                 model.CurUserAdSid = GetCurUser().Sid;
                 //model.Save(SetNextState.Back);
-                model.Go(false);
+                model.Go(GetCurUser(), false);
                 //model.Go2State(SetNextState.Back);
                 response.Content = new StringContent(String.Format("{{\"id\":{0},\"sid\":\"{1}\"}}", model.Id, model.Sid));
             }
@@ -123,7 +123,7 @@ namespace DataProvider.Controllers.Service
         //    return response;
         //}
 
-        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin, AdGroup.ServiceControler, AdGroup.ServiceTech, AdGroup.ServiceAdmin, AdGroup.ServiceManager, AdGroup.ServiceEngeneer })]
+        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin, AdGroup.ServiceControler, AdGroup.ServiceTech, AdGroup.ServiceAdmin, AdGroup.ServiceManager, AdGroup.ServiceEngeneer, AdGroup.ServiceCenterManager })]
         public HttpResponseMessage Go(Claim model)
         {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
@@ -131,7 +131,7 @@ namespace DataProvider.Controllers.Service
             try
             {
                 model.CurUserAdSid = GetCurUser().Sid;
-                model.Go();
+                model.Go(GetCurUser());
                 response.Content = new StringContent($"{{\"id\":{model.Id},\"sid\":\"{model.Sid}\"}}");
             }
             catch (Exception ex)
@@ -143,7 +143,7 @@ namespace DataProvider.Controllers.Service
             return response;
         }
 
-        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin, AdGroup.ServiceControler, AdGroup.ServiceTech, AdGroup.ServiceAdmin, AdGroup.ServiceManager, AdGroup.ServiceEngeneer })]
+        [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin, AdGroup.ServiceControler, AdGroup.ServiceTech, AdGroup.ServiceAdmin, AdGroup.ServiceManager, AdGroup.ServiceEngeneer, AdGroup.AddNewClaim, AdGroup.ServiceCenterManager })]
         public HttpResponseMessage Save(Claim model)
         {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
@@ -217,7 +217,7 @@ namespace DataProvider.Controllers.Service
             var claim = new Claim(idClaim.Value);
             claim.CurUserAdSid = creatorSid;
             //claim.Descr = descr;
-            claim.Go();
+            claim.Go(GetCurUser());
             return Ok();
         }
 
@@ -232,7 +232,7 @@ namespace DataProvider.Controllers.Service
         public IHttpActionResult RemoteCreate4ZipClaim(int? idServiceCame)
         {
             if (!idServiceCame.HasValue) return NotFound();
-            int id = Claim.SaveFromServicePlan4ZipClaim(idServiceCame.Value);
+            int id = Claim.SaveFromServicePlan4ZipClaim(GetCurUser(), idServiceCame.Value);
             return Ok();
         }
 

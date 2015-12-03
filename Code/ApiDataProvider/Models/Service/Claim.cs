@@ -273,7 +273,7 @@ namespace DataProvider.Models.Service
             if (IdWorkType.HasValue && IdWorkType.Value > 0)
                 WorkType = new WorkType() {Id= IdWorkType.Value, Name = Db.DbHelper.GetValueString(row, "work_type_name"), SysName = Db.DbHelper.GetValueString(row, "work_type_sys_name"), ZipInstall = Db.DbHelper.GetValueBool(row, "work_type_zip_install"), ZipOrder = Db.DbHelper.GetValueBool(row, "work_type_zip_order") };
 
-            State = new ClaimState() {Id=IdState, Name = Db.DbHelper.GetValueString(row, "claim_state_name"), SysName = Db.DbHelper.GetValueString(row, "claim_state_sys_name"), BackgroundColor = Db.DbHelper.GetValueString(row, "claim_state_background_color"), ForegroundColor = Db.DbHelper.GetValueString(row, "claim_state_foreground_color") };
+            State = new ClaimState() {Id=IdState, Name = Db.DbHelper.GetValueString(row, "claim_state_name"), SysName = Db.DbHelper.GetValueString(row, "claim_state_sys_name"), BackgroundColor = Db.DbHelper.GetValueString(row, "claim_state_background_color"), ForegroundColor = Db.DbHelper.GetValueString(row, "claim_state_foreground_color"), BorderColor = Db.DbHelper.GetValueString(row, "claim_state_border_color") };
 
             if (loadObj)
             {
@@ -302,7 +302,7 @@ namespace DataProvider.Models.Service
         /// <param name="idServiceCame"></param>
         /// <param name="creatorSid"></param>
         /// <returns></returns>
-        public static int SaveFromServicePlan4ZipClaim(int idServiceCame)
+        public static int SaveFromServicePlan4ZipClaim(AdUser user, int idServiceCame)
         {
             var came = new PlanServiceCame(idServiceCame);
             if (!came.NeedZip.HasValue || !came.NeedZip.Value) return 0;
@@ -336,7 +336,7 @@ namespace DataProvider.Models.Service
 
             var firstState = new ClaimState("SRVENGWORK");
             int id = claim.Save(firstState);
-            claim.Go();
+            claim.Go(user);
             return id;
         }
         /// <summary>
@@ -383,7 +383,7 @@ namespace DataProvider.Models.Service
                 IdDevice = Device.Id;
             }
 
-            if (isNew && ExistsActive()) throw new Exception("Для данного аппарата существует незавершенная заявка. Сохранение заявки не было завершено!");
+            //if (isNew && ExistsActive()) throw new Exception("Для данного аппарата существует незавершенная заявка. Сохранение заявки не было завершено!");
 
             if (ContractUnknown || Contract == null) { Contract = new Contract(); }
             else if (Contract.Id > 0)
@@ -646,7 +646,7 @@ namespace DataProvider.Models.Service
         /// Перевод заявки на следующую стадию
         /// </summary>
         /// <param name="confirm">Подтвердить или отклонить назначение заявки</param>
-        public void Go(bool confirm = true)
+        public void Go(AdUser user, bool confirm = true)
         {
             if (Id <= 0) throw new ArgumentException("Невозможно предать заявку. Не указан ID заявки.");
 
@@ -665,6 +665,7 @@ namespace DataProvider.Models.Service
 
             if (currState.SysName.ToUpper().Equals("NEW"))
             {
+                if (!user.HasAccess(AdGroup.AddNewClaim, AdGroup.ServiceCenterManager)) return;
                 goNext = true;
                 saveClaim = true;
                 int? wtId = null;
@@ -713,6 +714,7 @@ namespace DataProvider.Models.Service
             }
             else if (currState.SysName.ToUpper().Equals("TECHSET"))
             {
+                if (!user.HasAccess(AdGroup.ServiceTech)) return;
                 goNext = true;
                 saveClaim = true;
                 if (confirm)
@@ -735,6 +737,7 @@ namespace DataProvider.Models.Service
             }
             else if (currState.SysName.ToUpper().Equals("TECHWORK"))
             {
+                if (!user.HasAccess(AdGroup.ServiceTech)) return;
                 goNext = true;
                 saveClaim = true;
                 if (confirm)
@@ -744,7 +747,7 @@ namespace DataProvider.Models.Service
                     {
                         throw new ArgumentException("Сервисный лист отсутствует. Операция не завершена!");
                     }
-
+                    var cl = new Claim(Id);
                     ////if (!ServiceSheet4Save.NoTechWork)
                     ////{
                     ServiceSheet4Save.CurUserAdSid = CurUserAdSid;
@@ -757,9 +760,20 @@ namespace DataProvider.Models.Service
                         //Сначала сохраняем промежуточный статус
                         SaveStateStep(nextState.Id);
                         //saveStateInfo = false;
+                        
                         nextState = new ClaimState("DONE");
+                        
+                        if (cl.DeviceCollective)
+                        {
+                            SpecialistSid = Contractor.GetCurrentClientManagerSid(cl.IdContractor);
+                            nextState = new ClaimState("MANAGERNOTE");
+                            sendNote = true;
+                            noteTo = new[] { ServiceRole.CurSpecialist };
+                            noteText = $@"Вам передан заказ по заявке №%ID% %LINK%";
+                            noteSubject = $"[Заявка №%ID%] Вам передан заказ";
+                        }
 
-                        //Если есть хоть один не установленный ЗИП 
+                        //Если есть хоть один неустановленный ЗИП 
                         if (GetOrderedZipItemList(Id, ServiceSheet4Save.Id).Any(x => !x.Installed))
                         {
                             nextState = new ClaimState("SERVADMSETWAIT");
@@ -774,6 +788,7 @@ namespace DataProvider.Models.Service
                         //saveStateInfo = false;
                         //nextState = new ClaimState("ZIPORDER");
                         nextState = new ClaimState("ZIPISSUE");
+
                     }
                     else if ((!ServiceSheet4Save.ProcessEnabled || !ServiceSheet4Save.DeviceEnabled) &&
                              (!ServiceSheet4Save.ZipClaim.HasValue || !ServiceSheet4Save.ZipClaim.Value))
@@ -806,6 +821,7 @@ namespace DataProvider.Models.Service
             }
             else if (currState.SysName.ToUpper().Equals("SERVADMSETWAIT"))
             {
+                
                 goNext = true;
                 saveClaim = true;
                 nextState = new ClaimState("SERVADMSET");
@@ -837,6 +853,7 @@ namespace DataProvider.Models.Service
             }
             else if (currState.SysName.ToUpper().Equals("SRVADMWORK"))
             {
+                if (!user.HasAccess(AdGroup.ServiceAdmin)) return;
                 goNext = true;
                 saveClaim = true;
                 ServiceIssue4Save.IdClaim = Id;
@@ -864,8 +881,10 @@ namespace DataProvider.Models.Service
             }
             else if (currState.SysName.ToUpper().Equals("SRVENGSET"))
             {
+                if (!user.HasAccess(AdGroup.ServiceEngeneer)) return;
                 goNext = true;
                 saveClaim = true;
+
                 if (confirm)
                 {
                     nextState = new ClaimState("SRVENGGET");
@@ -886,25 +905,54 @@ namespace DataProvider.Models.Service
                     nextState = new ClaimState("SRVADMWORK");
                     Clear(specialist: true, engeneer: true);
                     sendNote = true;
-                    noteTo = new[] { ServiceRole.CurAdmin };
+                    noteTo = new[] {ServiceRole.CurAdmin};
                     noteText = $@"Отклонено назначение заявки №%ID% %LINK%";
                     noteSubject = $"[Заявка №%ID%] Отклонено назначение СИ";
                 }
             }
             else if (currState.SysName.ToUpper().Equals("SRVENGGET"))
             {
+                if (!user.HasAccess(AdGroup.ServiceEngeneer)) return;
                 goNext = true;
                 saveClaim = true;
                 nextState = new ClaimState("SRVENGWENT");
             }
             else if (currState.SysName.ToUpper().Equals("SRVENGWENT"))
             {
+                if (!user.HasAccess(AdGroup.ServiceEngeneer)) return;
                 goNext = true;
                 saveClaim = true;
                 nextState = new ClaimState("SRVENGWORK");
+                
+                var cl = new Claim(Id);
+                if (cl.IdWorkType.HasValue)
+                {
+                    SaveStateStep(nextState.Id, descr);
+                    var wtSysName = new WorkType(cl.IdWorkType.Value).SysName;
+                    if (cl.DeviceCollective && cl.WorkType.SysName.Equals("ЗРМ"))
+                    {
+                        nextState = new ClaimState("CARTRIDGELIST");
+                        //var sheet = new ServiceSheet() { IdClaim = Id, DeviceEnabled = false, ProcessEnabled = false, ZipClaim = true, CreatorSid = CurUserAdSid, EngeneerSid = CurUserAdSid, AdminSid = cl.CurAdminSid, WorkTypeId = cl.IdWorkType ?? -1 };
+                        //sheet.Save("SERVENGSETWAIT");
+                        //nextState = new ClaimState("ZIPISSUE");
+                    }
+                }
+            }
+            else if (currState.SysName.ToUpper().Equals("CARTRIDGELIST"))
+            {
+                goNext = true;
+                saveClaim = true;
+                nextState = new ClaimState("CARTRIDGEREFILL");
+            }
+            else if (currState.SysName.ToUpper().Equals("CARTRIDGEREFILL"))
+            {
+                goNext = true;
+                saveClaim = true;
+                nextState = new ClaimState("DONE");
             }
             else if (currState.SysName.ToUpper().Equals("SRVENGWORK"))
             {
+                if (!user.HasAccess(AdGroup.ServiceEngeneer)) return;
                 goNext = true;
                 saveClaim = true;
                 ServiceSheet4Save.IdClaim = Id;
@@ -970,7 +1018,7 @@ namespace DataProvider.Models.Service
                 ServiceSheet4Save.Save("SRVENGWORK");
 
                 bool hasNotInstalled = GetOrderedZipItemList(Id, ServiceSheet4Save.Id).Any(x => !x.Installed);
-                 
+
                 if (ServiceSheet4Save.ProcessEnabled && ServiceSheet4Save.DeviceEnabled)
                 {
                     //Если есть хоть один не установленный ЗИП 
@@ -1003,27 +1051,28 @@ namespace DataProvider.Models.Service
                         nextState = new ClaimState("SERVADMSET");
                         SpecialistSid = CurAdminSid;
                         sendNote = true;
-                        noteTo = new[] { ServiceRole.CurAdmin };
+                        noteTo = new[] {ServiceRole.CurAdmin};
                         noteText =
                             $@"Инженер не восстановил работу аппарата по заявке №%ID% %LINK%.\r\Комментарий:{
                                 ServiceSheet4Save.Descr}";
                         noteSubject = $"[Заявка №%ID%] Работа не восстановлена";
                     }
                 }
-                
+
                 //Если статус завершения и номер договора неизвестен, то переход на установку договора
                 if (cl.ContractUnknown && nextState.SysName.Equals("DONE"))
                 {
                     nextState = new ClaimState("CONTRACTSET");
                     SpecialistSid = Contractor.GetCurrentClientManagerSid(cl.IdContractor);
                     sendNote = true;
-                    noteTo = new[] { ServiceRole.CurSpecialist };
+                    noteTo = new[] {ServiceRole.CurSpecialist};
                     noteText = $@"Необходимо указать номер договора по заявке №%ID% %LINK%";
                     noteSubject = $"[Заявка №%ID%] Укажите номер договора";
                 }
             }
             else if (currState.SysName.ToUpper().Equals("CONTRACTSET"))
             {
+                if (!user.HasAccess(AdGroup.ServiceManager)) return;
                 goNext = true;
                 saveClaim = true;
 
@@ -1045,16 +1094,28 @@ namespace DataProvider.Models.Service
                     if (nextState.SysName.Equals("ZIPCHECK"))
                     {
                         sendNote = true;
-                        noteTo = new[] { ServiceRole.AllTech };
+                        noteTo = new[] {ServiceRole.AllTech};
                         noteText = $@"Необходимо заказать ЗИП по заявке №%ID% %LINK%";
                         noteSubject = $"[Заявка №%ID%] Необходимо заказать ЗИП";
                     }
                 }
 
-                //nextState = new ClaimState("SRVENGWORK");
+                var curCl = new Claim(Id);
+                if (curCl.DeviceCollective)
+                {
+                    SpecialistSid = Contractor.GetCurrentClientManagerSid(curCl.IdContractor);
+                    nextState = new ClaimState("MANAGERNOTE");
+                    sendNote = true;
+                    noteTo = new[] {ServiceRole.CurSpecialist};
+                    noteText = $@"Вам передан заказ по заявке №%ID% %LINK%";
+                    noteSubject = $"[Заявка №%ID%] Вам передан заказ";
                 }
+
+                //nextState = new ClaimState("SRVENGWORK");
+            }
             else if (currState.SysName.ToUpper().Equals("ZIPISSUE"))
             {
+                if (!user.HasAccess(AdGroup.ServiceEngeneer, AdGroup.ServiceTech)) return;
                 var lastServiceSheet = GetLastServiceSheet();
                 var curCl = new Claim(Id);
                 goNext = true;
@@ -1089,14 +1150,25 @@ namespace DataProvider.Models.Service
                             noteText = $@"Необходимо заказать ЗИП по заявке №%ID% %LINK%";
                             noteSubject = $"[Заявка №%ID%] Необходимо заказать ЗИП";
                         }
+
+                        if (curCl.DeviceCollective)
+                        {
+                            SpecialistSid = Contractor.GetCurrentClientManagerSid(curCl.IdContractor);
+                            nextState = new ClaimState("MANAGERNOTE");
+                            sendNote = true;
+                            noteTo = new[] {ServiceRole.CurSpecialist};
+                            noteText = $@"Вам передан заказ по заявке №%ID% %LINK%";
+                            noteSubject = $"[Заявка №%ID%] Вам передан заказ";
+                        }
                     }
                 }
                 else
                 {
                     if (notInstalledList.Any())
-                    //Если есть не установленный ЗИП
+                        //Если есть не установленный ЗИП
                     {
-                        ServiceSheetZipItem.NotInstalledSaveList(notInstalledList.Select(x=>x.Id).ToArray(), lastServiceSheet.Id, CurUserAdSid);
+                        ServiceSheetZipItem.NotInstalledSaveList(notInstalledList.Select(x => x.Id).ToArray(),
+                            lastServiceSheet.Id, CurUserAdSid);
                         Descr = $"Не весь ЗИП установлен";
                         if (lastServiceSheet.ProcessEnabled && lastServiceSheet.DeviceEnabled)
                         {
@@ -1106,10 +1178,10 @@ namespace DataProvider.Models.Service
                         {
                             nextState = new ClaimState("SERVADMSET");
                         }
-                        
+
                         SpecialistSid = curCl.CurAdminSid;
                         sendNote = true;
-                        noteTo = new[] { ServiceRole.CurAdmin };
+                        noteTo = new[] {ServiceRole.CurAdmin};
                         noteText = $@"Не весь ЗИП установлен №%ID% %LINK%";
                         noteSubject = $"[Заявка №%ID%] Не весь ЗИП установлен";
                     }
@@ -1117,11 +1189,12 @@ namespace DataProvider.Models.Service
                     {
                         nextState = new ClaimState("DONE");
                         sendNote = true;
-                        noteTo = new[] { ServiceRole.CurAdmin };
+                        noteTo = new[] {ServiceRole.CurAdmin};
                         noteText = $@"ЗИП Установлен по заявке №%ID% %LINK%";
                         noteSubject = $"[Заявка №%ID%] ЗИП установлен";
                     }
                 }
+
 
                 //Если номер договора неизвестен, то переход на установку договора
                 if (curCl.ContractUnknown)
@@ -1129,13 +1202,15 @@ namespace DataProvider.Models.Service
                     nextState = new ClaimState("CONTRACTSET");
                     SpecialistSid = Contractor.GetCurrentClientManagerSid(curCl.IdContractor);
                     sendNote = true;
-                    noteTo = new[] { ServiceRole.CurSpecialist };
+                    noteTo = new[] {ServiceRole.CurSpecialist};
                     noteText = $@"Необходимо указать номер договора по заявке №%ID% %LINK%";
                     noteSubject = $"[Заявка №%ID%] Укажите номер договора";
                 }
             }
             else if (currState.SysName.ToUpper().Equals("ZIPCHECK"))
             {
+                if (!user.HasAccess(AdGroup.ServiceTech)) return;
+
                 //В настоящий момент по этому статусу происходит заказ ЗИП специалистом Тех поддержки
                 if (!GetClaimCurrentState(Id).SysName.Equals("ZIPCHECKINWORK")) //На всякий случай проверяем еще раз
                 {
@@ -1153,6 +1228,7 @@ namespace DataProvider.Models.Service
 
             else if (currState.SysName.ToUpper().Equals("ZIPCHECKINWORK"))
             {
+                if (!user.HasAccess(AdGroup.ServiceTech)) return;
                 var curCl = new Claim(Id);
                 if (curCl.SpecialistSid != CurUserAdSid && curCl.CurTechSid != CurUserAdSid)
                     throw new ArgumentException("Проверка ЗИП уже в работе.");
@@ -1172,13 +1248,14 @@ namespace DataProvider.Models.Service
                     nextState = new ClaimState("ZIPORDERED");
 
                     sendNote = true;
-                    noteTo = new[] { ServiceRole.ZipConfirm };
+                    noteTo = new[] {ServiceRole.ZipConfirm};
                     noteText = $@"Необходимо утвердить список ЗИП в заявке №%ID% %LINK%";
                     noteSubject = $"[Заявка №%ID%] Утверждение список ЗИП";
                 }
             }
             else if (currState.SysName.ToUpper().Equals("ZIPCONFIRM"))
             {
+                if (!user.HasAccess(AdGroup.ServiceZipClaimConfirm)) return;
                 goNext = true;
                 saveClaim = true;
                 if (confirm)
@@ -1195,7 +1272,7 @@ namespace DataProvider.Models.Service
                     saveStateInfo = false;
                     nextState = new ClaimState("ZIPCHECKINWORK");
                     sendNote = true;
-                    noteTo = new[] { ServiceRole.CurTech };
+                    noteTo = new[] {ServiceRole.CurTech};
                     noteText = $@"Отклонен список ЗИП в заявке №%ID% %LINK%";
                     noteSubject = $"[Заявка №%ID%] Отклонен список ЗИП";
                 }
@@ -1209,7 +1286,7 @@ namespace DataProvider.Models.Service
                     descr = $"Отказ в закупке ЗИП\r\n{Descr}";
                     nextState = new ClaimState("ZIPBUYCANCEL");
                     sendNote = true;
-                    noteTo = new[] { ServiceRole.CurAdmin };
+                    noteTo = new[] {ServiceRole.CurAdmin};
                     noteText = $@"Отказ в закупке ЗИП №%ID% %LINK%";
                     noteSubject = $"[Заявка №%ID%] Отказ в закупке ЗИП";
                 }
@@ -1219,7 +1296,7 @@ namespace DataProvider.Models.Service
                     var curCl = new Claim(Id, false);
                     SpecialistSid = curCl.CurAdminSid;
                     sendNote = true;
-                    noteTo = new[] { ServiceRole.CurAdmin };
+                    noteTo = new[] {ServiceRole.CurAdmin};
                     noteText = $@"Вам назначена заявка №%ID% %LINK%";
                     noteSubject = $"[Заявка №%ID%] Вам назначена заявка";
                 }
@@ -1254,7 +1331,7 @@ namespace DataProvider.Models.Service
                 var curCl = new Claim(Id, false);
                 SpecialistSid = curCl.CurAdminSid;
                 sendNote = true;
-                noteTo = new[] { ServiceRole.CurAdmin };
+                noteTo = new[] {ServiceRole.CurAdmin};
                 noteText = $@"Вам назначена заявка №%ID% %LINK%";
                 noteSubject = $"[Заявка №%ID%] Вам назначена заявка";
             }
@@ -1265,7 +1342,7 @@ namespace DataProvider.Models.Service
                 nextState = new ClaimState("SERVADMSET");
                 SpecialistSid = CurAdminSid;
                 sendNote = true;
-                noteTo = new[] { ServiceRole.CurAdmin };
+                noteTo = new[] {ServiceRole.CurAdmin};
                 noteText = $@"Вам назначена заявка №%ID% %LINK%";
                 noteSubject = $"[Заявка №%ID%] Вам назначена заявка";
             }
@@ -1290,6 +1367,7 @@ namespace DataProvider.Models.Service
             //SaveStateStep(nextState.Id);
             if (sendNote)
             {
+                noteText = $"{noteText} %CLAIMINFO%";
                 SendNote(noteSubject, noteText, null, noteTo);
 
                 ////Замена по маске
@@ -1303,7 +1381,7 @@ namespace DataProvider.Models.Service
             }
         }
 
-        public static void ServiceSheetIsPayWraped(int serviceSheetId, string creatorSid)
+        public static void ServiceSheetIsPayWraped(AdUser user, int serviceSheetId, string creatorSid)
         {
             var ss = new ServiceSheet(serviceSheetId);
             if (ss.IsPayed.HasValue)
@@ -1325,18 +1403,29 @@ namespace DataProvider.Models.Service
                 var cl = new Claim(ss.IdClaim);
                 cl.CurUserAdSid = creatorSid;
                 cl.SendNote(subject, text, serviceSheetId, ServiceRole.ServiceSheetEngeneer);
-                cl.Go();
+
+                if (cl.State.SysName.Equals("DONE"))
+                {
+                    cl.Go(user); 
+                }
             }
         }
         
         public void SendNote(string subject, string text, int? serviceSheetId = null, params ServiceRole[] to)
         {
+            
             //Замена по маске
             subject = subject.Replace("%ID%", Id.ToString());
 
             text = text.Replace("%ID%", Id.ToString());
             string link = $"{ConfigurationManager.AppSettings["ServiceUrl"]}/Claim/Index/{Id}";
             text = text.Replace("%LINK%", $@"<p><a href=""{link}"">{link}</a></p>");
+
+            if (text.Contains("%CLAIMINFO%"))
+            {
+                var cl = new Claim(Id);
+                text = text.Replace("%CLAIMINFO%", $@"<p>Клиент: {cl.Contractor.FullName}<br />Аппарат: {cl.Device.FullName}<br />Адрес: {cl.CityName} {cl.Address}<br />Контактное лицо: {cl.ContactName}<br />Телефон: {cl.ContactPhone}<br />Комментарий: {cl.Descr}</p>");
+            }
 
             SendMailTo(text, subject, serviceSheetId, to);
         }
@@ -1507,18 +1596,22 @@ namespace DataProvider.Models.Service
             }
         }
 
-        public static async Task<ListResult<Claim>> GetListAsync(AdUser user, string adminSid = null, string engeneerSid = null, DateTime? dateStart = null, DateTime? dateEnd = null, int? topRows = null, string managerSid = null, string techSid = null, string serialNum = null, int? idDevice = null, bool? activeClaimsOnly = false, int? idClaimState = null, int? clientId = null, string clientSdNum = null, int? claimId = null, string deviceName = null, int? pageNum = null, string groupStates = null, string address = null)
+        public static ListResult<Claim> GetList(AdUser user, string adminSid = null, string engeneerSid = null, DateTime? dateStart = null, DateTime? dateEnd = null, int? topRows = null, string managerSid = null, string techSid = null, string serialNum = null, int? idDevice = null, bool? activeClaimsOnly = false, int? idClaimState = null, int? clientId = null, string clientSdNum = null, int? claimId = null, string deviceName = null, int? pageNum = null, string groupStates = null, string address = null, string servManagerSid = null)
         {
             if (user.Is(AdGroup.ServiceAdmin)) { adminSid = user.Sid; }
             if (user.Is(AdGroup.ServiceEngeneer)) engeneerSid = user.Sid;
+            if (user.Is(AdGroup.ServiceCenterManager)) servManagerSid = user.Sid;
             if (user.Is(AdGroup.ServiceManager)) managerSid = user.Sid;
             if (user.Is(AdGroup.ServiceTech)) techSid = user.Sid;
+            
 
             if (!topRows.HasValue) topRows = 30;
             if (!pageNum.HasValue)pageNum = 1;
 
             SqlParameter pServAdminSid = new SqlParameter() { ParameterName = "admin_sid", SqlValue = adminSid, SqlDbType = SqlDbType.VarChar };
             SqlParameter pServEngeneerSid = new SqlParameter() { ParameterName = "engeneer_sid", SqlValue = engeneerSid, SqlDbType = SqlDbType.VarChar };
+            //МСЦ - менеджер сервисного центра
+            SqlParameter pServManagerSid = new SqlParameter() { ParameterName = "serv_manager_sid", SqlValue = servManagerSid, SqlDbType = SqlDbType.VarChar };
             SqlParameter pDateStart = new SqlParameter() { ParameterName = "date_start", SqlValue = dateStart, SqlDbType = SqlDbType.Date };
             SqlParameter pDateEnd = new SqlParameter() { ParameterName = "date_end", SqlValue = dateEnd, SqlDbType = SqlDbType.Date };
             SqlParameter pTopRows = new SqlParameter() { ParameterName = "top_rows", SqlValue = topRows, SqlDbType = SqlDbType.Int };
@@ -1535,7 +1628,7 @@ namespace DataProvider.Models.Service
             SqlParameter pPageNum = new SqlParameter() { ParameterName = "page_num", SqlValue = pageNum, SqlDbType = SqlDbType.Int };
             SqlParameter pGroupStates = new SqlParameter() { ParameterName = "group_state_list", SqlValue = groupStates, SqlDbType = SqlDbType.NVarChar };
             SqlParameter pAddress = new SqlParameter() { ParameterName = "address", SqlValue = address, SqlDbType = SqlDbType.NVarChar };
-            var dt = Db.Service.ExecuteQueryStoredProcedure("get_claim_list", pServAdminSid, pServEngeneerSid, pDateStart, pDateEnd, pTopRows, pManagerSid, pTechSid, pSerialNum, pIdDevice, pActiveClaimsOnly, pIdClaimState, pClientId, pClientSdNum, pclaimId, pDeviceName, pPageNum, pGroupStates, pAddress);
+            var dt = Db.Service.ExecuteQueryStoredProcedure("get_claim_list", pServAdminSid, pServEngeneerSid, pDateStart, pDateEnd, pTopRows, pManagerSid, pTechSid, pSerialNum, pIdDevice, pActiveClaimsOnly, pIdClaimState, pClientId, pClientSdNum, pclaimId, pDeviceName, pPageNum, pGroupStates, pAddress, pServManagerSid);
 
             int cnt = 0;
             var lst = new List<Claim>();

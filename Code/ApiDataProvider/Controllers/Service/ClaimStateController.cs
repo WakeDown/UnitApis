@@ -16,9 +16,9 @@ namespace DataProvider.Controllers.Service
             return ClaimState.GetFilterList();
         }
 
-        public IEnumerable<ClaimStateGroup> GetGroupFilterList()
+        public IEnumerable<ClaimStateGroup> GetGroupFilterList(string servAdminSid = null, string servManagerSid = null, string servEngeneerSid = null, DateTime? dateStart = null, DateTime? dateEnd = null, int? topRows = null, string managerSid = null, string techSid = null, string serialNum = null, int? idDevice = null, bool? activeClaimsOnly = false, int? idClaimState = null, int? clientId = null, string clientSdNum = null, int? claimId = null, string deviceName = null, int? pageNum = null, string groupStates = null, string address = null)
         {
-            return ClaimStateGroup.GetFilterList();
+            return ClaimStateGroup.GetFilterList(GetCurUser(), servAdminSid, servEngeneerSid, dateStart, dateEnd, topRows, managerSid, techSid, serialNum, idDevice, activeClaimsOnly, idClaimState, clientId, clientSdNum, claimId: claimId, deviceName: deviceName, pageNum: pageNum, groupStates: groupStates, address: address, servManagerSid: servManagerSid);
         }
     }
 }

@@ -234,7 +234,7 @@ namespace DataProvider.Models.Service
             var dt = Db.Service.ExecuteQueryStoredProcedure("service_sheet_update", pNotInstalledComment, pId);
         }
 
-        public void SavePayed()
+        public void SavePayed(AdUser user)
         {
             SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = Id, SqlDbType = SqlDbType.Int };
             SqlParameter pIsPayed = new SqlParameter() { ParameterName = "is_payed", SqlValue = IsPayed, SqlDbType = SqlDbType.Bit };
@@ -243,7 +243,7 @@ namespace DataProvider.Models.Service
             var dt = Db.Service.ExecuteQueryStoredProcedure("service_sheet_update", pId, pIsPayed, pNotPayedComment, pIsPayedCreatorSid);
 
             //Отправка уведомления инженеру
-            Claim.ServiceSheetIsPayWraped(Id, CurUserAdSid);
+            Claim.ServiceSheetIsPayWraped(user, Id, CurUserAdSid);
         }
 
         //public static IEnumerable<ServiceSheet> GetClaimServiceSheetList(int idClaim)

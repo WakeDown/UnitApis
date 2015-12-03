@@ -87,7 +87,6 @@ namespace DataProvider.Models.Service
                     address = null;
                 }
             }
-            
 
             SqlParameter pIdContractor = new SqlParameter() { ParameterName = "id_contractor", SqlValue = idContractor, SqlDbType = SqlDbType.Int };
             SqlParameter pName = new SqlParameter() { ParameterName = "contractor_name", SqlValue = contractorName, SqlDbType = SqlDbType.NVarChar };
