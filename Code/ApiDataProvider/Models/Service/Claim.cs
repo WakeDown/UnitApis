@@ -47,10 +47,12 @@ namespace DataProvider.Models.Service
         public string CurAdminSid { get; set; }
         public string CurTechSid { get; set; }
         public string CurManagerSid { get; set; }
+        public string CurClientManagerSid { get; set; }
         public EmployeeSm Admin { get; set; }
         public EmployeeSm Engeneer { get; set; }
         public EmployeeSm Manager { get; set; }
         public EmployeeSm Tech { get; set; }
+        public EmployeeSm ClientManager { get; set; }
         public EmployeeSm Changer { get; set; }
         public int? CurServiceIssueId { get; set; }
         public int? IdServiceCame { get; set; }
@@ -213,6 +215,7 @@ namespace DataProvider.Models.Service
             ContactPhone = Db.DbHelper.GetValueString(row, "contact_phone");
             CityName = Db.DbHelper.GetValueString(row, "city_name");
             DeviceCollective = Db.DbHelper.GetValueBool(row, "device_collective");
+            CurClientManagerSid = Db.DbHelper.GetValueString(row, "cur_client_manager_sid");
 
             Contractor = new Contractor() { Id = Db.DbHelper.GetValueIntOrDefault(row, "id_contractor"), Name = Db.DbHelper.GetValueString(row, "contractor_name"), FullName = Db.DbHelper.GetValueString(row, "contractor_full_name") };
             if (ContractUnknown && IdContract <= 0)
@@ -269,6 +272,7 @@ namespace DataProvider.Models.Service
             Engeneer = new EmployeeSm() { AdSid = CurEngeneerSid, DisplayName = Db.DbHelper.GetValueString(row, "engeneer_name") };
             Specialist = new EmployeeSm() { AdSid = SpecialistSid, DisplayName = Db.DbHelper.GetValueString(row, "specialist_name") };
             Changer = new EmployeeSm() { AdSid = ChangerSid, DisplayName = Db.DbHelper.GetValueString(row, "changer_name") };
+            ClientManager = new EmployeeSm() { AdSid = CurClientManagerSid, DisplayName = Db.DbHelper.GetValueString(row, "client_manager_name") };
 
             if (IdWorkType.HasValue && IdWorkType.Value > 0)
                 WorkType = new WorkType() {Id= IdWorkType.Value, Name = Db.DbHelper.GetValueString(row, "work_type_name"), SysName = Db.DbHelper.GetValueString(row, "work_type_sys_name"), ZipInstall = Db.DbHelper.GetValueBool(row, "work_type_zip_install"), ZipOrder = Db.DbHelper.GetValueBool(row, "work_type_zip_order") };
@@ -292,6 +296,7 @@ namespace DataProvider.Models.Service
                 Engeneer = new EmployeeSm(CurEngeneerSid);
                 Specialist = new EmployeeSm(SpecialistSid);
                 Changer = new EmployeeSm(ChangerSid);
+                ClientManager = new EmployeeSm(CurClientManagerSid);
             }
 
         }
@@ -439,6 +444,8 @@ namespace DataProvider.Models.Service
                         Address = null;
                     }
                 }
+
+                CurClientManagerSid = Contractor.GetCurrentClientManagerSid(IdContractor);
             }
 
             SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = Id, SqlDbType = SqlDbType.Int };
@@ -459,6 +466,7 @@ namespace DataProvider.Models.Service
             SqlParameter pEngeneerSid = new SqlParameter() { ParameterName = "cur_engeneer_sid", SqlValue = CurEngeneerSid, SqlDbType = SqlDbType.VarChar };
             SqlParameter pAdminSid = new SqlParameter() { ParameterName = "cur_admin_sid", SqlValue = CurAdminSid, SqlDbType = SqlDbType.VarChar };
             SqlParameter pTechSid = new SqlParameter() { ParameterName = "cur_tech_sid", SqlValue = CurTechSid, SqlDbType = SqlDbType.VarChar };
+            SqlParameter pClientManagerSid = new SqlParameter() { ParameterName = "cur_client_manager_sid", SqlValue = CurClientManagerSid, SqlDbType = SqlDbType.VarChar };
             SqlParameter pManagerSid = new SqlParameter() { ParameterName = "cur_manager_sid", SqlValue = CurManagerSid, SqlDbType = SqlDbType.VarChar };
             SqlParameter pSerialNum = new SqlParameter() { ParameterName = "serial_num", SqlValue = Device.SerialNum, SqlDbType = SqlDbType.NVarChar };
             SqlParameter pCurServiceIssueId = new SqlParameter() { ParameterName = "cur_service_issue_id", SqlValue = CurServiceIssueId, SqlDbType = SqlDbType.Int };
@@ -481,7 +489,7 @@ namespace DataProvider.Models.Service
 
             //Если заявка уже сохранена то основная информаци не будет перезаписана
             dt = Db.Service.ExecuteQueryStoredProcedure("save_claim", pId, pIdContractor, pIdContract, pIdDevice,
-                pContractorName, pContractName, pDeviceName, /*pIdAdmin, pIdEngeneer,*/ pCreatorAdSid, pIdWorkType, pSpecialistSid, pClientSdNum, pEngeneerSid, pAdminSid, pTechSid, pManagerSid, pSerialNum, pCurServiceIssueId, pIdServiceCame, pDeviceUnknown, pContractUnknown, pIdCity, pAddress, pContactName, pContactPhone, pDeviceCollective);
+                pContractorName, pContractName, pDeviceName, /*pIdAdmin, pIdEngeneer,*/ pCreatorAdSid, pIdWorkType, pSpecialistSid, pClientSdNum, pEngeneerSid, pAdminSid, pTechSid, pManagerSid, pSerialNum, pCurServiceIssueId, pIdServiceCame, pDeviceUnknown, pContractUnknown, pIdCity, pAddress, pContactName, pContactPhone, pDeviceCollective, pClientManagerSid);
 
             int id = 0;
             if (dt.Rows.Count > 0)
@@ -765,7 +773,7 @@ namespace DataProvider.Models.Service
                         
                         if (cl.DeviceCollective)
                         {
-                            SpecialistSid = Contractor.GetCurrentClientManagerSid(cl.IdContractor);
+                            SpecialistSid = cl.CurClientManagerSid;//Contractor.GetCurrentClientManagerSid(cl.IdContractor);
                             nextState = new ClaimState("MANAGERNOTE");
                             sendNote = true;
                             noteTo = new[] { ServiceRole.CurSpecialist };
@@ -1063,7 +1071,7 @@ namespace DataProvider.Models.Service
                 if (cl.ContractUnknown && nextState.SysName.Equals("DONE"))
                 {
                     nextState = new ClaimState("CONTRACTSET");
-                    SpecialistSid = Contractor.GetCurrentClientManagerSid(cl.IdContractor);
+                    SpecialistSid = cl.CurClientManagerSid;//Contractor.GetCurrentClientManagerSid(cl.IdContractor);
                     sendNote = true;
                     noteTo = new[] {ServiceRole.CurSpecialist};
                     noteText = $@"Необходимо указать номер договора по заявке №%ID% %LINK%";
@@ -1103,7 +1111,7 @@ namespace DataProvider.Models.Service
                 var curCl = new Claim(Id);
                 if (curCl.DeviceCollective)
                 {
-                    SpecialistSid = Contractor.GetCurrentClientManagerSid(curCl.IdContractor);
+                    SpecialistSid = curCl.CurClientManagerSid;//Contractor.GetCurrentClientManagerSid(curCl.IdContractor);
                     nextState = new ClaimState("MANAGERNOTE");
                     sendNote = true;
                     noteTo = new[] {ServiceRole.CurSpecialist};
@@ -1153,7 +1161,7 @@ namespace DataProvider.Models.Service
 
                         if (curCl.DeviceCollective)
                         {
-                            SpecialistSid = Contractor.GetCurrentClientManagerSid(curCl.IdContractor);
+                            SpecialistSid = curCl.CurClientManagerSid;//Contractor.GetCurrentClientManagerSid(curCl.IdContractor);
                             nextState = new ClaimState("MANAGERNOTE");
                             sendNote = true;
                             noteTo = new[] {ServiceRole.CurSpecialist};
@@ -1200,7 +1208,7 @@ namespace DataProvider.Models.Service
                 if (curCl.ContractUnknown)
                 {
                     nextState = new ClaimState("CONTRACTSET");
-                    SpecialistSid = Contractor.GetCurrentClientManagerSid(curCl.IdContractor);
+                    SpecialistSid = curCl.CurClientManagerSid;//Contractor.GetCurrentClientManagerSid(curCl.IdContractor);
                     sendNote = true;
                     noteTo = new[] {ServiceRole.CurSpecialist};
                     noteText = $@"Необходимо указать номер договора по заявке №%ID% %LINK%";
@@ -1340,7 +1348,8 @@ namespace DataProvider.Models.Service
                 goNext = true;
                 saveClaim = true;
                 nextState = new ClaimState("SERVADMSET");
-                SpecialistSid = CurAdminSid;
+                var curCl = new Claim(Id, false);
+                SpecialistSid = curCl.CurAdminSid;
                 sendNote = true;
                 noteTo = new[] {ServiceRole.CurAdmin};
                 noteText = $@"Вам назначена заявка №%ID% %LINK%";

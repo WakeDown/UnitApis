@@ -36,7 +36,7 @@ namespace DataProvider.Helpers
         {
             Random rnd = new Random();
             int digit = rnd.Next(999999);
-            string result = $"{digit}-Z";
+            string result = $"Z-{digit}";
 
             return result;
         }
