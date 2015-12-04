@@ -1057,7 +1057,7 @@ namespace DataProvider.Models.Service
                     else
                     {
                         nextState = new ClaimState("SERVADMSET");
-                        SpecialistSid = CurAdminSid;
+                        SpecialistSid = cl.CurAdminSid;
                         sendNote = true;
                         noteTo = new[] {ServiceRole.CurAdmin};
                         noteText =
