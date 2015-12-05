@@ -25,9 +25,9 @@ namespace DataProvider.Controllers.Service
         //    return new ListResult<Claim>(list, cnt);
         //}
 
-        public ListResult<Claim> GetListAsync(string servAdminSid = null,string servManagerSid = null, string servEngeneerSid = null, DateTime? dateStart = null, DateTime? dateEnd = null, int? topRows = null, string managerSid = null, string techSid = null, string serialNum = null, int? idDevice = null, bool? activeClaimsOnly = false, int? idClaimState = null, int? clientId = null, string clientSdNum = null, int? claimId = null, string deviceName = null, int? pageNum = null, string groupStates = null, string address = null)
+        public ListResult<Claim> GetListAsync(string servAdminSid = null,string servManagerSid = null, string servEngeneerSid = null, DateTime? dateStart = null, DateTime? dateEnd = null, int? topRows = null, string managerSid = null, string techSid = null, string serialNum = null, int? idDevice = null, bool? activeClaimsOnly = false, int? idClaimState = null, int? clientId = null, string client = null, string clientSdNum = null, int? claimId = null, string deviceName = null, int? pageNum = null, string groupStates = null, string address = null, int? idState = null, string dateCreate = null, string curSpec = null)
         {
-            var result = Claim.GetList(GetCurUser(), servAdminSid, servEngeneerSid, dateStart, dateEnd, topRows, managerSid, techSid, serialNum, idDevice, activeClaimsOnly, idClaimState, clientId, clientSdNum, claimId:claimId, deviceName: deviceName, pageNum: pageNum, groupStates: groupStates, address: address, servManagerSid: servManagerSid);
+            var result = Claim.GetList(GetCurUser(), servAdminSid, servEngeneerSid, dateStart, dateEnd, topRows, managerSid, techSid, serialNum, idDevice, activeClaimsOnly, idClaimState, clientId, clientSdNum, claimId:claimId, deviceName: deviceName, pageNum: pageNum, groupStates: groupStates, address: address, servManagerSid: servManagerSid, client: client, idState: idState, dateCreate: dateCreate, curSpec: curSpec);
             return result;
         }
 
