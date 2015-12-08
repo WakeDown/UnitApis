@@ -14,6 +14,7 @@ namespace DataProvider.Models.Service
         public int CityId { get; set; }
         public string CityName { get; set; }
         public string AddressName { get; set; }
+        public string ObjectName { get; set; }
 
         public Address()
         {
@@ -39,6 +40,7 @@ namespace DataProvider.Models.Service
             CityId = Db.DbHelper.GetValueIntOrDefault(row, "id_city");
             CityName = Db.DbHelper.GetValueString(row, "city");
             AddressName = Db.DbHelper.GetValueString(row, "address");
+            ObjectName = Db.DbHelper.GetValueString(row, "object_name");
         }
 
         public static IEnumerable<Address> GetList(int? idContractor = null, int? idContract = null, int? idDevice = null, string addrName = null)

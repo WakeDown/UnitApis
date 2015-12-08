@@ -63,6 +63,7 @@ namespace DataProvider.Models.Service
         public int? IdCity { get; set; }
         public string CityName { get; set; }
         public string Address { get; set; }
+        public string ObjectName { get; set; }
         public string ContactName { get; set; }
         public string ContactPhone { get; set; }
         /// <summary>
@@ -216,6 +217,7 @@ namespace DataProvider.Models.Service
             CityName = Db.DbHelper.GetValueString(row, "city_name");
             DeviceCollective = Db.DbHelper.GetValueBool(row, "device_collective");
             CurClientManagerSid = Db.DbHelper.GetValueString(row, "cur_client_manager_sid");
+            ObjectName = Db.DbHelper.GetValueString(row, "object_name");
 
             Contractor = new Contractor() { Id = Db.DbHelper.GetValueIntOrDefault(row, "id_contractor"), Name = Db.DbHelper.GetValueString(row, "contractor_name"), FullName = Db.DbHelper.GetValueString(row, "contractor_full_name") };
             if (ContractUnknown && IdContract <= 0)
@@ -258,7 +260,7 @@ namespace DataProvider.Models.Service
                     Id = Db.DbHelper.GetValueIntOrDefault(row, "id_device"),
                     FullName = Db.DbHelper.GetValueString(row, "device_name"),
                     SerialNum = Db.DbHelper.GetValueString(row, "device_serial_num"),
-                    ObjectName = Db.DbHelper.GetValueString(row, "object_name"),
+                    ObjectName = Db.DbHelper.GetValueString(row, "device_object_name"),
                     Address = Db.DbHelper.GetValueString(row, "device_address"),
                     ContactName = Db.DbHelper.GetValueString(row, "device_contact_name"),
                     Descr = Db.DbHelper.GetValueString(row, "c2d_comment"),
@@ -436,6 +438,11 @@ namespace DataProvider.Models.Service
                         if (arr.Length > 1)
                         {
                             Address = arr[1];
+
+                            if (arr.Length > 2)
+                            {
+                                ObjectName = arr[2];
+                        }
                         }
                     }
                     catch (Exception)
@@ -478,6 +485,7 @@ namespace DataProvider.Models.Service
             SqlParameter pContactName = new SqlParameter() { ParameterName = "contact_name", SqlValue = ContactName, SqlDbType = SqlDbType.NVarChar };
             SqlParameter pContactPhone = new SqlParameter() { ParameterName = "contact_phone", SqlValue = ContactPhone, SqlDbType = SqlDbType.NVarChar };
             SqlParameter pDeviceCollective = new SqlParameter() { ParameterName = "device_collective", SqlValue = DeviceCollective, SqlDbType = SqlDbType.Bit };
+            SqlParameter pObjectName = new SqlParameter() { ParameterName = "object_name", SqlValue = ObjectName, SqlDbType = SqlDbType.NVarChar };
             DataTable dt = new DataTable();
             //using (var conn = Db.Service.connection)
             //{
@@ -489,7 +497,7 @@ namespace DataProvider.Models.Service
 
             //Если заявка уже сохранена то основная информаци не будет перезаписана
             dt = Db.Service.ExecuteQueryStoredProcedure("save_claim", pId, pIdContractor, pIdContract, pIdDevice,
-                pContractorName, pContractName, pDeviceName, /*pIdAdmin, pIdEngeneer,*/ pCreatorAdSid, pIdWorkType, pSpecialistSid, pClientSdNum, pEngeneerSid, pAdminSid, pTechSid, pManagerSid, pSerialNum, pCurServiceIssueId, pIdServiceCame, pDeviceUnknown, pContractUnknown, pIdCity, pAddress, pContactName, pContactPhone, pDeviceCollective, pClientManagerSid);
+                pContractorName, pContractName, pDeviceName, /*pIdAdmin, pIdEngeneer,*/ pCreatorAdSid, pIdWorkType, pSpecialistSid, pClientSdNum, pEngeneerSid, pAdminSid, pTechSid, pManagerSid, pSerialNum, pCurServiceIssueId, pIdServiceCame, pDeviceUnknown, pContractUnknown, pIdCity, pAddress, pContactName, pContactPhone, pDeviceCollective, pClientManagerSid, pObjectName);
 
             int id = 0;
             if (dt.Rows.Count > 0)
@@ -542,17 +550,40 @@ namespace DataProvider.Models.Service
         {
             var claim = new Claim(idClaim);
             claim.CurUserAdSid = creatorSid;
+            //bool goNext = false;
             if (claim.Id > 0)
             {
                 var state = new ClaimState(stateSysName);
-                bool saveClaimCurrentState = !stateSysName.Equals("ZIPCL-CLOSED");
-                claim.SaveStateStep(state.Id, descr, idZipClaim: idZipClaim, saveClaimCurrentState: saveClaimCurrentState);
-                //if (stateSysName.ToUpper().Equals("ZIPCL-FAIL"))
-                //{
-                //    var nextState = new ClaimState("ZIPBUYCANCEL");
-                //    claim.SaveStateStep(nextState.Id);
-                //}
+                bool saveClaimCurrentState = true;
+
+                //Если текущий статус совпадает с переданным или передают что заявка удалена или статус опаздывает (мы уже назначили кого-то а нам приходит статус по заказу ЗИП)
+                if (claim.State.SysName.Equals(stateSysName) || stateSysName.Equals("ZIPCL-CLOSED") || !claim.State.SysName.StartsWith("ZIPCL"))
+                {
+                    saveClaimCurrentState = false;
+                }
+
+                //Если текущий статус заявки не является завершающим из заявок на ЗИП (при обмене может случиться так что какой либо статус Эталона может прийти после завершающего)
+                //////if (claim.State.SysName.Equals("ZIPCL-CANCELED") || claim.State.SysName.Equals("ZIPCL-CLOSED") ||
+                //////    claim.State.SysName.Equals("ZIPCL-DELIV") ||
+                //////    claim.State.SysName.Equals("ZIPCL-ETSHIP-GET"))
+                //////{
+                //////    //Если заявки ЗИП - отменена, отклонена, доставлена или отгружено
+                //////    //то не даем продложать так как это конечный статус для ЗИП и заявка уже ушла далее
+                //////    saveClaimCurrentState = !stateSysName.Equals("ZIPCL-CLOSED");
+                //////}
+
+
+                claim.SaveStateStep(state.Id, descr, idZipClaim: idZipClaim,
+                        saveClaimCurrentState: saveClaimCurrentState);
+                    //if (stateSysName.ToUpper().Equals("ZIPCL-FAIL"))
+                    //{
+                    //    var nextState = new ClaimState("ZIPBUYCANCEL");
+                    //    claim.SaveStateStep(nextState.Id);
+                    //}
+                
             }
+
+            //return goNext;
         }
 
         public void SaveStateStep(int stateId, string descr = null, bool saveStateInfo = true, int? idZipClaim = null, bool saveClaimCurrentState = true)
@@ -748,6 +779,7 @@ namespace DataProvider.Models.Service
                 if (!user.HasAccess(AdGroup.ServiceTech)) return;
                 goNext = true;
                 saveClaim = true;
+
                 if (confirm)
                 {
                     ServiceSheet4Save.IdClaim = Id;
@@ -832,6 +864,7 @@ namespace DataProvider.Models.Service
                 
                 goNext = true;
                 saveClaim = true;
+                descr = $"{Descr}\r\nНазначен СА {AdHelper.GetUserBySid(SpecialistSid).FullName}";
                 nextState = new ClaimState("SERVADMSET");
                 sendNote = true;
                 noteTo = new[] { ServiceRole.CurSpecialist };
@@ -1291,7 +1324,7 @@ namespace DataProvider.Models.Service
                 saveClaim = true;
                 if (!confirm)
                 {
-                    descr = $"Отказ в закупке ЗИП\r\n{Descr}";
+                    descr = $"Вручную произведен отказ в закупке ЗИП\r\n{Descr}";
                     nextState = new ClaimState("ZIPBUYCANCEL");
                     sendNote = true;
                     noteTo = new[] {ServiceRole.CurAdmin};
@@ -1300,6 +1333,7 @@ namespace DataProvider.Models.Service
                 }
                 else
                 {
+                    descr = $"Вручную установлено что ЗИП на складе";
                     nextState = new ClaimState("SERVADMSET");
                     var curCl = new Claim(Id, false);
                     SpecialistSid = curCl.CurAdminSid;

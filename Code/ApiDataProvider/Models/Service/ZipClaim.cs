@@ -121,6 +121,7 @@ namespace DataProvider.Models.Service
                     {
                         item.ClaimId = zipClaim.Id;
                         item.CurUserAdSid = creatorSid;
+                        item.NoNomenclatureNum = true;
                         item.SaveUnitProg();
                     }
                 }

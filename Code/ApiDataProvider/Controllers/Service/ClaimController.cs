@@ -25,9 +25,9 @@ namespace DataProvider.Controllers.Service
         //    return new ListResult<Claim>(list, cnt);
         //}
 
-        public ListResult<Claim> GetListAsync(string servAdminSid = null,string servManagerSid = null, string servEngeneerSid = null, DateTime? dateStart = null, DateTime? dateEnd = null, int? topRows = null, string managerSid = null, string techSid = null, string serialNum = null, int? idDevice = null, bool? activeClaimsOnly = false, int? idClaimState = null, int? clientId = null, string client = null, string clientSdNum = null, int? claimId = null, string deviceName = null, int? pageNum = null, string groupStates = null, string address = null, int? idState = null, string dateCreate = null, string curSpec = null)
+        public ListResult<Claim> GetListAsync(string servAdminSid = null, string servManagerSid = null, string servEngeneerSid = null, DateTime? dateStart = null, DateTime? dateEnd = null, int? topRows = null, string managerSid = null, string techSid = null, string serialNum = null, int? idDevice = null, bool? activeClaimsOnly = false, int? idClaimState = null, int? clientId = null, string client = null, string clientSdNum = null, int? claimId = null, string deviceName = null, int? pageNum = null, string groupStates = null, string address = null, int? idState = null, string dateCreate = null, string curSpec = null)
         {
-            var result = Claim.GetList(GetCurUser(), servAdminSid, servEngeneerSid, dateStart, dateEnd, topRows, managerSid, techSid, serialNum, idDevice, activeClaimsOnly, idClaimState, clientId, clientSdNum, claimId:claimId, deviceName: deviceName, pageNum: pageNum, groupStates: groupStates, address: address, servManagerSid: servManagerSid, client: client, idState: idState, dateCreate: dateCreate, curSpec: curSpec);
+            var result = Claim.GetList(GetCurUser(), servAdminSid, servEngeneerSid, dateStart, dateEnd, topRows, managerSid, techSid, serialNum, idDevice, activeClaimsOnly, idClaimState, clientId, clientSdNum, claimId: claimId, deviceName: deviceName, pageNum: pageNum, groupStates: groupStates, address: address, servManagerSid: servManagerSid, client: client, idState: idState, dateCreate: dateCreate, curSpec: curSpec);
             return result;
         }
 
@@ -54,7 +54,7 @@ namespace DataProvider.Controllers.Service
         [AuthorizeAd(Groups = new[] { AdGroup.SuperAdmin, AdGroup.ServiceTech, AdGroup.ServiceControler, AdGroup.ServiceAdmin, AdGroup.ServiceManager, AdGroup.ServiceEngeneer, AdGroup.ServiceClaimView, AdGroup.ServiceCenterManager })]
         public IEnumerable<Claim2ClaimState> GetStateHistory(int? id, int? topRows)
         {
-           if (!id.HasValue) return new[] { new Claim2ClaimState() };
+            if (!id.HasValue) return new[] { new Claim2ClaimState() };
             return Claim2ClaimState.GetList(id.Value, topRows);
         }
 
@@ -212,12 +212,14 @@ namespace DataProvider.Controllers.Service
         {
             if (!idClaim.HasValue || String.IsNullOrEmpty(stateSysName)) return NotFound();
 
-            Claim.RemoteStateChange(idClaim.Value, stateSysName, creatorSid, descr, idZipClaim);
+          Claim.RemoteStateChange(idClaim.Value, stateSysName, creatorSid, descr, idZipClaim);
 
-            var claim = new Claim(idClaim.Value);
-            claim.CurUserAdSid = creatorSid;
-            //claim.Descr = descr;
-            claim.Go(GetCurUser());
+            
+                var claim = new Claim(idClaim.Value);
+                claim.CurUserAdSid = creatorSid;
+                //claim.Descr = descr;
+                claim.Go(GetCurUser());
+            
             return Ok();
         }
 
