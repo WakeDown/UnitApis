@@ -15,6 +15,10 @@ namespace DataProvider.Models.Stuff
         public string AdSid { get; set; }
         public string DisplayName { get; set; }
         public string FullName { get; set; }
+        public string FullNameDat { get; set; }
+        public string FullNameRod { get; set; }
+        public string DisplayNameDat { get; set; }
+        public string DisplayNameRod { get; set; }
         public string Email { get; set; }
         public string DepartmentName { get; set; }
         public string PositionName { get; set; }
@@ -60,6 +64,10 @@ namespace DataProvider.Models.Stuff
             Email = Db.DbHelper.GetValueString(row, "email");
             DepartmentName = Db.DbHelper.GetValueString(row, "dep_name");
             PositionName = Db.DbHelper.GetValueString(row, "pos_name");
+            FullNameDat = Db.DbHelper.GetValueString(row, "full_name_dat");
+            FullNameRod = Db.DbHelper.GetValueString(row, "full_name_rod");
+            DisplayNameDat = Employee.ShortName(FullNameDat);
+            DisplayNameRod = Employee.ShortName(FullNameRod);
         }
 
         private void FillSelf(EmployeeSm user)

@@ -118,7 +118,15 @@ namespace DataProvider.Helpers
                     nc))
             {
                 var domain = new PrincipalContext(ContextType.Domain);
-                var group = GroupPrincipal.FindByIdentity(domain, IdentityType.Sid, grpSid);
+                GroupPrincipal group;
+                try
+                {
+                    group = GroupPrincipal.FindByIdentity(domain, IdentityType.Sid, grpSid);
+                }
+                catch (ArgumentException)
+                {
+                    throw new Exception("Введен некорректный SID.");
+                }
                 if (group != null)
                 {
                     var members = group.GetMembers(true);
@@ -225,7 +233,7 @@ namespace DataProvider.Helpers
                 string name = StringHelper.Trim(emp.Name);
                 string position = emp.Position != null ? emp.Position.Id > 0 && String.IsNullOrEmpty(emp.Position.Name) ? new Position(emp.Position.Id).Name : emp.Position.Name : String.Empty;
                 string workNum = StringHelper.Trim(emp.WorkNum);
-                string mobilNum = StringHelper.Trim(emp.MobilNum);
+                string mobilNum = StringHelper.Trim(emp.MobilNum).Replace("-", "");
                 string city = emp.City != null ? StringHelper.Trim(emp.City.Name) : String.Empty;
                 string org = emp.Organization != null ? emp.Organization.Id > 0 && String.IsNullOrEmpty(emp.Organization.Name) ? new Organization(emp.Organization.Id).Name : emp.Organization.Name : String.Empty;
                 string dep = emp.Department != null ? emp.Department.Id > 0 && String.IsNullOrEmpty(emp.Department.Name) ? new Department(emp.Department.Id).Name : emp.Department.Name : String.Empty;

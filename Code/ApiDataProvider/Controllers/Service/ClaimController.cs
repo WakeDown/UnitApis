@@ -212,14 +212,15 @@ namespace DataProvider.Controllers.Service
         {
             if (!idClaim.HasValue || String.IsNullOrEmpty(stateSysName)) return NotFound();
 
-          Claim.RemoteStateChange(idClaim.Value, stateSysName, creatorSid, descr, idZipClaim);
+             var goNext =  Claim.RemoteStateChange(idClaim.Value, stateSysName, creatorSid, descr, idZipClaim);
 
-            
+            if (goNext)
+            {
                 var claim = new Claim(idClaim.Value);
                 claim.CurUserAdSid = creatorSid;
                 //claim.Descr = descr;
                 claim.Go(GetCurUser());
-            
+            }
             return Ok();
         }
 

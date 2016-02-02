@@ -26,8 +26,12 @@ namespace DataProvider.Objects
             Groups = groups;
         }
 
+        //IEnumerable<string> unlikeProductionUsers = new List<string>() { "remoteSpeCalcProject" };
+
         protected override bool IsAuthorized(HttpActionContext actionContext)
         {
+            //if (unlikeProductionUsers.Contains(HttpContext.Current.User.Identity.Name)) return false;
+
             if (base.IsAuthorized(actionContext))
             {
                 if (Groups == null || !Groups.Any())return true;

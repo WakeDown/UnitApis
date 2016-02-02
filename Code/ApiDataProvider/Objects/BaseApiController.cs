@@ -32,11 +32,15 @@ namespace Objects
         //}
         //public string CurUserAdSid { get; set; }
 
+         
+
+
         public BaseApiController()
         {
-
             //SetCurUser();
         }
+
+        
 
         protected AdUser GetCurUser()
         {

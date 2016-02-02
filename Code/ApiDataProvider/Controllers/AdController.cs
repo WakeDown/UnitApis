@@ -16,6 +16,11 @@ namespace DataProvider.Controllers
 {
     public class AdController : BaseApiController
     {
+        public IEnumerable<KeyValuePair<string, string>> GetUserListByGroupSid(string sid)
+        {
+            return AdHelper.GetUserListByAdGroup(sid);
+        }
+
         public IEnumerable<KeyValuePair<string, string>> GetUserListByAdGroup(AdGroup group)
         {
             return AdHelper.GetUserListByAdGroup(group);
@@ -32,10 +37,22 @@ namespace DataProvider.Controllers
             return curSid;
         }
         [HttpGet]
+
         public bool UserInGroup(string groupSid)
         {
             var grp = AdUserGroup.GetAdGroupBySid(groupSid);
             return AdHelper.UserInGroup(GetCurUser().User, grp);
+        }
+
+        public IEnumerable<string> GetUserGroups()
+        {
+            List<string> result = new List<string>();
+            foreach (AdGroup grp in GetCurUser().AdGroups)
+            {
+                result.Add(AdUserGroup.GetSidByAdGroup(grp));
+            }
+
+            return result;
         }
 
         [HttpGet]

@@ -24,6 +24,9 @@ namespace DataProvider.Objects
             
             list.Add(new AdUserGroup(AdGroup.SuperAdmin, "S-1-5-21-1970802976-3466419101-4042325969-4031", "SuperAdmin"));//Суперадмин
             list.Add(new AdUserGroup(AdGroup.SystemUser, "S-1-5-21-1970802976-3466419101-4042325969-4033", "SystemUser"));//Системынй пользователь
+            //Remote
+            list.Add(new AdUserGroup(AdGroup.RemoteGetUserRigthGroups, "S-1-5-21-1970802976-3466419101-4042325969-7654", "RemoteGetUserRigthGroups"));
+            list.Add(new AdUserGroup(AdGroup.RemoteGetUserRigthGroups, "S-1-5-21-1970802976-3466419101-4042325969-7654", "RemoteGetUserRigthGroups"));
             //Personal
             list.Add(new AdUserGroup(AdGroup.PersonalManager, "S-1-5-21-1970802976-3466419101-4042325969-4030", "PersonalManager"));//Менеджер по персоналу
             list.Add(new AdUserGroup(AdGroup.NewEmployeeNote, "S-1-5-21-1970802976-3466419101-4042325969-4036", "NewEmployeeNote"));//Уведомление о новом пользователе

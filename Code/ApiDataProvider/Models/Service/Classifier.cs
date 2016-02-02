@@ -26,9 +26,7 @@ namespace DataProvider.Models.Service
 
             return list;
         }
-
-
-
+        
         public static byte[] GetExcel()
         {
             var wb = new XLWorkbook();

@@ -234,6 +234,9 @@ namespace DataProvider.Models.Stuff
             MobilNum = StringHelper.Trim(MobilNum);
             FullNameDat=StringHelper.Trim(FullNameDat);
             FullNameRod = StringHelper.Trim(FullNameRod);
+            //if (WorkNum == "-999") WorkNum = null;
+            //if (Email == "-999") Email = null;
+            //if (MobilNum == "-999") MobilNum = null;
 
             SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = Id, SqlDbType = SqlDbType.Int };
             SqlParameter pAdSid = new SqlParameter() { ParameterName = "ad_sid", SqlValue = AdSid, SqlDbType = SqlDbType.VarChar };

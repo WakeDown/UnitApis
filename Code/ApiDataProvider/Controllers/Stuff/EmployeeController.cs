@@ -28,6 +28,7 @@ namespace DataProvider.Controllers.Stuff
         {
             return new EmployeeSm(sid);
         }
+
         public IEnumerable<Employee> GetList(int? idDepartment = null, int? idCity = null, bool showHidden = true)
         {
             bool userCanViewHiddenEmps = GetCurUser().HasAccess(AdGroup.PersonalManager, AdGroup.SuperAdmin);

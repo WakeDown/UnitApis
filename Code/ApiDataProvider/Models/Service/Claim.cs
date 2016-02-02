@@ -546,21 +546,27 @@ namespace DataProvider.Models.Service
             Db.Service.ExecuteQueryStoredProcedure("claim_change_contract_id", pIdClaim, pIdContract);
         }
 
-        public static void RemoteStateChange(int idClaim, string stateSysName, string creatorSid, string descr = null, int? idZipClaim = null)
+        public static bool RemoteStateChange(int idClaim, string stateSysName, string creatorSid, string descr = null, int? idZipClaim = null)
         {
             var claim = new Claim(idClaim);
             claim.CurUserAdSid = creatorSid;
-            //bool goNext = false;
+            bool goNext = true;
             if (claim.Id > 0)
             {
                 var state = new ClaimState(stateSysName);
-                bool saveClaimCurrentState = true;
+                bool saveClaimCurrentState = true;//!stateSysName.Equals("ZIPCL-CLOSED");
 
                 //Если текущий статус совпадает с переданным или передают что заявка удалена или статус опаздывает (мы уже назначили кого-то а нам приходит статус по заказу ЗИП)
-                if (claim.State.SysName.Equals(stateSysName) || stateSysName.Equals("ZIPCL-CLOSED") || !claim.State.SysName.StartsWith("ZIPCL"))
+                if (claim.State.SysName.Equals(stateSysName) || stateSysName.Equals("ZIPCL-CLOSED") || stateSysName.Equals("ZIPCL-DONE"))
                 {
                     saveClaimCurrentState = false;
                 }
+
+                ////////Если текущий статус совпадает с переданным или передают что заявка удалена или статус опаздывает (мы уже назначили кого-то а нам приходит статус по заказу ЗИП)
+                //////if (claim.State.SysName.Equals(stateSysName) || stateSysName.Equals("ZIPCL-CLOSED") || !claim.State.SysName.StartsWith("ZIPCL"))
+                //////{
+                //////    saveClaimCurrentState = false;
+                //////}
 
                 //Если текущий статус заявки не является завершающим из заявок на ЗИП (при обмене может случиться так что какой либо статус Эталона может прийти после завершающего)
                 //////if (claim.State.SysName.Equals("ZIPCL-CANCELED") || claim.State.SysName.Equals("ZIPCL-CLOSED") ||
@@ -582,8 +588,9 @@ namespace DataProvider.Models.Service
                     //}
                 
             }
-
-            //return goNext;
+            if (claim.State.SysName.Equals("ZIPORDERED"))
+                goNext = false;
+            return goNext;
         }
 
         public void SaveStateStep(int stateId, string descr = null, bool saveStateInfo = true, int? idZipClaim = null, bool saveClaimCurrentState = true)
@@ -704,7 +711,7 @@ namespace DataProvider.Models.Service
 
             if (currState.SysName.ToUpper().Equals("NEW"))
             {
-                if (!user.HasAccess(AdGroup.AddNewClaim, AdGroup.ServiceCenterManager)) return;
+                if (!user.HasAccess(AdGroup.AddNewClaim, AdGroup.ServiceCenterManager, AdGroup.ServiceControler)) return;
                 goNext = true;
                 saveClaim = true;
                 int? wtId = null;
@@ -753,7 +760,7 @@ namespace DataProvider.Models.Service
             }
             else if (currState.SysName.ToUpper().Equals("TECHSET"))
             {
-                if (!user.HasAccess(AdGroup.ServiceTech)) return;
+                if (!user.HasAccess(AdGroup.ServiceTech, AdGroup.ServiceControler)) return;
                 goNext = true;
                 saveClaim = true;
                 if (confirm)
@@ -776,7 +783,7 @@ namespace DataProvider.Models.Service
             }
             else if (currState.SysName.ToUpper().Equals("TECHWORK"))
             {
-                if (!user.HasAccess(AdGroup.ServiceTech)) return;
+                if (!user.HasAccess(AdGroup.ServiceTech, AdGroup.ServiceControler)) return;
                 goNext = true;
                 saveClaim = true;
 
@@ -894,7 +901,7 @@ namespace DataProvider.Models.Service
             }
             else if (currState.SysName.ToUpper().Equals("SRVADMWORK"))
             {
-                if (!user.HasAccess(AdGroup.ServiceAdmin)) return;
+                if (!user.HasAccess(AdGroup.ServiceAdmin, AdGroup.ServiceControler)) return;
                 goNext = true;
                 saveClaim = true;
                 ServiceIssue4Save.IdClaim = Id;
@@ -922,7 +929,7 @@ namespace DataProvider.Models.Service
             }
             else if (currState.SysName.ToUpper().Equals("SRVENGSET"))
             {
-                if (!user.HasAccess(AdGroup.ServiceEngeneer)) return;
+                if (!user.HasAccess(AdGroup.ServiceEngeneer, AdGroup.ServiceControler)) return;
                 goNext = true;
                 saveClaim = true;
 
@@ -953,14 +960,14 @@ namespace DataProvider.Models.Service
             }
             else if (currState.SysName.ToUpper().Equals("SRVENGGET"))
             {
-                if (!user.HasAccess(AdGroup.ServiceEngeneer)) return;
+                if (!user.HasAccess(AdGroup.ServiceEngeneer, AdGroup.ServiceControler)) return;
                 goNext = true;
                 saveClaim = true;
                 nextState = new ClaimState("SRVENGWENT");
             }
             else if (currState.SysName.ToUpper().Equals("SRVENGWENT"))
             {
-                if (!user.HasAccess(AdGroup.ServiceEngeneer)) return;
+                if (!user.HasAccess(AdGroup.ServiceEngeneer, AdGroup.ServiceControler)) return;
                 goNext = true;
                 saveClaim = true;
                 nextState = new ClaimState("SRVENGWORK");
@@ -993,7 +1000,7 @@ namespace DataProvider.Models.Service
             }
             else if (currState.SysName.ToUpper().Equals("SRVENGWORK"))
             {
-                if (!user.HasAccess(AdGroup.ServiceEngeneer)) return;
+                if (!user.HasAccess(AdGroup.ServiceEngeneer, AdGroup.ServiceControler)) return;
                 goNext = true;
                 saveClaim = true;
                 ServiceSheet4Save.IdClaim = Id;
@@ -1113,7 +1120,7 @@ namespace DataProvider.Models.Service
             }
             else if (currState.SysName.ToUpper().Equals("CONTRACTSET"))
             {
-                if (!user.HasAccess(AdGroup.ServiceManager)) return;
+                if (!user.HasAccess(AdGroup.ServiceManager, AdGroup.ServiceControler)) return;
                 goNext = true;
                 saveClaim = true;
 
@@ -1156,7 +1163,7 @@ namespace DataProvider.Models.Service
             }
             else if (currState.SysName.ToUpper().Equals("ZIPISSUE"))
             {
-                if (!user.HasAccess(AdGroup.ServiceEngeneer, AdGroup.ServiceTech)) return;
+                if (!user.HasAccess(AdGroup.ServiceEngeneer, AdGroup.ServiceTech, AdGroup.ServiceControler)) return;
                 var lastServiceSheet = GetLastServiceSheet();
                 var curCl = new Claim(Id);
                 goNext = true;
@@ -1250,7 +1257,7 @@ namespace DataProvider.Models.Service
             }
             else if (currState.SysName.ToUpper().Equals("ZIPCHECK"))
             {
-                if (!user.HasAccess(AdGroup.ServiceTech)) return;
+                if (!user.HasAccess(AdGroup.ServiceTech, AdGroup.ServiceControler)) return;
 
                 //В настоящий момент по этому статусу происходит заказ ЗИП специалистом Тех поддержки
                 if (!GetClaimCurrentState(Id).SysName.Equals("ZIPCHECKINWORK")) //На всякий случай проверяем еще раз
@@ -1269,7 +1276,7 @@ namespace DataProvider.Models.Service
 
             else if (currState.SysName.ToUpper().Equals("ZIPCHECKINWORK"))
             {
-                if (!user.HasAccess(AdGroup.ServiceTech)) return;
+                if (!user.HasAccess(AdGroup.ServiceTech, AdGroup.ServiceControler)) return;
                 var curCl = new Claim(Id);
                 if (curCl.SpecialistSid != CurUserAdSid && curCl.CurTechSid != CurUserAdSid)
                     throw new ArgumentException("Проверка ЗИП уже в работе.");
@@ -1296,7 +1303,7 @@ namespace DataProvider.Models.Service
             }
             else if (currState.SysName.ToUpper().Equals("ZIPCONFIRM"))
             {
-                if (!user.HasAccess(AdGroup.ServiceZipClaimConfirm)) return;
+                if (!user.HasAccess(AdGroup.ServiceZipClaimConfirm, AdGroup.ServiceControler)) return;
                 goNext = true;
                 saveClaim = true;
                 if (confirm)

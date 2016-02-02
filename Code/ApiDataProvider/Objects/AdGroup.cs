@@ -10,6 +10,10 @@ namespace DataProvider.Objects
         None,
         SuperAdmin,
         SystemUser,
+
+        //Remote
+        RemoteGetUserRigthGroups,
+        RemoteGetGroupUserList,
         //Personal
         PersonalManager,
         NewEmployeeNote,
@@ -24,6 +28,7 @@ namespace DataProvider.Objects
         SpeCalcProduct,
         SpeCalcOperator,
         SpeCalcKonkurs,
+        
         // />
 
         //Service

@@ -190,6 +190,7 @@
     <Compile Include="Controllers\Stuff\RestHolidayController.cs" />
     <Compile Include="Controllers\Stuff\RestHolidayTransferDayController.cs" />
     <Compile Include="Controllers\Stuff\StatementController.cs" />
+    <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Helpers\DateTimeHelper.cs" />
     <Compile Include="Controllers\Stuff\LanguageController.cs" />
     <Compile Include="Controllers\Stuff\VendorController.cs" />
@@ -332,6 +333,7 @@
     <None Include="Properties\PublishProfiles\UWP.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
     </None>
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
