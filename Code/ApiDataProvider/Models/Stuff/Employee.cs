@@ -122,7 +122,7 @@ namespace DataProvider.Models.Stuff
         public static string ShortName(string fullName)
         {
             string result = String.Empty;
-            string[] nameArr = fullName.Split(' ');
+            string[] nameArr = String.IsNullOrEmpty(fullName) ? new string[0] : fullName.Split(' ');
             for (int i = 0; i < nameArr.Count(); i++)
             {
                 //if (i > 2) break;
