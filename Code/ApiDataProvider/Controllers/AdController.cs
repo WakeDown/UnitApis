@@ -90,32 +90,32 @@ namespace DataProvider.Controllers
 
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
             //string sid = GetCurUser().Sid;
-            try
-            {
-                foreach (Employee emp in Employee.GetList(getPhoto: true))
+            //try
+            //{
+                foreach (Employee emp in Employee.GetList(getPhoto: true, getNewbies:true))
                 {
                     Employee e = emp;
-                    try
-                    {
+                    //try
+                    //{
                        string sid= AdHelper.SaveUser(e);
                         if (!String.IsNullOrEmpty(sid))
                         {
                             e.AdSid = sid;
                             e.Save();
                         }
-                    }
-                    catch (UnauthorizedAccessException ex)
-                    {
-                        continue;
-                    }
+                    //}
+                    //catch (UnauthorizedAccessException ex)
+                    //{
+                    //    continue;
+                    //}
                 }
-            }
-            catch (Exception ex)
-            {
-                response = new HttpResponseMessage(HttpStatusCode.OK);
-                response.Content = new StringContent(String.Format("{{\"errorMessage\":\"{0}\"}}", ex.Message));
+            //}
+            //catch (Exception ex)
+            //{
+            //    response = new HttpResponseMessage(HttpStatusCode.OK);
+            //    response.Content = new StringContent(String.Format("{{\"errorMessage\":\"{0}\"}}", ex.Message));
 
-            }
+            //}
             return response;
         }
     }

@@ -353,17 +353,18 @@ namespace DataProvider.Models.Stuff
 
         }
 
-        public static IEnumerable<Employee> GetList(int? idDepartment = null, bool getPhoto = false, int? idCity = null, int? idManager = null, bool userCanViewHiddenEmps = false, bool showHidden = true, int? idBudget = null)
+        public static IEnumerable<Employee> GetList(int? idDepartment = null, bool getPhoto = false, int? idCity = null, int? idManager = null, bool userCanViewHiddenEmps = false, bool showHidden = true, int? idBudget = null, bool getNewbies = false)
         {
             SqlParameter pIdDepartment = new SqlParameter() { ParameterName = "id_department", SqlValue = idDepartment, SqlDbType = SqlDbType.Int };
             SqlParameter pGetPhoto = new SqlParameter() { ParameterName = "get_photo", SqlValue = getPhoto, SqlDbType = SqlDbType.Bit };
             SqlParameter pIdCity = new SqlParameter() { ParameterName = "id_city", SqlValue = idCity, SqlDbType = SqlDbType.Int };
             SqlParameter pIdManager = new SqlParameter() { ParameterName = "id_manager", SqlValue = idManager, SqlDbType = SqlDbType.Int };
             SqlParameter pIdBudget = new SqlParameter() { ParameterName = "id_budget", SqlValue = idBudget, SqlDbType = SqlDbType.Int };
+            SqlParameter pgetNewbies = new SqlParameter() { ParameterName = "get_newbies", SqlValue = getNewbies, SqlDbType = SqlDbType.Bit };
             //if (sysNamePositions == null) sysNamePositions = new[] {""};
             //SqlParameter pSysNamePositions = new SqlParameter() { ParameterName = "lst_pos_sys_name", SqlValue = String.Join(",", sysNamePositions), SqlDbType = SqlDbType.NVarChar };
 
-            var dt = Db.Stuff.ExecuteQueryStoredProcedure("get_employee_list", pIdDepartment, pGetPhoto, pIdCity, pIdManager, pIdBudget);
+            var dt = Db.Stuff.ExecuteQueryStoredProcedure("get_employee_list", pIdDepartment, pGetPhoto, pIdCity, pIdManager, pIdBudget, pgetNewbies);
 
             var lst = new List<Employee>();
 

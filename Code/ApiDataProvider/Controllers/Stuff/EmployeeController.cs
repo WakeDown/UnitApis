@@ -35,6 +35,19 @@ namespace DataProvider.Controllers.Stuff
             return Employee.GetList(idDepartment, false, idCity, null, userCanViewHiddenEmps, showHidden);
         }
 
+        public IEnumerable<KeyValuePair<string, string>> GetListSimple(int? idDepartment = null, int? idCity = null, bool showHidden = true)
+        {
+            bool userCanViewHiddenEmps = GetCurUser().HasAccess(AdGroup.PersonalManager, AdGroup.SuperAdmin);
+            var list = Employee.GetList(idDepartment, false, idCity, null, userCanViewHiddenEmps, showHidden);
+            var simpList = new List<KeyValuePair<string, string>>();
+
+            foreach (Employee emp in list)
+            {
+                simpList.Add(new KeyValuePair<string, string>(emp.AdSid, emp.DisplayName));
+            }
+            return simpList;
+        }
+
         public IEnumerable<Employee> GetFiredList(int? idDepartment = null)
         {
             bool userCanViewHiddenDeps = GetCurUser().HasAccess(AdGroup.PersonalManager, AdGroup.SuperAdmin);

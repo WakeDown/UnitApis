@@ -118,7 +118,7 @@ namespace DataProvider.Helpers
                     nc))
             {
                 var domain = new PrincipalContext(ContextType.Domain);
-                GroupPrincipal group;
+                GroupPrincipal group = null;
                 try
                 {
                     group = GroupPrincipal.FindByIdentity(domain, IdentityType.Sid, grpSid);
@@ -237,6 +237,10 @@ namespace DataProvider.Helpers
                 string city = emp.City != null ? StringHelper.Trim(emp.City.Name) : String.Empty;
                 string org = emp.Organization != null ? emp.Organization.Id > 0 && String.IsNullOrEmpty(emp.Organization.Name) ? new Organization(emp.Organization.Id).Name : emp.Organization.Name : String.Empty;
                 string dep = emp.Department != null ? emp.Department.Id > 0 && String.IsNullOrEmpty(emp.Department.Name) ? new Department(emp.Department.Id).Name : emp.Department.Name : String.Empty;
+
+                //обрезаем название продразделения
+                dep = dep.Length >= 60 ?  dep.Remove(59) : dep;
+
                 var photo = emp.Photo != null && emp.Photo.Length > 0 ? emp.Photo : null;
                 Employee manager = new Employee(emp.Manager.Id);
                 string managerUsername = String.IsNullOrEmpty(manager.AdLogin)
@@ -361,7 +365,8 @@ namespace DataProvider.Helpers
                     SetProp(ref user, ref resultUser, "department", dep);
                     SetProp(ref user, ref resultUser, "manager", managerName);
                     user.Properties["jpegPhoto"].Clear();
-                    SetProp(ref user, ref resultUser, "jpegPhoto", photo);
+                    if (photo != null)user.Properties["jpegPhoto"].Add(photo);
+                    //SetProp(ref user, ref resultUser, "jpegPhoto", photo);
                     //using (WindowsImpersonationContextFacade impersonationContext= new WindowsImpersonationContextFacade(nc))
                     //{
                     user.CommitChanges();
