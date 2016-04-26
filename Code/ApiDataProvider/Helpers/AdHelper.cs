@@ -365,7 +365,11 @@ namespace DataProvider.Helpers
                     SetProp(ref user, ref resultUser, "department", dep);
                     SetProp(ref user, ref resultUser, "manager", managerName);
                     user.Properties["jpegPhoto"].Clear();
-                    if (photo != null)user.Properties["jpegPhoto"].Add(photo);
+                    if (photo != null)
+                    {
+                        var smallPhoto = ImageHelper.FixedWidth(photo, 130);
+                        user.Properties["jpegPhoto"].Add(smallPhoto);
+                    }
                     //SetProp(ref user, ref resultUser, "jpegPhoto", photo);
                     //using (WindowsImpersonationContextFacade impersonationContext= new WindowsImpersonationContextFacade(nc))
                     //{
