@@ -11,6 +11,7 @@ namespace DataProvider.Models.Stuff
 {
     public class Organization : DbModel
     {
+        public string Code { get; set; }
         public int Id { get; set; }
         public string Name { get; set; }
         public int EmpCount { get; set; }
@@ -73,6 +74,7 @@ namespace DataProvider.Models.Stuff
 
         private void FillSelf(DataRow row)
         {
+            Code = row["code"].ToString();
             Id = Db.DbHelper.GetValueInt(row["id"]);
             Name = row["name"].ToString();
             EmpCount = Db.DbHelper.GetValueInt(row["emp_count"]);
@@ -125,7 +127,7 @@ namespace DataProvider.Models.Stuff
             SqlParameter pId = new SqlParameter() { ParameterName = "id", SqlValue = Id, SqlDbType = SqlDbType.Int };
             SqlParameter pName = new SqlParameter() { ParameterName = "name", SqlValue = Name, SqlDbType = SqlDbType.NVarChar };
             SqlParameter pCreatorAdSid = new SqlParameter() { ParameterName = "creator_sid", SqlValue = CurUserAdSid, SqlDbType = SqlDbType.VarChar };
-
+            SqlParameter pCode = new SqlParameter() { ParameterName = "code", SqlValue = Code, SqlDbType = SqlDbType.NVarChar };
             SqlParameter pAddressUr = new SqlParameter() { ParameterName = "address_ur", SqlValue = AddressUr, SqlDbType = SqlDbType.NVarChar };
             SqlParameter pAddressFact = new SqlParameter() { ParameterName = "address_fact", SqlValue = AddressFact, SqlDbType = SqlDbType.NVarChar };
             SqlParameter pPhone = new SqlParameter() { ParameterName = "phone", SqlValue = Phone, SqlDbType = SqlDbType.NVarChar };
@@ -147,7 +149,7 @@ namespace DataProvider.Models.Stuff
             SqlParameter pDirectorSid = new SqlParameter() { ParameterName = "director_sid", SqlValue = Director.AdSid, SqlDbType = SqlDbType.VarChar };
             SqlParameter pIdDirector = new SqlParameter() { ParameterName = "id_director", SqlValue = Director.Id, SqlDbType = SqlDbType.Int };
 
-            var dt = Db.Stuff.ExecuteQueryStoredProcedure("save_organization", pId, pName, pCreatorAdSid, pAddressUr, pAddressFact, pPhone, pEmail, pInn, pKpp, pOgrn, pRs, pBank, pKs, pBik, pOkpo, pOkved, pDirectorSid, pSite, pIdDirector);
+            var dt = Db.Stuff.ExecuteQueryStoredProcedure("save_organization", pId, pName, pCreatorAdSid, pAddressUr, pAddressFact, pPhone, pEmail, pInn, pKpp, pOgrn, pRs, pBank, pKs, pBik, pOkpo, pOkved, pDirectorSid, pSite, pIdDirector, pCode);
             if (dt.Rows.Count > 0)
             {
                 int id;

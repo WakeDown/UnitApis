@@ -14,8 +14,16 @@ using WebGrease.Css.Extensions;
 
 namespace DataProvider.Controllers
 {
+    [Authorize]
     public class AdController : BaseApiController
     {
+        [AllowAnonymous]
+        public IEnumerable<AdUser> GetUsers()
+        {
+            var list = AdHelper.GetUserList();
+            return list;
+        } 
+
         public IEnumerable<KeyValuePair<string, string>> GetUserListByGroupSid(string sid)
         {
             return AdHelper.GetUserListByAdGroup(sid);

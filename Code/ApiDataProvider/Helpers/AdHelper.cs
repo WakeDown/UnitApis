@@ -49,10 +49,29 @@ namespace DataProvider.Helpers
             }
         }
 
+        public static void SetUserAdGroups(ref AdUser user)
+        {
+            if (user == null) return;
+
+            var userSid = user.Sid;
+            var adUserGroups = AdUserGroup.GetList()
+                .Where(group => UserInGroup(userSid, @group.Sid))
+                .Select(group => group.Group);
+            user.SetUserGroups(adUserGroups);
+        }
+
+        public static bool UserInGroup(string userSid, params string[] groupSid)
+        {
+            PrincipalContext context;
+            using (new WindowsImpersonationContextFacade(nc))
+                context = new PrincipalContext(ContextType.Domain);
+            var userPrincipal = UserPrincipal.FindByIdentity(context, userSid);
+
+            return userPrincipal != null && groupSid.Any(grp => userPrincipal.IsMemberOf(context, IdentityType.Sid, grp));
+        }
+
         public static void SetUserAdGroups(IIdentity identity, ref AdUser user)
         {
-
-
             //using (WindowsImpersonationContextFacade impersonationContext
             //    = new WindowsImpersonationContextFacade(
             //        nc))
@@ -237,6 +256,7 @@ namespace DataProvider.Helpers
                 string city = emp.City != null ? StringHelper.Trim(emp.City.Name) : String.Empty;
                 string org = emp.Organization != null ? emp.Organization.Id > 0 && String.IsNullOrEmpty(emp.Organization.Name) ? new Organization(emp.Organization.Id).Name : emp.Organization.Name : String.Empty;
                 string dep = emp.Department != null ? emp.Department.Id > 0 && String.IsNullOrEmpty(emp.Department.Name) ? new Department(emp.Department.Id).Name : emp.Department.Name : String.Empty;
+                string gender = emp.Male ? "Male" : "Female";
 
                 //обрезаем название продразделения
                 dep = dep.Length >= 60 ?  dep.Remove(59) : dep;
@@ -337,6 +357,7 @@ namespace DataProvider.Helpers
                     search.PropertiesToLoad.Add("l");
                     search.PropertiesToLoad.Add("company");
                     search.PropertiesToLoad.Add("department");
+                    search.PropertiesToLoad.Add("info");
                     //search.PropertiesToLoad.Add("modifyTimeStamp");
                     //search.PropertiesToLoad.Add("whenChanged");
                     //search.PropertiesToLoad.Add("whenCreated");
@@ -364,6 +385,7 @@ namespace DataProvider.Helpers
                     SetProp(ref user, ref resultUser, "company", org);
                     SetProp(ref user, ref resultUser, "department", dep);
                     SetProp(ref user, ref resultUser, "manager", managerName);
+                    SetProp(ref user, ref resultUser, "info", gender);
                     user.Properties["jpegPhoto"].Clear();
                     if (photo != null)
                     {
@@ -396,6 +418,88 @@ namespace DataProvider.Helpers
             {
                 user.Properties[name].Add(value);
             }
+        }
+
+        public static List<AdUser> GetUserList()
+        {
+            var list = new List<AdUser>();
+            using (DirectorySearcher search = new DirectorySearcher(DomainPath))
+            {
+                search.SizeLimit = int.MaxValue;
+                search.PageSize = int.MaxValue;
+                search.Filter = "(&(objectClass=user))";
+                search.PropertiesToLoad.Add("objectsid");
+                search.PropertiesToLoad.Add("samaccountname");
+                search.PropertiesToLoad.Add("userPrincipalName");
+                search.PropertiesToLoad.Add("mail");
+                search.PropertiesToLoad.Add("usergroup");
+                search.PropertiesToLoad.Add("displayname");
+                search.PropertiesToLoad.Add("givenName");
+                search.PropertiesToLoad.Add("sn");
+                search.PropertiesToLoad.Add("title");
+                search.PropertiesToLoad.Add("telephonenumber");
+                search.PropertiesToLoad.Add("homephone");
+                search.PropertiesToLoad.Add("mobile");
+                search.PropertiesToLoad.Add("manager");
+                search.PropertiesToLoad.Add("l");
+                search.PropertiesToLoad.Add("company");
+                search.PropertiesToLoad.Add("department");
+                search.PropertiesToLoad.Add("memberOf");
+                search.PropertiesToLoad.Add("info");
+                SearchResultCollection result = search.FindAll();
+
+                foreach (SearchResult res in result)
+                {
+                    var adUser = new AdUser();
+                    using (DirectoryEntry user = new DirectoryEntry(res.Path))
+                    {
+                        
+                        var sidInBytes = user.Properties["objectSid"].Value as byte[];
+                        var sid = new SecurityIdentifier(sidInBytes, 0);
+                        adUser.Sid = sid.ToString();
+
+                        if (String.IsNullOrEmpty(adUser.Sid)) continue;
+
+                        adUser.DepartmentName = user.Properties["department"].Value as string;
+                        adUser.PositionName = user.Properties["title"].Value as string;
+                        adUser.Photo = user.Properties["jpegPhoto"].Value as byte[];
+                        adUser.PhotoByte = user.Properties["jpegPhoto"].Value as byte[];
+                        adUser.Email = user.Properties["mail"].Value as string;
+                        adUser.FullName = user.Properties["displayName"].Value as string;
+                        adUser.Phone = user.Properties["telephonenumber"].Value as string;
+                        adUser.Mobile = user.Properties["mobile"].Value as string;
+                        adUser.CityName = user.Properties["l"].Value as string;
+                        adUser.ManagerName = user.Properties["manager"].Value as string;
+                        adUser.Gender = user.Properties["info"].Value as string;
+
+                        //var s = user.Properties["memberOf"].Value as string;
+
+                        //if (s != null && s.Contains("CN=off,DC=UN1T,DC=GROUP"))
+                        //{
+                        //    string sd = "";
+                        //}
+                        //if (s != null && s.Contains("off"))
+                        //{
+                        //    string sd = "";
+                        //}
+                        
+                        if (String.IsNullOrEmpty(adUser.DisplayName) || String.IsNullOrEmpty(adUser.Email)) continue;
+
+                        //if (String.IsNullOrEmpty(adUser.DisplayName) && String.IsNullOrEmpty(adUser.FullName) && String.IsNullOrEmpty(adUser.Email) && String.IsNullOrEmpty(adUser.DepartmentName) && String.IsNullOrEmpty(adUser.PositionName) && String.IsNullOrEmpty(adUser.Mobile)) continue;
+                    }
+
+                    if (!String.IsNullOrEmpty(adUser.ManagerName))
+                    {
+                        DirectoryEntry de = new DirectoryEntry("LDAP://" + adUser.ManagerName);
+                        //string username = de.Properties["samAccountName"][0].ToString();
+                        var sidInBytes = de.Properties["objectSid"].Value as byte[];
+                        var sid = new SecurityIdentifier(sidInBytes, 0);
+                        adUser.ManagerSid = sid.ToString();
+                    }
+                    list.Add(adUser);
+                }
+            }
+            return list;
         }
 
         public static string GenerateLoginByName(string surname, string name)

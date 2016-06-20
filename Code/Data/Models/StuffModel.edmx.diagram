@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="2b45433e49dd4ee98d9dda1003442957" Name="Diagram1">
+        <EntityTypeShape EntityType="StuffModel.C__RefactorLog" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.branch_offices" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.budget" Width="1.5" PointX="0.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.cities" Width="1.5" PointX="8.75" PointY="6" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.departments" Width="1.5" PointX="3.75" PointY="3.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.document_folders" Width="1.5" PointX="8.75" PointY="1.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.document_meet_links" Width="1.5" PointX="8.75" PointY="10.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.document_meet_notes" Width="1.5" PointX="4.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.document_meets" Width="1.5" PointX="10.75" PointY="10.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.documents" Width="1.5" PointX="11" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.employee_import" Width="1.5" PointX="0.75" PointY="12.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.employee_states" Width="1.5" PointX="12.75" PointY="10.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.employee_transfers" Width="1.5" PointX="13.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.employees" Width="1.5" PointX="14.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.engeneer_states" Width="1.5" PointX="8.75" PointY="14.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.holiday_work_confirms" Width="1.5" PointX="10.75" PointY="14.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.holiday_work_documents" Width="1.5" PointX="12.75" PointY="14.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.languages" Width="1.5" PointX="14.75" PointY="13.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.meeting_rooms" Width="1.5" PointX="15.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.org_state_images" Width="1.5" PointX="0.75" PointY="15.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.organizations" Width="1.5" PointX="16.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.photos" Width="1.5" PointX="16.75" PointY="11.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.position_import" Width="1.5" PointX="14.75" PointY="16.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.positions" Width="1.5" PointX="3.75" PointY="12.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_came_resources" Width="1.5" PointX="16.75" PointY="15.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_candidate_came_types" Width="1.5" PointX="17.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_candidate_resume_files" Width="1.5" PointX="5.75" PointY="17.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_candidates" Width="1.5" PointX="10.75" PointY="17.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_employee_change_reminders" Width="1.5" PointX="18.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_invite_messages" Width="1.5" PointX="11" PointY="6.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_question_driver_license_categories" Width="1.5" PointX="18.75" PointY="8.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_question_facts" Width="1.5" PointX="18.75" PointY="11.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_question_form_education_degrees" Width="1.5" PointX="18.75" PointY="14.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_question_form_educations" Width="1.5" PointX="18.75" PointY="17.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_question_form_facts" Width="1.5" PointX="19.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_question_form_further_educations" Width="1.5" PointX="0.75" PointY="19.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_question_form_languages" Width="1.5" PointX="2.75" PointY="19.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_question_form_recomandations" Width="1.5" PointX="12.75" PointY="19.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_question_form_relatives" Width="1.5" PointX="14.75" PointY="19.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_question_form_works" Width="1.5" PointX="20.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_question_form2driver_category" Width="1.5" PointX="7.75" PointY="20.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_question_form2programs" Width="1.5" PointX="20.75" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_question_forms" Width="1.5" PointX="20.75" PointY="12.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_question_links" Width="1.5" PointX="4.75" PointY="21.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_question_marital_status" Width="1.5" PointX="21.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_question_programs" Width="1.5" PointX="16.75" PointY="21.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_question_task_variants" Width="1.5" PointX="22.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_question_work_when" Width="1.5" PointX="22.75" PointY="6.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_selection_state_history" Width="1.5" PointX="22.75" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_selection_states" Width="1.5" PointX="22.75" PointY="12.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_selections" Width="1.5" PointX="22.75" PointY="16.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_vacancies" Width="1.5" PointX="22.75" PointY="21.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_vacancy_causes" Width="1.5" PointX="23.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_vacancy_state_history" Width="1.5" PointX="6.75" PointY="23.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_vacancy_states" Width="1.5" PointX="8.75" PointY="23.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_vacancy_types" Width="1.5" PointX="10.75" PointY="23.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.RequestHistory" Width="1.5" PointX="3" PointY="8.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.RequestHistoryAction" Width="1.5" PointX="12.75" PointY="23.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.RequestReasons" Width="1.5" PointX="3.75" PointY="16.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.Requests" Width="1.5" PointX="6" PointY="3.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.RequestStatuses" Width="1.5" PointX="0.75" PointY="8.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.rest_holiday_transfer_days" Width="1.5" PointX="0.75" PointY="24.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.rest_holidays" Width="1.5" PointX="24.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.statement_printed" Width="1.5" PointX="24.75" PointY="8.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.statement_types" Width="1.5" PointX="24.75" PointY="14.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.vendor_state_pictures" Width="1.5" PointX="14.75" PointY="24.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.vendor_states" Width="1.5" PointX="16.75" PointY="24.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.vendors" Width="1.5" PointX="24.75" PointY="18.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.wd_holidays" Width="1.5" PointX="18.75" PointY="24.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.wd_not_work_holidays" Width="1.5" PointX="24.75" PointY="22.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.wd_short_days" Width="1.5" PointX="24.75" PointY="24.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.wd_work_holidays" Width="1.5" PointX="25.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.work_days" Width="1.5" PointX="2.75" PointY="25.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.work_hours" Width="1.5" PointX="26.75" PointY="2.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.CaptureOutputLog" Width="1.5" PointX="4.75" PointY="26.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.Private_RenamedObjectLog" Width="1.5" PointX="26.75" PointY="5.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.TestResult" Width="1.5" PointX="26.75" PointY="8.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.departments_view" Width="1.5" PointX="10.75" PointY="26.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.employee_rest_holidays_report" Width="1.5" PointX="26.75" PointY="12.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.employees_all_view" Width="1.5" PointX="26.75" PointY="16.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.employees_report" Width="1.5" PointX="18.75" PointY="26.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.employees_view" Width="1.5" PointX="24.75" PointY="26.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_candidates_view" Width="1.5" PointX="26.75" PointY="26.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_selection_state_history_report" Width="1.5" PointX="6.75" PointY="27.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_selections_accept_or_cancel_report" Width="1.5" PointX="12.75" PointY="27.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_selections_report" Width="1.5" PointX="28.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_selections_view" Width="1.5" PointX="0.75" PointY="28.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_vacancies_report" Width="1.5" PointX="28.75" PointY="12.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.recruit_vacancies_view" Width="1.5" PointX="20.75" PointY="28.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.statement_printed_view" Width="1.5" PointX="28.75" PointY="23.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.users_view" Width="1.5" PointX="2.75" PointY="29.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.vacancy_state_history_report" Width="1.5" PointX="28.75" PointY="29.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.TestClasses" Width="1.5" PointX="30.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StuffModel.Tests" Width="1.5" PointX="30.75" PointY="3.75" IsExpanded="true" />
+        <AssociationConnector Association="StuffModel.FK_recruit_invite_messages_cities" ManuallyRouted="false" />
+        <AssociationConnector Association="StuffModel.FK_Requests_id_department" ManuallyRouted="false" />
+        <AssociationConnector Association="StuffModel.FK_document_folders_document_folders" ManuallyRouted="false" />
+        <AssociationConnector Association="StuffModel.FK_documents_document_folders" ManuallyRouted="false" />
+        <AssociationConnector Association="StuffModel.FK_Requests_id_position" ManuallyRouted="false" />
+        <AssociationConnector Association="StuffModel.FK_RequestHistory_RequestId" ManuallyRouted="false" />
+        <AssociationConnector Association="StuffModel.FK_RequestHistory_RequestNewStatusId" ManuallyRouted="false" />
+        <AssociationConnector Association="StuffModel.FK_RequestHistory_RequestOldStatusId" ManuallyRouted="false" />
+        <AssociationConnector Association="StuffModel.FK_Requests_id_reason" ManuallyRouted="false" />
+        <AssociationConnector Association="StuffModel.FK_Requests_id_status" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

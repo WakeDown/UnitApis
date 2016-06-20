@@ -1,0 +1,691 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{85EF4FFE-FB31-4817-A8E4-54853733F9B9}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Data</RootNamespace>
+    <AssemblyName>Data</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Class1.cs" />
+    <Compile Include="Models\branch_offices.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\branch_office_get_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\budget.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CaptureOutputLog.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\check_vendor_state_is_changed_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\cities.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\C__RefactorLog.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\departments.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\departments_view.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\documents.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\document_folders.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\document_meets.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\document_meet_links.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\document_meet_notes.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\employees.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\employees_all_view.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\employees_report.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\employees_view.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\employee_import.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\employee_rest_holidays_report.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\employee_states.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\employee_transfers.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\engeneer_states.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\engeneer_state_get_history_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\engeneer_state_get_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\engeneer_state_get_prev_version_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\engeneer_state_get_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\engener_state_get_expires_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\F_Num_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\get_budget_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\get_budget_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\get_budget_value_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\get_city_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\get_department_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\get_document_list_for_employee_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\get_document_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\get_doc_meet_link_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\get_employees_birthday_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\get_employees_bithday_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\get_employees_newbie_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\get_employee_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\get_employee_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\get_employee_sm_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\get_emp_state_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\get_expires_vendor_state_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\get_language_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\get_organization_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\get_org_state_images_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\get_org_state_image_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\get_other_employee_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\get_position_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\get_rest_holiday_transfer_days_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\get_rest_holiday_transfer_days_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\get_subordinate_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\get_vendor_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\get_vendor_state_history_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\get_vendor_state_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\get_vendor_state_prev_version_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\get_vendor_state_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\holiday_work_confirms.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\holiday_work_documents.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Info_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\languages.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\meeting_rooms.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\organizations.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\org_state_images.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\photos.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\positions.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\position_import.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Private_FindConstraint_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Private_GetConstraintType_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Private_GetDataTypeOrComputedColumnDefinition_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Private_GetDefaultConstraintDefinition_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Private_GetForeignKeyDefinition_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Private_GetFullTypeName_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Private_GetIdentityDefinition_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Private_GetOriginalTableInfo_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Private_GetQuotedTableNameForConstraint_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Private_RenamedObjectLog.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Private_ResolveApplyConstraintParameters_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Private_ResolveFakeTableNamesForBackwardCompatibility_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Private_ResolveName_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Private_ResolveObjectName_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Private_ResolveSchemaName_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_came_resources.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_came_resource_get_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_candidates.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_candidates_view.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_candidate_came_types.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_candidate_get_came_type_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_candidate_get_file_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_candidate_get_file_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_candidate_get_history_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_candidate_get_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_candidate_get_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_candidate_resume_files.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_employee_change_reminders.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_invite_messages.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_question_create_link_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_question_driver_license_categories.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_question_facts.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_question_facts_get_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_question_form2driver_categories_get_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_question_form2driver_category.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_question_form2programs.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_question_forms.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_question_form_confirm_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_question_form_educations.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_question_form_education_degrees.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_question_form_education_degrees_get_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_question_form_education_get_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_question_form_facts.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_question_form_further_educations.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_question_form_fut_education_get_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_question_form_get_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_question_form_languages.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_question_form_language_get_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_question_form_recomandations.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_question_form_recomendation_get_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_question_form_relatives.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_question_form_relatives_get_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_question_form_works.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_question_form_work_get_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_question_get_driver_license_categories_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_question_get_form2programs_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_question_get_form_facts_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_question_get_marital_status_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_question_get_task_variants_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_question_get_work_when_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_question_links.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_question_marital_status.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_question_programs.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_question_programs_get_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_question_task_variants.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_question_work_when.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_selections.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_selections_accept_or_cancel_report.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_selections_report.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_selections_view.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_selection_get_history_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_selection_get_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_selection_get_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_selection_get_state_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_selection_states.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_selection_state_history.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_selection_state_history_report.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_vacancies.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_vacancies_report.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_vacancies_view.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_vacancy_causes.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_vacancy_cause_get_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_vacancy_get_history_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_vacancy_get_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_vacancy_get_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_vacancy_get_state_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_vacancy_states.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_vacancy_state_history.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_vacancy_types.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\recruit_vacancy_type_get_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\RequestHistory.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\RequestHistoryAction.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\RequestReasons.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Requests.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\RequestStatuses.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\rest_holidays.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\rest_holiday_employee_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\rest_holiday_get_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\rest_holiday_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\rest_holiday_transfer_days.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\rest_holiday_years_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\set_employee_fired_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\SplitInt_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\statement_printed.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\statement_printed_get_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\statement_printed_view.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\statement_types.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\statement_type_get_list_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\statement_type_get_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\StuffModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>StuffModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\StuffModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\StuffModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>StuffModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\TestCaseSummary_Result.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\TestClasses.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\TestResult.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Tests.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\users_view.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\vacancy_state_history_report.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\vendors.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\vendor_states.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\vendor_state_pictures.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\wd_holidays.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\wd_not_work_holidays.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\wd_short_days.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\wd_work_holidays.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\work_days.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\work_hours.cs">
+      <DependentUpon>StuffModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EntityDeploy Include="Models\StuffModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>StuffModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.Config" />
+    <None Include="Models\StuffModel.edmx.diagram">
+      <DependentUpon>StuffModel.edmx</DependentUpon>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Models\StuffModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>StuffModel.edmx</DependentUpon>
+      <LastGenOutput>StuffModel.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\StuffModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>StuffModel.edmx</DependentUpon>
+      <LastGenOutput>StuffModel.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Objects\" />
+    <Folder Include="Services\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

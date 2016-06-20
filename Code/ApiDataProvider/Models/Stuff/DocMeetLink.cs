@@ -58,7 +58,6 @@ namespace DataProvider.Models.Stuff
                     SqlParameter pCreatorAdSid = new SqlParameter(){ParameterName = "creator_sid",SqlValue = CurUserAdSid,SqlDbType = SqlDbType.VarChar};
 
                     var dt = Db.Stuff.ExecuteQueryStoredProcedure("save_doc_meet_link", pIdDocument, pIdDepartment, pIdPosition,pIdEmployee, pCreatorAdSid);
-                
             }
         }
 

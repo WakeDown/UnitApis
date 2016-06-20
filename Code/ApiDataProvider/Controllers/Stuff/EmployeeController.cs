@@ -24,6 +24,17 @@ namespace DataProvider.Controllers.Stuff
         //{
         //    Employee.RefillManager();
         //}
+
+        //public IEnumerable<AdUser> GetUsers()
+        //{
+        //    var list = GetList(showHidden: false);
+        //    var result = new List<AdUser>();
+        //    foreach (Employee emp in list)
+        //    {
+        //        result.Add(new AdUser() { DepartmentName = emp.Department.Name, PositionName = emp.Position.Name, Phone = emp.MobilNum, Email = emp.Email, DisplayName = emp.DisplayName, FullName = emp.FullName, PhotoByte = emp.Photo,});
+        //    }
+        //}
+
         public EmployeeSm GetSimple(string sid)
         {
             return new EmployeeSm(sid);
