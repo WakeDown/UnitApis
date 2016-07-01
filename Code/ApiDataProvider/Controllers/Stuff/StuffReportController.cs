@@ -14,7 +14,8 @@ namespace DataProvider.Controllers.Stuff
 {
     public class StuffReportController : ApiController
     {
-        [AuthorizeAd(Groups = new[] { AdGroup.SystemUser,AdGroup.SystemUser })]
+        //[AuthorizeAd(Groups = new[] { AdGroup.SystemUser,AdGroup.SystemUser })]
+        [AllowAnonymous]
         public IEnumerable<ItBudgetReportItem> GetItBudgetList(float? peopleCost = 350F)
         {
             if (!peopleCost.HasValue) peopleCost = 350F;
