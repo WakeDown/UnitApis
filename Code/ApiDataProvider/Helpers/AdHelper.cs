@@ -362,6 +362,8 @@ namespace DataProvider.Helpers
                     search.PropertiesToLoad.Add("info");
                     search.PropertiesToLoad.Add("pager");
                     search.PropertiesToLoad.Add("homePhone");
+                    search.PropertiesToLoad.Add("homeNumber");
+                    search.PropertiesToLoad.Add("otherHomePhone");
                     //search.PropertiesToLoad.Add("modifyTimeStamp");
                     //search.PropertiesToLoad.Add("whenChanged");
                     //search.PropertiesToLoad.Add("whenCreated");
@@ -392,6 +394,8 @@ namespace DataProvider.Helpers
                     SetProp(ref user, ref resultUser, "info", gender);
                     SetProp(ref user, ref resultUser, "pager", ipPhone);
                     SetProp(ref user, ref resultUser, "homePhone", ipPhonePass);
+                    SetProp(ref user, ref resultUser, "homeNumber", ipPhonePass);
+                    SetProp(ref user, ref resultUser, "otherHomePhone", ipPhonePass);
                     user.Properties["jpegPhoto"].Clear();
                     if (photo != null)
                     {
