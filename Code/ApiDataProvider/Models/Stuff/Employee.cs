@@ -60,6 +60,8 @@ namespace DataProvider.Models.Stuff
         public bool IsHidden { get; set; }
         public DateTime? DateFired { get; set; }
         public int? IdBudget { get; set; }
+        public string IpPhone { get; set; }
+        public string IpPhonePass { get; set; }
 
         public Employee()
         {
@@ -104,6 +106,8 @@ namespace DataProvider.Models.Stuff
             IsHidden = row.Table.Columns.Contains("is_hidden") && Db.DbHelper.GetValueBool(row["is_hidden"].ToString());
             DateFired = Db.DbHelper.GetValueDateTimeOrNull(row, "date_fired");
             IdBudget = Db.DbHelper.GetValueIntOrNull(row, "id_budget");
+            IpPhone= row.Table.Columns.Contains("ip_phone") ? row["ip_phone"].ToString() : String.Empty;
+            IpPhonePass = row.Table.Columns.Contains("ip_phone_pass") ? row["ip_phone_pass"].ToString() : String.Empty;
         }
 
         public Employee(int id, bool getPhoto = false)

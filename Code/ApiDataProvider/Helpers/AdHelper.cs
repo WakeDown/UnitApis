@@ -257,6 +257,8 @@ namespace DataProvider.Helpers
                 string org = emp.Organization != null ? emp.Organization.Id > 0 && String.IsNullOrEmpty(emp.Organization.Name) ? new Organization(emp.Organization.Id).Name : emp.Organization.Name : String.Empty;
                 string dep = emp.Department != null ? emp.Department.Id > 0 && String.IsNullOrEmpty(emp.Department.Name) ? new Department(emp.Department.Id).Name : emp.Department.Name : String.Empty;
                 string gender = emp.Male ? "Male" : "Female";
+                string ipPhone = emp.IpPhone;
+                string ipPhonePass = emp.IpPhonePass;
 
                 //обрезаем название продразделения
                 dep = dep.Length >= 60 ?  dep.Remove(59) : dep;
@@ -281,7 +283,7 @@ namespace DataProvider.Helpers
                     userIsExist = resultUser != null && resultUser.Properties.Contains("sAMAccountName");
                 }
 
-                if (!String.IsNullOrEmpty(managerUsername.Trim()))
+                if (emp.Manager.Id > 0 && !String.IsNullOrEmpty(managerUsername.Trim()))
                 {
                     using (directoryEntry)
                     {
@@ -358,6 +360,8 @@ namespace DataProvider.Helpers
                     search.PropertiesToLoad.Add("company");
                     search.PropertiesToLoad.Add("department");
                     search.PropertiesToLoad.Add("info");
+                    search.PropertiesToLoad.Add("pager");
+                    search.PropertiesToLoad.Add("homePhone");
                     //search.PropertiesToLoad.Add("modifyTimeStamp");
                     //search.PropertiesToLoad.Add("whenChanged");
                     //search.PropertiesToLoad.Add("whenCreated");
@@ -386,6 +390,8 @@ namespace DataProvider.Helpers
                     SetProp(ref user, ref resultUser, "department", dep);
                     SetProp(ref user, ref resultUser, "manager", managerName);
                     SetProp(ref user, ref resultUser, "info", gender);
+                    SetProp(ref user, ref resultUser, "pager", ipPhone);
+                    SetProp(ref user, ref resultUser, "homePhone", ipPhonePass);
                     user.Properties["jpegPhoto"].Clear();
                     if (photo != null)
                     {
