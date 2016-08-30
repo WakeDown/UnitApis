@@ -661,6 +661,22 @@ namespace DataProvider.Models.Stuff
                 }
             return list;
         }
-        
+
+        public static IEnumerable<KeyValuePair<string, string>> GetSubordinatesAllTimeSimple(string sid)
+        {
+            var list = new Dictionary<string, string>();
+            SqlParameter pSid = new SqlParameter() { ParameterName = "sid", SqlValue = sid, SqlDbType = SqlDbType.VarChar };
+            var dt = Db.Stuff.ExecuteQueryStoredProcedure("get_subordinate_all_time_list", pSid);
+
+            if (dt.Rows.Count > 0)
+            {
+                foreach (DataRow row in dt.Rows)
+                {
+                    list.Add(Db.DbHelper.GetValueString(row, "ad_sid"), Db.DbHelper.GetValueString(row, "display_name"));
+                }
+            }
+            return list;
+        }
+
     }
 }

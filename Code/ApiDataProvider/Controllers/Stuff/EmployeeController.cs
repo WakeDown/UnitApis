@@ -306,6 +306,13 @@ namespace DataProvider.Controllers.Stuff
             return list;
         }
 
+        public IEnumerable<KeyValuePair<string, string>> GetSubordinatesAllTimeSimple(string sid)
+        {
+            var list = Employee.GetSubordinatesAllTimeSimple(sid).ToList();
+
+            return list;
+        }
+
         public IEnumerable<Department> GetWorkingDepartmentList(string sid)
         {
             var list = Department.GetList(employeeSid:sid);
