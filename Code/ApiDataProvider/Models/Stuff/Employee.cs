@@ -88,7 +88,11 @@ namespace DataProvider.Models.Stuff
             Email = row.Table.Columns.Contains("email") ? row["email"].ToString() : String.Empty;
             WorkNum = row.Table.Columns.Contains("work_num") ? row["work_num"].ToString() : String.Empty;
             MobilNum = row.Table.Columns.Contains("mobil_num") ? row["mobil_num"].ToString() : String.Empty;
-            EmpState = new EmpState() { Id = row.Table.Columns.Contains("id_emp_state") ? Db.DbHelper.GetValueInt(row["id_emp_state"]) : 0, Name = row.Table.Columns.Contains("emp_state") ? row["emp_state"].ToString() : String.Empty };
+            EmpState = new EmpState() {
+                Id = row.Table.Columns.Contains("id_emp_state") ? Db.DbHelper.GetValueInt(row["id_emp_state"]) : 0,
+                Name = row.Table.Columns.Contains("emp_state") ? row["emp_state"].ToString() : String.Empty,
+                SysName = row.Table.Columns.Contains("emp_state_sys_name") ? row["emp_state_sys_name"].ToString() : String.Empty
+            };
             Department = new Department() { Id = row.Table.Columns.Contains("id_department") ? Db.DbHelper.GetValueInt(row["id_department"]) : 0, Name = row.Table.Columns.Contains("department") ? row["department"].ToString() : String.Empty };
             City = new City() { Id = row.Table.Columns.Contains("id_city") ? Db.DbHelper.GetValueInt(row["id_city"]) : 0, Name = row.Table.Columns.Contains("city") ? row["city"].ToString() : String.Empty };
             DateCame = row.Table.Columns.Contains("date_came") ? Db.DbHelper.GetValueDateTimeOrNull(row["date_came"]) : new DateTime();
@@ -369,6 +373,31 @@ namespace DataProvider.Models.Stuff
             //SqlParameter pSysNamePositions = new SqlParameter() { ParameterName = "lst_pos_sys_name", SqlValue = String.Join(",", sysNamePositions), SqlDbType = SqlDbType.NVarChar };
 
             var dt = Db.Stuff.ExecuteQueryStoredProcedure("get_employee_list", pIdDepartment, pGetPhoto, pIdCity, pIdManager, pIdBudget, pgetNewbies);
+
+            var lst = new List<Employee>();
+
+            foreach (DataRow row in dt.Rows)
+            {
+                var emp = new Employee(row);
+                if (emp.IsHidden && (!userCanViewHiddenEmps || !showHidden)) continue;
+                lst.Add(emp);
+            }
+
+            return lst;
+        }
+
+        public static IEnumerable<Employee> GetAllTimeList(int? idDepartment = null, bool getPhoto = false, int? idCity = null, int? idManager = null, bool userCanViewHiddenEmps = false, bool showHidden = true, int? idBudget = null, bool getNewbies = false)
+        {
+            SqlParameter pIdDepartment = new SqlParameter() { ParameterName = "id_department", SqlValue = idDepartment, SqlDbType = SqlDbType.Int };
+            SqlParameter pGetPhoto = new SqlParameter() { ParameterName = "get_photo", SqlValue = getPhoto, SqlDbType = SqlDbType.Bit };
+            SqlParameter pIdCity = new SqlParameter() { ParameterName = "id_city", SqlValue = idCity, SqlDbType = SqlDbType.Int };
+            SqlParameter pIdManager = new SqlParameter() { ParameterName = "id_manager", SqlValue = idManager, SqlDbType = SqlDbType.Int };
+            SqlParameter pIdBudget = new SqlParameter() { ParameterName = "id_budget", SqlValue = idBudget, SqlDbType = SqlDbType.Int };
+            SqlParameter pgetNewbies = new SqlParameter() { ParameterName = "get_newbies", SqlValue = getNewbies, SqlDbType = SqlDbType.Bit };
+            //if (sysNamePositions == null) sysNamePositions = new[] {""};
+            //SqlParameter pSysNamePositions = new SqlParameter() { ParameterName = "lst_pos_sys_name", SqlValue = String.Join(",", sysNamePositions), SqlDbType = SqlDbType.NVarChar };
+
+            var dt = Db.Stuff.ExecuteQueryStoredProcedure("get_all_time_employee_list", pIdDepartment, pGetPhoto, pIdCity, pIdManager, pIdBudget, pgetNewbies);
 
             var lst = new List<Employee>();
 

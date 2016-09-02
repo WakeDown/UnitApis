@@ -12,6 +12,7 @@ namespace DataProvider.Models.Stuff
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public string SysName { get; set; }
 
         public EmpState()
         {

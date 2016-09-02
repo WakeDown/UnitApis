@@ -46,6 +46,12 @@ namespace DataProvider.Controllers.Stuff
             return Employee.GetList(idDepartment, false, idCity, null, userCanViewHiddenEmps, showHidden);
         }
 
+        public IEnumerable<Employee> GetAllTimeList(int? idDepartment = null, int? idCity = null, bool showHidden = true)
+        {
+            bool userCanViewHiddenEmps = GetCurUser().HasAccess(AdGroup.PersonalManager, AdGroup.SuperAdmin);
+            return Employee.GetAllTimeList(idDepartment, false, idCity, null, userCanViewHiddenEmps, showHidden);
+        }
+
         public IEnumerable<KeyValuePair<string, string>> GetListSimple(int? idDepartment = null, int? idCity = null, bool showHidden = true)
         {
             bool userCanViewHiddenEmps = GetCurUser().HasAccess(AdGroup.PersonalManager, AdGroup.SuperAdmin);

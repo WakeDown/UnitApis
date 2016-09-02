@@ -25,7 +25,7 @@ namespace DataProvider.Models.Stuff
         public int OrgStructureLevel { get; set; }
 
         public IEnumerable<Employee> Stuff { get; set; } 
-
+        public bool Enabled { get; set; }
 
         public Department() { }
 
@@ -42,6 +42,7 @@ namespace DataProvider.Models.Stuff
             Chief = new Employee() { Id = Db.DbHelper.GetValueInt(row["id_chief"]), DisplayName = row["chief"].ToString(), AdSid = Db.DbHelper.GetValueString(row, "chief_sid") };
             EmployeeCount = Db.DbHelper.GetValueIntOrDefault(row["emp_count"]);
             Hidden = row.Table.Columns.Contains("hidden") && Db.DbHelper.GetValueBool(row["hidden"]);
+            Enabled = row.Table.Columns.Contains("enabled") && Db.DbHelper.GetValueBool(row["enabled"]);
         }
 
         public Department(int id)
@@ -134,6 +135,25 @@ namespace DataProvider.Models.Stuff
             {
                 var dep = new Department(row);
                 if (dep.Hidden && !userCanViewHiddenDeps){continue;}
+                lst.Add(dep);
+            }
+
+            return lst;
+        }
+
+        public static IEnumerable<Department> GetAllTimeList(bool getEmpCount = false, bool userCanViewHiddenDeps = false, bool? hasAdAccount = null, string employeeSid = null)
+        {
+            SqlParameter pGetEmpCount = new SqlParameter() { ParameterName = "get_emp_count", SqlValue = getEmpCount, SqlDbType = SqlDbType.Bit };
+            SqlParameter pHasAdAccount = new SqlParameter() { ParameterName = "has_ad_account", SqlValue = hasAdAccount, SqlDbType = SqlDbType.Bit };
+            SqlParameter pEmployeeSid = new SqlParameter() { ParameterName = "employee_sid", SqlValue = employeeSid, SqlDbType = SqlDbType.VarChar };
+            var dt = Db.Stuff.ExecuteQueryStoredProcedure("get_all_time_department", pGetEmpCount, pHasAdAccount, pEmployeeSid);
+
+            var lst = new List<Department>();
+
+            foreach (DataRow row in dt.Rows)
+            {
+                var dep = new Department(row);
+                if (dep.Hidden && !userCanViewHiddenDeps) { continue; }
                 lst.Add(dep);
             }
 

@@ -22,6 +22,12 @@ namespace DataProvider.Controllers.Stuff
             return Department.GetList(userCanViewHiddenDeps: userCanViewHiddenDeps);
         }
 
+        public IEnumerable<Department> GetAllTimeList()
+        {
+            bool userCanViewHiddenDeps = AdHelper.UserInGroup(GetCurUser().User, AdGroup.PersonalManager, AdGroup.SuperAdmin);
+            return Department.GetAllTimeList(userCanViewHiddenDeps: userCanViewHiddenDeps);
+        }
+
         public IEnumerable<Department> GetOrgStructure()
         {
             bool userCanViewHiddenDeps = AdHelper.UserInGroup(GetCurUser().User, AdGroup.PersonalManager, AdGroup.SuperAdmin);
