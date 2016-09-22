@@ -36,5 +36,28 @@ namespace DataProvider.Controllers.Eprice
             }
             return response;
         }
+
+        [HttpPost]
+        public HttpResponseMessage GetProductActualInfo(PartNumValue partNumVal)
+        {
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Created);
+            string sid = GetCurUser().Sid;
+            try
+            {
+                //var treolanPrice = Treolan.GetPriceByPartNum(partNum);
+                var prod = CatalogProduct.GetProductActualInfo(partNumVal.PartNum);
+                string priceStr = prod.GetStr();
+                string name = prod.NomenclatureName;
+                //response.Content = new StringContent(String.Format("{{\"priceStr\": \"{0}\"}}", priceStr));
+                response.Content = new StringContent(String.Format("{{\"Value\":\"{0}\", \"NomenclatureName\":\"{1}\"}}", priceStr, name));
+            }
+            catch (Exception ex)
+            {
+                response = new HttpResponseMessage(HttpStatusCode.OK);
+                response.Content = new StringContent(String.Format("{{\"errorMessage\":\"{0}\"}}", ex.Message));
+
+            }
+            return response;
+        }
     }
 }

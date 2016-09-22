@@ -13,6 +13,7 @@ namespace DataProvider.Models.Eprice
         public Currency Currency { get; set; }
         //public CatalogCategory Category { get; set; }
         public ProductProvider Provider { get; set; }
+        public string NomenclatureName { get; set; }
 
         public PriceResult()
         {
@@ -25,6 +26,7 @@ namespace DataProvider.Models.Eprice
             if (dr.Table.Columns.Contains("price")) Price = Db.DbHelper.GetValueDecimal(dr["price"]);
             if (dr.Table.Columns.Contains("currency_str")) Currency.Name = dr["currency_str"].ToString();
             if (dr.Table.Columns.Contains("name")) Provider.Name = dr["name"].ToString();
+            if (dr.Table.Columns.Contains("nomenclature_name")) NomenclatureName = dr["nomenclature_name"].ToString();
         }
 
         public string GetStr()

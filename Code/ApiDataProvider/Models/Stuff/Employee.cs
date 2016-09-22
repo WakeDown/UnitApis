@@ -349,8 +349,10 @@ namespace DataProvider.Models.Stuff
 
                 if (!isRefill && isEdit)
                 {
-                    string body = String.Format("<p>В систему введен новый сотрудник.</p><p>{0}</p><p>{1}</p><p>{2}</p>", FullName, Email,
-                        City.Name);
+                    string portalLink = String.Format("{0}/Employee/Index/{1}", ConfigurationManager.AppSettings["StuffUrl"], Id);
+
+                    string body = String.Format("<p>В систему введен новый сотрудник.</p><p>{0}</p><p>{1}</p><p>{2}</p><p><a href=\"{3}\">{3}</a></p>", FullName, Email,
+                        City.Name, portalLink);
                     if (!adCreate) body += "<p style='color:red; font-size: 14pt;'>Не удалось создать пользователя в AD!</p>";
                     //var recipients = AdHelper.GetRecipientsFromAdGroup(AdGroup.NewEmployeeNote);
                     var recipients = AdHelper.GetRecipientsFromAdGroup(AdGroup.NewEmployeeNote);

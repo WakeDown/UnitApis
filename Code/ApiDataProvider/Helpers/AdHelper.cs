@@ -396,6 +396,9 @@ namespace DataProvider.Helpers
                     SetProp(ref user, ref resultUser, "homePhone", ipPhonePass);
                     SetProp(ref user, ref resultUser, "homeNumber", ipPhonePass);
                     SetProp(ref user, ref resultUser, "otherHomePhone", ipPhonePass);
+
+                    user.Rename("CN=" + fullName);
+
                     user.Properties["jpegPhoto"].Clear();
                     if (photo != null)
                     {
@@ -427,6 +430,21 @@ namespace DataProvider.Helpers
             else
             {
                 user.Properties[name].Add(value);
+            }
+        }
+
+        public void Rename(string userDn, string newCN)
+        {
+            try
+            {
+                using (DirectoryEntry user = new DirectoryEntry(userDn))
+                {
+                    user.Properties["cn"].Value = newCN;
+                    user.CommitChanges();
+                }
+            }
+            catch (DirectoryServicesCOMException e)
+            {
             }
         }
 

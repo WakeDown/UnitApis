@@ -70,5 +70,19 @@ namespace DataProvider.Models.Eprice
             }
             return new PriceResult();
         }
+
+        public static PriceResult GetProductActualInfo(string partNum)
+        {
+            if (String.IsNullOrEmpty(partNum)) throw new ArgumentException("Партномер не указан");
+            SqlParameter pPartNum = new SqlParameter() { ParameterName = "part_num", SqlValue = partNum, SqlDbType = SqlDbType.NVarChar };
+
+            var dt = Db.Eprice.ExecuteQueryStoredProcedure("get_catalog_product", pPartNum);
+
+            if (dt.Rows.Count > 0)
+            {
+                return new PriceResult(dt.Rows[0]);
+            }
+            return new PriceResult();
+        }
     }
 }
